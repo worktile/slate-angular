@@ -6,6 +6,8 @@
   },
   "peerDependencies": {
     "@angular/common": "~10.2.4",
-    "@angular/core": "~10.2.4"
+    "@angular/core": "~10.2.4",
+    "slate": "^0.58.4",
+    "slate-history": "^0.58.4"
   }
 }
