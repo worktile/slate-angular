@@ -7,8 +7,10 @@ module.exports = {
             2,
             'always',
             [
+                'core',
                 'release',
-                ''
+                'plugin',
+                'config'
             ]
         ]
     }
