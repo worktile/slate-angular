@@ -1,0 +1,21 @@
+<ng-template #paragraph let-context="context">
+    <div slaElement [context]="context">
+        <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+    </div>
+</ng-template>
+<ng-template #text let-context="context">
+    <span slaText [text]="context.text" [parent]="context.parent" [index]="context.index" [editor]="context.editor"
+        [isLast]="ViewText.isLeafBlock(editor, context.parent) && context.index === context.parent.children.length - 1"
+        [renderMark]="renderMark" [renderLeaf]="context.renderLeaf" [decorations]="context.decorations"></span>
+</ng-template>
+<ng-template #voidText let-context="context">
+    <div [attr.contenteditable]="ViewText.isLeafBlock(editor, context.parent)" [attr.data-slate-spacer]="true" class="sla-slate-spacer">
+        <span slaText [text]="context.text" [parent]="context.parent" [index]="context.index" [editor]="context.editor"
+            [isLast]="ViewText.isLeafBlock(editor, context.parent) && context.index === context.parent.children.length - 1"
+            [renderMark]="renderMark" [renderLeaf]="context.renderLeaf" [decorations]="context.decorations"></span>
+    </div>
+</ng-template>
+<ng-template #stringComponentTemplate let-context="context">
+    <span slaString [text]="context.text" [isLast]="context.isLast" [leaf]="context.leaf"
+        [parent]="context.parent" [editor]="context.editor"></span>
+</ng-template>

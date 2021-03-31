@@ -1,0 +1,35 @@
+@import '../components/block-card/block-card.component.scss';
+
+.sla-editable-container {
+    display: block;
+    outline: none;
+    padding: 32px;
+    white-space: pre-wrap;
+    & [contenteditable="true"] {
+        outline: none;
+    }
+}
+.sla-slate-spacer {
+    height: 0;
+    color: transparent;
+    outline: none;
+    position: absolute;
+}
+.sla-placeholder {
+    pointer-events: none;
+    display: inline-block;
+    width: 0px;
+    max-width: 100%;
+    white-space: nowrap;
+    vertical-align: text-top;
+    line-height: 18px;
+    user-select: none;
+    color: #aaa;
+}
+.non-editable-area {
+    position: absolute;
+    left: 0;
+    pointer-events: none;
+    user-select: none;
+}
+

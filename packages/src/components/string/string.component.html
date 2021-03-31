@@ -1,0 +1,9 @@
+<sla-nest-entry [isRemoveNativeElement]="true" [viewOutlet]="contentTemplate" [context]="context"></sla-nest-entry>
+
+<ng-template #stringTemplate let-context="context">
+    <span data-slate-string="true">{{ context.leaf.text }}{{ context.isTrailing ? '\n' : null }}</span>
+</ng-template>
+<ng-template #zeroTemplate let-context="context">
+    <span attr.data-slate-zero-width="{{ context.isLineBreak ? 'n' : 'z' }}"
+        attr.data-slate-length="{{ context.zeroStringLength }}">{{ '\uFEFF' }}<br *ngIf="context.isLineBreak" /></span>
+</ng-template>

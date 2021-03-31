@@ -1,0 +1,95 @@
+$relative-left: 150px;
+$editor-width: 800px;
+
+.demo-rich-editor-wrapper {
+    width: $editor-width;
+    margin: 0 auto;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    margin-top: 80px;
+    &.single {
+        width: 690px;
+        margin: 0 auto;
+    }
+    .demo-global-toolbar {
+        display: flex;
+        justify-content: center;
+        position: sticky;
+        width: 100%;
+        top: 0;
+        z-index: 999;
+        background-color: white;
+        margin-bottom: 10px;
+    }
+    .demo-the-editor {
+        display: block;
+        width: $editor-width;
+        margin: 0 auto;
+        margin-bottom: 30px;
+    }
+    &.debug-info {
+        .demo-the-editor {
+            position: relative;
+            left: $relative-left;
+        }
+    }
+    .editor-intro-title {
+        width: $editor-width;
+        margin: 20px auto;
+    }
+}
+.element-image-wrap {
+    & img {
+        width: 100%;
+    }
+}
+
+.terminal {
+    position: relative;
+    max-width: $editor-width;
+    border-radius: 6px;
+    padding-top: 45px;
+    margin-top: 8px;
+    overflow: hidden;
+    background-color: rgb(15, 15, 16);
+    position: relative;
+    left: $relative-left;
+    &.selection {
+        position: absolute;
+        left: $relative-left - 30px;
+        top: 70px;
+        width: 300px;
+    }
+    margin: 0 auto;
+}
+
+.terminal::before {
+    content: '\2022 \2022 \2022';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: rgb(58, 58, 58);
+    color: #c2c3c4;
+    width: 100%;
+    font-size: 2rem;
+    line-height: 0;
+    padding: 14px 0;
+    text-indent: 4px;
+}
+
+.terminal pre {
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+    color: white;
+    padding: 0 1rem 1rem;
+    margin: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+}

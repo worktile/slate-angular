@@ -1,0 +1,36 @@
+<div class="demo-rich-editor-wrapper">
+    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" (valueChange)="valueChange($event)" [renderElement]="renderElement()">
+        <ng-template #elementTemplate let-context="context">
+            <h1 *ngIf="context.element.type === 'heading-one'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h1>
+            <h2 *ngIf="context.element.type === 'heading-two'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h2>
+            <h3 *ngIf="context.element.type === 'heading-three'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h3>
+            <h4 *ngIf="context.element.type === 'heading-four'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h4>
+            <h5 *ngIf="context.element.type === 'heading-five'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h5>
+            <h6 *ngIf="context.element.type === 'heading-six'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h6>
+            <li *ngIf="context.element.type === 'list-item'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </li>
+            <blockquote *ngIf="context.element.type === 'block-quote'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </blockquote>
+            <ul *ngIf="context.element.type === 'bulleted-list'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </ul>
+            <p *ngIf="context.element.type === 'paragraph'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </p>
+        </ng-template>
+    </sla-editable>
+</div>

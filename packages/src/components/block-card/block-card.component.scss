@@ -1,0 +1,19 @@
+.sla-block-card-element {
+    display: block;
+    position: relative;
+    .card-left, .card-right {
+        bottom: 0px;
+        position: absolute;
+        width: 2px;
+        overflow: hidden;
+        user-select: text;
+    }
+    .card-left {
+        left: -2px;
+        text-align: left;
+    }
+    .card-right {
+        right: -2px;
+        text-align: right;
+    }
+}

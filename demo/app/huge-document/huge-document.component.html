@@ -1,0 +1,12 @@
+<div class="demo-rich-editor-wrapper single">
+    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" (valueChange)="valueChange($event)"  [renderElement]="renderElement()">
+        <ng-template
+            #elementTemplate
+            let-context="context"
+        >
+            <h1 *ngIf="context.element.type === 'heading-one'" slaElement [context]="context">
+                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            </h1>
+        </ng-template>
+    </sla-editable>
+</div>

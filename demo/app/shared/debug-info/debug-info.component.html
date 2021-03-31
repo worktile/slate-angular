@@ -1,0 +1,10 @@
+<div class="terminal" *ngIf="dev">
+    <pre><code>{{ theEditor?.children | json }}</code>
+  </pre>
+</div>
+<div class="terminal selection" *ngIf="dev">
+    <pre>current selection
+<code>{{ theEditor?.selection | json }}</code></pre>
+    <pre>current operations
+<code>{{ currentOperations | json }}</code></pre>
+</div>
