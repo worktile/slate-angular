@@ -174,7 +174,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             });
         });
         this.ngZone.runOutsideAngular(() => {
-                this.initialize();
+            this.initialize();
         });
     }
 
@@ -186,11 +186,9 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     writeValue(value: Node[]) {
-        if (value ) {
-            if (this.initialized) {
-                this.editor.children = value;
-                this.reRender();
-            }
+        if (value && this.initialized) {
+            this.editor.children = value;
+            this.reRender();
         }
     }
 
