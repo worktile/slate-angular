@@ -1,5 +1,5 @@
 <div class="demo-rich-editor-wrapper single">
-    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" (valueChange)="valueChange($event)"  [renderElement]="renderElement()">
+    <sla-editable class="demo-slate-angular-editor" [editor]="editor"  [(ngModel)]="value" (ngModelChange)="valueChange($event)"  [renderElement]="renderElement()">
         <ng-template
             #elementTemplate
             let-context="context"

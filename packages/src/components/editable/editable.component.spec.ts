@@ -13,12 +13,13 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { SlaComponentBase } from '../../core';
 import { ViewElementContext } from '../../interfaces/view-node';
 import { AngularEditor } from '../../plugins/angular-editor';
+import { FormsModule } from '@angular/forms';
 
 describe('SlaEditableComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [BasicComponent, SlateCoreComponent, DynamicComponent, Dynamic2Component, BasicOriginComponent],
-            imports: [SlateModule]
+            imports: [SlateModule, FormsModule]
         })
             .overrideModule(BrowserDynamicTestingModule, {
                 set: {
@@ -134,6 +135,8 @@ describe('SlaEditableComponent', () => {
         });
 
         it('should set children property of editor', () => {
+            // console.log(component.slateComponent.editor.children,component.value)
+            tick(2000);
             expect(component.slateComponent.editor.children).toBe(component.value);
         });
 
@@ -239,7 +242,7 @@ describe('SlaEditableComponent', () => {
 @Component({
     selector: 'basic-slate',
     template: `
-        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" (valueChange)="valueChangeSpy()">
+        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value" (ngModelChange)="valueChangeSpy()">
         </sla-editable>
     `
 })
@@ -330,7 +333,7 @@ export class Dynamic2Component extends SlaComponentBase implements OnInit, OnDes
 @Component({
     selector: 'sla-core-slate',
     template: `
-        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value"  [renderElement]="renderElement">
+        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"  [renderElement]="renderElement">
         </sla-editable>
     `
 })
@@ -380,7 +383,7 @@ class SlateCoreComponent implements OnInit {
 @Component({
     selector: 'basic-editable',
     template: `
-        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" [slaKeyDown]="slaKeyDown()">
+        <sla-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value" [slaKeyDown]="slaKeyDown()">
         </sla-editable>
     `
 })

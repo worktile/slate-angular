@@ -13,7 +13,8 @@ import {
     NgZone,
     Output,
     EventEmitter,
-    Injector
+    Injector,
+    forwardRef
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
 import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
@@ -40,6 +41,8 @@ import Debug from 'debug';
 import { ViewNodeService } from '../../services/view-node.service';
 import { SlaTemplateComponent } from '../template/template.component';
 import { SlaErrorCode } from '../../constants';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
+
 const timeDebug = Debug('slate-time');
 // Chrome Legacy doesn't support `beforeinput` correctly
 const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX || IS_EDGE_LEGACY || IS_CHROME_LEGACY);
@@ -58,7 +61,11 @@ const forceOnDOMPaste = IS_SAFARI;
     },
     templateUrl: 'editable.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ViewNodeService]
+    providers: [ViewNodeService, {
+        provide: NG_VALUE_ACCESSOR,
+        useExisting: forwardRef(() => SlaEditableComponent),
+        multi: true
+    }]
 })
 export class SlaEditableComponent implements OnInit, OnDestroy {
     selectionchangeEventName = 'selectionchange';
@@ -79,22 +86,12 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
 
     private initialized: boolean;
 
+    private onTouchedCallback: () => void = () => { };
+
+    private onChangeCallback: (_: any) => void = () => { };
+
     @Input()
     editor: AngularEditor;
-
-    @Input()
-    set value(value: Node[]) {
-        if (this.originValue !== value) {
-            this.originValue = value;
-            if (this.initialized) {
-                this.editor.children = this.originValue;
-                this.reRender();
-            }
-        }
-    }
-
-    @Output()
-    valueChange: EventEmitter<Node[]> = new EventEmitter();
 
     @Input()
     renderElement: (element: SlateElement) => ViewRefType;
@@ -160,7 +157,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.editor.injector = this.injector;
-        this.editor.children = this.originValue;
         this.decorations = this.decorate([this.editor, []]);
         this.viewNodeService.initialize(
             this.editor,
@@ -180,8 +176,25 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             });
         });
         this.ngZone.runOutsideAngular(() => {
-            this.initialize();
+                this.initialize();
         });
+    }
+
+    registerOnChange(fn: any) {
+        this.onChangeCallback = fn;
+    }
+    registerOnTouched(fn: any) {
+        this.onTouchedCallback = fn;
+    }
+
+    writeValue(value: Node[]) {
+        if (value && value !== this.originValue) {
+            this.originValue = value;
+            if (this.initialized) {
+                this.editor.children = this.originValue;
+                this.reRender();
+            }
+        }
     }
 
     public reRender() {
@@ -320,9 +333,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     onEditorValueChange() {
-        this.originValue = this.editor.children;
+        this.onChangeCallback(this.editor.children);
         this.reRender();
-        this.valueChange.emit(this.editor.children);
     }
 
     //#region event proxy
