@@ -5,12 +5,13 @@ import { SlaEditableComponent } from '../../components/editable/editable.compone
 import { async, TestBed, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
 import { SlateModule } from '../../slate.module';
 import { AngularEditor } from '../angular-editor';
+import { FormsModule } from '@angular/forms';
 
 describe('AngularEditor', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [SlateCoreComponent],
-            imports: [SlateModule]
+            imports: [SlateModule, FormsModule]
         }).compileComponents();
     }));
 
@@ -67,7 +68,7 @@ describe('AngularEditor', () => {
         <sla-editable
             class="demo-slate-angular-editor"
             [editor]="editor"
-            [value]="value"
+            [(ngModel)]="value"
         >
         </sla-editable>
     `

@@ -1,5 +1,5 @@
 <div class="demo-rich-editor-wrapper">
-    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [value]="value" (valueChange)="valueChange($event)" [renderElement]="renderElement" [renderMark]="renderMark">
+    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value" (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [renderMark]="renderMark">
         <ng-template #table let-context="context">
             <div *ngIf="context.element.type === 'table'" slaElement [context]="context">
                 <table>
