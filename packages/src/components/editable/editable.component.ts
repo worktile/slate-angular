@@ -30,7 +30,7 @@ import {
     DOMSelection
 } from '../../utils/dom';
 import { Subject, interval } from 'rxjs';
-import { debounceTime, skip, takeUntil, throttle } from 'rxjs/operators';
+import { takeUntil, throttle } from 'rxjs/operators';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
@@ -81,8 +81,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     latestElement = null as DOMElement | null;
 
     protected manualListeners: (() => void)[] = [];
-
-    private originValue: Node[];
 
     private initialized: boolean;
 
@@ -188,10 +186,9 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     writeValue(value: Node[]) {
-        if (value && value !== this.originValue) {
-            this.originValue = value;
+        if (value ) {
             if (this.initialized) {
-                this.editor.children = this.originValue;
+                this.editor.children = value;
                 this.reRender();
             }
         }
