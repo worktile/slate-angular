@@ -239,12 +239,12 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         });
     }
 
-    toNativeSelection(force: boolean = false) {
+    toNativeSelection() {
         try {
             const { selection } = this.editor;
             const domSelection = window.getSelection();
 
-            if (!force && (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor))) {
+            if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
                 return;
             }
 
@@ -583,33 +583,32 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     private onDOMCompositionStart(event: CompositionEvent) {
+        const { selection } = this.editor;
+        if (selection) {
+            // solve the problem of cross node Chinese input
+            if (Range.isExpanded(this.editor.selection)) {
+                Editor.deleteFragment(this.editor);
+                this.reRender();
+            }
+        } else {
+            // 当光标是块级光标时，输入中文前需要强制移动选区
+            const domSelection = window.getSelection();
+            let cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
+            let cardTarget = domSelection.anchorNode;
+            if (!cardTargetAttr) {
+                cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.focusNode);
+                cardTarget = domSelection.focusNode;
+            }
+            if (cardTargetAttr) {
+                const cardEntry = AngularEditor.toSlateCardEntry(this.editor, cardTarget);
+                const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
+                const point = isCardLeft ? Editor.before(this.editor, cardEntry[1]) : Editor.after(this.editor, cardEntry[1]);
+                Transforms.select(this.editor, point);
+                this.reRender();
+            }
+        }
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionStart)) {
             this.isComposing = true;
-        }
-
-        // card hook
-        // 当光标是块级光标时，输入中文前需要强制移动选区
-        const domSelection = window.getSelection();
-        let cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
-        let cardTarget = domSelection.anchorNode;
-        if (!cardTargetAttr) {
-            cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.focusNode);
-            cardTarget = domSelection.focusNode;
-        }
-        if (cardTargetAttr) {
-            const cardEntry = AngularEditor.toSlateCardEntry(this.editor, cardTarget);
-            const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
-            const point = isCardLeft ? Editor.before(this.editor, cardEntry[1]) : Editor.after(this.editor, cardEntry[1]);
-            Transforms.select(this.editor, point);
-            this.toNativeSelection(true);
-        }
-
-        // solve the problem of cross node Chinese input
-        if (!Range.isCollapsed(this.editor.selection)) {
-            Editor.deleteFragment(this.editor);
-            this.viewElements = this.viewNodeService.pack(this.viewElements, this.decorations);
-            this.cdr.detectChanges();
-            this.toNativeSelection(true);
         }
     }
 
