@@ -135,8 +135,6 @@ describe('SlaEditableComponent', () => {
         });
 
         it('should set children property of editor', () => {
-            // console.log(component.slateComponent.editor.children,component.value)
-            tick(2000);
             expect(component.slateComponent.editor.children).toBe(component.value);
         });
 
