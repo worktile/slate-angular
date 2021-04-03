@@ -1,4 +1,4 @@
-import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant } from 'slate';
+import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, Path, Operation } from 'slate';
 import { EDITOR_TO_ON_CHANGE } from '../utils/weak-maps';
 import { isDOMText, getPlainText } from '../utils/dom';
 import { AngularEditor } from './angular-editor';
@@ -36,6 +36,54 @@ export const withAngular = <T extends Editor>(editor: T) => {
       }
     }
   }
+
+  // e.apply = (op: Operation) => {
+  //   const matches: [Path, Key][] = []
+
+  //   switch (op.type) {
+  //     case 'insert_text':
+  //     case 'remove_text':
+  //     case 'set_node': {
+  //       for (const [node, path] of Editor.levels(e, { at: op.path })) {
+  //         const key = ReactEditor.findKey(e, node)
+  //         matches.push([path, key])
+  //       }
+
+  //       break
+  //     }
+
+  //     case 'insert_node':
+  //     case 'remove_node':
+  //     case 'merge_node':
+  //     case 'split_node': {
+  //       for (const [node, path] of Editor.levels(e, {
+  //         at: Path.parent(op.path),
+  //       })) {
+  //         const key = ReactEditor.findKey(e, node)
+  //         matches.push([path, key])
+  //       }
+
+  //       break
+  //     }
+
+  //     case 'move_node': {
+  //       for (const [node, path] of Editor.levels(e, {
+  //         at: Path.common(Path.parent(op.path), Path.parent(op.newPath)),
+  //       })) {
+  //         const key = ReactEditor.findKey(e, node)
+  //         matches.push([path, key])
+  //       }
+  //       break
+  //     }
+  //   }
+
+  //   apply(op)
+
+  //   for (const [path, key] of matches) {
+  //     const [node] = Editor.node(e, path)
+  //     NODE_TO_KEY.set(node, key)
+  //   }
+  // }
 
   e.onChange = () => {
     const onContextChange = EDITOR_TO_ON_CHANGE.get(e);
