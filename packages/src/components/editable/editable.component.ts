@@ -34,7 +34,7 @@ import {
 import { Subject, interval } from 'rxjs';
 import { takeUntil, throttle } from 'rxjs/operators';
 import scrollIntoView from 'scroll-into-view-if-needed';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_FIREFOX_LEGACY } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -47,7 +47,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const timeDebug = Debug('slate-time');
 // Chrome Legacy doesn't support `beforeinput` correctly
-const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX || IS_EDGE_LEGACY || IS_CHROME_LEGACY);
+const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX_LEGACY || IS_EDGE_LEGACY || IS_CHROME_LEGACY);
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
