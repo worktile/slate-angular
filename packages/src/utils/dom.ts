@@ -22,12 +22,28 @@ export {
     DOMStaticRange
 };
 
+declare global {
+    interface Window {
+        Selection: typeof Selection['constructor'];
+        DataTransfer: typeof DataTransfer['constructor'];
+        Node: typeof Node['constructor'];
+    }
+}
+
 export type DOMPoint = [Node, number];
+
+/**
+ * Returns the host window of a DOM node
+ */
+export const getDefaultView = (value: any): Window | null => {
+    return (
+        (value && value.ownerDocument && value.ownerDocument.defaultView) || null
+    );
+}
 
 /**
  * Check if a DOM node is a comment node.
  */
-
 export const isDOMComment = (value: any): value is DOMComment => {
     return isDOMNode(value) && value.nodeType === 8;
 };
@@ -35,7 +51,6 @@ export const isDOMComment = (value: any): value is DOMComment => {
 /**
  * Check if a DOM node is an element node.
  */
-
 export const isDOMElement = (value: any): value is DOMElement => {
     return isDOMNode(value) && value.nodeType === 1;
 };
@@ -43,15 +58,22 @@ export const isDOMElement = (value: any): value is DOMElement => {
 /**
  * Check if a value is a DOM node.
  */
-
 export const isDOMNode = (value: any): value is DOMNode => {
-    return value instanceof Node;
+    const window = getDefaultView(value)
+    return !!window && value instanceof window.Node;
 };
+
+/**
+ * Check if a value is a DOM selection.
+ */
+export const isDOMSelection = (value: any): value is DOMSelection => {
+    const window = value && value.anchorNode && getDefaultView(value.anchorNode)
+    return !!window && value instanceof window.Selection
+}
 
 /**
  * Check if a DOM node is an element node.
  */
-
 export const isDOMText = (value: any): value is DOMText => {
     return isDOMNode(value) && value.nodeType === 3;
 };
@@ -59,19 +81,17 @@ export const isDOMText = (value: any): value is DOMText => {
 /**
  * Checks whether a paste event is a plaintext-only event.
  */
-
 export const isPlainTextOnlyPaste = (event: ClipboardEvent) => {
     return (
-      event.clipboardData &&
-      event.clipboardData.getData('text/plain') !== '' &&
-      event.clipboardData.types.length === 1
+        event.clipboardData &&
+        event.clipboardData.getData('text/plain') !== '' &&
+        event.clipboardData.types.length === 1
     );
 };
 
 /**
  * Normalize a DOM point so that it always refers to a text node.
  */
-
 export const normalizeDOMPoint = (domPoint: DOMPoint): DOMPoint => {
     let [node, offset] = domPoint;
 
@@ -103,7 +123,6 @@ export const normalizeDOMPoint = (domPoint: DOMPoint): DOMPoint => {
  * Get the nearest editable child at `index` in a `parent`, preferring
  * `direction`.
  */
-
 export const getEditableChild = (
     parent: DOMElement,
     index: number,
@@ -154,24 +173,23 @@ export const getEditableChild = (
  *
  * The domNode must be attached to the DOM.
  */
-
 export const getPlainText = (domNode: DOMNode) => {
     let text = '';
 
     if (isDOMText(domNode) && domNode.nodeValue) {
-      return domNode.nodeValue;
+        return domNode.nodeValue;
     }
 
     if (isDOMElement(domNode)) {
-      for (const childNode of Array.from(domNode.childNodes)) {
-        text += getPlainText(childNode);
-      }
+        for (const childNode of Array.from(domNode.childNodes)) {
+            text += getPlainText(childNode);
+        }
 
-      const display = getComputedStyle(domNode).getPropertyValue('display');
+        const display = getComputedStyle(domNode).getPropertyValue('display');
 
-      if (display === 'block' || display === 'list' || domNode.tagName === 'BR') {
-        text += '\n';
-      }
+        if (display === 'block' || display === 'list' || domNode.tagName === 'BR') {
+            text += '\n';
+        }
     }
 
     return text;
