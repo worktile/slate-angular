@@ -659,8 +659,15 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             AngularEditor.setFragmentData(this.editor, event.clipboardData);
             const { selection } = this.editor;
 
-            if (selection && Range.isExpanded(selection)) {
-                Editor.deleteFragment(this.editor);
+            if (selection) {
+                if (Range.isExpanded(selection)) {
+                    Editor.deleteFragment(this.editor)
+                } else {
+                    const node = Node.parent(this.editor, selection.anchor.path)
+                    if (Editor.isVoid(this.editor, node)) {
+                        Transforms.delete(this.editor)
+                    }
+                }
             }
         }
     }
