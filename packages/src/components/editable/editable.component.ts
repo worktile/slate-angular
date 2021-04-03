@@ -57,9 +57,9 @@ const forceOnDOMPaste = IS_SAFARI;
         class: 'sla-editable-container',
         '[attr.contenteditable]': 'readonly ? undefined : true',
         '[attr.role]': `readonly ? undefined : 'textbox'`,
-        '[attr.spellCheck]': `!hasBeforeInputSupport ? undefined : spellCheck`,
-        '[attr.autoCorrect]': `!hasBeforeInputSupport ? undefined : autoCorrect`,
-        '[attr.autoCapitalize]': `!hasBeforeInputSupport ? undefined : autoCapitalize`
+        '[attr.spellCheck]': `!hasBeforeInputSupport ? false : spellCheck`,
+        '[attr.autoCorrect]': `!hasBeforeInputSupport ? false : autoCorrect`,
+        '[attr.autoCapitalize]': `!hasBeforeInputSupport ? false : autoCapitalize`
     },
     templateUrl: 'editable.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
