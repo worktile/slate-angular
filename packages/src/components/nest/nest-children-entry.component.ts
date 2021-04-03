@@ -26,10 +26,10 @@ export class SlaNestChildrenEntryComponent implements OnInit, AfterViewInit, OnD
 
     ngAfterViewInit() {
         const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
-        parentElement.insertBefore(this.createChildrenFragment(),this.elementRef.nativeElement)
+        parentElement.insertBefore(this.createChildrenFragment(), this.elementRef.nativeElement)
         this.elementRef.nativeElement.remove();
         this.differ = this.differs.find(this.childrenComponent).create((index, item) => {
-            return item.rootNode;
+            return item;
         });
         this.differ.diff(this.childrenComponent as any);
         this.childrenComponent.changes.subscribe((value) => {
@@ -38,9 +38,15 @@ export class SlaNestChildrenEntryComponent implements OnInit, AfterViewInit, OnD
                 iterableChanges.forEachAddedItem((record: IterableChangeRecord<SlaNestEntryComponent>) => {
                     const previousComponent = this.childrenComponent.find((item, index) => index === record.currentIndex - 1);
                     if (previousComponent) {
-                        previousComponent.rootNode.insertAdjacentElement('afterend', record.item.rootNode);
+                        let previousRootNode = previousComponent.rootNodes[previousComponent.rootNodes.length - 1];
+                        record.item.rootNodes.forEach((rootNode) => {
+                            previousRootNode.insertAdjacentElement('afterend', rootNode);
+                            previousRootNode = rootNode;
+                        });
                     } else {
-                        parentElement.insertBefore(record.item.rootNode, parentElement.children.item(0));
+                        const fragment = document.createDocumentFragment();
+                        fragment.append(...record.item.rootNodes);
+                        parentElement.insertBefore(fragment, parentElement.children.item(0));
                     }
                 });
             }
@@ -50,7 +56,7 @@ export class SlaNestChildrenEntryComponent implements OnInit, AfterViewInit, OnD
     createChildrenFragment() {
         const fragment = document.createDocumentFragment();
         this.childrenComponent.forEach((nest, index) => {
-            fragment.append(nest.rootNode);
+            fragment.append(...nest.rootNodes);
         })
         return fragment;
     }

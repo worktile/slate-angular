@@ -9,7 +9,7 @@ export class SlaBlockCardComponent implements OnInit {
     @ViewChild('centerContianer', { static: true })
     centerContianer: ElementRef;
 
-    centerElement: HTMLElement;
+    centerRootNodes: HTMLElement[];
 
     element: Element;
 
@@ -20,13 +20,15 @@ export class SlaBlockCardComponent implements OnInit {
     constructor(private elementRef: ElementRef) {}
 
     ngOnInit() {
-        this.centerContianer.nativeElement.appendChild(this.centerElement);
+        const fragment = document.createDocumentFragment();
+        fragment.append(...this.centerRootNodes);
+        this.centerContianer.nativeElement.appendChild(fragment);
         this.nativeElement.classList.add(`sla-block-card-element`);
         this.nativeElement.classList.add(`sla-block-card-${this.element.type}`);
     }
 
-    initializeCenter(rootNode: HTMLElement, element: Element) {
-        this.centerElement = rootNode;
+    initializeCenter(rootNodes: HTMLElement[], element: Element) {
+        this.centerRootNodes = rootNodes;
         this.element = element;
     }
 }
