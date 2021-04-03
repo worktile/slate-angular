@@ -952,19 +952,22 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     private onDOMPaste(event: ClipboardEvent) {
-        // COMPAT: Certain browsers don't support the `beforeinput` event, so we
-        // fall back to React's `onPaste` here instead.
-        // COMPAT: Firefox, Chrome and Safari are not emitting `beforeinput` events
-        // when "paste without formatting" option is used.
-        // This unfortunately needs to be handled with paste events instead.
         if (
-            !this.isDOMEventHandled(event, this.slaPaste) &&
-            (!HAS_BEFORE_INPUT_SUPPORT || isPlainTextOnlyPaste(event) || forceOnDOMPaste) &&
             !this.readonly &&
-            hasEditableTarget(this.editor, event.target)
+            hasEditableTarget(this.editor, event.target) &&
+            !this.isDOMEventHandled(event, this.slaPaste)
         ) {
-            event.preventDefault();
-            AngularEditor.insertData(this.editor, event.clipboardData);
+            // COMPAT: Certain browsers don't support the `beforeinput` event, so we
+            // fall back to React's `onPaste` here instead.
+            // COMPAT: Firefox, Chrome and Safari don't emit `beforeinput` events
+            // when "paste without formatting" is used, so fallback. (2020/02/20)
+            if (
+                !HAS_BEFORE_INPUT_SUPPORT ||
+                isPlainTextOnlyPaste(event)
+            ) {
+                event.preventDefault()
+                AngularEditor.insertData(this.editor, event.clipboardData)
+            }
         }
     }
 
