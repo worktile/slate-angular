@@ -55,7 +55,8 @@
     "slate-history": "0.62.0",
     "tslib": "^2.0.0",
     "unified": "^9.1.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "direction": "^1.0.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1002.3",

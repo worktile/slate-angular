@@ -18,6 +18,7 @@ import {
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
 import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
+import getDirection from 'direction';
 import { AngularEditor } from '../../plugin/angular-editor';
 import {
     DOMElement,
@@ -729,6 +730,11 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         ) {
             const nativeEvent = event;
             const { selection } = editor;
+            const element =
+                editor.children[
+                selection !== null ? selection.focus.path[0] : 0
+                ];
+            const isRTL = getDirection(Node.string(element)) === 'rtl';
 
             try {
                 // COMPAT: Since we prevent the default behavior on
@@ -796,7 +802,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     event.preventDefault();
 
                     if (selection && Range.isCollapsed(selection)) {
-                        Transforms.move(editor, { reverse: true });
+                        Transforms.move(editor, { reverse: !isRTL });
                     } else {
                         Transforms.collapse(editor, { edge: 'start' });
                     }
@@ -808,7 +814,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     event.preventDefault();
 
                     if (selection && Range.isCollapsed(selection)) {
-                        Transforms.move(editor);
+                        Transforms.move(editor, { reverse: isRTL });
                     } else {
                         Transforms.collapse(editor, { edge: 'end' });
                     }
@@ -818,13 +824,13 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
 
                 if (Hotkeys.isMoveWordBackward(nativeEvent)) {
                     event.preventDefault();
-                    Transforms.move(editor, { unit: 'word', reverse: true });
+                    Transforms.move(editor, { unit: 'word', reverse: !isRTL });
                     return;
                 }
 
                 if (Hotkeys.isMoveWordForward(nativeEvent)) {
                     event.preventDefault();
-                    Transforms.move(editor, { unit: 'word' });
+                    Transforms.move(editor, { unit: 'word', reverse: isRTL });
                     return;
                 }
 
@@ -951,15 +957,9 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             hasEditableTarget(this.editor, event.nativeEvent.target)
         ) {
             event.nativeEvent.preventDefault();
-            try {
-                const text = event.data;
-                if (!Range.isCollapsed(this.editor.selection)) {
-                    Editor.deleteFragment(this.editor);
-                }
-                preventInsertFromComposition(event.nativeEvent, this.editor);
-                Editor.insertText(this.editor, text);
-            } catch (error) {
-                this.editor.onError({ code: SlaErrorCode.ToNativeSelectionError, nativeError: error });
+            if (!this.isComposing) {
+                const text = (event as any).data as string
+                Editor.insertText(this.editor, text)
             }
         }
     }
