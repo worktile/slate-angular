@@ -2,6 +2,7 @@ import { ComponentType } from "@angular/cdk/portal";
 import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EmbeddedViewRef, Injector, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewContainerRef } from "@angular/core";
 import { SlaBlockCardComponent } from "../block-card/block-card.component";
 import { ViewRefType } from '../../interfaces/view-node';
+import { isDOMElement } from "../../utils/dom";
 
 @Component({
     selector: 'sla-nest-entry, div[slaNestEntry]',
@@ -31,15 +32,11 @@ export class SlaNestEntryComponent implements OnInit, OnChanges {
             return [this.blockCardComponentRef.instance.nativeElement];
         }
         if (this.embeddedViewRef) {
-            return this.embeddedViewRef.rootNodes.filter((rootNode) => this.isHTMLElement(rootNode));
+            return this.embeddedViewRef.rootNodes.filter((rootNode) => isDOMElement(rootNode));
         }
         if (this.componentRef.instance) {
             return (this.componentRef.hostView as any).rootNodes
         }
-    }
-
-    isHTMLElement(node: Node) {
-        return node.nodeType === 1;
     }
 
     constructor(
