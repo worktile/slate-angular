@@ -32,6 +32,7 @@ import { IS_CHROME } from '../utils/environment';
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
     setFragmentData: (data: DataTransfer) => void;
+    hasRange: (editor: AngularEditor, range: Range) => boolean;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
     equalsNodeKey: (node: Node, another: Node) => boolean;
@@ -587,6 +588,13 @@ export const AngularEditor = {
         const focus = isCollapsed ? anchor : AngularEditor.toSlatePoint(editor, [focusNode, focusOffset]);
 
         return { anchor, focus };
+    },
+
+    hasRange(editor: AngularEditor, range: Range): boolean {
+        const { anchor, focus } = range
+        return (
+            Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path)
+        )
     },
 
     hasCardTarget(node: DOMNode) {

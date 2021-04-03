@@ -287,6 +287,15 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 return;
             }
 
+            // when <Editable/> is being controlled through external value
+            // then its children might just change - DOM responds to it on its own
+            // but Slate's value is not being updated through any operation
+            // and thus it doesn't transform selection on its own
+            if (selection && !AngularEditor.hasRange(this.editor, selection)) {
+                this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection);
+                return
+            }
+
             // Otherwise the DOM selection is out of sync, so update it.
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
             this.isUpdatingSelection = true;
