@@ -15,7 +15,7 @@ import {
     OnChanges,
     SimpleChanges
 } from '@angular/core';
-import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
+import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -26,7 +26,8 @@ import {
     DOMRange,
     isDOMElement,
     isPlainTextOnlyPaste,
-    DOMSelection
+    DOMSelection,
+    getDefaultView
 } from '../../utils/dom';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, throttle } from 'rxjs/operators';
@@ -74,7 +75,6 @@ const forceOnDOMPaste = IS_SAFARI;
     }]
 })
 export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
-    selectionchangeEventName = 'selectionchange';
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
 
@@ -152,6 +152,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     ngOnInit() {
         this.editor.injector = this.injector;
         this.editor.children = [];
+        let window = getDefaultView(this.elementRef.nativeElement);
+        EDITOR_TO_WINDOW.set(this.editor, window);
         EDITOR_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         ELEMENT_TO_NODE.set(this.elementRef.nativeElement, this.editor);
@@ -194,12 +196,13 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
     initialize() {
         this.initialized = true;
+        const window = AngularEditor.getWindow(this.editor);
         this.addEventListener(
-            this.selectionchangeEventName,
+            'selectionchange',
             event => {
                 this.selectionChange$.next(event);
             },
-            document
+            window.document
         );
         this.selectionChange$
             .pipe(
@@ -237,6 +240,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     toNativeSelection() {
         try {
             const { selection } = this.editor;
+            const window = AngularEditor.getWindow(this.editor);
             const domSelection = window.getSelection();
 
             if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
@@ -376,9 +380,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     private toSlateSelection() {
         if (!this.readonly && !this.isComposing && !this.isUpdatingSelection) {
             try {
-                // card hook
                 this.useIsFocus();
-
+                const window = AngularEditor.getWindow(this.editor);
                 const domSelection = window.getSelection();
                 if (!domSelection) {
                     return Transforms.deselect(this.editor);
@@ -500,7 +503,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                         // because DOM selection in sync will be exec before `compositionend` event
                         // isComposing is true will prevent DOM selection being update correctly.
                         this.isComposing = false;
-                        preventInsertFromComposition(event);
+                        preventInsertFromComposition(event, this.editor);
                     }
                     case 'insertFromDrop':
                     case 'insertFromPaste':
@@ -514,6 +517,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                             AngularEditor.insertData(editor, data);
                         } else if (typeof data === 'string') {
                             // block card
+                            const window = AngularEditor.getWindow(editor)
                             const domSelection = window.getSelection();
                             const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
                                 AngularEditor.hasCardTarget(domSelection.focusNode);
@@ -541,6 +545,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         ) {
             return;
         }
+
+        const window = AngularEditor.getWindow(this.editor);
 
         // COMPAT: If the current `activeElement` is still the previous
         // one, this is due to the window being blurred when the tab
@@ -611,8 +617,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (this.isComposing === true && !IS_SAFARI && event.data) {
-                preventInsertFromComposition(event);
+            if (!IS_SAFARI && !IS_FIREFOX && !IS_CHROME_LEGACY && event.data) {
+                preventInsertFromComposition(event, this.editor);
                 Editor.insertText(this.editor, event.data);
             }
 
@@ -650,6 +656,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private onDOMCopy(event: ClipboardEvent) {
+        const window = AngularEditor.getWindow(this.editor);
         const isOutsideSlate = !hasStringTarget(window.getSelection()) && isTargetInsideVoid(this.editor, event.target);
         if (!isOutsideSlate && hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.copy)) {
             event.preventDefault();
@@ -723,6 +730,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             !this.isDOMEventHandled(event, this.focus)
         ) {
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
+            const window = AngularEditor.getWindow(this.editor);
             this.latestElement = window.document.activeElement;
 
             // COMPAT: If the editor has nested editable elements, the focus
@@ -1005,6 +1013,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
     //#region card
     useIsFocus() {
+        const window = AngularEditor.getWindow(this.editor);
         const activeElement = window.document.activeElement;
         const ediabableElement = AngularEditor.toDOMNode(this.editor, this.editor);
         if (activeElement === ediabableElement || hasEditableTarget(this.editor, activeElement)) {
@@ -1075,12 +1084,13 @@ const hasStringTarget = (domSelection: DOMSelection) => {
  * remove default insert from composition
  * @param text
  */
-const preventInsertFromComposition = (event: Event) => {
+const preventInsertFromComposition = (event: Event, editor: AngularEditor) => {
     const types = ['compositionend', 'insertFromComposition'];
     if (!types.includes(event.type)) {
         return;
     }
     const insertText = (event as CompositionEvent).data;
+    const window = AngularEditor.getWindow(editor);
     const domSelection = window.getSelection();
     // ensure text node insert composition input text
     if (insertText && domSelection.anchorNode instanceof Text && domSelection.anchorNode.textContent.endsWith(insertText)) {
