@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { Editor, Element as SlateElement, Text as SlateText, Range, Path, Node, NodeEntry } from 'slate';
-import { AngularEditor } from '../plugins/angular-editor';
+import { AngularEditor } from '../plugin/angular-editor';
 import { ViewElement, ViewText, ViewNode } from '../interfaces/view-node';
 import { NODE_TO_PARENT, NODE_TO_INDEX, NODE_TO_VIEWNODE } from '../utils/weak-maps';
 import { Key } from '../utils/key';

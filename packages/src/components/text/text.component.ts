@@ -15,7 +15,7 @@ import { Text as SlateText, Element as SlateElement, Range } from 'slate';
 import { ViewNodeService } from '../../services/view-node.service';
 import { Initializer } from '../../core/initializer';
 import { ViewRefType } from '../../interfaces/view-node';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { AngularEditor } from '../../plugin/angular-editor';
 
 @Component({
     selector: 'sla-text,[slaText]',

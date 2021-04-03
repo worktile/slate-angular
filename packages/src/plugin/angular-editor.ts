@@ -1,4 +1,4 @@
-import { Editor, Node, Path, Point, Range, Transforms, Descendant, Element } from 'slate';
+import { Editor, Node, Path, Point, Range, Transforms, Descendant, Element, BaseEditor } from 'slate';
 import {
     EDITOR_TO_ELEMENT,
     ELEMENT_TO_NODE,
@@ -16,20 +16,20 @@ import {
     DOMRange,
     DOMSelection,
     DOMStaticRange,
+    hasShadowRoot,
     isDOMElement,
     isDOMSelection,
     normalizeDOMPoint
 } from '../utils/dom';
-import { Injector, ViewContainerRef } from '@angular/core';
+import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
 import { SlaErrorData } from '../interfaces/error'
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
+import { IS_CHROME } from '../utils/environment';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
  */
-
-export interface AngularEditor extends Editor {
+export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
     setFragmentData: (data: DataTransfer) => void;
     onKeydown: (event: KeyboardEvent) => void;
@@ -108,6 +108,30 @@ export const AngularEditor = {
         }
         throw new Error(`Unable to find the path for Slate node: ${JSON.stringify(node)}`);
     },
+
+    /**
+ * Find the DOM node that implements DocumentOrShadowRoot for the editor.
+ */
+
+    findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
+        const el = AngularEditor.toDOMNode(editor, editor)
+        const root = el.getRootNode()
+
+        if (!(root instanceof Document || root instanceof ShadowRoot))
+            throw new Error(
+                `Unable to find DocumentOrShadowRoot for editor element: ${el}`
+            )
+
+        // COMPAT: Only Chrome implements the DocumentOrShadowRoot mixin for
+        // ShadowRoot; other browsers still implement it on the Document
+        // interface. (2020/08/08)
+        // https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot#Properties
+        if (root.getSelection === undefined && el.ownerDocument !== null)
+            return el.ownerDocument
+
+        return root
+    },
+
 
     /**
      * Check if the editor is focused.
@@ -534,6 +558,17 @@ export const AngularEditor = {
                 anchorOffset = domRange.anchorOffset;
                 focusNode = domRange.focusNode;
                 focusOffset = domRange.focusOffset;
+                // COMPAT: There's a bug in chrome that always returns `true` for
+                // `isCollapsed` for a Selection that comes from a ShadowRoot.
+                // (2020/08/08)
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=447523
+                if (IS_CHROME && hasShadowRoot()) {
+                    isCollapsed =
+                        domRange.anchorNode === domRange.focusNode &&
+                        domRange.anchorOffset === domRange.focusOffset
+                } else {
+                    isCollapsed = domRange.isCollapsed
+                }
                 isCollapsed = domRange.isCollapsed;
             } else {
                 anchorNode = domRange.startContainer;

@@ -18,7 +18,7 @@ import {
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
 import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { AngularEditor } from '../../plugin/angular-editor';
 import {
     DOMElement,
     DOMNode,
@@ -252,8 +252,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     toNativeSelection() {
         try {
             const { selection } = this.editor;
-            const window = AngularEditor.getWindow(this.editor);
-            const domSelection = window.getSelection();
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            const domSelection = root.getSelection()
 
             if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
                 return;
@@ -313,7 +313,11 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     );
                 }
                 const leafEl = newDomRange.startContainer.parentElement;
+                leafEl.getBoundingClientRect = newDomRange.getBoundingClientRect.bind(
+                    newDomRange
+                );
                 scrollIntoView(leafEl, { scrollMode: 'if-needed', boundary: el });
+                delete leafEl.getBoundingClientRect;
             }
 
             setTimeout(() => {
@@ -352,8 +356,9 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         if (!this.readonly && !this.isComposing && !this.isUpdatingSelection) {
             try {
                 this.useIsFocus();
-                const window = AngularEditor.getWindow(this.editor);
-                const domSelection = window.getSelection();
+                const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+                const { activeElement } = root;
+                const domSelection = root.getSelection();
                 if (!domSelection) {
                     return Transforms.deselect(this.editor);
                 }
@@ -514,13 +519,12 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const window = AngularEditor.getWindow(this.editor);
-
         // COMPAT: If the current `activeElement` is still the previous
         // one, this is due to the window being blurred when the tab
         // itself becomes unfocused, so we want to abort early to allow to
         // editor to stay focused when the tab becomes focused again.
-        if (this.latestElement === window.document.activeElement) {
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+        if (this.latestElement === root.activeElement) {
             return;
         }
 
@@ -700,8 +704,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             !this.isDOMEventHandled(event, this.slaFocus)
         ) {
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
-            const window = AngularEditor.getWindow(this.editor);
-            this.latestElement = window.document.activeElement;
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            this.latestElement = root.activeElement;
 
             // COMPAT: If the editor has nested editable elements, the focus
             // can go to them. In Firefox, this must be prevented because it
@@ -971,8 +975,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
 
     //#region card
     useIsFocus() {
-        const window = AngularEditor.getWindow(this.editor);
-        const activeElement = window.document.activeElement;
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+        const { activeElement } = root;
         const ediabableElement = AngularEditor.toDOMNode(this.editor, this.editor);
         if (activeElement === ediabableElement || hasEditableTarget(this.editor, activeElement)) {
             this.latestElement = activeElement;

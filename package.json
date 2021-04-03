@@ -51,8 +51,8 @@
     "node-sass": "^4.13.0",
     "rxjs": "~6.6.3",
     "scroll-into-view-if-needed": "^2.2.20",
-    "slate": "^0.58.4",
-    "slate-history": "^0.58.4",
+    "slate": "0.62.0",
+    "slate-history": "0.62.0",
     "tslib": "^2.0.0",
     "unified": "^9.1.0",
     "zone.js": "~0.10.2"

@@ -1,8 +1,8 @@
 /*
  * Public API Surface of slate-angular
  */
-export * from './plugins/angular-editor';
-export * from './plugins/with-angular';
+export * from './plugin/angular-editor';
+export * from './plugin/with-angular';
 export * from './components/editable/editable.component';
 export * from './components/element/element.component';
 export * from './components/nest/nest-entry.component';

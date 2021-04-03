@@ -3,7 +3,7 @@ import { Component, ViewChild, OnInit, OnDestroy, Input, ElementRef } from '@ang
 import { createEditor, Transforms, Editor } from 'slate';
 import { SlateModule } from '../../slate.module';
 import { SlaEditableComponent } from './editable.component';
-import { withAngular } from '../../plugins/with-angular';
+import { withAngular } from '../../plugin/with-angular';
 import { ELEMENT_TO_NODE, EDITOR_TO_ELEMENT, NODE_TO_ELEMENT, EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
 import { dispatchKeyboardEvent } from '../../testing';
 import { Z } from '@angular/cdk/keycodes';
@@ -12,7 +12,7 @@ import { IS_APPLE } from '../../utils/environment';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { SlaComponentBase } from '../../core';
 import { ViewElementContext } from '../../interfaces/view-node';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { AngularEditor } from '../../plugin/angular-editor';
 import { FormsModule } from '@angular/forms';
 
 describe('SlaEditableComponent', () => {

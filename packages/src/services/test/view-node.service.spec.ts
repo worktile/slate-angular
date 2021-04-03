@@ -1,8 +1,8 @@
 import { ViewNodeService } from '../view-node.service';
 import { createEditor, Transforms, Editor, Element, Range, NodeEntry } from 'slate';
-import { withAngular } from '../../plugins/with-angular';
+import { withAngular } from '../../plugin/with-angular';
 import { ViewElement, ViewText } from '../../interfaces/view-node';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { AngularEditor } from '../../plugin/angular-editor';
 import { NODE_TO_PARENT } from '../../utils/weak-maps';
 
 describe('ViewNodeService', () => {

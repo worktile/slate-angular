@@ -10,7 +10,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { Path, Node, Element as SlateElement, Editor, Text } from 'slate';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { AngularEditor } from '../../plugin/angular-editor';
 import { ViewNodeService } from '../../services/view-node.service';
 
 @Component({
