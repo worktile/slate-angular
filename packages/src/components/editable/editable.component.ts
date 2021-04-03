@@ -109,6 +109,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     @Input() slaClick: (event: MouseEvent) => void;
     @Input() slaCompositionEnd: (event: CompositionEvent) => void;
     @Input() slaCompositionStart: (event: CompositionEvent) => void;
+    @Input() slaCompositionUpdate: (event: CompositionEvent) => void;
     @Input() slaCopy: (event: ClipboardEvent) => void;
     @Input() slaCut: (event: ClipboardEvent) => void;
     @Input() slaDragOver: (event: DragEvent) => void;
@@ -237,6 +238,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         this.addEventListener('click', this.onDOMClick.bind(this));
         this.addEventListener('compositionend', this.onDOMCompositionEnd.bind(this));
         this.addEventListener('compositionstart', this.onDOMCompositionStart.bind(this));
+        this.addEventListener('compositionupdate', this.onDOMCompositionUpdate.bind(this));
         this.addEventListener('copy', this.onDOMCopy.bind(this));
         this.addEventListener('cut', this.onDOMCut.bind(this));
         this.addEventListener('dragover', this.onDOMDragOver.bind(this));
@@ -591,9 +593,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     private onDOMCompositionEnd(event: CompositionEvent) {
-        if (!event.data && !Range.isCollapsed(this.editor.selection)) {
-            Transforms.delete(this.editor);
-        }
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionEnd)) {
             this.isComposing = false;
 
@@ -634,8 +633,14 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 this.reRender();
             }
         }
-        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionStart)) {
-            this.isComposing = true;
+    }
+
+    private onDOMCompositionUpdate(event: CompositionEvent) {
+        if (
+            hasEditableTarget(this.editor, event.target) &&
+            !this.isDOMEventHandled(event, this.slaCompositionUpdate)
+        ) {
+            this.isComposing = true
         }
     }
 
