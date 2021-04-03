@@ -45,7 +45,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
   //     case 'remove_text':
   //     case 'set_node': {
   //       for (const [node, path] of Editor.levels(e, { at: op.path })) {
-  //         const key = ReactEditor.findKey(e, node)
+  //         const key = AngularEditor.findKey(e, node)
   //         matches.push([path, key])
   //       }
 
@@ -59,7 +59,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
   //       for (const [node, path] of Editor.levels(e, {
   //         at: Path.parent(op.path),
   //       })) {
-  //         const key = ReactEditor.findKey(e, node)
+  //         const key = AngularEditor.findKey(e, node)
   //         matches.push([path, key])
   //       }
 
@@ -70,7 +70,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
   //       for (const [node, path] of Editor.levels(e, {
   //         at: Path.common(Path.parent(op.path), Path.parent(op.newPath)),
   //       })) {
-  //         const key = ReactEditor.findKey(e, node)
+  //         const key = AngularEditor.findKey(e, node)
   //         matches.push([path, key])
   //       }
   //       break

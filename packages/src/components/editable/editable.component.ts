@@ -17,7 +17,7 @@ import {
     forwardRef
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
-import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
+import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugin/angular-editor';
 import {
@@ -44,6 +44,7 @@ import { ViewNodeService } from '../../services/view-node.service';
 import { SlaTemplateComponent } from '../template/template.component';
 import { SlaErrorCode } from '../../constants';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { HistoryEditor } from 'slate-history';
 
 const timeDebug = Debug('slate-time');
 // Chrome Legacy doesn't support `beforeinput` correctly
@@ -188,7 +189,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         this.onTouchedCallback = fn;
     }
 
-    writeValue(value: Node[]) {
+    writeValue(value: Descendant[]) {
         if (value && this.initialized) {
             this.editor.children = value;
             this.reRender();
@@ -766,8 +767,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 if (Hotkeys.isRedo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (typeof editor.redo === 'function') {
-                        editor.redo();
+                    if (HistoryEditor.isHistoryEditor(editor)) {
+                        editor.redo()
                     }
 
                     return;
@@ -776,8 +777,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 if (Hotkeys.isUndo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (typeof editor.undo === 'function') {
-                        editor.undo();
+                    if (HistoryEditor.isHistoryEditor(editor)) {
+                        editor.undo()
                     }
 
                     return;
