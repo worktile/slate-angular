@@ -7,6 +7,7 @@ import { SlaComponentBase } from '../core/component.base';
  * at render time such that after a render occurs we can always backtrack.
  */
 
+export const EDITOR_TO_WINDOW: WeakMap<Editor, Window> = new WeakMap();
 export const NODE_TO_INDEX: WeakMap<Node, number> = new WeakMap();
 export const NODE_TO_PARENT: WeakMap<Node, Ancestor> = new WeakMap();
 

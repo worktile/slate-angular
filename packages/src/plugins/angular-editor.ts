@@ -6,7 +6,8 @@ import {
     IS_READONLY,
     NODE_TO_INDEX,
     NODE_TO_PARENT,
-    NODE_TO_ELEMENT
+    NODE_TO_ELEMENT,
+    EDITOR_TO_WINDOW
 } from '../utils/weak-maps';
 import {
     DOMElement,
@@ -16,6 +17,7 @@ import {
     DOMSelection,
     DOMStaticRange,
     isDOMElement,
+    isDOMSelection,
     normalizeDOMPoint
 } from '../utils/dom';
 import { Injector, ViewContainerRef } from '@angular/core';
@@ -40,6 +42,17 @@ export interface AngularEditor extends Editor {
 
 export const AngularEditor = {
     ...Editor,
+    /**
+ * Return the host window of the current editor.
+ */
+
+    getWindow(editor: AngularEditor): Window {
+        const window = EDITOR_TO_WINDOW.get(editor);
+        if (!window) {
+            throw new Error('Unable to find a host window element for this editor');
+        }
+        return window;
+    },
     /**
      * Find a key for a Slate node.
      */
@@ -136,6 +149,7 @@ export const AngularEditor = {
         const el = AngularEditor.toDOMNode(editor, editor);
         IS_FOCUSED.set(editor, false);
 
+        const window = AngularEditor.getWindow(editor);
         if (window.document.activeElement === el) {
             el.blur();
         }
@@ -149,6 +163,7 @@ export const AngularEditor = {
         const el = AngularEditor.toDOMNode(editor, editor);
         IS_FOCUSED.set(editor, true);
 
+        const window = AngularEditor.getWindow(editor);
         if (window.document.activeElement !== el) {
             el.focus({ preventScroll: true });
         }
@@ -160,6 +175,7 @@ export const AngularEditor = {
 
     deselect(editor: AngularEditor): void {
         const { selection } = editor;
+        const window = AngularEditor.getWindow(editor)
         const domSelection = window.getSelection();
 
         if (domSelection && domSelection.rangeCount > 0) {
@@ -310,6 +326,7 @@ export const AngularEditor = {
         const domAnchor = AngularEditor.toDOMPoint(editor, anchor);
         const domFocus = Range.isCollapsed(range) ? domAnchor : AngularEditor.toDOMPoint(editor, focus);
 
+        const window = AngularEditor.getWindow(editor);
         const domRange = window.document.createRange();
         const [startNode, startOffset] = isBackward ? domFocus : domAnchor;
         const [endNode, endOffset] = isBackward ? domAnchor : domFocus;
@@ -390,6 +407,7 @@ export const AngularEditor = {
 
         // Else resolve a range from the caret position where the drop occured.
         let domRange;
+        const window = AngularEditor.getWindow(editor);
         const { document } = window;
 
         // COMPAT: In Firefox, `caretRangeFromPoint` doesn't exist. (2016/07/25)
@@ -444,6 +462,7 @@ export const AngularEditor = {
             // can determine what the offset relative to the text node is.
             if (leafNode) {
                 textNode = leafNode.closest('[data-slate-node="text"]')!;
+                const window = AngularEditor.getWindow(editor);
                 const range = window.document.createRange();
                 range.setStart(textNode, 0);
                 range.setEnd(nearestNode, nearestOffset);
@@ -502,7 +521,7 @@ export const AngularEditor = {
      */
 
     toSlateRange(editor: AngularEditor, domRange: DOMRange | DOMStaticRange | DOMSelection): Range {
-        const el = domRange instanceof Selection ? domRange.anchorNode : domRange.startContainer;
+        const el = isDOMSelection(domRange) ? domRange.anchorNode : domRange.startContainer;
         let anchorNode;
         let anchorOffset;
         let focusNode;
@@ -510,7 +529,7 @@ export const AngularEditor = {
         let isCollapsed;
 
         if (el) {
-            if (domRange instanceof Selection) {
+            if (isDOMSelection(domRange)) {
                 anchorNode = domRange.anchorNode;
                 anchorOffset = domRange.anchorOffset;
                 focusNode = domRange.focusNode;
@@ -564,6 +583,7 @@ export const AngularEditor = {
     }) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
         const cursorNode = blockCardElement.closest('.sla-block-card-element').querySelector(`[card-target="card-${options.direction}"]`);
+        const window = AngularEditor.getWindow(editor);
         const domSelection = window.getSelection();
         domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
     }
