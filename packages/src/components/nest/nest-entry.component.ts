@@ -8,7 +8,15 @@ import { ViewRefType } from '../../interfaces/view-node';
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlaNestEntryComponent implements OnInit, OnDestroy, OnChanges {
+export class SlaNestEntryComponent implements OnInit, OnChanges {
+    embeddedViewRef: EmbeddedViewRef<any>;
+
+    componentRef: ComponentRef<any>;
+
+    blockCardComponentRef: ComponentRef<SlaBlockCardComponent>;
+
+    contextObject = { context: {} };
+
     @Input()
     context: any;
 
@@ -18,32 +26,37 @@ export class SlaNestEntryComponent implements OnInit, OnDestroy, OnChanges {
     @Input()
     isRemoveNativeElement: false;
 
-    rootNode: HTMLElement;
+    get rootNodes(): HTMLElement[] {
+        if (this.blockCardComponentRef) {
+            return [this.blockCardComponentRef.instance.nativeElement];
+        }
+        if (this.embeddedViewRef) {
+            return this.embeddedViewRef.rootNodes.filter((rootNode) => this.isHTMLElement(rootNode));
+        }
+        if (this.componentRef.instance) {
+            return (this.componentRef.hostView as any).rootNodes
+        }
+    }
 
-    embeddedViewRef: EmbeddedViewRef<any>;
-
-    componentRef: ComponentRef<any>;
-
-    contextObject = { context: {} };
-
-    blockCardComponentRef: ComponentRef<SlaBlockCardComponent>;
+    isHTMLElement(node: Node) {
+        return node.nodeType === 1;
+    }
 
     constructor(
         private elementRef: ElementRef<any>,
         private viewContainerRef: ViewContainerRef,
         private componentFactoryResolver: ComponentFactoryResolver,
         private injector: Injector
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.contextObject.context = this.context;
         this.createView();
+        if (this.context.isBlockCard) {
+            this.createBlockCard();
+        }
         if (this.isRemoveNativeElement) {
             this.elementRef.nativeElement.remove();
-        }
-
-        if (this.context.isBlockCard) {
-            this.rootNode = this.createBlockCard();
         }
     }
 
@@ -52,10 +65,21 @@ export class SlaNestEntryComponent implements OnInit, OnDestroy, OnChanges {
             this.updateContext(simpleChanges['context'].currentValue);
         }
         if (simpleChanges['viewOutlet'] && !simpleChanges['viewOutlet'].firstChange) {
+            let nextElement = this.rootNodes[this.rootNodes.length - 1].nextElementSibling;
+            const parentElement = this.rootNodes[this.rootNodes.length - 1].parentElement;
+            this.destroyTemplate();
+            this.destroyComponent();
+            this.destroyBlockCard();
             this.createView();
-
             if (this.context.isBlockCard) {
-                this.rootNode = this.createBlockCard();
+                this.createBlockCard();
+            }
+            if (nextElement) {
+                const fragment = document.createDocumentFragment();
+                fragment.append(...this.rootNodes);
+                parentElement.insertBefore(fragment, nextElement);
+            } else {
+                parentElement.append(...this.rootNodes);
             }
         }
     }
@@ -82,54 +106,37 @@ export class SlaNestEntryComponent implements OnInit, OnDestroy, OnChanges {
         }
     }
 
-    createView() {
-        if (this.isTemplateRef(this.viewOutlet)) {
-            const embeddedViewRef = this.viewContainerRef.createEmbeddedView(this.viewOutlet as TemplateRef<any>, this.contextObject);
-
-            if (this.rootNode) {
-                this.rootNode.replaceWith(embeddedViewRef.rootNodes[0]);
-            }
-            this.destroyTemplate();
-            this.destroyComponent();
-
-            this.rootNode = embeddedViewRef.rootNodes[0];
-            this.embeddedViewRef = embeddedViewRef;
-        }
-
-        if (this.isComponentType(this.viewOutlet)) {
-            const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.viewOutlet as ComponentType<any>);
-            const componentRef = this.viewContainerRef.createComponent(componentFactory);
-            componentRef.instance.context = this.context;
-
-            if (this.rootNode) {
-                this.rootNode.replaceWith((componentRef.hostView as any).rootNodes[0]);
-            }
-            this.destroyTemplate();
-            this.destroyComponent();
-
-            this.rootNode = (componentRef.hostView as any).rootNodes[0];
-            this.componentRef = componentRef;
-        }
-    }
-
-    updateContext<T>(context: T): void {
-        this.contextObject.context = context;
-
-        if (this.componentRef) {
-            this.componentRef.instance.context = context;
-        }
-    }
-
-    createBlockCard() {
+    destroyBlockCard() {
         if (this.blockCardComponentRef) {
             this.blockCardComponentRef.destroy();
             this.blockCardComponentRef = null;
         }
-        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlaBlockCardComponent);
-        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlaBlockCardComponent>(componentFactory, null, this.injector);
-        this.blockCardComponentRef.instance.initializeCenter(this.rootNode, this.context.element);
-        return this.blockCardComponentRef.instance.nativeElement;
     }
 
-    ngOnDestroy() {}
+    createView() {
+        if (this.isTemplateRef(this.viewOutlet)) {
+            const embeddedViewRef = this.viewContainerRef.createEmbeddedView(this.viewOutlet as TemplateRef<any>, this.contextObject);
+            this.embeddedViewRef = embeddedViewRef;
+        }
+        if (this.isComponentType(this.viewOutlet)) {
+            const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.viewOutlet as ComponentType<any>);
+            const componentRef = this.viewContainerRef.createComponent(componentFactory);
+            componentRef.instance.context = this.context;
+            this.componentRef = componentRef;
+        }
+    }
+
+    createBlockCard() {
+        const rootNodes = this.rootNodes;
+        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlaBlockCardComponent);
+        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlaBlockCardComponent>(componentFactory, null, this.injector);
+        this.blockCardComponentRef.instance.initializeCenter(rootNodes, this.context.element);
+    }
+
+    updateContext<T>(context: T): void {
+        this.contextObject.context = context;
+        if (this.componentRef) {
+            this.componentRef.instance.context = context;
+        }
+    }
 }

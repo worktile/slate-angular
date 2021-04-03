@@ -24,7 +24,7 @@
             </demo-element-image>
         </ng-template>
         <ng-template #heading let-context="context">
-            <h1 *ngIf="context.element.type === 'heading-one'" slaElement [context]="context">
+            <h1 *ngIf="context.element.type === 'heading-one'">
                 <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
             </h1>
             <h2 *ngIf="context.element.type === 'heading-two'" slaElement [context]="context">
