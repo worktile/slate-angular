@@ -517,6 +517,9 @@ export const AngularEditor = {
                 textNode = leafNode.closest('[data-slate-node="text"]')!;
                 domNode = leafNode;
                 offset = domNode.textContent!.length;
+                domNode.querySelectorAll('[data-slate-zero-width]').forEach(el => {
+                    offset -= el.textContent!.length
+                })
             }
 
             // COMPAT: If the parent node is a Slate zero-width space, editor is
