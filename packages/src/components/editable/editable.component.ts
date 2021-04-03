@@ -104,7 +104,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     readonly = false;
 
     //#region input event handler
-    @Input() slaBeforeInput: (event: Event) => void;
+    @Input() slaBeforeInput: (event: InputEvent) => void;
     @Input() slaBlur: (event: Event) => void;
     @Input() slaClick: (event: MouseEvent) => void;
     @Input() slaCompositionEnd: (event: CompositionEvent) => void;
