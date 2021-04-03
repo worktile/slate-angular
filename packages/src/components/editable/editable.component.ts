@@ -710,357 +710,356 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             }
         }
     }
-}
 
     private onDOMDragOver(event: DragEvent) {
-    if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragOver)) {
-        // Only when the target is void, call `preventDefault` to signal
-        // that drops are allowed. Editable content is droppable by
-        // default, and calling `preventDefault` hides the cursor.
-        const node = AngularEditor.toSlateNode(this.editor, event.target);
+        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragOver)) {
+            // Only when the target is void, call `preventDefault` to signal
+            // that drops are allowed. Editable content is droppable by
+            // default, and calling `preventDefault` hides the cursor.
+            const node = AngularEditor.toSlateNode(this.editor, event.target);
 
-        if (Editor.isVoid(this.editor, node)) {
-            event.preventDefault();
+            if (Editor.isVoid(this.editor, node)) {
+                event.preventDefault();
+            }
         }
     }
-}
 
     private onDOMDragStart(event: DragEvent) {
-    if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
-        const node = AngularEditor.toSlateNode(this.editor, event.target);
-        const path = AngularEditor.findPath(this.editor, node);
-        const voidMatch = Editor.void(this.editor, { at: path });
+        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
+            const node = AngularEditor.toSlateNode(this.editor, event.target);
+            const path = AngularEditor.findPath(this.editor, node);
+            const voidMatch = Editor.void(this.editor, { at: path });
 
-        // If starting a drag on a void node, make sure it is selected
-        // so that it shows up in the selection's fragment.
-        if (voidMatch) {
-            const range = Editor.range(this.editor, path);
-            Transforms.select(this.editor, range);
+            // If starting a drag on a void node, make sure it is selected
+            // so that it shows up in the selection's fragment.
+            if (voidMatch) {
+                const range = Editor.range(this.editor, path);
+                Transforms.select(this.editor, range);
+            }
+
+            AngularEditor.setFragmentData(this.editor, event.dataTransfer);
         }
-
-        AngularEditor.setFragmentData(this.editor, event.dataTransfer);
     }
-}
 
     private onDOMDrop(event: DragEvent) {
-    if (hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.drop)) {
-        // COMPAT: Certain browsers don't fire `beforeinput` events at all, and
-        // Chromium browsers don't properly fire them for files being
-        // dropped into a `contenteditable`. (2019/11/26)
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=1028668
-        if (!HAS_BEFORE_INPUT_SUPPORT || (!IS_SAFARI && event.dataTransfer.files.length > 0)) {
-            event.preventDefault();
-            const range = AngularEditor.findEventRange(this.editor, event);
-            const data = event.dataTransfer;
-            Transforms.select(this.editor, range);
-            AngularEditor.insertData(this.editor, data);
+        if (hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.drop)) {
+            // COMPAT: Certain browsers don't fire `beforeinput` events at all, and
+            // Chromium browsers don't properly fire them for files being
+            // dropped into a `contenteditable`. (2019/11/26)
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=1028668
+            if (!HAS_BEFORE_INPUT_SUPPORT || (!IS_SAFARI && event.dataTransfer.files.length > 0)) {
+                event.preventDefault();
+                const range = AngularEditor.findEventRange(this.editor, event);
+                const data = event.dataTransfer;
+                Transforms.select(this.editor, range);
+                AngularEditor.insertData(this.editor, data);
+            }
         }
     }
-}
 
     private onDOMFocus(event: Event) {
-    if (
-        !this.readonly &&
-        !this.isUpdatingSelection &&
-        hasEditableTarget(this.editor, event.target) &&
-        !this.isDOMEventHandled(event, this.focus)
-    ) {
-        const el = AngularEditor.toDOMNode(this.editor, this.editor);
-        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
-        this.latestElement = root.activeElement
+        if (
+            !this.readonly &&
+            !this.isUpdatingSelection &&
+            hasEditableTarget(this.editor, event.target) &&
+            !this.isDOMEventHandled(event, this.focus)
+        ) {
+            const el = AngularEditor.toDOMNode(this.editor, this.editor);
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            this.latestElement = root.activeElement
 
-        // COMPAT: If the editor has nested editable elements, the focus
-        // can go to them. In Firefox, this must be prevented because it
-        // results in issues with keyboard navigation. (2017/03/30)
-        if (IS_FIREFOX && event.target !== el) {
-            el.focus();
-            return;
+            // COMPAT: If the editor has nested editable elements, the focus
+            // can go to them. In Firefox, this must be prevented because it
+            // results in issues with keyboard navigation. (2017/03/30)
+            if (IS_FIREFOX && event.target !== el) {
+                el.focus();
+                return;
+            }
+
+            IS_FOCUSED.set(this.editor, true);
         }
-
-        IS_FOCUSED.set(this.editor, true);
     }
-}
 
     private onDOMKeydown(event: KeyboardEvent) {
-    const editor = this.editor;
-    if (
-        !this.readonly &&
-        hasEditableTarget(editor, event.target) &&
-        !this.isComposing &&
-        !this.isDOMEventHandled(event, this.keyDown)
-    ) {
-        const nativeEvent = event;
-        const { selection } = editor;
+        const editor = this.editor;
+        if (
+            !this.readonly &&
+            hasEditableTarget(editor, event.target) &&
+            !this.isComposing &&
+            !this.isDOMEventHandled(event, this.keyDown)
+        ) {
+            const nativeEvent = event;
+            const { selection } = editor;
 
-        const element =
-            editor.children[
-            selection !== null ? selection.focus.path[0] : 0
-            ]
-        const isRTL = getDirection(Node.string(element)) === 'rtl';
+            const element =
+                editor.children[
+                selection !== null ? selection.focus.path[0] : 0
+                ]
+            const isRTL = getDirection(Node.string(element)) === 'rtl';
 
-        try {
-            // COMPAT: Since we prevent the default behavior on
-            // `beforeinput` events, the browser doesn't think there's ever
-            // any history stack to undo or redo, so we have to manage these
-            // hotkeys ourselves. (2019/11/06)
-            if (Hotkeys.isRedo(nativeEvent)) {
-                event.preventDefault();
-
-                if (typeof editor.redo === 'function') {
-                    editor.redo();
-                }
-
-                return;
-            }
-
-            if (Hotkeys.isUndo(nativeEvent)) {
-                event.preventDefault();
-
-                if (typeof editor.undo === 'function') {
-                    editor.undo();
-                }
-
-                return;
-            }
-
-            // COMPAT: Certain browsers don't handle the selection updates
-            // properly. In Chrome, the selection isn't properly extended.
-            // And in Firefox, the selection isn't properly collapsed.
-            // (2017/10/17)
-            if (Hotkeys.isMoveLineBackward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, { unit: 'line', reverse: true });
-                return;
-            }
-
-            if (Hotkeys.isMoveLineForward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, { unit: 'line' });
-                return;
-            }
-
-            if (Hotkeys.isExtendLineBackward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, {
-                    unit: 'line',
-                    edge: 'focus',
-                    reverse: true
-                });
-                return;
-            }
-
-            if (Hotkeys.isExtendLineForward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, { unit: 'line', edge: 'focus' });
-                return;
-            }
-
-            // COMPAT: If a void node is selected, or a zero-width text node
-            // adjacent to an inline is selected, we need to handle these
-            // hotkeys manually because browsers won't be able to skip over
-            // the void node with the zero-width space not being an empty
-            // string.
-            if (Hotkeys.isMoveBackward(nativeEvent)) {
-                event.preventDefault();
-
-                if (selection && Range.isCollapsed(selection)) {
-                    Transforms.move(editor, { reverse: !isRTL });
-                } else {
-                    Transforms.collapse(editor, { edge: 'start' });
-                }
-
-                return;
-            }
-
-            if (Hotkeys.isMoveForward(nativeEvent)) {
-                event.preventDefault();
-
-                if (selection && Range.isCollapsed(selection)) {
-                    Transforms.move(editor, { reverse: isRTL });
-                } else {
-                    Transforms.collapse(editor, { edge: 'end' });
-                }
-
-                return;
-            }
-
-            if (Hotkeys.isMoveWordBackward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, { unit: 'word', reverse: !isRTL });
-                return;
-            }
-
-            if (Hotkeys.isMoveWordForward(nativeEvent)) {
-                event.preventDefault();
-                Transforms.move(editor, { unit: 'word', reverse: isRTL });
-                return;
-            }
-
-            // COMPAT: Certain browsers don't support the `beforeinput` event, so we
-            // fall back to guessing at the input intention for hotkeys.
-            // COMPAT: In iOS, some of these hotkeys are handled in the
-            if (!HAS_BEFORE_INPUT_SUPPORT) {
-                // We don't have a core behavior for these, but they change the
-                // DOM if we don't prevent them, so we have to.
-                if (Hotkeys.isBold(nativeEvent) || Hotkeys.isItalic(nativeEvent) || Hotkeys.isTransposeCharacter(nativeEvent)) {
-                    event.preventDefault();
-                    return;
-                }
-
-                if (Hotkeys.isSplitBlock(nativeEvent)) {
-                    event.preventDefault();
-                    Editor.insertBreak(editor);
-                    return;
-                }
-
-                if (Hotkeys.isDeleteBackward(nativeEvent)) {
+            try {
+                // COMPAT: Since we prevent the default behavior on
+                // `beforeinput` events, the browser doesn't think there's ever
+                // any history stack to undo or redo, so we have to manage these
+                // hotkeys ourselves. (2019/11/06)
+                if (Hotkeys.isRedo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
-                    } else {
-                        Editor.deleteBackward(editor);
+                    if (typeof editor.redo === 'function') {
+                        editor.redo();
                     }
 
                     return;
                 }
 
-                if (Hotkeys.isDeleteForward(nativeEvent)) {
+                if (Hotkeys.isUndo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
-                    } else {
-                        Editor.deleteForward(editor);
+                    if (typeof editor.undo === 'function') {
+                        editor.undo();
                     }
 
                     return;
                 }
 
-                if (Hotkeys.isDeleteLineBackward(nativeEvent)) {
+                // COMPAT: Certain browsers don't handle the selection updates
+                // properly. In Chrome, the selection isn't properly extended.
+                // And in Firefox, the selection isn't properly collapsed.
+                // (2017/10/17)
+                if (Hotkeys.isMoveLineBackward(nativeEvent)) {
+                    event.preventDefault();
+                    Transforms.move(editor, { unit: 'line', reverse: true });
+                    return;
+                }
+
+                if (Hotkeys.isMoveLineForward(nativeEvent)) {
+                    event.preventDefault();
+                    Transforms.move(editor, { unit: 'line' });
+                    return;
+                }
+
+                if (Hotkeys.isExtendLineBackward(nativeEvent)) {
+                    event.preventDefault();
+                    Transforms.move(editor, {
+                        unit: 'line',
+                        edge: 'focus',
+                        reverse: true
+                    });
+                    return;
+                }
+
+                if (Hotkeys.isExtendLineForward(nativeEvent)) {
+                    event.preventDefault();
+                    Transforms.move(editor, { unit: 'line', edge: 'focus' });
+                    return;
+                }
+
+                // COMPAT: If a void node is selected, or a zero-width text node
+                // adjacent to an inline is selected, we need to handle these
+                // hotkeys manually because browsers won't be able to skip over
+                // the void node with the zero-width space not being an empty
+                // string.
+                if (Hotkeys.isMoveBackward(nativeEvent)) {
                     event.preventDefault();
 
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
+                    if (selection && Range.isCollapsed(selection)) {
+                        Transforms.move(editor, { reverse: !isRTL });
                     } else {
-                        Editor.deleteBackward(editor, { unit: 'line' });
+                        Transforms.collapse(editor, { edge: 'start' });
                     }
 
                     return;
                 }
 
-                if (Hotkeys.isDeleteLineForward(nativeEvent)) {
+                if (Hotkeys.isMoveForward(nativeEvent)) {
                     event.preventDefault();
 
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
+                    if (selection && Range.isCollapsed(selection)) {
+                        Transforms.move(editor, { reverse: isRTL });
                     } else {
-                        Editor.deleteForward(editor, { unit: 'line' });
+                        Transforms.collapse(editor, { edge: 'end' });
                     }
 
                     return;
                 }
 
-                if (Hotkeys.isDeleteWordBackward(nativeEvent)) {
+                if (Hotkeys.isMoveWordBackward(nativeEvent)) {
                     event.preventDefault();
-
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
-                    } else {
-                        Editor.deleteBackward(editor, { unit: 'word' });
-                    }
-
+                    Transforms.move(editor, { unit: 'word', reverse: !isRTL });
                     return;
                 }
 
-                if (Hotkeys.isDeleteWordForward(nativeEvent)) {
+                if (Hotkeys.isMoveWordForward(nativeEvent)) {
                     event.preventDefault();
-
-                    if (selection && Range.isExpanded(selection)) {
-                        Editor.deleteFragment(editor);
-                    } else {
-                        Editor.deleteForward(editor, { unit: 'word' });
-                    }
-
+                    Transforms.move(editor, { unit: 'word', reverse: isRTL });
                     return;
                 }
+
+                // COMPAT: Certain browsers don't support the `beforeinput` event, so we
+                // fall back to guessing at the input intention for hotkeys.
+                // COMPAT: In iOS, some of these hotkeys are handled in the
+                if (!HAS_BEFORE_INPUT_SUPPORT) {
+                    // We don't have a core behavior for these, but they change the
+                    // DOM if we don't prevent them, so we have to.
+                    if (Hotkeys.isBold(nativeEvent) || Hotkeys.isItalic(nativeEvent) || Hotkeys.isTransposeCharacter(nativeEvent)) {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    if (Hotkeys.isSplitBlock(nativeEvent)) {
+                        event.preventDefault();
+                        Editor.insertBreak(editor);
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteBackward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteBackward(editor);
+                        }
+
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteForward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteForward(editor);
+                        }
+
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteLineBackward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteBackward(editor, { unit: 'line' });
+                        }
+
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteLineForward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteForward(editor, { unit: 'line' });
+                        }
+
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteWordBackward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteBackward(editor, { unit: 'word' });
+                        }
+
+                        return;
+                    }
+
+                    if (Hotkeys.isDeleteWordForward(nativeEvent)) {
+                        event.preventDefault();
+
+                        if (selection && Range.isExpanded(selection)) {
+                            Editor.deleteFragment(editor);
+                        } else {
+                            Editor.deleteForward(editor, { unit: 'word' });
+                        }
+
+                        return;
+                    }
+                }
+            } catch (error) {
+                this.editor.onError({ code: SlateErrorCode.OnDOMKeydownError, nativeError: error });
             }
-        } catch (error) {
-            this.editor.onError({ code: SlateErrorCode.OnDOMKeydownError, nativeError: error });
         }
     }
-}
 
     private onDOMPaste(event: ClipboardEvent) {
-    // COMPAT: Certain browsers don't support the `beforeinput` event, so we
-    // fall back to React's `onPaste` here instead.
-    // COMPAT: Firefox, Chrome and Safari are not emitting `beforeinput` events
-    // when "paste without formatting" option is used.
-    // This unfortunately needs to be handled with paste events instead.
-    if (
-        !this.isDOMEventHandled(event, this.paste) &&
-        (!HAS_BEFORE_INPUT_SUPPORT || isPlainTextOnlyPaste(event) || forceOnDOMPaste) &&
-        !this.readonly &&
-        hasEditableTarget(this.editor, event.target)
-    ) {
-        event.preventDefault();
-        if (this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
-            Editor.deleteFragment(this.editor);
-        }
-        AngularEditor.insertData(this.editor, event.clipboardData);
-    }
-}
-
-    private onFallbackBeforeInput(event: BeforeInputEvent) {
-    // COMPAT: Certain browsers don't support the `beforeinput` event, so we
-    // fall back to React's leaky polyfill instead just for it. It
-    // only works for the `insertText` input type.
-    if (
-        !HAS_BEFORE_INPUT_SUPPORT &&
-        !this.readonly &&
-        !this.isDOMEventHandled(event.nativeEvent, this.beforeInput) &&
-        hasEditableTarget(this.editor, event.nativeEvent.target)
-    ) {
-        event.nativeEvent.preventDefault();
-        try {
-            const text = event.data;
-            if (!Range.isCollapsed(this.editor.selection)) {
+        // COMPAT: Certain browsers don't support the `beforeinput` event, so we
+        // fall back to React's `onPaste` here instead.
+        // COMPAT: Firefox, Chrome and Safari are not emitting `beforeinput` events
+        // when "paste without formatting" option is used.
+        // This unfortunately needs to be handled with paste events instead.
+        if (
+            !this.isDOMEventHandled(event, this.paste) &&
+            (!HAS_BEFORE_INPUT_SUPPORT || isPlainTextOnlyPaste(event) || forceOnDOMPaste) &&
+            !this.readonly &&
+            hasEditableTarget(this.editor, event.target)
+        ) {
+            event.preventDefault();
+            if (this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
                 Editor.deleteFragment(this.editor);
             }
-            // block card
-            const domSelection = window.getSelection();
-            const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
-                AngularEditor.hasCardTarget(domSelection.focusNode);
-            if (isBlockCard) {
-                return;
-            }
-            // just handle Non-IME input  
-            if (!this.isComposing) {
-                Editor.insertText(this.editor, text);
-            }
-        } catch (error) {
-            this.editor.onError({ code: SlateErrorCode.ToNativeSelectionError, nativeError: error });
+            AngularEditor.insertData(this.editor, event.clipboardData);
         }
     }
-}
 
-    private isDOMEventHandled(event: Event, handler ?: (event: Event) => void) {
-    if (!handler) {
-        return false;
+    private onFallbackBeforeInput(event: BeforeInputEvent) {
+        // COMPAT: Certain browsers don't support the `beforeinput` event, so we
+        // fall back to React's leaky polyfill instead just for it. It
+        // only works for the `insertText` input type.
+        if (
+            !HAS_BEFORE_INPUT_SUPPORT &&
+            !this.readonly &&
+            !this.isDOMEventHandled(event.nativeEvent, this.beforeInput) &&
+            hasEditableTarget(this.editor, event.nativeEvent.target)
+        ) {
+            event.nativeEvent.preventDefault();
+            try {
+                const text = event.data;
+                if (!Range.isCollapsed(this.editor.selection)) {
+                    Editor.deleteFragment(this.editor);
+                }
+                // block card
+                const domSelection = window.getSelection();
+                const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
+                    AngularEditor.hasCardTarget(domSelection.focusNode);
+                if (isBlockCard) {
+                    return;
+                }
+                // just handle Non-IME input  
+                if (!this.isComposing) {
+                    Editor.insertText(this.editor, text);
+                }
+            } catch (error) {
+                this.editor.onError({ code: SlateErrorCode.ToNativeSelectionError, nativeError: error });
+            }
+        }
     }
-    handler(event);
-    return event.defaultPrevented;
-}
-//#endregion
 
-ngOnDestroy() {
-    NODE_TO_ELEMENT.delete(this.editor);
-    this.manualListeners.forEach(manualListener => {
-        manualListener();
-    });
-    this.destroy$.complete();
-    EDITOR_TO_ON_CHANGE.delete(this.editor);
-}
+    private isDOMEventHandled(event: Event, handler?: (event: Event) => void) {
+        if (!handler) {
+            return false;
+        }
+        handler(event);
+        return event.defaultPrevented;
+    }
+    //#endregion
+
+    ngOnDestroy() {
+        NODE_TO_ELEMENT.delete(this.editor);
+        this.manualListeners.forEach(manualListener => {
+            manualListener();
+        });
+        this.destroy$.complete();
+        EDITOR_TO_ON_CHANGE.delete(this.editor);
+    }
 }
 
 /**
