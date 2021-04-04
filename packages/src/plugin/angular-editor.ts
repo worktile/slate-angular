@@ -27,7 +27,7 @@ import { SlaErrorData } from '../interfaces/error'
 import { IS_CHROME } from '../utils/environment';
 
 /**
- * A React and DOM-specific version of the `Editor` interface.
+ * A Angular and DOM-specific version of the `Editor` interface.
  */
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
