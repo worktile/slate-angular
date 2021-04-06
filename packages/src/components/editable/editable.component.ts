@@ -623,7 +623,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (!IS_SAFARI && !IS_FIREFOX && !IS_CHROME_LEGACY && event.data) {
+            if (!IS_SAFARI && !IS_FIREFOX_LEGACY && !IS_CHROME_LEGACY && event.data) {
                 preventInsertFromComposition(event, this.editor);
                 Editor.insertText(this.editor, event.data);
             }
@@ -1004,10 +1004,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             hasEditableTarget(this.editor, event.nativeEvent.target)
         ) {
             event.nativeEvent.preventDefault();
-            if (!this.isComposing) {
-                const text = (event as any).data as string
-                Editor.insertText(this.editor, text)
-            }
+            const text = (event as any).data as string;
+            Editor.insertText(this.editor, text);
         }
     }
 
