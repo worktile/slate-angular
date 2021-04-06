@@ -514,21 +514,20 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                         break;
                     }
 
-                    case 'insertFromComposition': {
-                        // COMPAT: in safari, `compositionend` event is dispatched after
-                        // the beforeinput event with the inputType "insertFromComposition" has been dispatched.
-                        // https://www.w3.org/TR/input-events-2/
-                        // so the following code is the right logic
-                        // because DOM selection in sync will be exec before `compositionend` event
-                        // isComposing is true will prevent DOM selection being update correctly.
-                        this.isComposing = false;
-                        preventInsertFromComposition(event, this.editor);
-                    }
+                    case 'insertFromComposition':
                     case 'insertFromDrop':
                     case 'insertFromPaste':
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
+                        if (type === 'insertFromComposition') {
+                            // COMPAT: in Safari, `compositionend` is dispatched after the
+                            // `beforeinput` for "insertFromComposition". But if we wait for it
+                            // then we will abort because we're still composing and the selection
+                            // won't be updated properly.
+                            // https://www.w3.org/TR/input-events-2/
+                            this.isComposing = false
+                        }
                         const window = AngularEditor.getWindow(editor)
                         if (data instanceof window.DataTransfer) {
                             AngularEditor.insertData(editor, data as DataTransfer);
