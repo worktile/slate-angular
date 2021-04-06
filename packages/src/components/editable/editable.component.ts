@@ -45,12 +45,9 @@ import { SlaTemplateComponent } from '../template/template.component';
 import { SlaErrorCode } from '../../constants';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HistoryEditor } from 'slate-history';
-
 const timeDebug = Debug('slate-time');
 // Chrome Legacy doesn't support `beforeinput` correctly
 const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX_LEGACY || IS_EDGE_LEGACY || IS_CHROME_LEGACY);
-// not correctly clipboardData on beforeinput
-const forceOnDOMPaste = IS_SAFARI;
 
 @Component({
     selector: 'sla-editable',
@@ -283,7 +280,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 hasDomSelectionInEditor = true;
             }
 
-
             // If the DOM selection is in the editor and the editor selection is already correct, we're done.
             if (
                 hasDomSelection &&
@@ -307,7 +303,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             // Otherwise the DOM selection is out of sync, so update it.
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
             this.isUpdatingSelection = true;
-
             const newDomRange = selection && AngularEditor.toDOMRange(this.editor, selection);
 
             if (newDomRange) {
@@ -423,7 +418,32 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 const { selection } = editor;
                 const { inputType: type } = event;
                 const data = event.dataTransfer || event.data || undefined;
+
+                // These two types occur while a user is composing text and can't be
+                // cancelled. Let them through and wait for the composition to end.
+                if (
+                    type === 'insertCompositionText' ||
+                    type === 'deleteCompositionText'
+                ) {
+                    return
+                }
+
                 event.preventDefault();
+
+                // COMPAT: For the deleting forward/backward input types we don't want
+                // to change the selection because it is the range that will be deleted,
+                // and those commands determine that for themselves.
+                if (!type.startsWith('delete') || type.startsWith('deleteBy')) {
+                    const [targetRange] = (event as any).getTargetRanges()
+
+                    if (targetRange) {
+                        const range = AngularEditor.toSlateRange(editor, targetRange)
+
+                        if (!selection || !Range.equals(selection, range)) {
+                            Transforms.select(editor, range)
+                        }
+                    }
+                }
 
                 // COMPAT: If the selection is expanded, even if the command seems like
                 // a delete forward/backward command it should delete the selection.
@@ -513,9 +533,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                         if (data instanceof window.DataTransfer) {
                             AngularEditor.insertData(editor, data as DataTransfer);
                         } else if (typeof data === 'string') {
-                            if (editor.selection && !Range.isCollapsed(editor.selection)) {
-                                Editor.deleteFragment(editor);
-                            }
                             Editor.insertText(editor, data);
                         }
                         break;
