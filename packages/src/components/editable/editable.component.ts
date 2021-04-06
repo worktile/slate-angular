@@ -186,10 +186,15 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     writeValue(value: Node[]) {
-        if (value && this.initialized) {
+        if (value && value.length && this.initialized) {
             this.editor.children = value;
-            this.reRender();
+        } else {
+            this.editor.children = [{
+                type: 'paragraph',
+                children: [{ text: '' }]
+            }];
         }
+        this.reRender();
     }
 
     public reRender() {
