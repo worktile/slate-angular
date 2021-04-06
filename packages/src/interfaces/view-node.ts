@@ -49,7 +49,7 @@ export interface ViewElementContext<T extends SlateElement = SlateElement, K ext
 
 export interface ViewTextContext<K extends Editor = Editor>  {
     text: SlateText;
-    parent: Element;
+    parent: Ancestor;
     index: number;
     editor: K;
     decorations: SlateRange[];

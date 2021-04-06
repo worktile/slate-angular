@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { Editor, Range, Point, Transforms, createEditor } from 'slate';
+import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'packages/src/public-api';
 
@@ -101,7 +101,7 @@ const withShortcuts = editor => {
                 if (type === 'list-item') {
                     const list = { type: 'bulleted-list', children: [] };
                     Transforms.wrapNodes(editor, list, {
-                        match: n => n.type === 'list-item'
+                        match: n =>  Element.isElement(n) && n.type === 'list-item'
                     });
                 }
 
@@ -116,7 +116,7 @@ const withShortcuts = editor => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-            const match = Editor.above(editor, {
+            const match = Editor.above<Element>(editor, {
                 match: n => Editor.isBlock(editor, n)
             });
 
@@ -129,7 +129,7 @@ const withShortcuts = editor => {
 
                     if (block.type === 'list-item') {
                         Transforms.unwrapNodes(editor, {
-                            match: n => n.type === 'bulleted-list'
+                            match: n => Element.isElement(n) && n.type === 'bulleted-list'
                         });
                     }
 

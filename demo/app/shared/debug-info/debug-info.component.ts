@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Operation } from 'slate';
-import { TheEditor } from 'theia-editor';
+import { Editor, Operation } from 'slate';
 
 @Component({
     selector: 'demo-debug-info',
@@ -10,7 +9,7 @@ export class DemoDebugInfoComponent implements OnInit {
     dev = false;
 
     @Input()
-    theEditor: TheEditor;
+    theEditor: Editor;
 
     @Input()
     currentOperations: Operation[];

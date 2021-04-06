@@ -10,15 +10,16 @@ import {
     Input,
     OnDestroy
 } from '@angular/core';
+import { ImageElement } from '../../custom-types';
 import { SlaComponentBase, ViewElementContext } from 'slate-angular';
 
 @Component({
     selector: 'demo-element-image',
     templateUrl: 'image-component.html'
 })
-export class DemoElementImageComponent extends SlaComponentBase implements OnInit, OnDestroy {
+export class DemoElementImageComponent extends SlaComponentBase<ImageElement> implements OnInit, OnDestroy {
     @Input()
-    set context(value: ViewElementContext) {
+    set context(value: ViewElementContext<ImageElement>) {
         this.setContext(value);
     }
 

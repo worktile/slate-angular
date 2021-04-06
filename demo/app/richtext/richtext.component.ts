@@ -1,7 +1,8 @@
 import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
 import { createEditor, Text as SlateText, Editor, Operation } from 'slate';
 import { withHistory } from 'slate-history';
-import { withAngular } from 'packages/src/public-api';
+import { withAngular } from 'slate-angular';
+import { CustomText } from '../custom-types';
 
 @Component({
     selector: 'demo-richtext',
@@ -36,7 +37,7 @@ export class DemoRichtextComponent implements OnInit {
         return null;
     }
 
-    renderMark = (text: SlateText) => {
+    renderMark = (text: CustomText) => {
         let rootDOM;
         let deepestDOM;
         if (text.bold) {

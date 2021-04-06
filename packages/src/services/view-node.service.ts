@@ -1,5 +1,5 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { Editor, Element as SlateElement, Text as SlateText, Range, Path, Node, NodeEntry } from 'slate';
+import { Editor, Element as SlateElement, Text as SlateText, Range, Path, Node, NodeEntry, Ancestor } from 'slate';
 import { AngularEditor } from '../plugin/angular-editor';
 import { ViewElement, ViewText, ViewNode } from '../interfaces/view-node';
 import { NODE_TO_PARENT, NODE_TO_INDEX, NODE_TO_VIEWNODE } from '../utils/weak-maps';
@@ -42,9 +42,9 @@ export class ViewNodeService {
         return this.packChildren(this.editor, this.editor.selection, [...viewNodes], decorations) as ViewElement[];
     }
 
-    private packChildren(parent: SlateElement, pSelection: Range | null, viewNodes: ViewNode[], decorations?: Range[]) {
+    private packChildren(parent: Ancestor, pSelection: Range | null, viewNodes: ViewNode[], decorations?: Range[]) {
         const path = AngularEditor.findPath(this.editor, parent);
-        const parentIsVoid = this.editor.isVoid(parent);
+        const parentIsVoid =  !Editor.isEditor(parent) && this.editor.isVoid(parent);
         parent.children.forEach((node, i) => {
             NODE_TO_PARENT.set(node, parent);
             NODE_TO_INDEX.set(node, i);
@@ -209,7 +209,7 @@ export class ViewNodeService {
         return attributes;
     }
 
-    private isEqualsNode(node: Node, another: Node) {
+    private isEqualsNode(node: SlateElement, another: SlateElement) {
         return (this.editor.equalsNodeKey(node, another) || this.isEqualNodeNumber()) && node.type === another.type;
     }
 
