@@ -189,11 +189,16 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
         this.onTouchedCallback = fn;
     }
 
-    writeValue(value: Descendant[]) {
-        if (value && this.initialized) {
+    writeValue(value: Node[]) {
+        if (value && value.length && this.initialized) {
             this.editor.children = value;
-            this.reRender();
+        } else {
+            this.editor.children = [{
+                type: 'paragraph',
+                children: [{ text: '' }]
+            }];
         }
+        this.reRender();
     }
 
     public reRender() {
