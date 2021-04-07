@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { Component, ViewChild, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
 import { createEditor, Transforms, Editor } from 'slate';
 import { SlateModule } from '../../slate.module';
@@ -16,7 +16,7 @@ import { AngularEditor } from '../../plugins/angular-editor';
 import { FormsModule } from '@angular/forms';
 
 describe('SlaEditableComponent', () => {
-    beforeEach(async(() => {
+    beforeEach(fakeAsync(() => {
         TestBed.configureTestingModule({
             declarations: [BasicComponent, SlateCoreComponent, DynamicComponent, Dynamic2Component, BasicOriginComponent],
             imports: [SlateModule, FormsModule]
@@ -32,11 +32,11 @@ describe('SlaEditableComponent', () => {
     describe('origin', () => {
         let component: BasicOriginComponent;
         let fixture: ComponentFixture<BasicOriginComponent>;
-        beforeEach(async () => {
+        beforeEach(fakeAsync(() => {
             fixture = TestBed.createComponent(BasicOriginComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-        });
+        }));
         it('should create', () => {
             expect(component.editableComponent).toBeTruthy();
         });
@@ -124,11 +124,11 @@ describe('SlaEditableComponent', () => {
     describe('basic', () => {
         let component: BasicComponent;
         let fixture: ComponentFixture<BasicComponent>;
-        beforeEach(async () => {
+        beforeEach(fakeAsync(() => {
             fixture = TestBed.createComponent(BasicComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-        });
+        }));
 
         it('should create', () => {
             expect(component.slateComponent).toBeTruthy();
@@ -189,11 +189,11 @@ describe('SlaEditableComponent', () => {
     describe('core', () => {
         let component: SlateCoreComponent;
         let fixture: ComponentFixture<SlateCoreComponent>;
-        beforeEach(async () => {
+        beforeEach(fakeAsync(() => {
             fixture = TestBed.createComponent(SlateCoreComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-        });
+        }));
 
         it('should update dynamic component when reset value', fakeAsync(() => {
             expect((fixture.debugElement.nativeElement as HTMLElement).innerText).toContain('dynamic');
