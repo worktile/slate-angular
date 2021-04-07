@@ -32,7 +32,7 @@ describe('SlaEditableComponent', () => {
     describe('origin', () => {
         let component: BasicOriginComponent;
         let fixture: ComponentFixture<BasicOriginComponent>;
-        beforeEach(() => {
+        beforeEach(async () => {
             fixture = TestBed.createComponent(BasicOriginComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
@@ -117,14 +117,14 @@ describe('SlaEditableComponent', () => {
             };
             dispatchKeyboardEvent(editableElement, 'keydown', Z, 'z', editableElement, { meta: true });
             tick(1000);
-            expect(Editor.string(component.editor, [0, 0])).toBe(component.value[0].children[0].text + insertText);
+            expect(Editor.string(component.editor, [0, 0])).toBe(component.value[0].children[0].text);
         }));
     })
 
     describe('basic', () => {
         let component: BasicComponent;
         let fixture: ComponentFixture<BasicComponent>;
-        beforeEach(() => {
+        beforeEach(async () => {
             fixture = TestBed.createComponent(BasicComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
@@ -162,7 +162,7 @@ describe('SlaEditableComponent', () => {
     describe('core', () => {
         let component: SlateCoreComponent;
         let fixture: ComponentFixture<SlateCoreComponent>;
-        beforeEach(() => {
+        beforeEach(async () => {
             fixture = TestBed.createComponent(SlateCoreComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
@@ -234,7 +234,7 @@ describe('SlaEditableComponent', () => {
             expect(currentText.replace(/\s/g, '&nbsp;')).toContain(text);
         }));
     });
-    
+
 });
 
 @Component({
@@ -246,12 +246,10 @@ describe('SlaEditableComponent', () => {
 })
 class BasicComponent {
     editor = withAngular(createEditor());
-    value = [
-        {
-            type: 'paragraph',
-            children: [{ text: 'This is editable' }]
-        }
-    ];
+    value = [{
+        type: 'paragraph',
+        children: [{ text: 'This is editable' }]
+    }];
 
     @ViewChild(SlaEditableComponent, { static: true })
     slateComponent: SlaEditableComponent;
@@ -259,7 +257,7 @@ class BasicComponent {
 
     valueChangeSpy = jasmine.createSpy('valueChange callback');
 
-    constructor() {}
+    constructor() { }
 }
 
 const withDynamic = (editor: AngularEditor): AngularEditor => {
@@ -358,7 +356,7 @@ class SlateCoreComponent implements OnInit {
     @ViewChild(SlaEditableComponent, { static: true })
     editableComponent: SlaEditableComponent;
 
-    constructor() {}
+    constructor() { }
 
     ngOnInit(): void {
         this.plugins.reduce((prevEditor, nextEditor) => nextEditor(prevEditor), this.editor);
