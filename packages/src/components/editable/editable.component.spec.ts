@@ -138,6 +138,33 @@ describe('SlaEditableComponent', () => {
             expect(component.slateComponent.editor.children).toBe(component.value);
         });
 
+        it('should sync editor value when component value change', fakeAsync(() => {
+            component.value = [{
+                type: 'paragraph',
+                children: [{ text: 'This is another editable' }]
+            }];
+            fixture.detectChanges();
+            tick(1000);
+            expect(component.slateComponent.editor.children).toBe(component.value);
+        }));
+
+        it('should sync component value when editor value change', fakeAsync(() => {
+            const insertText = ' another text'
+            Transforms.select(component.editor, {
+                anchor: {
+                    path: [0, 0],
+                    offset: 16
+                },
+                focus: {
+                    path: [0, 0],
+                    offset: 16
+                }
+            });
+            Transforms.insertText(component.editor, insertText);
+            tick(1000);
+            expect(component.value).toBe(component.slateComponent.editor.children as []);
+        }));
+
         it('should set EDITOR_TO_ON_CHANGE', () => {
             expect(EDITOR_TO_ON_CHANGE.get(component.editor)).toBeTruthy();
         });
