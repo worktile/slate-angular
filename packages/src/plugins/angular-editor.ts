@@ -480,7 +480,7 @@ export const AngularEditor = {
             // composition the ASCII characters will be prepended to the zero-width
             // space, so subtract 1 from the offset to account for the zero-width
             // space character.
-            if (domNode && offset === domNode.textContent!.length && parentNode.hasAttribute('data-slate-zero-width')) {
+            if (domNode && offset === domNode.textContent!.length && parentNode && parentNode.hasAttribute('data-slate-zero-width')) {
                 offset--;
             }
         }
