@@ -18,10 +18,9 @@ import {
     isDOMElement,
     normalizeDOMPoint
 } from '../utils/dom';
-import { Injector, ViewContainerRef } from '@angular/core';
+import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
 import { SlaErrorData } from '../interfaces/error'
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -36,6 +35,7 @@ export interface AngularEditor extends Editor {
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
     onError: (errorData: SlaErrorData) => void;
+    onDOMEventHandle: (event: Event, handler?: (event: Event) => void) => void;
 }
 
 export const AngularEditor = {
@@ -63,6 +63,10 @@ export const AngularEditor = {
         if (errorData.nativeError) {
             throw errorData.nativeError;
         }
+    },
+
+    onDOMEventHandle(editor: AngularEditor, event: Event) {
+        editor.onDOMEventHandle(event);
     },
 
     /**

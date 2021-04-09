@@ -237,5 +237,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
     
     e.onError = (errorData: SlaErrorData) => {};
 
+    e.onDOMEventHandle = (event: Event, handler?: (event: Event) => void)=> {}
+
     return e;
 };

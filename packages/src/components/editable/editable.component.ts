@@ -962,6 +962,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             return false;
         }
         handler(event);
+        this.editor.onDOMEventHandle(event,handler);
         return event.defaultPrevented;
     }
     //#endregion
