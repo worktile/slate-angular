@@ -1,10 +1,10 @@
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
-import { Point } from 'slate'
-import { DOMElement, DOMRange, DOMStaticRange, DOMSelection } from '../utils/dom'
+import { SlaErrorCode } from '../constants'
 
 
 export interface SlaErrorData {
     code?: SlaErrorCode | number;
     codeName?: string;
-    nativeError?: Error
+    nativeError?: Error;
+    event?: Event;
+    handler?: (event: Event) => void;
 }
