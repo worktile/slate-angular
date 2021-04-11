@@ -35,13 +35,4 @@
             </h3>
         </ng-template>
     </sla-editable>
-    <div class="terminal" *ngIf="dev">
-        <pre><code>{{ editor.children | json }}</code>
-      </pre>
-    </div>
-    <div class="terminal selection" *ngIf="dev">
-        <pre>current selection
-<code>{{ editor.selection | json }}</code></pre>
-<pre>latest operations
-<code>{{ operations | json }}</code></pre></div>
 </div>

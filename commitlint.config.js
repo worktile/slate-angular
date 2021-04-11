@@ -11,7 +11,8 @@ module.exports = {
                 'core',
                 'release',
                 'plugin',
-                'config'
+                'config',
+                'template'
             ]
         ]
     }

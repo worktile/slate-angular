@@ -3,6 +3,8 @@ import { createEditor, Text as SlateText, Editor, Operation } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'packages/src/public-api';
 
+const SLATE_DEV_MODE_KEY = 'slate-dev';
+
 @Component({
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html'
@@ -12,21 +14,21 @@ export class DemoRichtextComponent implements OnInit {
 
     markTypes = ['bold', 'italic', 'code'];
 
-    dev = false;
-
     @ViewChild('heading', { read: TemplateRef, static: true })
     headingTemplate: TemplateRef<any>;
 
     editor = withHistory(withAngular(createEditor()));
 
-    operations: Operation[] = null;
-
     ngOnInit(): void {
-        this.dev = localStorage.getItem('slate-dev') === 'true' ? true : false;
+        if (!localStorage.getItem(SLATE_DEV_MODE_KEY)) {
+            console.log(`open dev mode use code：window.localStorage.setItem('${SLATE_DEV_MODE_KEY}', true);`);
+        }
     }
 
     valueChange(event) {
-        this.operations = [...this.editor.operations];
+        if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
+            console.log(`anchor: ${JSON.stringify(this.editor.selection.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection.focus)}`);
+        }
     }
 
     renderElement = (element: any) => {
