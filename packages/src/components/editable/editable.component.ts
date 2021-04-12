@@ -333,8 +333,8 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     onEditorValueChange() {
-        this.onChangeCallback(this.editor.children);
         this.reRender();
+        this.onChangeCallback(this.editor.children);
     }
 
     //#region event proxy
