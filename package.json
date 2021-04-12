@@ -1,15 +1,15 @@
 {
   "name": "demo",
-  "version": "0.50.0",
+  "version": "0.50.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
     "build:demo": "ng build demo --baseHref=/ --prod",
     "build": "ng build slate-angular && cpx \"./packages/src/**/*.scss\" ./dist/",
     "pub": "npm run build && cd dist && npm publish --access public",
-    "patch": "cd packages && npm version patch && cd ../ && git add . && npm run pub",
-    "minor": "cd packages && npm version minor && cd ../ && git add . && npm run pub",
-    "major": "cd packages && npm version major && cd ../ && git add . && npm run pub",
+    "patch": "cd packages && npm version patch && cd ../ && git add . && standard-version -a --release-as patch && npm run pub",
+    "minor": "cd packages && npm version minor && cd ../ && git add . && standard-version -a --release-as minor && npm run pub",
+    "major": "cd packages && npm version major && cd ../ && git add . && standard-version -a --release-as major && npm run pub",
     "test": "ng test slate-angular",
     "lint": "ng lint",
     "e2e": "ng e2e"
