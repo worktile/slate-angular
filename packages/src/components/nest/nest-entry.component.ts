@@ -34,7 +34,7 @@ export class SlaNestEntryComponent implements OnInit, OnChanges {
             return this.embeddedViewRef.rootNodes.filter((rootNode) => this.isHTMLElement(rootNode));
         }
         if (this.componentRef.instance) {
-            return (this.componentRef.hostView as any).rootNodes
+            return [(this.componentRef.hostView as any).rootNodes[0]];
         }
     }
 
