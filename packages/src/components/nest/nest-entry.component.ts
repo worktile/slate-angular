@@ -33,6 +33,8 @@ export class SlaNestEntryComponent implements OnInit, OnChanges {
         if (this.embeddedViewRef) {
             return this.embeddedViewRef.rootNodes.filter((rootNode) => this.isHTMLElement(rootNode));
         }
+        // fix the case for dynamic creat component in plugin component
+        // rootNodes contianer dom for dynamic creat component
         if (this.componentRef.instance) {
             return [(this.componentRef.hostView as any).rootNodes[0]];
         }
