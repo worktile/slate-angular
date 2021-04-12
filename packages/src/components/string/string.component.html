@@ -1,7 +1,9 @@
 <sla-nest-entry [isRemoveNativeElement]="true" [viewOutlet]="contentTemplate" [context]="context"></sla-nest-entry>
 
 <ng-template #stringTemplate let-context="context">
-    <span data-slate-string="true">{{ context.leaf.text }}{{ context.isTrailing ? '\n' : null }}</span>
+    <!-- Compatible with Chinese input in Chrome with \n -->
+    <span data-slate-string="true">{{ context.leaf.text }}<span *ngIf="context.isTrailing"
+            data-slate-zero-width>{{'\uFEFF'}}</span></span>
 </ng-template>
 <ng-template #zeroTemplate let-context="context">
     <span attr.data-slate-zero-width="{{ context.isLineBreak ? 'n' : 'z' }}"
