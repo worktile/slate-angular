@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { Component, ViewChild, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
 import { createEditor, Transforms, Editor } from 'slate';
 import { SlateModule } from '../../slate.module';
@@ -193,6 +193,8 @@ describe('SlaEditableComponent', () => {
             fixture = TestBed.createComponent(SlateCoreComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
+            flush();
+            fixture.detectChanges();
         }));
 
         it('should update dynamic component when reset value', fakeAsync(() => {
@@ -211,7 +213,8 @@ describe('SlaEditableComponent', () => {
             ];
             component.value = editorData;
             fixture.detectChanges();
-            tick(100);
+            flush();
+            fixture.detectChanges();
             const currentText = (fixture.debugElement.nativeElement as HTMLElement).innerText;
             expect(currentText).toContain(text);
         }));
@@ -231,7 +234,8 @@ describe('SlaEditableComponent', () => {
             ];
             component.value = editorData;
             fixture.detectChanges();
-            tick(100);
+            flush();
+            fixture.detectChanges();
             const currentText = (fixture.debugElement.nativeElement as HTMLElement).innerText;
             expect(currentText).toContain(date);
         }));
@@ -244,7 +248,8 @@ describe('SlaEditableComponent', () => {
                 }
             ];
             fixture.detectChanges();
-            tick(100);
+            flush();
+            fixture.detectChanges();
             expect((fixture.debugElement.nativeElement as HTMLElement).innerText).toContain('');
 
             const text = 'update&nbsp;text&nbsp;content';
@@ -256,7 +261,8 @@ describe('SlaEditableComponent', () => {
                 }
             ];
             fixture.detectChanges();
-            tick(100);
+            flush();
+            fixture.detectChanges();
             const currentText = (fixture.debugElement.nativeElement as HTMLElement).innerText;
             expect(currentText.replace(/\s/g, '&nbsp;')).toContain(text);
         }));

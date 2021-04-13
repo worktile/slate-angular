@@ -186,18 +186,14 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     writeValue(value: Node[]) {
-        if (value && value.length && this.initialized) {
+        if (value && value.length) {
             this.editor.children = value;
-        } else {
-            this.editor.children = [{
-                type: 'paragraph',
-                children: [{ text: '' }]
-            }];
+            this.viewElements = this.viewNodeService.pack(this.viewElements, this.decorations);
+            this.cdr.markForCheck();
         }
-        this.reRender();
     }
 
-    public reRender() {
+    public forceFlush() {
         timeDebug('start data sync');
         this.viewElements = this.viewNodeService.pack(this.viewElements, this.decorations);
         this.cdr.detectChanges();
@@ -231,7 +227,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             .subscribe(event => {
                 this.toSlateSelection();
             });
-        this.viewElements = this.viewNodeService.pack(this.viewElements, this.decorations);
         if (HAS_BEFORE_INPUT_SUPPORT) {
             this.addEventListener('beforeinput', this.onDOMBeforeInput.bind(this));
         }
@@ -333,7 +328,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     }
 
     onEditorValueChange() {
-        this.reRender();
+        this.forceFlush();
         this.onChangeCallback(this.editor.children);
     }
 
@@ -600,7 +595,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             // solve the problem of cross node Chinese input
             if (Range.isExpanded(this.editor.selection)) {
                 Editor.deleteFragment(this.editor);
-                this.reRender();
+                this.forceFlush();
             }
         } else {
             // 当光标是块级光标时，输入中文前需要强制移动选区
@@ -616,7 +611,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
                 const point = isCardLeft ? Editor.before(this.editor, cardEntry[1]) : Editor.after(this.editor, cardEntry[1]);
                 Transforms.select(this.editor, point);
-                this.reRender();
+                this.forceFlush();
             }
         }
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionStart)) {

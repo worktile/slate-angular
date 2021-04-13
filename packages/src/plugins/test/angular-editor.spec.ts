@@ -2,7 +2,7 @@ import { ViewChild, Component } from '@angular/core';
 import { withAngular } from '../with-angular';
 import { createEditor, Transforms } from 'slate';
 import { SlaEditableComponent } from '../../components/editable/editable.component';
-import { async, TestBed, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
+import { async, TestBed, ComponentFixture, tick, fakeAsync, flush } from '@angular/core/testing';
 import { SlateModule } from '../../slate.module';
 import { AngularEditor } from '../angular-editor';
 import { FormsModule } from '@angular/forms';
@@ -18,11 +18,13 @@ describe('AngularEditor', () => {
     describe('toDOMRange', () => {
         let component: SlateCoreComponent;
         let fixture: ComponentFixture<SlateCoreComponent>;
-        beforeEach(() => {
+        beforeEach(fakeAsync(() => {
             fixture = TestBed.createComponent(SlateCoreComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-        });
+            flush();
+            fixture.detectChanges();
+        }));
 
         it('should fixed cursor after zero width char when text node is empty', () => {
             Transforms.select(component.editor, {
