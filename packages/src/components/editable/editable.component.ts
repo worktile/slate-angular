@@ -44,8 +44,14 @@ import { SlaErrorCode } from '../../constants';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const timeDebug = Debug('slate-time');
+// COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
 // Chrome Legacy doesn't support `beforeinput` correctly
-const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX || IS_EDGE_LEGACY || IS_CHROME_LEGACY);
+const HAS_BEFORE_INPUT_SUPPORT =
+    !IS_CHROME_LEGACY &&
+    !IS_EDGE_LEGACY &&
+    globalThis.InputEvent &&
+    // @ts-ignore The `getTargetRanges` property isn't recognized.
+    typeof globalThis.InputEvent.prototype.getTargetRanges === 'function'
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
@@ -576,16 +582,18 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             Transforms.delete(this.editor);
         }
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionEnd)) {
-            this.isComposing = false;
-
-            // COMPAT: In Chrome, `beforeinput` events for compositions
+            // COMPAT: In Chrome/Firefox, `beforeinput` events for compositions
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (!IS_SAFARI && !IS_FIREFOX && !IS_CHROME_LEGACY && event.data) {
+            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data) {
                 preventInsertFromComposition(event);
                 Editor.insertText(this.editor, event.data);
             }
+
+            // COMPAT: In Firefox 87.0 CompositionEnd fire twice
+            // so we need avoid repeat isnertText by isComposing === true,
+            this.isComposing = false;
         }
     }
 
