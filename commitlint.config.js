@@ -12,7 +12,8 @@ module.exports = {
                 'release',
                 'plugin',
                 'config',
-                'template'
+                'template',
+                'browser'
             ]
         ]
     }
