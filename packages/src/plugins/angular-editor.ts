@@ -548,6 +548,11 @@ export const AngularEditor = {
         return cardTarget && cardTarget.nodeValue === 'card-left';
     },
 
+    isCardCenter(node: DOMNode){
+        const cardTarget = AngularEditor.getCardTargetAttribute(node);
+        return cardTarget && cardTarget.nodeValue === 'card-center';
+    },
+
     isCardLeftByTargetAttr(targetAttr: any) {
         return targetAttr && targetAttr.nodeValue === 'card-left';
     },

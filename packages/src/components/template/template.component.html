@@ -9,7 +9,7 @@
         [renderMark]="renderMark" [renderLeaf]="context.renderLeaf" [decorations]="context.decorations"></span>
 </ng-template>
 <ng-template #voidText let-context="context">
-    <div [attr.contenteditable]="ViewText.isLeafBlock(editor, context.parent)" [attr.data-slate-spacer]="true" class="sla-slate-spacer">
+    <div [attr.data-slate-spacer]="true" class="sla-slate-spacer">
         <span slaText [text]="context.text" [parent]="context.parent" [index]="context.index" [editor]="context.editor"
             [isLast]="ViewText.isLeafBlock(editor, context.parent) && context.index === context.parent.children.length - 1"
             [renderMark]="renderMark" [renderLeaf]="context.renderLeaf" [decorations]="context.decorations"></span>

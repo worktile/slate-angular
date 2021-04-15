@@ -356,15 +356,17 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     return Transforms.deselect(this.editor);
                 }
 
+                const { anchorNode, focusNode } = domSelection;
+                const isAnchorHasCardTarget = AngularEditor.hasCardTarget(anchorNode);
+                const isFocusNodeHasCardTarget = AngularEditor.hasCardTarget(anchorNode);
                 // card hook
-                if (AngularEditor.hasCardTarget(domSelection.anchorNode) || AngularEditor.hasCardTarget(domSelection.focusNode)) {
+                if (isAnchorHasCardTarget || isFocusNodeHasCardTarget) {
                     if (domSelection.isCollapsed) {
                         Transforms.deselect(this.editor);
                         return;
                     }
                 }
 
-                const { anchorNode, focusNode } = domSelection;
                 const anchorNodeSelectable = hasEditableTarget(this.editor, anchorNode) || isTargetInsideVoid(this.editor, anchorNode);
                 const focusNodeSelectable = hasEditableTarget(this.editor, focusNode) || isTargetInsideVoid(this.editor, focusNode);
                 if (anchorNodeSelectable && focusNodeSelectable) {
@@ -374,7 +376,16 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     }
                     Transforms.select(this.editor, range);
                 } else {
-                    Transforms.deselect(this.editor);
+                    if (AngularEditor.hasCardTarget(focusNode) && AngularEditor.isCardCenter(focusNode)) {
+                        const range = AngularEditor.toSlateRange(this.editor, domSelection);
+                        if (range) {
+                            const [, path] = AngularEditor.toSlateCardEntry(this.editor, focusNode);
+                            const isAfter = Path.isAfter(path, range.anchor.path);
+                            const newPath = isAfter? AngularEditor.end(this.editor, path):AngularEditor.start(this.editor, path);
+                            const newRange = AngularEditor.range(this.editor, range.anchor, newPath);
+                            Transforms.select(this.editor, newRange);
+                        }
+                    }
                 }
             } catch (error) {
                 this.editor.onError({ code: SlaErrorCode.ToSlateSelectionError, nativeError: error })
