@@ -11,8 +11,6 @@ import {
     OnDestroy,
     ChangeDetectorRef,
     NgZone,
-    Output,
-    EventEmitter,
     Injector,
     forwardRef
 } from '@angular/core';
@@ -362,14 +360,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     return Transforms.deselect(this.editor);
                 }
 
-                // card hook
-                if (AngularEditor.hasCardTarget(domSelection.anchorNode) || AngularEditor.hasCardTarget(domSelection.focusNode)) {
-                    if (domSelection.isCollapsed) {
-                        Transforms.deselect(this.editor);
-                        return;
-                    }
-                }
-
                 const { anchorNode, focusNode } = domSelection;
                 const anchorNodeSelectable = hasEditableTarget(this.editor, anchorNode) || isTargetInsideVoid(this.editor, anchorNode);
                 const focusNodeSelectable = hasEditableTarget(this.editor, focusNode) || isTargetInsideVoid(this.editor, focusNode);
@@ -495,6 +485,13 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                             if (editor.selection && !Range.isCollapsed(editor.selection)) {
                                 Editor.deleteFragment(editor);
                             }
+                            // block card
+                            const domSelection = window.getSelection();
+                            const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
+                            AngularEditor.hasCardTarget(domSelection.focusNode);
+                            if (isBlockCard) {
+                                return;
+                            }
                             Editor.insertText(editor, data);
                         }
                         break;
@@ -586,7 +583,11 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data) {
+
+            // block card
+            const domSelection = window.getSelection();
+            const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) || AngularEditor.hasCardTarget(domSelection.focusNode);
+            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data && !isBlockCard) {
                 preventInsertFromComposition(event);
                 Editor.insertText(this.editor, event.data);
             }
@@ -599,21 +600,18 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
 
     private onDOMCompositionStart(event: CompositionEvent) {
         const { selection } = this.editor;
+
+        // 当光标是块级光标时，输入中文前需要强制移动选区
+        const domSelection = window.getSelection();
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
+        const cardTarget = domSelection.anchorNode;
+
         if (selection) {
-            // solve the problem of cross node Chinese input
-            if (Range.isExpanded(this.editor.selection)) {
+            if (Range.isExpanded(selection)) {
                 Editor.deleteFragment(this.editor);
                 this.forceFlush();
             }
-        } else {
-            // 当光标是块级光标时，输入中文前需要强制移动选区
-            const domSelection = window.getSelection();
-            let cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
-            let cardTarget = domSelection.anchorNode;
-            if (!cardTargetAttr) {
-                cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.focusNode);
-                cardTarget = domSelection.focusNode;
-            }
+
             if (cardTargetAttr) {
                 const cardEntry = AngularEditor.toSlateCardEntry(this.editor, cardTarget);
                 const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
@@ -1039,7 +1037,7 @@ const hasStringTarget = (domSelection: DOMSelection) => {
 
 /**
  * remove default insert from composition
- * @param text 
+ * @param text
  */
 const preventInsertFromComposition = (event: Event) => {
     const types = ['compositionend', 'insertFromComposition'];
