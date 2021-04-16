@@ -1,4 +1,4 @@
-import { Editor, Node, Path, Point, Range, Transforms, Descendant, Element } from 'slate';
+import { Editor, Node, Path, Point, Range, Transforms } from 'slate';
 import {
     EDITOR_TO_ELEMENT,
     ELEMENT_TO_NODE,
@@ -18,10 +18,9 @@ import {
     isDOMElement,
     normalizeDOMPoint
 } from '../utils/dom';
-import { Injector, ViewContainerRef } from '@angular/core';
+import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
-import { SlaErrorData } from '../interfaces/error'
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
+import { SlaErrorData } from '../interfaces/error';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -255,6 +254,33 @@ export const AngularEditor = {
         const [node] = Editor.node(editor, point.path);
         const el = AngularEditor.toDOMNode(editor, node);
         let domPoint: DOMPoint | undefined;
+
+        // block card
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(el);
+        if (cardTargetAttr) {
+            const cardCenter = el.parentElement;
+            let cardNode;
+
+            if (point.offset === -1) {
+                cardNode = cardCenter.previousElementSibling;
+            } else {
+                cardNode = cardCenter.nextElementSibling;
+            }
+
+            const domNode = cardNode.childNodes[0] as HTMLElement;
+            domPoint = [domNode, 0];
+
+            if (!domPoint) {
+              throw new Error(
+                `Cannot resolve a DOM point from Slate point: ${JSON.stringify(
+                  point
+                )}`
+              );
+            }
+
+            return domPoint;
+        }
+
         // If we're inside a void node, force the offset to 0, otherwise the zero
         // width spacing character will result in an incorrect offset of 1
         if (Editor.void(editor, { at: point })) {
@@ -425,13 +451,19 @@ export const AngularEditor = {
         let offset = 0;
 
         // block card
-        let cardTargetAttr = AngularEditor.getCardTargetAttribute(nearestNode);
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(nearestNode);
         if (cardTargetAttr) {
             const blockCardEntry = AngularEditor.toSlateCardEntry(editor, nearestNode);
             if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
-                return AngularEditor.start(editor, blockCardEntry[1]);
+                return {
+                  path: blockCardEntry[1],
+                  offset: -1,
+                };
             } else {
-                return AngularEditor.end(editor, blockCardEntry[1]);
+                return {
+                  path: blockCardEntry[1],
+                  offset: +1,
+                };
             }
         }
 
