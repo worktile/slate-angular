@@ -1,4 +1,4 @@
-import { Editor, Node, Path, Point, Range, Transforms, Descendant, Element } from 'slate';
+import { Editor, Node, Path, Point, Range, Transforms } from 'slate';
 import {
     EDITOR_TO_ELEMENT,
     ELEMENT_TO_NODE,
@@ -18,10 +18,9 @@ import {
     isDOMElement,
     normalizeDOMPoint
 } from '../utils/dom';
-import { Injector, ViewContainerRef } from '@angular/core';
+import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
-import { SlaErrorData } from '../interfaces/error'
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
+import { SlaErrorData } from '../interfaces/error';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -255,6 +254,19 @@ export const AngularEditor = {
         const [node] = Editor.node(editor, point.path);
         const el = AngularEditor.toDOMNode(editor, node);
         let domPoint: DOMPoint | undefined;
+
+        // block card
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(el);
+        if (cardTargetAttr) {
+            if (point.offset === -1) {
+                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
+                return [cursorNode, 1];
+            } else {
+                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'right' });
+                return [cursorNode, 1];
+            }
+        }
+
         // If we're inside a void node, force the offset to 0, otherwise the zero
         // width spacing character will result in an incorrect offset of 1
         if (Editor.void(editor, { at: point })) {
@@ -425,13 +437,19 @@ export const AngularEditor = {
         let offset = 0;
 
         // block card
-        let cardTargetAttr = AngularEditor.getCardTargetAttribute(nearestNode);
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(nearestNode);
         if (cardTargetAttr) {
             const blockCardEntry = AngularEditor.toSlateCardEntry(editor, nearestNode);
             if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
-                return AngularEditor.start(editor, blockCardEntry[1]);
+                return {
+                  path: blockCardEntry[1],
+                  offset: -1,
+                };
             } else {
-                return AngularEditor.end(editor, blockCardEntry[1]);
+                return {
+                  path: blockCardEntry[1],
+                  offset: +1,
+                };
             }
         }
 
@@ -543,6 +561,15 @@ export const AngularEditor = {
         return node.parentElement.attributes['card-target'] || (node instanceof HTMLElement && node.attributes['card-target']);
     },
 
+    getCardCursorNode(editor: AngularEditor, blockCardNode: Node, options: {
+        direction: 'left' | 'right'
+    }) {
+        const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
+        return blockCardElement
+          .closest('.sla-block-card-element')
+          .querySelector(`[card-target="card-${options.direction}"]`);
+    },
+
     isCardLeft(node: DOMNode) {
         const cardTarget = AngularEditor.getCardTargetAttribute(node);
         return cardTarget && cardTarget.nodeValue === 'card-left';
@@ -553,7 +580,10 @@ export const AngularEditor = {
     },
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
-        const element = node.parentElement.closest('.sla-block-card-element').querySelector('[card-target="card-center"]').firstElementChild;
+        const element = node.parentElement
+            .closest('.sla-block-card-element')
+            .querySelector('[card-target="card-center"]')
+            .firstElementChild;
         const slateNode = AngularEditor.toSlateNode(editor, element);
         const path = AngularEditor.findPath(editor, slateNode);
         return [slateNode, path];
@@ -562,8 +592,7 @@ export const AngularEditor = {
     moveBlockCard(editor: AngularEditor, blockCardNode: Node, options: {
         direction: 'left' | 'right'
     }) {
-        const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
-        const cursorNode = blockCardElement.closest('.sla-block-card-element').querySelector(`[card-target="card-${options.direction}"]`);
+        const cursorNode = AngularEditor.getCardCursorNode(editor, blockCardNode, options);
         const domSelection = window.getSelection();
         domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
     }
