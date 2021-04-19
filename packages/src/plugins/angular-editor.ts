@@ -431,25 +431,43 @@ export const AngularEditor = {
      */
 
     toSlatePoint(editor: AngularEditor, domPoint: DOMPoint): Point {
+        const [domNode, domOffset] = domPoint;
         const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint);
         let parentNode = nearestNode.parentNode as DOMElement;
         let textNode: DOMElement | null = null;
         let offset = 0;
 
         // block card
-        const cardTargetAttr = AngularEditor.getCardTargetAttribute(nearestNode);
+        const cardTargetAttr = AngularEditor.getCardTargetAttribute(domNode);
         if (cardTargetAttr) {
-            const blockCardEntry = AngularEditor.toSlateCardEntry(editor, nearestNode);
-            if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
-                return {
-                  path: blockCardEntry[1],
-                  offset: -1,
-                };
-            } else {
-                return {
-                  path: blockCardEntry[1],
-                  offset: +1,
-                };
+            const domSelection = window.getSelection();
+            const isBackward = editor.selection && Range.isBackward(editor.selection);
+            const blockCardEntry = AngularEditor.toSlateCardEntry(editor, domNode) || AngularEditor.toSlateCardEntry(editor, nearestNode);
+            if (domSelection.isCollapsed) {
+                if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
+                    return { path: blockCardEntry[1], offset: -1 };
+                }
+                else {
+                    return { path: blockCardEntry[1], offset: +1 };
+                }
+            }
+            // forward
+            // and to the end of previous node
+            if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
+                return AngularEditor.end(editor, Path.previous(blockCardEntry[1]));
+            }
+            // to the of current node
+            if ((AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) || AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) && !isBackward) {
+                return AngularEditor.end(editor, blockCardEntry[1]);
+            }
+            // backward
+            // and to the start of next node
+            if (AngularEditor.isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
+                return AngularEditor.start(editor, Path.next(blockCardEntry[1]));
+            }
+            // and to the start of current node
+            if ((AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) || AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) && isBackward) {
+                return AngularEditor.start(editor, blockCardEntry[1]);
             }
         }
 
@@ -562,12 +580,12 @@ export const AngularEditor = {
     },
 
     getCardCursorNode(editor: AngularEditor, blockCardNode: Node, options: {
-        direction: 'left' | 'right'
+        direction: 'left' | 'right' | 'center'
     }) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
         return blockCardElement
-          .closest('.sla-block-card-element')
-          .querySelector(`[card-target="card-${options.direction}"]`);
+            .closest('.sla-block-card-element')
+            .querySelector(`[card-target="card-${options.direction}"]`);
     },
 
     isCardLeft(node: DOMNode) {
@@ -579,10 +597,17 @@ export const AngularEditor = {
         return targetAttr && targetAttr.nodeValue === 'card-left';
     },
 
+    isCardRightByTargetAttr(targetAttr: any) {
+        return targetAttr && targetAttr.nodeValue === 'card-right';
+    },
+
+    isCardCenterByTargetAttr(targetAttr: any) {
+        return targetAttr && targetAttr.nodeValue === 'card-center';
+    },
+
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
         const element = node.parentElement
-            .closest('.sla-block-card-element')
-            .querySelector('[card-target="card-center"]')
+            .closest('.sla-block-card-element')?.querySelector('[card-target="card-center"]')
             .firstElementChild;
         const slateNode = AngularEditor.toSlateNode(editor, element);
         const path = AngularEditor.findPath(editor, slateNode);

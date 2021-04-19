@@ -275,7 +275,6 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 hasDomSelectionInEditor = true;
             }
 
-
             // If the DOM selection is in the editor and the editor selection is already correct, we're done.
             if (
                 hasDomSelection &&
@@ -361,13 +360,10 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 }
 
                 const { anchorNode, focusNode } = domSelection;
-                const anchorNodeSelectable = hasEditableTarget(this.editor, anchorNode) || isTargetInsideVoid(this.editor, anchorNode);
-                const focusNodeSelectable = hasEditableTarget(this.editor, focusNode) || isTargetInsideVoid(this.editor, focusNode);
+                const anchorNodeSelectable = hasEditableTarget(this.editor, anchorNode) || AngularEditor.hasCardTarget(anchorNode) || isTargetInsideVoid(this.editor, anchorNode);
+                const focusNodeSelectable = hasEditableTarget(this.editor, focusNode) || AngularEditor.hasCardTarget(focusNode) || isTargetInsideVoid(this.editor, focusNode);
                 if (anchorNodeSelectable && focusNodeSelectable) {
                     const range = AngularEditor.toSlateRange(this.editor, domSelection);
-                    if (!hasStringTarget(domSelection)) {
-                        Transforms.deselect(this.editor);
-                    }
                     Transforms.select(this.editor, range);
                 } else {
                     Transforms.deselect(this.editor);
@@ -488,7 +484,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                             // block card
                             const domSelection = window.getSelection();
                             const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
-                            AngularEditor.hasCardTarget(domSelection.focusNode);
+                                AngularEditor.hasCardTarget(domSelection.focusNode);
                             if (isBlockCard) {
                                 return;
                             }
@@ -951,7 +947,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                 // block card
                 const domSelection = window.getSelection();
                 const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
-                AngularEditor.hasCardTarget(domSelection.focusNode);
+                    AngularEditor.hasCardTarget(domSelection.focusNode);
                 if (isBlockCard) {
                     return;
                 }
