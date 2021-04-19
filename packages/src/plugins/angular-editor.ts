@@ -258,27 +258,13 @@ export const AngularEditor = {
         // block card
         const cardTargetAttr = AngularEditor.getCardTargetAttribute(el);
         if (cardTargetAttr) {
-            const cardCenter = el.parentElement;
-            let cardNode;
-
             if (point.offset === -1) {
-                cardNode = cardCenter.previousElementSibling;
+                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
+                return [cursorNode, 0];
             } else {
-                cardNode = cardCenter.nextElementSibling;
+                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'right' });
+                return [cursorNode, 0];
             }
-
-            const domNode = cardNode.childNodes[0] as HTMLElement;
-            domPoint = [domNode, 0];
-
-            if (!domPoint) {
-              throw new Error(
-                `Cannot resolve a DOM point from Slate point: ${JSON.stringify(
-                  point
-                )}`
-              );
-            }
-
-            return domPoint;
         }
 
         // If we're inside a void node, force the offset to 0, otherwise the zero
@@ -575,6 +561,16 @@ export const AngularEditor = {
         return node.parentElement.attributes['card-target'] || (node instanceof HTMLElement && node.attributes['card-target']);
     },
 
+    getCardCursorNode(editor: AngularEditor, blockCardNode: Node, options: {
+        direction: 'left' | 'right'
+    }) {
+        const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
+        const cursorNode = blockCardElement
+          .closest('.sla-block-card-element')
+          .querySelector(`[card-target="card-${options.direction}"]`);
+        return cursorNode;
+    },
+
     isCardLeft(node: DOMNode) {
         const cardTarget = AngularEditor.getCardTargetAttribute(node);
         return cardTarget && cardTarget.nodeValue === 'card-left';
@@ -585,7 +581,10 @@ export const AngularEditor = {
     },
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
-        const element = node.parentElement.closest('.sla-block-card-element').querySelector('[card-target="card-center"]').firstElementChild;
+        const element = node.parentElement
+            .closest('.sla-block-card-element')
+            .querySelector('[card-target="card-center"]')
+            .firstElementChild;
         const slateNode = AngularEditor.toSlateNode(editor, element);
         const path = AngularEditor.findPath(editor, slateNode);
         return [slateNode, path];
@@ -594,8 +593,7 @@ export const AngularEditor = {
     moveBlockCard(editor: AngularEditor, blockCardNode: Node, options: {
         direction: 'left' | 'right'
     }) {
-        const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
-        const cursorNode = blockCardElement.closest('.sla-block-card-element').querySelector(`[card-target="card-${options.direction}"]`);
+        const cursorNode = AngularEditor.getCardCursorNode(editor, blockCardNode, options);
         const domSelection = window.getSelection();
         domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
     }
