@@ -583,11 +583,7 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-
-            // block card
-            const domSelection = window.getSelection();
-            const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) || AngularEditor.hasCardTarget(domSelection.focusNode);
-            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data && !isBlockCard) {
+            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data) {
                 preventInsertFromComposition(event);
                 Editor.insertText(this.editor, event.data);
             }
@@ -601,17 +597,17 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
     private onDOMCompositionStart(event: CompositionEvent) {
         const { selection } = this.editor;
 
-        // 当光标是块级光标时，输入中文前需要强制移动选区
         const domSelection = window.getSelection();
         const cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
         const cardTarget = domSelection.anchorNode;
 
         if (selection) {
+            // solve the problem of cross node Chinese input
             if (Range.isExpanded(selection)) {
                 Editor.deleteFragment(this.editor);
                 this.forceFlush();
             }
-
+            // 当光标是块级光标时，输入中文前需要强制移动选区
             if (cardTargetAttr) {
                 const cardEntry = AngularEditor.toSlateCardEntry(this.editor, cardTarget);
                 const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
@@ -951,6 +947,14 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     Editor.deleteFragment(this.editor);
                 }
                 preventInsertFromComposition(event.nativeEvent);
+
+                // block card
+                const domSelection = window.getSelection();
+                const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
+                AngularEditor.hasCardTarget(domSelection.focusNode);
+                if (isBlockCard) {
+                    return;
+                }
                 Editor.insertText(this.editor, text);
             } catch (error) {
                 this.editor.onError({ code: SlaErrorCode.ToNativeSelectionError, nativeError: error });
