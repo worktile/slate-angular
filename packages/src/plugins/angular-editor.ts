@@ -260,10 +260,10 @@ export const AngularEditor = {
         if (cardTargetAttr) {
             if (point.offset === -1) {
                 const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
-                return [cursorNode, 0];
+                return [cursorNode, 1];
             } else {
                 const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'right' });
-                return [cursorNode, 0];
+                return [cursorNode, 1];
             }
         }
 
@@ -565,10 +565,9 @@ export const AngularEditor = {
         direction: 'left' | 'right'
     }) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
-        const cursorNode = blockCardElement
+        return blockCardElement
           .closest('.sla-block-card-element')
           .querySelector(`[card-target="card-${options.direction}"]`);
-        return cursorNode;
     },
 
     isCardLeft(node: DOMNode) {
