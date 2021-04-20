@@ -431,7 +431,7 @@ export const AngularEditor = {
      */
 
     toSlatePoint(editor: AngularEditor, domPoint: DOMPoint): Point {
-        const [domNode, domOffset] = domPoint;
+        const [domNode] = domPoint;
         const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint);
         let parentNode = nearestNode.parentNode as DOMElement;
         let textNode: DOMElement | null = null;
@@ -583,9 +583,10 @@ export const AngularEditor = {
         direction: 'left' | 'right' | 'center'
     }) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
-        return blockCardElement
-            .closest('.sla-block-card-element')
-            .querySelector(`[card-target="card-${options.direction}"]`);
+        const cardCenter = blockCardElement.parentElement;
+        return options.direction === 'left'
+          ? cardCenter.previousElementSibling
+          : cardCenter.nextElementSibling;
     },
 
     isCardLeft(node: DOMNode) {
