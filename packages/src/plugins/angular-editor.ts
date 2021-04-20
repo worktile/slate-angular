@@ -443,31 +443,44 @@ export const AngularEditor = {
             const domSelection = window.getSelection();
             const isBackward = editor.selection && Range.isBackward(editor.selection);
             const blockCardEntry = AngularEditor.toSlateCardEntry(editor, domNode) || AngularEditor.toSlateCardEntry(editor, nearestNode);
+            const [, blockPath] = blockCardEntry;
             if (domSelection.isCollapsed) {
                 if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
-                    return { path: blockCardEntry[1], offset: -1 };
+                    return { path: blockPath, offset: -1 };
                 }
                 else {
-                    return { path: blockCardEntry[1], offset: +1 };
+                    return { path: blockPath, offset: +1 };
                 }
             }
             // forward
             // and to the end of previous node
             if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
-                return AngularEditor.end(editor, Path.previous(blockCardEntry[1]));
+                const endPath =
+                  blockPath[blockPath.length - 1] <= 0
+                    ? blockPath
+                    : Path.previous(blockPath);
+                return AngularEditor.end(editor, endPath);
             }
             // to the of current node
-            if ((AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) || AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) && !isBackward) {
-                return AngularEditor.end(editor, blockCardEntry[1]);
+            if (
+                (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
+                AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) &&
+                !isBackward
+            ) {
+                return AngularEditor.end(editor, blockPath);
             }
             // backward
             // and to the start of next node
             if (AngularEditor.isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
-                return AngularEditor.start(editor, Path.next(blockCardEntry[1]));
+                return AngularEditor.start(editor, Path.next(blockPath));
             }
             // and to the start of current node
-            if ((AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) || AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) && isBackward) {
-                return AngularEditor.start(editor, blockCardEntry[1]);
+            if (
+                (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
+                AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) &&
+                isBackward
+            ) {
+                return AngularEditor.start(editor, blockPath);
             }
         }
 
