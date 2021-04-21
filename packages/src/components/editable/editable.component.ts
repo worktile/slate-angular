@@ -475,12 +475,12 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
+                        if (editor.selection && !Range.isCollapsed(editor.selection)) {
+                            Editor.deleteFragment(editor);
+                        }
                         if (data instanceof DataTransfer) {
                             AngularEditor.insertData(editor, data);
                         } else if (typeof data === 'string') {
-                            if (editor.selection && !Range.isCollapsed(editor.selection)) {
-                                Editor.deleteFragment(editor);
-                            }
                             // block card
                             const domSelection = window.getSelection();
                             const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
@@ -922,6 +922,9 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
             hasEditableTarget(this.editor, event.target)
         ) {
             event.preventDefault();
+            if (this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
+                Editor.deleteFragment(this.editor);
+            }
             AngularEditor.insertData(this.editor, event.clipboardData);
         }
     }
