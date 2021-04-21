@@ -1,11 +1,10 @@
-import { Editor, Node, Path, Operation, Transforms, Range, Text, Element, NodeEntry, Descendant } from 'slate';
+import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant } from 'slate';
 import { EDITOR_TO_ON_CHANGE } from '../utils/weak-maps';
 import { isDOMText, getPlainText } from '../utils/dom';
 import { AngularEditor } from './angular-editor';
-import { Key } from '../utils/key';
 import { SlaErrorData } from '../interfaces/error';
 
-export const withAngular = <T extends Editor>(editor: T) => {
+export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
     const e = editor as T & AngularEditor;
     const { apply, onChange } = e;
 
@@ -93,7 +92,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
         const stringObj = JSON.stringify(fragment);
         const encoded = window.btoa(encodeURIComponent(stringObj));
         attach.setAttribute('data-slate-fragment', encoded);
-        data.setData('application/x-slate-fragment', encoded);
+        data.setData(`application/${clipboardFormatKey}`, encoded);
 
         // Add the content to a <div> so that we can get its inner HTML.
         const div = document.createElement('div');
@@ -106,7 +105,7 @@ export const withAngular = <T extends Editor>(editor: T) => {
     },
 
     e.insertData = (data: DataTransfer) => {
-        const fragment = data.getData('application/x-slate-fragment');
+        const fragment = data.getData(`application/${clipboardFormatKey}`);
 
         if (fragment) {
             const decoded = decodeURIComponent(window.atob(fragment));
