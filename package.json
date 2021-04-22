@@ -1,6 +1,6 @@
 {
   "name": "slate-angular",
-  "version": "0.53.1",
+  "version": "0.53.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
