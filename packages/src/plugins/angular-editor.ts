@@ -449,7 +449,7 @@ export const AngularEditor = {
                     return { path: blockPath, offset: -1 };
                 }
                 else {
-                    return { path: blockPath, offset: +1 };
+                    return { path: blockPath, offset: -2 };
                 }
             }
             // forward
