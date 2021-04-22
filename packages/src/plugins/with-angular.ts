@@ -1,4 +1,4 @@
-import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant } from 'slate';
+import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, Path } from 'slate';
 import { EDITOR_TO_ON_CHANGE } from '../utils/weak-maps';
 import { isDOMText, getPlainText } from '../utils/dom';
 import { AngularEditor } from './angular-editor';
@@ -204,13 +204,15 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
               Transforms.mergeNodes(editor, { at: path.concat(n), voids: true })
               n--
             } else if (prev.text === '') {
+              const isFocusedPath = Range.isCollapsed(editor.selection) && Path.equals(editor.selection.anchor.path, path.concat(n - 1));
               Transforms.removeNodes(editor, {
                 at: path.concat(n - 1),
                 voids: true,
               })
               // hook
               // adjust cursor location when empty text is first child of node #WIK-3631
-              if (prev === node.children[0]) {
+              // ensure current selection in the text #WIK-3762
+              if (prev === node.children[0] && isFocusedPath) {
                 Transforms.move(editor);
               }
               n--
