@@ -27,7 +27,7 @@ export class DemoRichtextComponent implements OnInit {
 
     valueChange(event) {
         if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
-            console.log(`anchor: ${JSON.stringify(this.editor.selection.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection.focus)}`);
+            console.log(`anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`);
         }
     }
 

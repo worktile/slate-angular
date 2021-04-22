@@ -359,10 +359,17 @@ export class SlaEditableComponent implements OnInit, OnDestroy {
                     return Transforms.deselect(this.editor);
                 }
 
+                const editorElement = EDITOR_TO_ELEMENT.get(this.editor);
+                const hasDomSelectionInEditor = editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode);
+                if (!hasDomSelectionInEditor) {
+                    Transforms.deselect(this.editor);
+                    return;
+                }
+
                 // try to get the selection directly, because some terrible case can be normalize for normalizeDOMPoint
                 // for example, double-click the last cell of the table to select a non-editable DOM
                 const range = AngularEditor.toSlateRange(this.editor, domSelection);
-                if (this.editor.selection && Range.equals(range, this.editor.selection)) {
+                if (this.editor.selection && Range.equals(range, this.editor.selection) && !hasStringTarget(domSelection)) {
                     // force adjust DOMSelection
                     this.toNativeSelection();
                 } else {
