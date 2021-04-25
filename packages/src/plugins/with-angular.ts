@@ -200,21 +200,21 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         } else {
           // Merge adjacent text nodes that are empty or match.
           if (prev != null && Text.isText(prev)) {
-            if (Text.equals(child, prev, { loose: true })) {
-              Transforms.mergeNodes(editor, { at: path.concat(n), voids: true })
-              n--
-            } else if (prev.text === '') {
-              const isFocusedPath = Range.isCollapsed(editor.selection) && Path.equals(editor.selection.anchor.path, path.concat(n - 1));
+            // adjust logic: first remove empty text to avoid merge empty text #WIK-3805
+            if (prev.text === '') {
+              // adjust logic: adjust cursor location when empty text is first child of node #WIK-3631
+              // ensure current selection in the text #WIK-3762
+              const prevFocused = Range.isCollapsed(editor.selection) && Path.equals(editor.selection.anchor.path, path.concat(n - 1));
+              if (prev === node.children[0] && prevFocused) {
+                Transforms.select(editor, Editor.start(editor, path.concat(n)));
+              }
               Transforms.removeNodes(editor, {
                 at: path.concat(n - 1),
                 voids: true,
               })
-              // hook
-              // adjust cursor location when empty text is first child of node #WIK-3631
-              // ensure current selection in the text #WIK-3762
-              if (prev === node.children[0] && isFocusedPath) {
-                Transforms.move(editor);
-              }
+              n--
+            } else if (Text.equals(child, prev, { loose: true })) {
+              Transforms.mergeNodes(editor, { at: path.concat(n), voids: true })
               n--
             } else if (isLast && child.text === '') {
               Transforms.removeNodes(editor, {
