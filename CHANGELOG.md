@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * **core:** avoid merge the empty text #WIK-3805 ([33b7ee2](https://github.com/worktile/slate-angular/commit/33b7ee2884d7cbb79d50a63498c29ef99a456271)), closes [#WIK-3805](https://github.com/worktile/slate-angular/issues/WIK-3805)
-* **core:** avoid merge the empty text #WIK-3805 ([5b81b66](https://github.com/worktile/slate-angular/commit/5b81b667494dde8ff2af7dad9d0e21297234fdd1)), closes [#WIK-3805](https://github.com/worktile/slate-angular/issues/WIK-3805)
 
 ### [0.53.4](https://github.com/worktile/slate-angular/compare/v0.53.3...v0.53.4) (2021-04-25)
 
