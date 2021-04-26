@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.53.5](https://github.com/worktile/slate-angular/compare/v0.53.4...v0.53.5) (2021-04-25)
+
+
+### Bug Fixes
+
+* **core:** avoid merge the empty text #WIK-3805 ([33b7ee2](https://github.com/worktile/slate-angular/commit/33b7ee2884d7cbb79d50a63498c29ef99a456271)), closes [#WIK-3805](https://github.com/worktile/slate-angular/issues/WIK-3805)
+
 ### [0.53.4](https://github.com/worktile/slate-angular/compare/v0.53.3...v0.53.4) (2021-04-25)
 
 ### [0.53.3](https://github.com/worktile/slate-angular/compare/v0.53.2...v0.53.3) (2021-04-22)
