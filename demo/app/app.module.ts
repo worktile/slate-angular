@@ -7,8 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { SlateModule } from 'packages/src/slate.module';
+import { SlateModule } from 'slate-angular';
 import { DemoElementImageComponent } from './components/image/image-component';
+import { DemoMarkTextComponent } from './components/text/text.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +17,8 @@ import { DemoElementImageComponent } from './components/image/image-component';
         DemoRichtextComponent,
         DemoMarkdownShortcutsComponent,
         DemoHugeDocumentComponent,
-        DemoElementImageComponent
+        DemoElementImageComponent,
+        DemoMarkTextComponent
     ],
     imports: [
         BrowserModule,
@@ -25,6 +27,7 @@ import { DemoElementImageComponent } from './components/image/image-component';
         FormsModule,
         SlateModule
     ],
+    entryComponents: [DemoMarkTextComponent],
     providers: [
     ],
     bootstrap: [AppComponent]

@@ -1,38 +1,16 @@
 <div class="demo-rich-editor-wrapper">
-    <sla-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value" (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [renderMark]="renderMark">
-        <ng-template #table let-context="context">
-            <div *ngIf="context.element.type === 'table'" slaElement [context]="context">
-                <table>
-                    <tbody>
-                        <ng-template
-                            [ngTemplateOutlet]="context.childrenTemplate"
-                            [ngTemplateOutletContext]="context"
-                        ></ng-template>
-                    </tbody>
-                </table>
-            </div>
-            <tr *ngIf="context.element.type === 'table-row'" slaElement [context]="context">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
-            </tr>
-            <td *ngIf="context.element.type === 'table-cell'" slaElement [context]="context">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
-            </td>
-        </ng-template>
-        <ng-template #image let-context="context" >
-            <demo-element-image [context]="context">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
-            </demo-element-image>
-        </ng-template>
-        <ng-template #heading let-context="context">
-            <h1 *ngIf="context.element.type === 'heading-one'">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+    <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
+        (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [renderText]="renderText">
+        <ng-template #heading let-context="context" let-viewContext="viewContext" let-viewContext="viewContext">
+            <h1 *ngIf="context.element.type === 'heading-one'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
             </h1>
-            <h2 *ngIf="context.element.type === 'heading-two'" slaElement [context]="context">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            <h2 *ngIf="context.element.type === 'heading-two'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
             </h2>
-            <h3 *ngIf="context.element.type === 'heading-three'" slaElement [context]="context">
-                <sla-nest-children-entry [children]="context.children"></sla-nest-children-entry>
+            <h3 *ngIf="context.element.type === 'heading-three'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
             </h3>
         </ng-template>
-    </sla-editable>
+        <ng-template #blockquote let-context="context" let-viewContext="viewContext" let-viewContext="viewContext">
+            <blockquote slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></blockquote>
+        </ng-template>
+    </slate-editable>
 </div>

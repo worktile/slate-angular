@@ -1,0 +1,14 @@
+<ng-template #stringTemplate let-context="context" let-viewContext="viewContext">
+    <span data-slate-string="true">{{ context.text }}</span>
+</ng-template>
+<ng-template #compatStringTemplate let-context="context" let-viewContext="viewContext">
+    <!-- Compatible with Chinese input in Chrome with \n -->
+    <span data-slate-string="true">{{ context.text }}<span data-slate-zero-width>{{'\uFEFF'}}</span></span>
+</ng-template>
+<ng-template #emptyStringTemplate let-context="context" let-viewContext="viewContext">
+    <span attr.data-slate-zero-width="z" attr.data-slate-length="{{ context.elementStringLength }}">{{ '\uFEFF' }}</span>
+</ng-template>
+<ng-template #lineBreakEmptyStringTemplate let-context="context" let-viewContext="viewContext">
+    <span data-slate-zero-width="n" attr.data-slate-length="{{ context.elementStringLength }}">{{ '\uFEFF'
+        }}<br /></span>
+</ng-template>

@@ -1,0 +1,61 @@
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren } from "@angular/core";
+import { Text } from 'slate';
+import { SlateLeafContext, SlateTextContext, SlateViewContext } from "../../interfaces/view-context";
+import { SlateViewContainer } from "../../interfaces/view-container";
+import { SlateLeafComponent } from "../leaf/leaf.component";
+import { isDecoratorRangeListEqual } from "../../utils/range-list";
+
+@Component({
+    selector: 'slate-leaves',
+    template: `<slate-leaf
+                    [context]="context" [viewContext]="viewContext"
+                    [viewContext]="viewContext"
+                    *ngFor="let context of leafContexts; trackBy: trackBy"></slate-leaf>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class SlateLeavesComponent extends SlateViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
+    initialized = false;
+    leafContexts: SlateLeafContext[];
+    leaves: Text[];
+
+    @Input() context: SlateTextContext;
+
+    @ViewChildren(SlateLeafComponent, { read: SlateLeafComponent })
+    childrenComponent: QueryList<SlateLeafComponent>;
+
+    ngOnInit() {
+        this.leaves = Text.decorations(this.context.text, this.context.decorations);
+        this.leafContexts = this.getLeafCotexts();
+        this.initialized = true;
+    }
+
+    getLeafCotexts() {
+        return this.leaves.map((leaf, index) => {
+            return {
+                leaf,
+                text: this.context.text,
+                parent: this.context.parent,
+                index,
+                isLast: this.context.isLast && index === this.leaves.length - 1
+            }
+        });
+    }
+
+    ngOnChanges(simpleChanges: SimpleChanges) {
+        if (!this.initialized) {
+            return;
+        }
+        const context = simpleChanges['context'];
+        const previousValue: SlateTextContext = context.previousValue;
+        const currentValue: SlateTextContext = context.currentValue;
+        if (previousValue.text !== currentValue.text || !isDecoratorRangeListEqual(previousValue.decorations, currentValue.decorations)) {
+            this.leaves = Text.decorations(this.context.text, this.context.decorations);
+        }
+        this.leafContexts = this.getLeafCotexts();
+    }
+
+    trackBy(index, item) {
+        return index;
+    }
+}

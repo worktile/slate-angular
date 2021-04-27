@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import faker from 'faker';
 import { createEditor } from 'slate';
-import { withAngular } from 'packages/src/public-api';
+import { withAngular } from 'slate-angular';
 
 @Component({
     selector: 'demo-huge-document',

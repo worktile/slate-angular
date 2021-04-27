@@ -23,10 +23,8 @@
         "allowSyntheticDefaultImports": true,
         "paths": {
             "slate-angular": [
-                "packages/src/public-api"
-            ],
-            "slate-angular/*": [
-                "packages/src/*"
+                "dist",
+                "dist/slate-angular"
             ]
         }
     },

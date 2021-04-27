@@ -1,7 +1,8 @@
 import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
-import { createEditor, Text as SlateText, Editor, Operation } from 'slate';
+import { createEditor, Text as SlateText, Editor, Element } from 'slate';
 import { withHistory } from 'slate-history';
-import { withAngular } from 'packages/src/public-api';
+import { withAngular } from 'slate-angular';
+import { DemoMarkTextComponent } from '../components/text/text.component';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
@@ -17,6 +18,9 @@ export class DemoRichtextComponent implements OnInit {
     @ViewChild('heading', { read: TemplateRef, static: true })
     headingTemplate: TemplateRef<any>;
 
+    @ViewChild('blockquote', { read: TemplateRef, static: true })
+    blockquoteTemplate: TemplateRef<any>;
+
     editor = withHistory(withAngular(createEditor()));
 
     ngOnInit(): void {
@@ -28,45 +32,24 @@ export class DemoRichtextComponent implements OnInit {
     valueChange(event) {
         if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
             console.log(`anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`);
+            console.log('operations: ', this.editor.operations);
         }
     }
 
-    renderElement = (element: any) => {
-        if (element.type.startsWith('heading')) {
+    renderElement = (element: Element) => {
+        if ((element.type as string).startsWith('heading')) {
             return this.headingTemplate;
+        }
+        if (element.type === 'block-quote') {
+            return this.blockquoteTemplate;
         }
         return null;
     }
 
-    renderMark = (text: SlateText) => {
-        let rootDOM;
-        let deepestDOM;
-        if (text.bold) {
-            const strong = document.createElement('strong');
-            rootDOM = strong;
-            deepestDOM = strong;
+    renderText = (text: SlateText) => {
+        if (text.bold || text.italic || text.code) {
+            return DemoMarkTextComponent;
         }
-        if (text.italic) {
-            const em = document.createElement('em');
-            if (rootDOM) {
-                em.appendChild(rootDOM);
-            }
-            if (!deepestDOM) {
-                deepestDOM = rootDOM || em;
-            }
-            rootDOM = em;
-        }
-        if (text.code) {
-            const code = document.createElement('code');
-            if (rootDOM) {
-                code.appendChild(rootDOM);
-            }
-            if (!deepestDOM) {
-                deepestDOM = rootDOM || code;
-            }
-            rootDOM = code;
-        }
-        return { rootDOM, deepestDOM };
     }
 
     isActive(type: string) {
@@ -123,5 +106,9 @@ const initialValue = [
     {
         type: 'paragraph',
         children: [{ text: 'Try it out for yourself!' }]
+    },
+    {
+        type: 'paragraph',
+        children: [{ text: '' }]
     }
 ];

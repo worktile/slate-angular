@@ -1,9 +1,30 @@
-.demo-slate-angular-editor {
-    min-height: 350px;
+.slate-editable-container {
+    border: 1px solid #eee;
+    border-radius: 3px;
+    padding: 32px;
 
-    .sla-editable-container {
-        border: 1px solid #eee;
-        border-radius: 3px;
-        padding: 32px;
+    .code-line {
+        background-color: rgba($color: #000000, $alpha: 0.06);
+        border-radius: 2px;
+        border: 1px solid rgba($color: #000000, $alpha: 0.08);
+        padding: 0 2px;
+        margin: 0 1px;
+    }
+
+    blockquote {
+        margin: 0;
+        margin-left: 0;
+        margin-right: 0;
+        color: #888;
+        padding-left: 10px !important;
+        border-left: 4px solid #eee;
+    }
+    
+    h1,h2,h3 {
+        margin: 0px;
+    }
+
+    &>[data-slate-node="element"] {
+        margin-bottom: 8px;
     }
 }

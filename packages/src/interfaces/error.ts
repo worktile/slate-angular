@@ -1,10 +1,13 @@
-import { SlaErrorDataType, SlaErrorCode } from '../constants'
-import { Point } from 'slate'
-import { DOMElement, DOMRange, DOMStaticRange, DOMSelection } from '../utils/dom'
+export enum SlateErrorCode {
+    ToNativeSelectionError = 2100,
+    ToSlateSelectionError = 2101,
+    OnDOMBeforeInputError = 2102,
+    OnSyntheticBeforeInputError = 2103,
+    OnDOMKeydownError = 2104
+}
 
-
-export interface SlaErrorData {
-    code?: SlaErrorCode | number;
-    codeName?: string;
+export interface SlateError {
+    code?: SlateErrorCode | number;
+    name?: string;
     nativeError?: Error
 }

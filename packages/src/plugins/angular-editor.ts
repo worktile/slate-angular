@@ -1,4 +1,4 @@
-import { Editor, Node, Path, Point, Range, Transforms } from 'slate';
+import { Editor, Node, Path, Point, Range, Transforms, Element } from 'slate';
 import {
     EDITOR_TO_ELEMENT,
     ELEMENT_TO_NODE,
@@ -6,7 +6,8 @@ import {
     IS_READONLY,
     NODE_TO_INDEX,
     NODE_TO_PARENT,
-    NODE_TO_ELEMENT
+    NODE_TO_ELEMENT,
+    NODE_TO_KEY
 } from '../utils/weak-maps';
 import {
     DOMElement,
@@ -20,7 +21,8 @@ import {
 } from '../utils/dom';
 import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
-import { SlaErrorData } from '../interfaces/error';
+import { SlateError } from '../interfaces/error'
+import { Key } from '../utils/key';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -34,31 +36,32 @@ export interface AngularEditor extends Editor {
     equalsNodeKey: (node: Node, another: Node) => boolean;
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
-    onError: (errorData: SlaErrorData) => void;
+    onError: (errorData: SlateError) => void;
 }
 
 export const AngularEditor = {
     ...Editor,
+
     /**
      * Find a key for a Slate node.
      */
 
-    // findKey(editor: AngularEditor, node: Node): Key {
-    //     let key = NODE_TO_KEY.get(node);
+    findKey(editor: AngularEditor, node: Node): Key {
+        let key = NODE_TO_KEY.get(node);
 
-    //     if (!key) {
-    //         key = new Key();
-    //         NODE_TO_KEY.set(node, key);
-    //     }
+        if (!key) {
+            key = new Key();
+            NODE_TO_KEY.set(node, key);
+        }
 
-    //     return key;
-    // },
+        return key;
+    },
 
     /**
      * handle editor error.
      */
 
-    onError(errorData: SlaErrorData) {
+    onError(errorData: SlateError) {
         if (errorData.nativeError) {
             throw errorData.nativeError;
         }
@@ -584,6 +587,10 @@ export const AngularEditor = {
         return { anchor, focus };
     },
 
+    isLeafBlock(editor: AngularEditor, node: Node): boolean {
+        return Element.isElement(node) && !editor.isInline(node) && Editor.hasInlines(editor, node)
+    },
+
     hasCardTarget(node: DOMNode) {
         return node && (node.parentElement.hasAttribute('card-target') || (node instanceof HTMLElement && node.hasAttribute('card-target')));
     },
@@ -621,7 +628,7 @@ export const AngularEditor = {
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
         const element = node.parentElement
-            .closest('.sla-block-card-element')?.querySelector('[card-target="card-center"]')
+            .closest('.slate-block-card')?.querySelector('[card-target="card-center"]')
             .firstElementChild;
         const slateNode = AngularEditor.toSlateNode(editor, element);
         const path = AngularEditor.findPath(editor, slateNode);

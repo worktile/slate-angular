@@ -1,9 +1,9 @@
 import { ViewChild, Component } from '@angular/core';
 import { withAngular } from '../with-angular';
 import { createEditor, Transforms } from 'slate';
-import { SlaEditableComponent } from '../../components/editable/editable.component';
+import { SlateEditableComponent } from '../../components/editable/editable.component';
 import { async, TestBed, ComponentFixture, tick, fakeAsync, flush } from '@angular/core/testing';
-import { SlateModule } from '../../slate.module';
+import { SlateModule } from '../../module';
 import { AngularEditor } from '../angular-editor';
 import { FormsModule } from '@angular/forms';
 
@@ -67,12 +67,12 @@ describe('AngularEditor', () => {
 @Component({
     selector: 'sla-core-slate',
     template: `
-        <sla-editable
+        <slate-editable
             class="demo-slate-angular-editor"
             [editor]="editor"
             [(ngModel)]="value"
         >
-        </sla-editable>
+        </slate-editable>
     `
 })
 class SlateCoreComponent {
@@ -85,11 +85,11 @@ class SlateCoreComponent {
         }
     ];
 
-    @ViewChild(SlaEditableComponent, { static: true })
-    slaEditableComponent: SlaEditableComponent;
+    @ViewChild(SlateEditableComponent, { static: true })
+    slaEditableComponent: SlateEditableComponent;
 
-    @ViewChild(SlaEditableComponent, { static: true })
-    editableComponent: SlaEditableComponent;
+    @ViewChild(SlateEditableComponent, { static: true })
+    editableComponent: SlateEditableComponent;
 
     constructor() {}
 }

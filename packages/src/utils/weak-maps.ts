@@ -1,6 +1,6 @@
 import { Node, Ancestor, Editor } from 'slate';
-import { ViewNode } from '../interfaces/view-node';
-import { SlaComponentBase } from '../core/component.base';
+import { Key } from './key';
+import { SlateElementComponentBase } from '../interfaces/view-base';
 
 /**
  * Two weak maps that allow us rebuild a path given a node. They are populated
@@ -18,9 +18,10 @@ export const NODE_TO_PARENT: WeakMap<Node, Ancestor> = new WeakMap();
 export const EDITOR_TO_ELEMENT: WeakMap<Editor, HTMLElement> = new WeakMap();
 export const EDITOR_TO_PLACEHOLDER: WeakMap<Editor, string> = new WeakMap();
 export const ELEMENT_TO_NODE: WeakMap<HTMLElement, Node> = new WeakMap();
-// export const KEY_TO_ELEMENT: WeakMap<Key, HTMLElement> = new WeakMap();
+// Deprecated
+export const KEY_TO_ELEMENT: WeakMap<Key, HTMLElement> = new WeakMap();
 export const NODE_TO_ELEMENT: WeakMap<Node, HTMLElement> = new WeakMap();
-// export const NODE_TO_KEY: WeakMap<Node, Key> = new WeakMap();
+export const NODE_TO_KEY: WeakMap<Node, Key> = new WeakMap();
 
 /**
  * Weak maps for storing editor-related state.
@@ -37,7 +38,7 @@ export const IS_CLICKING: WeakMap<Editor, boolean> = new WeakMap();
 
 export const EDITOR_TO_ON_CHANGE = new WeakMap<Editor, () => void>();
 
-export const NODE_TO_VIEWNODE = new WeakMap<Node, ViewNode>();
+// export const NODE_TO_VIEWNODE = new WeakMap<Node, ViewNode>();
 
 /**
  * Symbols.
@@ -48,4 +49,4 @@ export const PLACEHOLDER_SYMBOL = (Symbol('placeholder') as unknown) as string;
 /**
  * Weak map for associating the html element with the component.
  */
-export const ELEMENT_TO_COMPONENT: WeakMap<Node, SlaComponentBase> = new WeakMap();
+export const ELEMENT_TO_COMPONENT: WeakMap<Node, SlateElementComponentBase> = new WeakMap();
