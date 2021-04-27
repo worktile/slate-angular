@@ -2,7 +2,7 @@ import { ChangeDetectorRef, ElementRef, Input, OnDestroy, OnInit, TemplateRef } 
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./view-context";
-import { Element } from 'slate';
+import { Element, Range } from 'slate';
 import { ComponentType } from "@angular/cdk/portal";
 
 export type ViewType = TemplateRef<any> | ComponentType<any>;
@@ -10,28 +10,42 @@ export type ViewType = TemplateRef<any> | ComponentType<any>;
 /**
  * template context or component base class
  */
-export interface SlateViewBase<T> {
+export interface SlateViewBase<T, K extends AngularEditor = AngularEditor> {
     context: T;
-    viewContext: SlateViewContext;
+    viewContext: SlateViewContext<K>;
+}
+
+export interface BeforeContextChange<T> {
+    beforeContextChange: (value: T) => void;
+}
+
+function hasBeforeContextChange<T>(value): value is BeforeContextChange<T> {
+    if (value.beforeContextChange) {
+        return true;
+    }
+    return false;
 }
 
 /**
  * base class for custom element component or text component
  */
-export abstract class SlateComponentBase<T = SlateTextContext | SlateLeafContext | SlateElementContext> {
-    private _context: T;
+export abstract class SlateComponentBase<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
+    protected _context: T;
 
     @Input()
     set context(value: T) {
+        if (hasBeforeContextChange<T>(this)) {
+            this.beforeContextChange(value);
+        }
         this._context = value;
-        this.onContextChanges();
+        this.onContextChange();
     }
 
     get context() {
         return this._context;
     }
 
-    @Input() viewContext: SlateViewContext;
+    @Input() viewContext: SlateViewContext<K>;
 
     get nativeElement(): HTMLElement {
         return this.elementRef.nativeElement;
@@ -39,7 +53,7 @@ export abstract class SlateComponentBase<T = SlateTextContext | SlateLeafContext
 
     constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef) { }
 
-    abstract onContextChanges();
+    abstract onContextChange();
 }
 
 export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext> implements OnInit {
@@ -49,7 +63,7 @@ export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext>
         this.initailzed = true;
     }
 
-    onContextChanges() {
+    onContextChange() {
         if (!this.initailzed) {
             return;
         }
@@ -57,34 +71,46 @@ export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext>
     }
 }
 
-export class SlateElementComponentBase<T extends Element = Element, K extends AngularEditor = AngularEditor> extends SlateComponentBase<SlateElementContext<T, K>> implements OnInit, OnDestroy {
+export class SlateElementComponentBase<T extends Element = Element, K extends AngularEditor = AngularEditor> extends SlateComponentBase<SlateElementContext<T>, K> implements OnInit, OnDestroy {
     initailzed = false;
 
     get element() {
-        return this.context && this.context.element;
+        return this._context && this._context.element;
     }
 
     get selection() {
-        return this.context && this.context.selection;
+        return this._context && this._context.selection;
     }
 
     get decorations() {
-        return this.context && this.context.decorations;
+        return this._context && this._context.decorations;
     }
 
     get children() {
-        return this.context.element.children;
+        return this._context.element.children;
     }
 
     get childrenContext() {
-        return { parent: this.context.element, selection: this.context.selection, decorations: this.context.decorations };
+        return { parent: this._context.element, selection: this._context.selection, decorations: this._context.decorations };
+    }
+
+    get editor() {
+        return this.viewContext.editor;
+    }
+
+    get readonly() {
+        return this.viewContext.readonly;
+    }
+
+    get isCollapsed() {
+        return this.selection && Range.isCollapsed(this.editor.selection);
     }
 
     ngOnInit() {
         this.updateWeakMap();
         ELEMENT_TO_COMPONENT.set(this.element, this);
-        for (const key in this.context.attributes) {
-            this.nativeElement.setAttribute(key, this.context.attributes[key]);
+        for (const key in this._context.attributes) {
+            this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initailzed = true;
     }
@@ -103,7 +129,7 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
         }
     }
 
-    onContextChanges() {
+    onContextChange() {
         if (!this.initailzed) {
             return;
         }
@@ -116,7 +142,7 @@ export class SlateTextComponentBase extends SlateComponentBase<SlateTextContext>
     initailzed = false;
 
     get text() {
-        return this.context.text;
+        return this._context.text;
     }
 
     ngOnInit() {
@@ -135,7 +161,7 @@ export class SlateTextComponentBase extends SlateComponentBase<SlateTextContext>
         }
     }
 
-    onContextChanges() {
+    onContextChange() {
         if (!this.initailzed) {
             return;
         }

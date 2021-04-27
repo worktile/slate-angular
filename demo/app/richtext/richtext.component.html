@@ -1,16 +1,16 @@
 <div class="demo-rich-editor-wrapper">
     <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
         (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [renderText]="renderText">
-        <ng-template #heading let-context="context" let-viewContext="viewContext" let-viewContext="viewContext">
-            <h1 *ngIf="context.element.type === 'heading-one'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
+        <ng-template #heading let-context="context" let-viewContext="viewContext">
+            <h1 *ngIf="context.element.type === 'heading-one'" slateElement [context]="context" [viewContext]="viewContext">
             </h1>
-            <h2 *ngIf="context.element.type === 'heading-two'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
+            <h2 *ngIf="context.element.type === 'heading-two'" slateElement [context]="context" [viewContext]="viewContext">
             </h2>
-            <h3 *ngIf="context.element.type === 'heading-three'" slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext">
+            <h3 *ngIf="context.element.type === 'heading-three'" slateElement [context]="context" [viewContext]="viewContext">
             </h3>
         </ng-template>
-        <ng-template #blockquote let-context="context" let-viewContext="viewContext" let-viewContext="viewContext">
-            <blockquote slateElement [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></blockquote>
+        <ng-template #blockquote let-context="context" let-viewContext="viewContext">
+            <blockquote slateElement [context]="context" [viewContext]="viewContext"></blockquote>
         </ng-template>
     </slate-editable>
 </div>

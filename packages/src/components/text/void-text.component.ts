@@ -5,25 +5,25 @@ import {
     Input,
     OnInit
 } from '@angular/core';
-import { SlateTextContext, SlateViewContext } from '../../interfaces/view-context';
+import { SlateTextComponentBase } from '../../interfaces/view-base';
 import { AngularEditor } from '../../plugins/angular-editor';
 
 @Component({
     selector: 'span[slateVoidText]',
-    template: `<span slateText [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></span>`,
+    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-        'data-slate-node': 'text',
         '[attr.contenteditable]': 'isLeafBlock',
-        'data-slate-spacer': "true"
+        'data-slate-spacer': "true",
+        'class': 'slate-spacer',
+        'data-slate-node': 'text'
     }
 })
-export class SlateVoidTextComponent implements OnInit {
-    @Input() context: SlateTextContext;
-    @Input() viewContext: SlateViewContext;
-    isLeafBlock = false;
+export class SlateVoidTextComponent extends SlateTextComponentBase implements OnInit {
+    isLeafBlock;
 
     ngOnInit() {
         this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
+        super.ngOnInit();
     }
 }

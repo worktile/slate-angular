@@ -32,17 +32,14 @@ export abstract class SlateViewContainerItem<T = SlateElementContext | SlateText
         protected componentFactoryResolver: ComponentFactoryResolver
     ) { }
 
-    destroyComponent() {
-        if (this.componentRef) {
-            this.componentRef.destroy();
-            this.componentRef = null;
-        }
-    }
-
-    destroyTemplate() {
+    destroyView() {
         if (this.embeddedViewRef) {
             this.embeddedViewRef.destroy();
             this.embeddedViewRef = null;
+        }
+        if (this.componentRef) {
+            this.componentRef.destroy();
+            this.componentRef = null;
         }
     }
 
@@ -93,8 +90,7 @@ export abstract class SlateViewContainerItem<T = SlateElementContext | SlateText
                 this.embeddedViewContext = { context, viewContext: this.viewContext };
                 const embeddedViewRef = this.viewContainerRef.createEmbeddedView<SlateViewBase<T>>(this.viewType, this.embeddedViewContext);
                 firstRootNode.replaceWith(...embeddedViewRef.rootNodes.filter((rootNode) => isDOMElement(rootNode)));
-                this.destroyTemplate();
-                this.destroyComponent();
+                this.destroyView();
                 this.embeddedViewRef = embeddedViewRef;
             }
             if (isComponentType(this.viewType)) {
@@ -103,8 +99,7 @@ export abstract class SlateViewContainerItem<T = SlateElementContext | SlateText
                 componentRef.instance.context = context;
                 componentRef.instance.viewContext = this.viewContext;
                 firstRootNode.replaceWith(componentRef.instance.nativeElement);
-                this.destroyTemplate();
-                this.destroyComponent();
+                this.destroyView();
                 this.componentRef = componentRef;
             }
         }

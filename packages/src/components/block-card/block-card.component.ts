@@ -11,8 +11,6 @@ export class SlateBlockCardComponent implements OnInit {
 
     centerRootNodes: HTMLElement[];
 
-    element: Element;
-
     get nativeElement() {
         return this.elementRef.nativeElement;
     }
@@ -26,8 +24,7 @@ export class SlateBlockCardComponent implements OnInit {
         this.nativeElement.classList.add(`slate-block-card`);
     }
 
-    initializeCenter(rootNodes: HTMLElement[], element: Element) {
+    initializeCenter(rootNodes: HTMLElement[]) {
         this.centerRootNodes = rootNodes;
-        this.element = element;
     }
 }

@@ -41,6 +41,11 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
         this.createBlockCard();
     }
 
+    destroyView() {
+        super.destroyView();
+        this.destroyBlockCard();
+    }
+
     ngOnChanges() {
         if (!this.initialized) {
             return;
@@ -48,7 +53,6 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
         NODE_TO_INDEX.set(this.node, this.index);
         NODE_TO_PARENT.set(this.node, this.context.parent);
         this.updateView();
-        this.destroyBlockCard();
         this.createBlockCard();
     }
 
@@ -61,13 +65,13 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
 
     createBlockCard() {
         const isBlockCard = this.viewContext.editor.isBlockCard(this.node);
-        if (!isBlockCard) {
+        if (!isBlockCard || this.blockCardComponentRef) {
             return;
         }
         const rootNodes = this.rootNodes;
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
         this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
-        this.blockCardComponentRef.instance.initializeCenter(rootNodes, this.node as Element);
+        this.blockCardComponentRef.instance.initializeCenter(rootNodes);
     }
 
     getCommonContext(): { selection: Range; decorations: Range[] } {

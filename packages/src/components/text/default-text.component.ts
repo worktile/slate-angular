@@ -13,8 +13,5 @@ import { SlateTextComponentBase } from '../../interfaces/view-base';
         'data-slate-node': 'text'
     }
 })
-export class SlateDefaultTextComponent extends SlateTextComponentBase implements OnInit {
-    ngOnInit() {
-        super.ngOnInit();
-    }
+export class SlateDefaultTextComponent extends SlateTextComponentBase {
 }
