@@ -13,7 +13,8 @@ module.exports = {
                 'plugin',
                 'config',
                 'template',
-                'browser'
+                'browser',
+                'docs'
             ]
         ]
     }
