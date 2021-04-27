@@ -9,6 +9,7 @@ module.exports = {
             [
                 'demo',
                 'core',
+                'view',
                 'release',
                 'plugin',
                 'config',
