@@ -107,7 +107,6 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
 
     ngOnInit() {
         this.updateWeakMap();
-        ELEMENT_TO_COMPONENT.set(this.element, this);
         for (const key in this._context.attributes) {
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
@@ -117,6 +116,7 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
     updateWeakMap() {
         NODE_TO_ELEMENT.set(this.element, this.nativeElement);
         ELEMENT_TO_NODE.set(this.nativeElement, this.element);
+        ELEMENT_TO_COMPONENT.set(this.element, this);
     }
 
     ngOnDestroy() {
