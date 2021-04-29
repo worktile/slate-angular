@@ -78,19 +78,19 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
     childrenContext: SlateChildrenContext;
 
     get element() {
-        return this._context.element;
+        return this._context && this._context.element;
     }
 
     get selection() {
-        return this._context.selection;
+        return this._context && this._context.selection;
     }
 
     get decorations() {
-        return this._context.decorations;
+        return this._context && this._context.decorations;
     }
 
     get children() {
-        return this._context.element.children;
+        return this._context && this._context.element.children;
     }
 
     get editor() {
