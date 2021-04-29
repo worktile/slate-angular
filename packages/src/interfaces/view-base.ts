@@ -4,6 +4,7 @@ import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./view-context";
 import { Element, Range } from 'slate';
 import { ComponentType } from "@angular/cdk/portal";
+import { SlateChildrenContext } from "./view-context";
 
 export type ViewType = TemplateRef<any> | ComponentType<any>;
 
@@ -74,24 +75,22 @@ export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext>
 export class SlateElementComponentBase<T extends Element = Element, K extends AngularEditor = AngularEditor> extends SlateComponentBase<SlateElementContext<T>, K> implements OnInit, OnDestroy {
     initailzed = false;
 
+    childrenContext: SlateChildrenContext;
+
     get element() {
-        return this._context && this._context.element;
+        return this._context.element;
     }
 
     get selection() {
-        return this._context && this._context.selection;
+        return this._context.selection;
     }
 
     get decorations() {
-        return this._context && this._context.decorations;
+        return this._context.decorations;
     }
 
     get children() {
         return this._context.element.children;
-    }
-
-    get childrenContext() {
-        return { parent: this._context.element, selection: this._context.selection, decorations: this._context.decorations };
     }
 
     get editor() {
@@ -130,11 +129,16 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
     }
 
     onContextChange() {
+        this.childrenContext = this.getChildrenContext();
         if (!this.initailzed) {
             return;
         }
         this.cdr.markForCheck();
         this.updateWeakMap();
+    }
+
+    getChildrenContext() {
+        return { parent: this._context.element, selection: this._context.selection, decorations: this._context.decorations };
     }
 }
 
