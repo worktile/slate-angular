@@ -26,8 +26,11 @@ Useful scripts include:
 `npm run build` build slate-angular library
 
 #### Prerequisites
-Angular >= 10.x
+
+Angular >= 10.2.4
+
 Slate >= 0.58.4
 
 #### Contributing
-🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! Don't hesitate to share your plugins here. 
+
+🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! 
