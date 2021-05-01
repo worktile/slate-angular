@@ -5,9 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
-import { ModifierKeys } from '@angular/cdk/testing';
 import { createFakeEvent, createKeyboardEvent, createMouseEvent, createTouchEvent } from './events';
+import { ModifierKeys } from './types';
 
 /**
  * Utility to dispatch any event on a Node.

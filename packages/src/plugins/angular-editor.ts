@@ -21,7 +21,7 @@ import {
 } from '../utils/dom';
 import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
-import { SlateError } from '../interfaces/error'
+import { SlateError } from '../types/error'
 import { Key } from '../utils/key';
 
 /**

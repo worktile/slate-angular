@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren } from "@angular/core";
 import { Text } from 'slate';
-import { SlateLeafContext, SlateTextContext, SlateViewContext } from "../../interfaces/view-context";
-import { SlateViewContainer } from "../../interfaces/view-container";
+import { SlateLeafContext, SlateTextContext, SlateViewContext } from "../../view/context";
+import { ViewContainer } from "../../view/container";
 import { SlateLeafComponent } from "../leaf/leaf.component";
 import { isDecoratorRangeListEqual } from "../../utils/range-list";
 
@@ -14,7 +14,7 @@ import { isDecoratorRangeListEqual } from "../../utils/range-list";
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateLeavesComponent extends SlateViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
+export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
     initialized = false;
     leafContexts: SlateLeafContext[];
     leaves: Text[];

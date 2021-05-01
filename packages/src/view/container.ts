@@ -1,13 +1,14 @@
 import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, IterableDiffers, QueryList } from "@angular/core";
-import { SlateViewContext } from "../interfaces/view-context";
-import { SlateViewContainerItem } from "./view-container-item";
+import { SlateViewContext } from "./context";
+import { ViewContainerItem } from "./container-item";
+
 /**
  * the sepcial container for angular template
  * Add the rootNodes of each child component to the parentElement
  * Remove useless DOM elements, eg: comment...
  */
 @Directive()
-export abstract class SlateViewContainer<T extends SlateViewContainerItem> implements AfterViewInit {
+export abstract class ViewContainer<T extends ViewContainerItem> implements AfterViewInit {
     abstract childrenComponent: QueryList<T>;
 
     @Input() viewContext: SlateViewContext;

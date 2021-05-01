@@ -3,15 +3,15 @@ import {
     ChangeDetectionStrategy,
     OnInit
 } from '@angular/core';
-import { SlateTextComponentBase } from '../../interfaces/view-base';
+import { BaseTextComponent } from '../../view/base';
 
 @Component({
-    selector: 'span[slateText]',
+    selector: 'span[slateDefaultText]',
     template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         'data-slate-node': 'text'
     }
 })
-export class SlateDefaultTextComponent extends SlateTextComponentBase {
+export class SlateDefaultTextComponent extends BaseTextComponent {
 }

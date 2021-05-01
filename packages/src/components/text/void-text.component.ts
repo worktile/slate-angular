@@ -5,7 +5,7 @@ import {
     Input,
     OnInit
 } from '@angular/core';
-import { SlateTextComponentBase } from '../../interfaces/view-base';
+import { BaseTextComponent } from '../../view/base';
 import { AngularEditor } from '../../plugins/angular-editor';
 
 @Component({
@@ -19,7 +19,7 @@ import { AngularEditor } from '../../plugins/angular-editor';
         'data-slate-node': 'text'
     }
 })
-export class SlateVoidTextComponent extends SlateTextComponentBase implements OnInit {
+export class SlateVoidTextComponent extends BaseTextComponent implements OnInit {
     isLeafBlock;
 
     ngOnInit() {

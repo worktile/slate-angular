@@ -1,29 +1,29 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChildren } from "@angular/core";
-import { SlateNodeComponent } from "../node/node.component";
+import { SlateDescendantComponent } from "../descendant/descendant.component";
 import { Descendant } from 'slate';
 import { AngularEditor } from "../../plugins/angular-editor";
-import { SlateChildrenContext, SlateViewContext } from "../../interfaces/view-context";
-import { SlateViewContainer } from "../../interfaces/view-container";
+import { SlateChildrenContext, SlateViewContext } from "../../view/context";
+import { ViewContainer } from "../../view/container";
 
 @Component({
     selector: 'slate-children',
-    template: `<slate-node 
-                    [node]="node"
+    template: `<slate-descendant 
+                    [descendant]="descendant"
                     [context]="context" [viewContext]="viewContext"
                     [viewContext]="viewContext"
                     [index]="index"
-                    *ngFor="let node of children;let index = index; trackBy: trackBy"></slate-node>`,
+                    *ngFor="let descendant of children;let index = index; trackBy: trackBy"></slate-descendant>`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateChildrenComponent extends SlateViewContainer<SlateNodeComponent> implements OnInit {
+export class SlateChildrenComponent extends ViewContainer<SlateDescendantComponent> implements OnInit {
     @Input() children: Descendant[];
 
     @Input() context: SlateChildrenContext;
 
     @Input() viewContext: SlateViewContext;
 
-    @ViewChildren(SlateNodeComponent, { read: SlateNodeComponent })
-    childrenComponent: QueryList<SlateNodeComponent>;
+    @ViewChildren(SlateDescendantComponent, { read: SlateDescendantComponent })
+    childrenComponent: QueryList<SlateDescendantComponent>;
 
     ngOnInit() {
     }

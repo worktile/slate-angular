@@ -34,12 +34,12 @@ import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY } from '../../u
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
-import {  ViewType } from '../../interfaces/view-base';
-import { SlateErrorCode } from '../../interfaces/error';
+import { SlateErrorCode } from '../../types/error';
 import Debug from 'debug';
 import { SlateStringTemplateComponent } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SlateChildrenContext, SlateViewContext } from '../../interfaces/view-context';
+import { SlateChildrenContext, SlateViewContext } from '../../view/context';
+import { ViewType } from '../../types/view';
 
 const timeDebug = Debug('slate-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event

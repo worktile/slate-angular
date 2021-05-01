@@ -1,6 +1,6 @@
 
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { SlateLeafComponentBase } from "../../interfaces/view-base";
+import { BaseLeafComponent } from "../../view/base";
 
 @Component({
     selector: 'span[slateDefaultLeaf]',
@@ -10,5 +10,5 @@ import { SlateLeafComponentBase } from "../../interfaces/view-base";
         'data-slate-leaf': 'true'
     }
 })
-export class SlateDefaultLeafComponent extends SlateLeafComponentBase {
+export class SlateDefaultLeafComponent extends BaseLeafComponent {
 }

@@ -1,36 +1,23 @@
 import { ChangeDetectorRef, ElementRef, Input, OnDestroy, OnInit, TemplateRef } from "@angular/core";
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
-import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./view-context";
+import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
 import { Element, Range } from 'slate';
-import { ComponentType } from "@angular/cdk/portal";
-import { SlateChildrenContext } from "./view-context";
-
-export type ViewType = TemplateRef<any> | ComponentType<any>;
+import { SlateChildrenContext } from "./context";
+import { hasBeforeContextChange } from "./before-context-change";
 
 /**
- * template context or component base class
+ * base class for template
  */
-export interface SlateViewBase<T, K extends AngularEditor = AngularEditor> {
+export interface BaseEmbeddedView<T, K extends AngularEditor = AngularEditor> {
     context: T;
     viewContext: SlateViewContext<K>;
-}
-
-export interface BeforeContextChange<T> {
-    beforeContextChange: (value: T) => void;
-}
-
-function hasBeforeContextChange<T>(value): value is BeforeContextChange<T> {
-    if (value.beforeContextChange) {
-        return true;
-    }
-    return false;
 }
 
 /**
  * base class for custom element component or text component
  */
-export abstract class SlateComponentBase<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
+export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
     protected _context: T;
 
     @Input()
@@ -57,7 +44,10 @@ export abstract class SlateComponentBase<T = SlateTextContext | SlateLeafContext
     abstract onContextChange();
 }
 
-export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext> implements OnInit {
+/**
+ * base class for custom leaf component
+ */
+export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initailzed = false;
 
     ngOnInit() {
@@ -72,7 +62,10 @@ export class SlateLeafComponentBase extends SlateComponentBase<SlateLeafContext>
     }
 }
 
-export class SlateElementComponentBase<T extends Element = Element, K extends AngularEditor = AngularEditor> extends SlateComponentBase<SlateElementContext<T>, K> implements OnInit, OnDestroy {
+/**
+ * base class for custom element component
+ */
+export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseComponent<SlateElementContext<T>, K> implements OnInit, OnDestroy {
     initailzed = false;
 
     childrenContext: SlateChildrenContext;
@@ -142,7 +135,10 @@ export class SlateElementComponentBase<T extends Element = Element, K extends An
     }
 }
 
-export class SlateTextComponentBase extends SlateComponentBase<SlateTextContext> implements OnInit, OnDestroy {
+/**
+ * base class for custom text component
+ */
+export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
     initailzed = false;
 
     get text() {

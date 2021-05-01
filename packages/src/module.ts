@@ -7,7 +7,7 @@ import { SlateElementComponent } from './components/element/element.component';
 import { SlateDefaultElementComponent } from './components/element/default-element.component';
 import { SlateStringComponent } from './components/string/string.component';
 import { SlateStringTemplateComponent } from './components/string/template.component';
-import { SlateNodeComponent } from './components/node/node.component';
+import { SlateDescendantComponent } from './components/descendant/descendant.component';
 import { SlateChildrenComponent } from './components/children/children.component';
 import { SlateBlockCardComponent } from './components/block-card/block-card.component';
 import { SlateLeafComponent } from './components/leaf/leaf.component';
@@ -23,7 +23,7 @@ import { SlateLeavesComponent } from './components/leaves/leaves.component';
         SlateDefaultTextComponent,
         SlateStringComponent,
         SlateStringTemplateComponent,
-        SlateNodeComponent,
+        SlateDescendantComponent,
         SlateChildrenComponent,
         SlateBlockCardComponent,
         SlateLeafComponent,

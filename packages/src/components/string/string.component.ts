@@ -9,8 +9,8 @@ import {
     AfterViewInit
 } from '@angular/core';
 import { Editor, Path, Node } from 'slate';
-import { SlateViewContainerItem } from '../../interfaces/view-container-item';
-import { SlateLeafContext, SlateStringContext } from '../../interfaces/view-context';
+import { ViewContainerItem } from '../../view/container-item';
+import { SlateLeafContext, SlateStringContext } from '../../view/context';
 import { AngularEditor } from '../../plugins/angular-editor';
 
 @Component({
@@ -18,7 +18,7 @@ import { AngularEditor } from '../../plugins/angular-editor';
     template: '',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateStringComponent extends SlateViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
+export class SlateStringComponent extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
     @Input() context: SlateLeafContext;
 
     constructor(private elementRef: ElementRef<any>, protected viewContainerRef: ViewContainerRef) {

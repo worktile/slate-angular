@@ -1,7 +1,7 @@
 import { NodeEntry, Range, Element, Ancestor, Text } from "slate";
 import { SlateStringTemplateComponent } from "../components/string/template.component";
 import { AngularEditor } from "../plugins/angular-editor";
-import { ViewType } from "./view-base";
+import { ViewType } from "../types/view";
 
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;

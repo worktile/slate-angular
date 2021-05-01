@@ -1,7 +1,7 @@
 import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, Path, Operation } from 'slate';
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
 import { AngularEditor } from './angular-editor';
-import { SlateError } from '../interfaces/error';
+import { SlateError } from '../types/error';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
   const e = editor as T & AngularEditor;

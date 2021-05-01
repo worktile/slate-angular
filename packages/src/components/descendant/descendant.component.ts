@@ -1,25 +1,26 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, Input, OnChanges, OnInit } from "@angular/core";
 import { SlateBlockCardComponent } from "../block-card/block-card.component";
-import { SlateViewContainerItem } from '../../interfaces/view-container-item';
+import { ViewContainerItem } from '../../view/container-item';
 import { Descendant, Editor, Range, Element } from "slate";
-import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from "../../interfaces/view-context";
+import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from "../../view/context";
 import { AngularEditor } from "../../plugins/angular-editor";
 import { NODE_TO_INDEX, NODE_TO_PARENT } from "../../utils/weak-maps";
 import { SlateDefaultElementComponent } from "../element/default-element.component";
-import { SlateElementComponentBase, SlateTextComponentBase, ViewType } from "../../interfaces/view-base";
+import { BaseElementComponent, BaseTextComponent } from "../../view/base";
 import { SlateDefaultTextComponent } from "../text/default-text.component";
 import { SlateVoidTextComponent } from "../text/void-text.component";
 import { isDecoratorRangeListEqual } from "../../utils";
+import { ViewType } from "../../types/view";
 
 @Component({
-    selector: 'slate-node',
+    selector: 'slate-descendant',
     template: '',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateNodeComponent extends SlateViewContainerItem<SlateElementContext | SlateTextContext, SlateElementComponentBase | SlateTextComponentBase> implements OnInit, OnChanges {
+export class SlateDescendantComponent extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent> implements OnInit, OnChanges {
     blockCardComponentRef: ComponentRef<SlateBlockCardComponent>;
 
-    @Input() node: Descendant;
+    @Input() descendant: Descendant;
 
     @Input() context: SlateChildrenContext;
 
@@ -35,8 +36,8 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
     }
 
     ngOnInit() {
-        NODE_TO_INDEX.set(this.node, this.index);
-        NODE_TO_PARENT.set(this.node, this.context.parent);
+        NODE_TO_INDEX.set(this.descendant, this.index);
+        NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.createView();
         this.createBlockCard();
     }
@@ -50,8 +51,8 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
         if (!this.initialized) {
             return;
         }
-        NODE_TO_INDEX.set(this.node, this.index);
-        NODE_TO_PARENT.set(this.node, this.context.parent);
+        NODE_TO_INDEX.set(this.descendant, this.index);
+        NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.updateView();
         this.createBlockCard();
     }
@@ -64,7 +65,7 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
     }
 
     createBlockCard() {
-        const isBlockCard = this.viewContext.editor.isBlockCard(this.node);
+        const isBlockCard = this.viewContext.editor.isBlockCard(this.descendant);
         if (!isBlockCard || this.blockCardComponentRef) {
             return;
         }
@@ -79,7 +80,7 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
         const p = path.concat(this.index);
         const range = Editor.range(this.viewContext.editor, p);
         const sel = this.context.selection && Range.intersection(range, this.context.selection);
-        const ds = this.viewContext.decorate([this.node, p]);
+        const ds = this.viewContext.decorate([this.descendant, p]);
 
         for (const dec of this.context.decorations) {
             const d = Range.intersection(dec, range);
@@ -91,13 +92,13 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
     }
 
     getContext(): SlateElementContext | SlateTextContext {
-        if (Element.isElement(this.node)) {
+        if (Element.isElement(this.descendant)) {
             const computedContext = this.getCommonContext();
-            const key = AngularEditor.findKey(this.viewContext.editor, this.node);
-            const isInline = this.viewContext.editor.isInline(this.node);
-            const isVoid = this.viewContext.editor.isVoid(this.node);
+            const key = AngularEditor.findKey(this.viewContext.editor, this.descendant);
+            const isInline = this.viewContext.editor.isInline(this.descendant);
+            const isVoid = this.viewContext.editor.isVoid(this.descendant);
             const elementContext: SlateElementContext = {
-                element: this.node,
+                element: this.descendant,
                 ...computedContext,
                 attributes: {
                     'data-slate-node': 'element',
@@ -119,18 +120,18 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
                 decorations: computedContext.decorations,
                 isLast: isLeafBlock && this.index === this.context.parent.children.length - 1,
                 parent: this.context.parent,
-                text: this.node
+                text: this.descendant
             }
             return textContext;
         }
     }
 
     getViewType(): ViewType {
-        if (Element.isElement(this.node)) {
-            return (this.viewContext.renderElement && this.viewContext.renderElement(this.node)) || SlateDefaultElementComponent;
+        if (Element.isElement(this.descendant)) {
+            return (this.viewContext.renderElement && this.viewContext.renderElement(this.descendant)) || SlateDefaultElementComponent;
         } else {
             const isVoid = this.viewContext.editor.isVoid(this.context.parent);
-            return isVoid ? SlateVoidTextComponent : (this.viewContext.renderText && this.viewContext.renderText(this.node)) || SlateDefaultTextComponent;
+            return isVoid ? SlateVoidTextComponent : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
         }
     }
 
@@ -155,7 +156,7 @@ export class SlateNodeComponent extends SlateViewContainerItem<SlateElementConte
     }
 
     memoizedContext(prev: SlateElementContext | SlateTextContext, next: SlateElementContext | SlateTextContext): boolean {
-        if (Element.isElement(this.node)) {
+        if (Element.isElement(this.descendant)) {
             return this.memoizedElementContext(prev as SlateElementContext, next as SlateElementContext);
         } else {
             return this.memoizedTextContext(prev as SlateTextContext, next as SlateTextContext);

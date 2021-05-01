@@ -1,17 +1,18 @@
 import { ComponentFactoryResolver, ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
+import { ViewType } from "../types/view";
 import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
-import { SlateComponentBase, SlateViewBase, ViewType } from "./view-base";
-import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextContext, SlateViewContext } from "./view-context";
+import { BaseComponent, BaseEmbeddedView } from "./base";
+import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextContext, SlateViewContext } from "./context";
 
 /**
  * Dynamically create/update components or templates
  * Provide rootNodes for the view container
  * If the dynamically created component uses onpush mode, then it must call markForCheck when setting the context
  */
-export abstract class SlateViewContainerItem<T = SlateElementContext | SlateTextContext | SlateLeafContext | SlateStringContext, K extends SlateComponentBase<T> = SlateComponentBase<T>> {
+export abstract class ViewContainerItem<T = SlateElementContext | SlateTextContext | SlateLeafContext | SlateStringContext, K extends BaseComponent<T> = BaseComponent<T>> {
     initialized = false;
-    embeddedViewRef: EmbeddedViewRef<SlateViewBase<T>>;
-    embeddedViewContext: SlateViewBase<T>;
+    embeddedViewRef: EmbeddedViewRef<BaseEmbeddedView<T>>;
+    embeddedViewContext: BaseEmbeddedView<T>;
     componentRef: ComponentRef<K>;
     viewType: ViewType;
 
@@ -55,7 +56,7 @@ export abstract class SlateViewContainerItem<T = SlateElementContext | SlateText
         const context = this.getContext();
         if (isTemplateRef(this.viewType)) {
             this.embeddedViewContext = { context, viewContext: this.viewContext };
-            const embeddedViewRef = this.viewContainerRef.createEmbeddedView<SlateViewBase<T>>(this.viewType, this.embeddedViewContext);
+            const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType, this.embeddedViewContext);
             this.embeddedViewRef = embeddedViewRef;
         }
         if (isComponentType(this.viewType)) {
@@ -88,7 +89,7 @@ export abstract class SlateViewContainerItem<T = SlateElementContext | SlateText
             const firstRootNode = this.rootNodes[0];
             if (isTemplateRef(this.viewType)) {
                 this.embeddedViewContext = { context, viewContext: this.viewContext };
-                const embeddedViewRef = this.viewContainerRef.createEmbeddedView<SlateViewBase<T>>(this.viewType, this.embeddedViewContext);
+                const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType, this.embeddedViewContext);
                 firstRootNode.replaceWith(...embeddedViewRef.rootNodes.filter((rootNode) => isDOMElement(rootNode)));
                 this.destroyView();
                 this.embeddedViewRef = embeddedViewRef;

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, Renderer2 } from "@angular/core";
-import { SlateTextComponentBase } from "slate-angular";
+import { BaseTextComponent } from "slate-angular";
 
 @Component({
     selector: 'span[markText]',
@@ -8,7 +8,7 @@ import { SlateTextComponentBase } from "slate-angular";
         'data-slate-node': 'text'
     }
 })
-export class DemoMarkTextComponent extends SlateTextComponentBase {
+export class DemoMarkTextComponent extends BaseTextComponent {
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
         super(elementRef, cdr);
     }

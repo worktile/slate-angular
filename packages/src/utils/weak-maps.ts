@@ -1,6 +1,6 @@
 import { Node, Ancestor, Editor } from 'slate';
 import { Key } from './key';
-import { SlateElementComponentBase } from '../interfaces/view-base';
+import { BaseElementComponent } from '../view/base';
 
 /**
  * Two weak maps that allow us rebuild a path given a node. They are populated
@@ -49,4 +49,4 @@ export const PLACEHOLDER_SYMBOL = (Symbol('placeholder') as unknown) as string;
 /**
  * Weak map for associating the html element with the component.
  */
-export const ELEMENT_TO_COMPONENT: WeakMap<Node, SlateElementComponentBase> = new WeakMap();
+export const ELEMENT_TO_COMPONENT: WeakMap<Node, BaseElementComponent> = new WeakMap();
