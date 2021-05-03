@@ -1,15 +1,13 @@
-import { async, tick, fakeAsync } from '@angular/core/testing';
-import { createEditor, Editor, Transforms } from 'slate';
-import { withAngular } from '../with-angular';
-import { EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
-import { AngularEditor } from '../angular-editor';
+import { fakeAsync, flush } from '@angular/core/testing';
+import { createEditor, Transforms } from 'slate';
+import { withAngular } from './with-angular';
+import { EDITOR_TO_ON_CHANGE } from '../utils/weak-maps';
+import { AngularEditor } from './angular-editor';
 
 describe('with-angular', () => {
-    let editor;
-    let angularEditor;
+    let angularEditor: AngularEditor;
     function configEditor() {
-        editor = createEditor();
-        angularEditor = withAngular(editor);
+        angularEditor = withAngular(createEditor());
         angularEditor.children = [
             {
                 type: 'paragraph',
@@ -29,12 +27,27 @@ describe('with-angular', () => {
         configEditor();
     });
     describe('onChange', () => {
+        it('default onChange was called', fakeAsync(() => {
+            spyOn(angularEditor, 'onChange').and.callThrough();
+            Transforms.select(angularEditor, {
+                anchor: {
+                    path: [0, 0],
+                    offset: 0
+                },
+                focus: {
+                    path: [0, 0],
+                    offset: 3
+                }
+            });
+            flush();
+            expect(angularEditor.onChange).toHaveBeenCalled();
+        }));
         it('custom onChange was called', fakeAsync(() => {
             let isOnChanged = false;
-            EDITOR_TO_ON_CHANGE.set(editor, () => {
+            EDITOR_TO_ON_CHANGE.set(angularEditor, () => {
                 isOnChanged = true;
             });
-            Transforms.select(editor, {
+            Transforms.select(angularEditor, {
                 anchor: {
                     path: [0, 0],
                     offset: 0
@@ -44,25 +57,8 @@ describe('with-angular', () => {
                     offset: 3
                 }
             });
-            tick(1000);
+            flush();
             expect(isOnChanged).toBeTruthy();
         }));
-        it('default OnChange was called', fakeAsync(() => {
-            spyOn(editor, 'onChange').and.callThrough();
-            Transforms.select(editor, {
-                anchor: {
-                    path: [0, 0],
-                    offset: 0
-                },
-                focus: {
-                    path: [0, 0],
-                    offset: 3
-                }
-            });
-            tick(1000);
-            expect(editor.onChange).toHaveBeenCalled();
-        }));
-    });
-    describe('insertData', () => {
     });
 });
