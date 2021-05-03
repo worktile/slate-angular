@@ -2,8 +2,8 @@
 import {
     Component,
     ChangeDetectionStrategy,
-    Input,
-    OnInit
+    OnInit,
+    OnChanges
 } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
 import { AngularEditor } from '../../plugins/angular-editor';
@@ -19,11 +19,18 @@ import { AngularEditor } from '../../plugins/angular-editor';
         'data-slate-node': 'text'
     }
 })
-export class SlateVoidTextComponent extends BaseTextComponent implements OnInit {
-    isLeafBlock;
+export class SlateVoidTextComponent extends BaseTextComponent implements OnInit, OnChanges {
+    isLeafBlock: boolean;
 
     ngOnInit() {
         this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
         super.ngOnInit();
+    }
+
+    ngOnChanges() {
+        if (!this.initailzed) {
+            return;
+        }
+        this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
     }
 }
