@@ -9,6 +9,7 @@ import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextCon
  * Provide rootNodes for the view container
  * If the dynamically created component uses onpush mode, then it must call markForCheck when setting the context
  */
+@Directive()
 export abstract class ViewContainerItem<T = SlateElementContext | SlateTextContext | SlateLeafContext | SlateStringContext, K extends BaseComponent<T> = BaseComponent<T>> {
     initialized = false;
     embeddedViewRef: EmbeddedViewRef<BaseEmbeddedView<T>>;
@@ -53,6 +54,7 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
     createView() {
         this.initialized = true;
         this.viewType = this.getViewType();
+        console.log(this.viewType, '哈哈哈哈');
         const context = this.getContext();
         if (isTemplateRef(this.viewType)) {
             this.embeddedViewContext = { context, viewContext: this.viewContext };

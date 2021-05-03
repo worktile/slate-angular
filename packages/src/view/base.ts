@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, ElementRef, Input, OnDestroy, OnInit, TemplateRef } from "@angular/core";
+import { ChangeDetectorRef, Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
@@ -17,6 +17,7 @@ export interface BaseEmbeddedView<T, K extends AngularEditor = AngularEditor> {
 /**
  * base class for custom element component or text component
  */
+@Directive()
 export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
     protected _context: T;
 
