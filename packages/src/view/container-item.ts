@@ -54,7 +54,6 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
     createView() {
         this.initialized = true;
         this.viewType = this.getViewType();
-        console.log(this.viewType, '哈哈哈哈');
         const context = this.getContext();
         if (isTemplateRef(this.viewType)) {
             this.embeddedViewContext = { context, viewContext: this.viewContext };
