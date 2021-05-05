@@ -28,22 +28,26 @@
                 "glob": "favicon.ico",
                 "input": "demo",
                 "output": "/"
+              },
+              {
+                "glob": "**/*",
+                "input": "demo/assets",
+                "output": "/assets"
               }
             ],
             "styles": [
               "demo/styles.scss"
             ],
-            "scripts": [
-            ],
+            "scripts": [],
             "allowedCommonJsDependencies": [
-                "lodash",
-                "debug",
-                "esrever",
-                "unified",
-                "remark-parse",
-                "remark-slate",
-                "rxjs/internal/scheduler/asap",
-                "faker"
+              "lodash",
+              "debug",
+              "esrever",
+              "unified",
+              "remark-parse",
+              "remark-slate",
+              "rxjs/internal/scheduler/asap",
+              "faker"
             ]
           },
           "configurations": {

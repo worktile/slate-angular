@@ -10,10 +10,12 @@ import { NgModule } from '@angular/core';
 import { SlateModule } from 'slate-angular';
 import { DemoElementImageComponent } from './components/image/image-component';
 import { DemoMarkTextComponent } from './components/text/text.component';
+import { DemoButtonComponent } from './components/button/button.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        DemoButtonComponent,
         DemoRichtextComponent,
         DemoMarkdownShortcutsComponent,
         DemoHugeDocumentComponent,
