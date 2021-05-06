@@ -88,11 +88,11 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     }
 
     get editor() {
-        return this.viewContext.editor;
+        return this.viewContext && this.viewContext.editor;
     }
 
     get readonly() {
-        return this.viewContext.readonly;
+        return this.viewContext && this.viewContext.readonly;
     }
 
     get isCollapsed() {
