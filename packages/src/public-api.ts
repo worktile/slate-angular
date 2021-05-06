@@ -11,3 +11,4 @@ export * from './view/base';
 export * from './view/context';
 export * from './view/before-context-change';
 export * from './utils';
+export * from './types';
