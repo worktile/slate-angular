@@ -51,6 +51,22 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initailzed = false;
 
+    get text() {
+        return this.context && this.context.text;
+    }
+
+    get leaf() {
+        return this.context && this.context.leaf;
+    }
+
+    get editor() {
+        return this.viewContext && this.viewContext.editor;
+    }
+
+    get readonly() {
+        return this.viewContext && this.viewContext.readonly;
+    }
+
     ngOnInit() {
         this.initailzed = true;
     }
