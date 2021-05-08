@@ -162,6 +162,14 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
         return this._context.text;
     }
 
+    get editor() {
+        return this.viewContext && this.viewContext.editor;
+    }
+
+    get readonly() {
+        return this.viewContext && this.viewContext.readonly;
+    }
+
     ngOnInit() {
         this.updateWeakMap();
         this.initailzed = true;
