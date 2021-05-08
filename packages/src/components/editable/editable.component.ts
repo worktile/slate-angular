@@ -12,7 +12,9 @@ import {
     ChangeDetectorRef,
     NgZone,
     Injector,
-    forwardRef
+    forwardRef,
+    OnChanges,
+    SimpleChanges
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
 import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
@@ -40,6 +42,7 @@ import { SlateStringTemplateComponent } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
+import { isDecoratorRangeListEqual } from '../../utils';
 
 const timeDebug = Debug('slate-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -71,7 +74,7 @@ const forceOnDOMPaste = IS_SAFARI;
         multi: true
     }]
 })
-export class SlateEditableComponent implements OnInit, OnDestroy {
+export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     selectionchangeEventName = 'selectionchange';
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
@@ -92,8 +95,7 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
 
     private onChangeCallback: (_: any) => void = () => { };
 
-    @Input()
-    editor: AngularEditor;
+    @Input() editor: AngularEditor;
 
     @Input() renderElement: (element: SlateElement) => ViewType;
 
@@ -136,8 +138,6 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
     }
     //#endregion
 
-    decorations: Range[];
-
     @ViewChild('templateComponent', { static: true }) templateComponent: SlateStringTemplateComponent;
 
     constructor(
@@ -151,7 +151,6 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.editor.injector = this.injector;
         this.editor.children = [];
-        this.decorations = this.decorate([this.editor, []]);
         EDITOR_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         ELEMENT_TO_NODE.set(this.elementRef.nativeElement, this.editor);
@@ -164,16 +163,18 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
         this.ngZone.runOutsideAngular(() => {
             this.initialize();
         });
-        this.viewContext = {
-            editor: this.editor,
-            decorate: this.decorate,
-            renderElement: this.renderElement,
-            renderLeaf: this.renderLeaf,
-            renderText: this.renderText,
-            templateComponent: this.templateComponent,
-            readonly: this.readonly
+        this.initializeViewContext();
+        this.initializeContext();
+    }
+
+    ngOnChanges(simpleChanges: SimpleChanges) {
+        if (!this.initialized) {
+            return;
         }
-        this.detectContext();
+        const decorateChange = simpleChanges['decorate'];
+        if (decorateChange) {
+            this.detectContext();
+        }
     }
 
     registerOnChange(fn: any) {
@@ -316,7 +317,7 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
         this.onChangeCallback(this.editor.children);
     }
 
-    public forceFlush() {
+    forceFlush() {
         timeDebug('start data sync');
         this.detectContext();
         this.cdr.detectChanges();
@@ -324,13 +325,36 @@ export class SlateEditableComponent implements OnInit, OnDestroy {
         timeDebug('end data sync');
     }
 
-    public detectContext() {
-        if (!this.context || (this.context.decorations !== this.decorations || this.context.selection !== this.editor.selection)) {
+    initializeContext() {
+        this.context = {
+            parent: this.editor,
+            selection: this.editor.selection,
+            decorations: this.decorate([this.editor, []]),
+            decorate: this.decorate
+        };
+    }
+
+    initializeViewContext() {
+        this.viewContext = {
+            editor: this.editor,
+            renderElement: this.renderElement,
+            renderLeaf: this.renderLeaf,
+            renderText: this.renderText,
+            templateComponent: this.templateComponent,
+            readonly: this.readonly
+        };
+    }
+
+    detectContext() {
+        if (this.context.selection !== this.editor.selection || this.context.decorate !== this.decorate) {
+            const decorations = this.decorate([this.editor, []]);
+            const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
             this.context = {
                 parent: this.editor,
                 selection: this.editor.selection,
-                decorations: this.decorations
-            }
+                decorations: isSameDecorations ? this.context.decorations : decorations,
+                decorate: this.decorate
+            };
         }
     }
 

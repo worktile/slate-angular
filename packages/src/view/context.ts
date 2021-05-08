@@ -10,13 +10,13 @@ export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;
     renderText?: (text: Text) => ViewType;
-    decorate?: (entry: NodeEntry) => Range[];
 }
 
 export interface SlateChildrenContext {
     parent: Ancestor;
     selection: Range;
     decorations: Range[];
+    decorate: (entry: NodeEntry) => Range[];
 }
 
 export interface SlateElementContext<T extends Element = Element> {
@@ -24,6 +24,7 @@ export interface SlateElementContext<T extends Element = Element> {
     selection: Range | null;
     decorations: Range[];
     attributes: SlateElementAttributes;
+    decorate: (entry: NodeEntry) => Range[];
 }
 
 export interface SlateTextContext {

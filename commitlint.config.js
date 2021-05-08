@@ -15,7 +15,8 @@ module.exports = {
                 'config',
                 'template',
                 'browser',
-                'docs'
+                'docs',
+                'decorate'
             ]
         ]
     }

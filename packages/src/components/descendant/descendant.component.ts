@@ -80,7 +80,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         const p = path.concat(this.index);
         const range = Editor.range(this.viewContext.editor, p);
         const sel = this.context.selection && Range.intersection(range, this.context.selection);
-        const ds = this.viewContext.decorate([this.descendant, p]);
+        const ds = this.context.decorate([this.descendant, p]);
 
         for (const dec of this.context.decorations) {
             const d = Range.intersection(dec, range);
@@ -103,7 +103,8 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                 attributes: {
                     'data-slate-node': 'element',
                     'data-slate-key': key.id
-                }
+                },
+                decorate: this.context.decorate
             }
             if (isInline) {
                 elementContext.attributes['data-slate-inline'] = true;
@@ -138,6 +139,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     memoizedElementContext(prev: SlateElementContext, next: SlateElementContext) {
         return (
             prev.element === next.element &&
+            prev.decorate === next.decorate &&
             isDecoratorRangeListEqual(prev.decorations, next.decorations) &&
             (prev.selection === next.selection ||
                 (!!prev.selection &&

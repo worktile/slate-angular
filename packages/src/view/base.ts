@@ -139,8 +139,13 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         this.updateWeakMap();
     }
 
-    getChildrenContext() {
-        return { parent: this._context.element, selection: this._context.selection, decorations: this._context.decorations };
+    getChildrenContext(): SlateChildrenContext {
+        return {
+            parent: this._context.element,
+            selection: this._context.selection,
+            decorations: this._context.decorations,
+            decorate: this._context.decorate
+        };
     }
 }
 
