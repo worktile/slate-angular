@@ -36,6 +36,14 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
 
     @Input() viewContext: SlateViewContext<K>;
 
+    get editor() {
+        return this.viewContext && this.viewContext.editor;
+    }
+
+    get readonly() {
+        return this.viewContext && this.viewContext.readonly;
+    }
+
     get nativeElement(): HTMLElement {
         return this.elementRef.nativeElement;
     }
@@ -57,14 +65,6 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 
     get leaf() {
         return this.context && this.context.leaf;
-    }
-
-    get editor() {
-        return this.viewContext && this.viewContext.editor;
-    }
-
-    get readonly() {
-        return this.viewContext && this.viewContext.readonly;
     }
 
     ngOnInit() {
@@ -101,14 +101,6 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     get children() {
         return this._context && this._context.element.children;
-    }
-
-    get editor() {
-        return this.viewContext && this.viewContext.editor;
-    }
-
-    get readonly() {
-        return this.viewContext && this.viewContext.readonly;
     }
 
     get isCollapsed() {
@@ -160,14 +152,6 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
 
     get text() {
         return this._context.text;
-    }
-
-    get editor() {
-        return this.viewContext && this.viewContext.editor;
-    }
-
-    get readonly() {
-        return this.viewContext && this.viewContext.readonly;
     }
 
     ngOnInit() {
