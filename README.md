@@ -12,19 +12,22 @@
 Angular view layer for [Slate](https://github.com/ianstormtaylor/slate)
 [中文文档](https://github.com/worktile/slate-angular/blob/master/README.zh-CN.md)
 
-### Introduction
+
+## Introduction
 
 [Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the core model and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
 
 Slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
 
-### Demo
 
-[Try out our live demo](http://planet.ngnice.com)
+## Demo
 
-![ngx-planet-micro-front-end.gif](https://cdn.pingcode.com/open-sources/ngx-planet/ngx-planet-micro-front-end.gif)
+[Try out our live demo](http://slate-angular.ngnice.com)
 
-### Feature
+![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
+
+
+## Feature
 
 - 支持块级元素前后光标
 - 支持自定义元素组件
@@ -32,7 +35,7 @@ Slate-angular is inspired by slate-react, and try to keep the style of slate and
 - 支持自定义叶子组件
 
 
-### Who is using slate-angular?
+## Who is using slate-angular?
 
 <table>
   <tr>
@@ -46,6 +49,7 @@ Slate-angular is inspired by slate-react, and try to keep the style of slate and
   </tr>
 </table>
 
+
 ## 💻 Development
 
 ```bash
@@ -58,25 +62,18 @@ npm run build              // build new slate-angular
 
 npm run test               // run unit tests
 ```
-### Development scripts
 
-Useful scripts include:
-
-`npm install` Installs package dependencies
-
-`​npm run start` Start Demo
-
-`npm run build` build slate-angular library
-
-#### Prerequisites
+### Prerequisites
 
 Angular >= 10.2.4
 
 Slate >= 0.58.4
 
-#### Contributing
+
+## Contributing
 
 🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! 
+
 
 ## LICENSE
 

@@ -11,17 +11,20 @@
 
 基于 [Slate](https://github.com/ianstormtaylor/slate) 的 Angular 视图层
 
-### 介绍
+
+## 介绍
 
 [Slate](https://github.com/ianstormtaylor/slate) 是一款架构良好、高扩展性的富文本编辑器框架，包括核心模型和视图层，但slate官方只提供了基于react的视图层，slate-angular 是 slate 视图层实现的补充，可帮助您使用 slate 和 angular 构建富文本编辑器。
 
 slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular 各自的风格, 对中文输入友好, 开启你的 slate-angular 之旅吧。
 
-### 示例
+
+## 示例
 
 [Try out our live demo](http://slate-angular.ngnice.com)
 
 ![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
+
 
 ### 功能
 
@@ -30,7 +33,8 @@ slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular �
 - 支持自定义文本组件/模板
 - 支持自定义叶子组件/模板
 
-### 谁在使用 slate-angular?
+
+## 谁在使用 slate-angular?
 
 <table>
   <tr>
@@ -43,6 +47,7 @@ slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular �
     </td>
   </tr>
 </table>
+
 
 ## 💻 开发
 
@@ -57,11 +62,13 @@ npm run build              // 重新构建 slate-angular
 npm run test               // 执行单元测试
 ```
 
+
 ### 依赖
 
 Angular >= 10.2.4
 
 Slate >= 0.58.4
+
 
 ### 贡献代码
 
