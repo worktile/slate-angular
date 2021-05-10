@@ -11,6 +11,7 @@
     "minor": "cd packages && npm version minor && cd ../ && git add . && standard-version -a --release-as minor && npm run pub",
     "major": "cd packages && npm version major && cd ../ && git add . && standard-version -a --release-as major && npm run pub",
     "test": "ng test slate-angular",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

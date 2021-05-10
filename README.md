@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/worktile/slate-angular.svg?style=shield)](https://circleci.com/gh/worktile/slate-angular)
 [![Coverage Status][coveralls-image]][coveralls-url]
-[![npm (scoped)](https://img.shields.io/npm/v/@worktile/planet?style=flat)](https://www.npmjs.com/package/@worktile/planet)
-[![npm](https://img.shields.io/npm/dm/@worktile/planet)](https://www.npmjs.com/package/@worktile/planet)
-![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/@worktile/planet) [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![npm (scoped)](https://img.shields.io/npm/v/slate-angular?style=flat)](https://www.npmjs.com/package/slate-angular)
+[![npm](https://img.shields.io/npm/dm/slate-angular)](https://www.npmjs.com/package/slate-angular)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/slate-angular)
 
 [coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/worktile/slate-angular
