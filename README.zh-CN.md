@@ -19,9 +19,9 @@ slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular �
 
 ### 示例
 
-[Try out our live demo](http://planet.ngnice.com)
+[Try out our live demo](http://slate-angular.ngnice.com)
 
-![ngx-planet-micro-front-end.gif](https://cdn.pingcode.com/open-sources/ngx-planet/ngx-planet-micro-front-end.gif)
+![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
 
 ### 功能
 

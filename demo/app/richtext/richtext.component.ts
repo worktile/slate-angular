@@ -126,8 +126,14 @@ export class DemoRichtextComponent implements OnInit {
         },
     ];
 
-    @ViewChild('heading', { read: TemplateRef, static: true })
-    headingTemplate: TemplateRef<any>;
+    @ViewChild('heading_1', { read: TemplateRef, static: true })
+    headingOneTemplate: TemplateRef<any>;
+
+    @ViewChild('heading_2', { read: TemplateRef, static: true })
+    headingTwoTemplate: TemplateRef<any>;
+
+    @ViewChild('heading_3', { read: TemplateRef, static: true })
+    headingThreeTemplate: TemplateRef<any>;
 
     @ViewChild('blockquote', { read: TemplateRef, static: true })
     blockquoteTemplate: TemplateRef<any>;
@@ -157,8 +163,14 @@ export class DemoRichtextComponent implements OnInit {
     }
 
     renderElement = (element: Element) => {
-        if ((element.type as string).startsWith('heading')) {
-            return this.headingTemplate;
+        if (element.type === 'heading-one') {
+            return this.headingOneTemplate;
+        }
+        if (element.type === 'heading-two') {
+            return this.headingTwoTemplate;
+        }
+        if (element.type === 'heading-three') {
+            return this.headingThreeTemplate;
         }
         if (element.type === 'block-quote') {
             return this.blockquoteTemplate;
