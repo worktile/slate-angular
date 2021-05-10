@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { Element } from 'slate';
 
 @Component({
     selector: 'slate-block-card, [slateBlockCard]',

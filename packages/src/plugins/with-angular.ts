@@ -279,8 +279,6 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
   e.onClick = () => { };
 
-  e.equalsNodeKey = (node, another) => false;
-
   e.isBlockCard = (element) => false;
 
   e.onError = (errorData: SlateError) => {

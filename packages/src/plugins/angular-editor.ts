@@ -33,7 +33,6 @@ export interface AngularEditor extends Editor {
     setFragmentData: (data: DataTransfer) => void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
-    equalsNodeKey: (node: Node, another: Node) => boolean;
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
     onError: (errorData: SlateError) => void;
