@@ -18,6 +18,10 @@ describe('AngularEditor', () => {
         fixture.detectChanges();
     }));
 
+    afterEach(() => {
+        fixture.destroy();
+    });
+
     it('should fixed cursor after zero width char when text node is empty', () => {
         Transforms.select(component.editor, {
             anchor: {
