@@ -1,9 +1,13 @@
 # slate-angular
 
 [![CircleCI](https://circleci.com/gh/worktile/slate-angular.svg?style=shield)](https://circleci.com/gh/worktile/slate-angular)
+[![Coverage Status][coveralls-image]][coveralls-url]
 [![npm (scoped)](https://img.shields.io/npm/v/slate-angular?style=flat)](https://www.npmjs.com/package/slate-angular)
 [![npm](https://img.shields.io/npm/dm/slate-angular)](https://www.npmjs.com/package/slate-angular)
 ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/slate-angular)
+
+[coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/worktile/slate-angular
 
 Angular view layer for [Slate](https://github.com/ianstormtaylor/slate)
 [中文文档](https://github.com/worktile/slate-angular/blob/master/README.zh-CN.md)
@@ -11,7 +15,7 @@ Angular view layer for [Slate](https://github.com/ianstormtaylor/slate)
 
 ## Introduction
 
-[Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the core model and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
+[Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the model layer and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
 
 Slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
 
@@ -25,10 +29,10 @@ Slate-angular is inspired by slate-react, and try to keep the style of slate and
 
 ## Feature
 
-- 支持块级元素前后光标
-- 支持自定义元素组件
-- 支持自定义文本组件
-- 支持自定义叶子组件
+- Cursor before and after for block elements
+- Custom Element Compoent
+- Custom Text Component 
+- Custom Leaf Component
 
 
 ## Who is using slate-angular?
