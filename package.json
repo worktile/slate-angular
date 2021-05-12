@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
-    "build:demo": "ng build demo --baseHref=/ --prod",
     "build": "ng build slate-angular && cpx \"./packages/src/**/*.scss\" ./dist/",
+    "build:demo": "ng build demo --prod",
     "pub": "npm run build && cd dist && npm publish --access public",
     "patch": "cd packages && npm version patch && cd ../ && git add . && standard-version -a --release-as patch && npm run pub",
     "minor": "cd packages && npm version minor && cd ../ && git add . && standard-version -a --release-as minor && npm run pub",
