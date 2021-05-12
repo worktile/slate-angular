@@ -1,8 +1,0 @@
-<span #leaf>
-    <sla-nest-children-entry [children]="leafViews"></sla-nest-children-entry>
-</span>
-
-<ng-template #stringComponentTemplate let-context="context">
-    <span slaString [text]="context.text" [isLast]="context.isLast" [leaf]="context.leaf"
-        [parent]="context.parent" [editor]="context.editor"></span>
-</ng-template>

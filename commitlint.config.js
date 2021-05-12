@@ -9,12 +9,14 @@ module.exports = {
             [
                 'demo',
                 'core',
+                'view',
                 'release',
                 'plugin',
                 'config',
                 'template',
                 'browser',
-                'docs'
+                'docs',
+                'decorate'
             ]
         ]
     }

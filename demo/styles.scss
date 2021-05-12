@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 @import './app/app.component.scss';
 @import './editor-typo.scss';
-@import '../packages/src/styles/index.scss';
+@import '../dist/styles/index.scss';
+@import './assets/materialicons/icon.css';

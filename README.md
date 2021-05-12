@@ -1,33 +1,81 @@
-<p align="center">
-  <a href="#"><img src="./docs/images/banner.jpeg" /></a>
-</p>
+# slate-angular
 
-<p align="center">
-  An angular view layer base on Slate <br/>
-  for building rich text editors.
-</p>
-<br/>
+[![CircleCI](https://circleci.com/gh/worktile/slate-angular.svg?style=shield)](https://circleci.com/gh/worktile/slate-angular)
+[![Coverage Status][coveralls-image]][coveralls-url]
+[![npm (scoped)](https://img.shields.io/npm/v/slate-angular?style=flat)](https://www.npmjs.com/package/slate-angular)
+[![npm](https://img.shields.io/npm/dm/slate-angular)](https://www.npmjs.com/package/slate-angular)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/slate-angular)
 
-<br/>
+[coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/worktile/slate-angular
 
-### Introduction
-Slate is a completely customizable framework for building rich text editors. In principle, Slate is frame-independent. It's core layer implementation does not depend on any front-end framework. The framework-related parts are extracted into an independent view layer, but currently the official only provides a React-based view layer, in order to be able to Using Slate in the Angular framework, we have developed a view layer based on Angular, so that you can easily develop a rich text editor based on Angular + Slate.
+Angular view layer for Slate
 
-In the process of developing slate-angular, we made a lot of reference to the implementation of slate-react, and kept closely updated with the official implementation of slate-react, and we fixed a large number of Chinese input crashes, so you can trust it enough , Start your slate-angular journey.
+[中文文档](https://github.com/worktile/slate-angular/blob/master/README.zh-CN.md)
 
-### Development scripts
 
-Useful scripts include:
+## Introduction
 
-`npm install` Installs package dependencies
+[Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the model layer and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
 
-`​npm run start` Start Demo
+Slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
 
-`npm run build` build slate-angular library
 
-#### Prerequisites
-Angular >= 10.x
+## Demo
+
+[Try out our live demo](http://slate-angular.ngnice.com)
+
+![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
+
+
+## Feature
+
+- Cursor before and after for block elements
+- Custom Element Compoent
+- Custom Text Component 
+- Custom Leaf Component
+
+
+## Who is using slate-angular?
+
+<table>
+  <tr>
+    <td width="240" align="center">
+      <a target="_blank" href="https://pingcode.com/product/wiki?utm_source=github-slate-angular">
+        <img src="https://cdn.pingcode.com/static/pc-charm/assets/images/logo.png?v=2.40.0" height="40"/>
+        <br />
+        <strong>PingCode Wiki</strong>
+      </a>
+    </td>
+  </tr>
+</table>
+
+
+## 💻 Development
+
+```bash
+npm install   // Installs package dependencies
+```
+
+```bash
+npm run start              // run demo
+npm run build              // build new slate-angular
+
+npm run test               // run unit tests
+```
+
+### Prerequisites
+
+Angular >= 10.2.4
+
 Slate >= 0.58.4
 
-#### Contributing
-🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! Don't hesitate to share your plugins here. 
+
+## Contributing
+
+🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! 
+
+
+## LICENSE
+
+[MIT License](https://github.com/worktile/slate-angular/blob/master/LICENSE)
