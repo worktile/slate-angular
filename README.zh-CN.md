@@ -9,7 +9,7 @@
 [coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/worktile/slate-angular
 
-基于 [Slate](https://github.com/ianstormtaylor/slate) 的 Angular 视图层
+基于 Slate 的 Angular 视图层
 
 
 ## 介绍
