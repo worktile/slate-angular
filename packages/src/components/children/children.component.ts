@@ -29,6 +29,6 @@ export class SlateChildrenComponent extends ViewContainer<SlateDescendantCompone
     }
 
     trackBy = (index, node) => {
-        return AngularEditor.findKey(this.viewContext.editor, node);
+        return this.viewContext.trackBy(node) || AngularEditor.findKey(this.viewContext.editor, node);
     }
 }

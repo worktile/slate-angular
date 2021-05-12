@@ -2,7 +2,6 @@ import {
     Component,
     OnInit,
     Input,
-    TemplateRef,
     ViewChild,
     HostBinding,
     Renderer2,
@@ -17,7 +16,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE } from '../../utils/weak-maps';
-import { Text as SlateText, Element as SlateElement, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
     DOMElement,
@@ -97,7 +96,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() editor: AngularEditor;
 
-    @Input() renderElement: (element: SlateElement) => ViewType;
+    @Input() renderElement: (element: Element) => ViewType;
 
     @Input() renderLeaf: (text: SlateText) => ViewType;
 
@@ -105,23 +104,25 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
+    @Input() trackBy: (node: Element) => any = () => null;
+
     @Input()
     readonly = false;
 
     //#region input event handler
-    @Input() slaBeforeInput: (event: Event) => void;
-    @Input() slaBlur: (event: Event) => void;
-    @Input() slaClick: (event: MouseEvent) => void;
-    @Input() slaCompositionEnd: (event: CompositionEvent) => void;
-    @Input() slaCompositionStart: (event: CompositionEvent) => void;
-    @Input() slaCopy: (event: ClipboardEvent) => void;
-    @Input() slaCut: (event: ClipboardEvent) => void;
-    @Input() slaDragOver: (event: DragEvent) => void;
-    @Input() slaDragStart: (event: DragEvent) => void;
-    @Input() slaDrop: (event: DragEvent) => void;
-    @Input() slaFocus: (event: Event) => void;
-    @Input() slaKeyDown: (event: KeyboardEvent) => void;
-    @Input() slaPaste: (event: KeyboardEvent) => void;
+    @Input() beforeInput: (event: Event) => void;
+    @Input() blur: (event: Event) => void;
+    @Input() click: (event: MouseEvent) => void;
+    @Input() compositionEnd: (event: CompositionEvent) => void;
+    @Input() compositionStart: (event: CompositionEvent) => void;
+    @Input() copy: (event: ClipboardEvent) => void;
+    @Input() cut: (event: ClipboardEvent) => void;
+    @Input() dragOver: (event: DragEvent) => void;
+    @Input() dragStart: (event: DragEvent) => void;
+    @Input() drop: (event: DragEvent) => void;
+    @Input() focus: (event: Event) => void;
+    @Input() keyDown: (event: KeyboardEvent) => void;
+    @Input() paste: (event: KeyboardEvent) => void;
     //#endregion
 
     //#region DOM attr
@@ -340,6 +341,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             renderElement: this.renderElement,
             renderLeaf: this.renderLeaf,
             renderText: this.renderText,
+            trackBy: this.trackBy,
             templateComponent: this.templateComponent,
             readonly: this.readonly
         };
@@ -414,7 +416,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         }
     ) {
         const editor = this.editor;
-        if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.slaBeforeInput)) {
+        if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.beforeInput)) {
             timeDebug('with intent start beforeinput');
             try {
                 const { selection } = editor;
@@ -535,7 +537,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             this.readonly ||
             this.isUpdatingSelection ||
             !hasEditableTarget(this.editor, event.target) ||
-            this.isDOMEventHandled(event, this.slaBlur)
+            this.isDOMEventHandled(event, this.blur)
         ) {
             return;
         }
@@ -570,7 +572,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (relatedTarget != null && isDOMNode(relatedTarget) && AngularEditor.hasDOMNode(this.editor, relatedTarget)) {
             const node = AngularEditor.toSlateNode(this.editor, relatedTarget);
 
-            if (SlateElement.isElement(node) && !this.editor.isVoid(node)) {
+            if (Element.isElement(node) && !this.editor.isVoid(node)) {
                 return;
             }
         }
@@ -582,7 +584,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (
             !this.readonly &&
             hasTarget(this.editor, event.target) &&
-            !this.isDOMEventHandled(event, this.slaClick) &&
+            !this.isDOMEventHandled(event, this.click) &&
             isDOMNode(event.target)
         ) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
@@ -604,7 +606,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (!event.data && !Range.isCollapsed(this.editor.selection)) {
             Transforms.delete(this.editor);
         }
-        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionEnd)) {
+        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionEnd)) {
             // COMPAT: In Chrome/Firefox, `beforeinput` events for compositions
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
@@ -642,21 +644,21 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 this.forceFlush();
             }
         }
-        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCompositionStart)) {
+        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
             this.isComposing = true;
         }
     }
 
     private onDOMCopy(event: ClipboardEvent) {
         const isOutsideSlate = !hasStringTarget(window.getSelection()) && isTargetInsideVoid(this.editor, event.target);
-        if (!isOutsideSlate && hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.slaCopy)) {
+        if (!isOutsideSlate && hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.copy)) {
             event.preventDefault();
             AngularEditor.setFragmentData(this.editor, event.clipboardData);
         }
     }
 
     private onDOMCut(event: ClipboardEvent) {
-        if (!this.readonly && hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaCut)) {
+        if (!this.readonly && hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.cut)) {
             event.preventDefault();
             AngularEditor.setFragmentData(this.editor, event.clipboardData);
             const { selection } = this.editor;
@@ -668,7 +670,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private onDOMDragOver(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaDragOver)) {
+        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragOver)) {
             // Only when the target is void, call `preventDefault` to signal
             // that drops are allowed. Editable content is droppable by
             // default, and calling `preventDefault` hides the cursor.
@@ -681,7 +683,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private onDOMDragStart(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.slaDragStart)) {
+        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
             const voidMatch = Editor.void(this.editor, { at: path });
@@ -698,7 +700,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private onDOMDrop(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.slaDrop)) {
+        if (hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.drop)) {
             // COMPAT: Certain browsers don't fire `beforeinput` events at all, and
             // Chromium browsers don't properly fire them for files being
             // dropped into a `contenteditable`. (2019/11/26)
@@ -718,7 +720,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             !this.readonly &&
             !this.isUpdatingSelection &&
             hasEditableTarget(this.editor, event.target) &&
-            !this.isDOMEventHandled(event, this.slaFocus)
+            !this.isDOMEventHandled(event, this.focus)
         ) {
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
             this.latestElement = window.document.activeElement;
@@ -741,7 +743,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             !this.readonly &&
             hasEditableTarget(editor, event.target) &&
             !this.isComposing &&
-            !this.isDOMEventHandled(event, this.slaKeyDown)
+            !this.isDOMEventHandled(event, this.keyDown)
         ) {
             const nativeEvent = event;
             const { selection } = editor;
@@ -946,7 +948,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         // when "paste without formatting" option is used.
         // This unfortunately needs to be handled with paste events instead.
         if (
-            !this.isDOMEventHandled(event, this.slaPaste) &&
+            !this.isDOMEventHandled(event, this.paste) &&
             (!HAS_BEFORE_INPUT_SUPPORT || isPlainTextOnlyPaste(event) || forceOnDOMPaste) &&
             !this.readonly &&
             hasEditableTarget(this.editor, event.target)
@@ -966,7 +968,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (
             !HAS_BEFORE_INPUT_SUPPORT &&
             !this.readonly &&
-            !this.isDOMEventHandled(event.nativeEvent, this.slaBeforeInput) &&
+            !this.isDOMEventHandled(event.nativeEvent, this.beforeInput) &&
             hasEditableTarget(this.editor, event.nativeEvent.target)
         ) {
             event.nativeEvent.preventDefault();
