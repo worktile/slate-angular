@@ -1,4 +1,6 @@
+import { Route } from '@angular/compiler/src/core';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'demo-app-root',
@@ -6,5 +8,25 @@ import { Component, OnInit } from '@angular/core';
     providers: [],
 })
 export class AppComponent implements OnInit {
-    ngOnInit(): void {}
+    menus = [
+        {
+            url: '/',
+            name: 'RichText'
+        },
+        {
+            url: '/huge-document',
+            name: 'Huge Document'
+        },
+        {
+            url: '/markdown-shortcuts',
+            name: 'Markdown Shortcuts'
+        }
+    ];
+
+    isSelected(item) {
+        return window.location.href.endsWith(item.url);
+    }
+
+    ngOnInit(): void {
+    }
 }
