@@ -87,6 +87,15 @@ $editor-width: 800px;
     margin-top: 60px;
 }
 
+@media screen and (max-width: 768px) {
+    .sidenav {
+        display: none;
+    }
+    .content {
+        margin-left: 0px;
+    }
+}
+
 .demo-rich-editor-wrapper {
     max-width: 42em;
     margin: 20px auto;
