@@ -10,10 +10,6 @@ const routes: Routes = [
         component: DemoRichtextComponent
     },
     {
-        path: 'richtext',
-        component: DemoRichtextComponent
-    },
-    {
         path: 'huge-document',
         component: DemoHugeDocumentComponent
     },
