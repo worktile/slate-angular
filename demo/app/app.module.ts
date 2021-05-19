@@ -12,6 +12,7 @@ import { DemoElementImageComponent } from './components/image/image-component';
 import { DemoMarkTextComponent } from './components/text/text.component';
 import { DemoButtonComponent } from './components/button/button.component';
 import { DemoTablesComponent } from './tables/tables.component';
+import { DemoImagesComponent } from './images/images.component';
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import { DemoTablesComponent } from './tables/tables.component';
         DemoHugeDocumentComponent,
         DemoElementImageComponent,
         DemoMarkTextComponent,
-        DemoTablesComponent
+        DemoTablesComponent,
+        DemoImagesComponent
     ],
     imports: [
         BrowserModule,
@@ -31,7 +33,7 @@ import { DemoTablesComponent } from './tables/tables.component';
         FormsModule,
         SlateModule
     ],
-    entryComponents: [DemoMarkTextComponent],
+    entryComponents: [DemoMarkTextComponent, DemoElementImageComponent],
     providers: [
     ],
     bootstrap: [AppComponent]
