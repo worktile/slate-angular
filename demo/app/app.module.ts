@@ -11,6 +11,7 @@ import { SlateModule } from 'slate-angular';
 import { DemoElementImageComponent } from './components/image/image-component';
 import { DemoMarkTextComponent } from './components/text/text.component';
 import { DemoButtonComponent } from './components/button/button.component';
+import { DemoTableComponent } from './table/table.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { DemoButtonComponent } from './components/button/button.component';
         DemoMarkdownShortcutsComponent,
         DemoHugeDocumentComponent,
         DemoElementImageComponent,
-        DemoMarkTextComponent
+        DemoMarkTextComponent,
+        DemoTableComponent
     ],
     imports: [
         BrowserModule,
