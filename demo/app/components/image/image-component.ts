@@ -1,12 +1,12 @@
-import { Component, ElementRef, Renderer2, ChangeDetectorRef, HostListener, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { BaseElementComponent } from 'slate-angular';
 
 @Component({
-    selector: 'demo-element-image,[demoImage]',
-    template: `<img [src]="element.url" alt="" contenteditable="false">`,
+    selector: 'demo-element-image',
+    template: `<slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>
+               <img [src]="element.url" alt="" [class.outline]="selection"> `,
     host: {
-        '[attr.contenteditable]': 'false',
-        class: 'demo-element-image'
+        class: 'demo-element-image',
     }
 })
 export class DemoElementImageComponent extends BaseElementComponent {

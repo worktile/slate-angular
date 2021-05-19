@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { withAngular, AngularEditor } from 'slate-angular';
 import { createEditor, Transforms } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
@@ -10,23 +10,8 @@ import { DemoElementImageComponent } from '../components/image/image-component';
 export class DemoImagesComponent implements OnInit {
     value = initialValue;
 
-    editor = withAngular(createEditor());
+    editor = withImage(withAngular(createEditor()));
 
-    @HostListener('mousedown', ['$event'])
-    imageMousedown(event: MouseEvent) {
-        event.stopPropagation()
-        document.querySelectorAll('img').forEach(item => {
-            item.classList.remove('outline')
-        })
-        const target = event.target as HTMLElement;
-        if( target.tagName === 'DEMO-ELEMENT-IMAGE'){
-            target.children[0].classList.add('outline')
-        }
-        if (target.tagName === 'IMG') {
-            target.classList.add('outline');
-        }
-        return
-    }
     constructor(private cdr: ChangeDetectorRef) {}
 
     renderElement() {
@@ -65,10 +50,6 @@ export class DemoImagesComponent implements OnInit {
             voids: true
         }
         Transforms.insertNodes(this.editor, imageNode);
-        AngularEditor.deselect(this.editor);
-        this.cdr.detectChanges();
-        const dom = AngularEditor.toDOMNode(this.editor, imageNode);
-        dom.children[0].classList.add('outline');
     }
 
     addImages() {
@@ -133,4 +114,14 @@ const initialValue = [
         "key": "zRTHT"
     }
 ];
+
+const withImage = (editor: AngularEditor) => {
+    const {  isVoid } = editor;
+
+    editor.isVoid = element => {
+        return element.type === 'image' || isVoid(element);
+    };
+
+    return editor;
+}
 
