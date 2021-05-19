@@ -124,6 +124,21 @@ $editor-width: 800px;
         margin: 0 -20px;
         margin-bottom: 20px;
     }
+
+    .demo-element-image{
+        display: block;
+        img{ 
+            display: block;
+            max-width: 100%;
+            max-height: 20em;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        .outline{
+            box-shadow: 0 0 0 2px #348fe4;
+        }
+    }
+
 }
 
 .demo-table-editor-wrapper{
