@@ -5,9 +5,9 @@ import { MarkTypes, DemoMarkTextComponent } from '../components/text/text.compon
 
 @Component({
   selector: 'demo-tables',
-  templateUrl: 'table.component.html'
+  templateUrl: 'tables.component.html'
 })
-export class DemoTableComponent implements OnInit {
+export class DemoTablesComponent implements OnInit {
   value = initialValue;
 
   editor = withAngular(createEditor());
