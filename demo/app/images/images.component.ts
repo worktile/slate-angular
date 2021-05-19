@@ -68,7 +68,6 @@ export class DemoImagesComponent implements OnInit {
         AngularEditor.deselect(this.editor);
         this.cdr.detectChanges();
         const dom = AngularEditor.toDOMNode(this.editor, imageNode);
-        console.log(dom,23423)
         dom.children[0].classList.add('outline');
     }
 
