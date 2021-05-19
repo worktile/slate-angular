@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { withAngular, AngularEditor } from 'slate-angular';
 import { createEditor, Transforms } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
@@ -12,7 +12,7 @@ export class DemoImagesComponent implements OnInit {
 
     editor = withImage(withAngular(createEditor()));
 
-    constructor(private cdr: ChangeDetectorRef) {}
+    constructor() {}
 
     renderElement() {
         return (element: any) => {
@@ -46,8 +46,7 @@ export class DemoImagesComponent implements OnInit {
                 {
                     'text': ''
                 }
-            ],
-            voids: true
+            ]
         }
         Transforms.insertNodes(this.editor, imageNode);
     }
@@ -87,13 +86,7 @@ const initialValue = [
             }
         ],
         "key": "EwcCn",
-        "voids": true,
-        "name": "src=http___s13.sinaimg.cn_bmiddle_4d049168cc5e11e7fb13c&refer=http___s13.sinaimg.jpeg",
-        "width": 400,
-        "height": 300,
-        "thumbUrl": "https://atlas-rc.pingcode.com/files/public/5ffa68d453ffebf847cf49b9/origin-url",
-        "originUrl": "https://atlas-rc.pingcode.com/files/public/5ffa68d453ffebf847cf49b9/origin-url",
-        "align": "center"
+        "voids": true
     },
     {
         "type": "paragraph",
@@ -116,7 +109,7 @@ const initialValue = [
 ];
 
 const withImage = (editor: AngularEditor) => {
-    const {  isVoid } = editor;
+    const { isVoid } = editor;
 
     editor.isVoid = element => {
         return element.type === 'image' || isVoid(element);
