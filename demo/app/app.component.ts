@@ -24,6 +24,10 @@ export class AppComponent implements OnInit {
         {
             url: '/tables',
             name: 'Tables'
+        },
+        {
+            url: '/images',
+            name: 'Images'
         }
     ];
 
