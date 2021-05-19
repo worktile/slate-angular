@@ -4,6 +4,7 @@ import { DemoRichtextComponent } from './richtext/richtext.component';
 import { DemoHugeDocumentComponent } from './huge-document/huge-document.component';
 import { DemoMarkdownShortcutsComponent } from './markdown-shorcuts/markdown-shortcuts.component';
 import { DemoTablesComponent } from './tables/tables.component';
+import { DemoImagesComponent } from './images/images.component';
 
 const routes: Routes = [
     {
@@ -21,6 +22,10 @@ const routes: Routes = [
     {
         path: 'tables',
         component: DemoTablesComponent
+    },
+    {
+        path: 'images',
+        component: DemoImagesComponent
     }
 ];
 @NgModule({
