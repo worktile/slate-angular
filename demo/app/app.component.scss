@@ -125,3 +125,28 @@ $editor-width: 800px;
         margin-bottom: 20px;
     }
 }
+
+.demo-table-editor-wrapper{
+    table{
+        border-spacing: 0;
+        word-wrap: break-word;
+        box-sizing: border-box;
+        border-collapse: collapse;
+        margin: 13px 8px 0px 0px;
+        border: 1px solid #ddd;
+        border-top: none;
+        table-layout: fixed;
+        overflow: visible;
+        margin-left: 0px;
+        margin-right: 0px;
+        width: 100%;
+    }
+    td{
+        word-wrap: break-word;
+        border: 1px solid #ddd;
+        border-width: 1px 0 0 1px;
+        vertical-align: top;
+        padding: 8px;
+        cursor: text;
+    }
+}
