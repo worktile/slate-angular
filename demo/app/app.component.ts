@@ -14,16 +14,16 @@ export class AppComponent implements OnInit {
             name: 'RichText'
         },
         {
-            url: '/table',
-            name: 'Table'
-        },
-        {
             url: '/huge-document',
             name: 'Huge Document'
         },
         {
             url: '/markdown-shortcuts',
             name: 'Markdown Shortcuts'
+        },
+        {
+            url: '/tables',
+            name: 'Tables'
         }
     ];
 
