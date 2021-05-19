@@ -27,12 +27,12 @@ export class DemoImagesComponent implements OnInit {
 
     isImgUrl(imgUrl: string) {
         return new Promise((resolve, reject) => {
-            var ImgObj = new Image();
-            ImgObj.src = imgUrl;
-            ImgObj.onload = () => {
+            const imgObj = new Image();
+            imgObj.src = imgUrl;
+            imgObj.onload = () => {
                 resolve(true);
             }
-            ImgObj.onerror = () => {
+            imgObj.onerror = () => {
                 reject(false)
             }
         }).catch(error => { });
