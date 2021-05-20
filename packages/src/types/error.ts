@@ -3,7 +3,8 @@ export enum SlateErrorCode {
     ToSlateSelectionError = 2101,
     OnDOMBeforeInputError = 2102,
     OnSyntheticBeforeInputError = 2103,
-    OnDOMKeydownError = 2104
+    OnDOMKeydownError = 2104,
+    GetStartPointError = 2105
 }
 
 export interface SlateError {
