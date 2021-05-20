@@ -11,6 +11,7 @@ import { SlateDefaultTextComponent } from "../text/default-text.component";
 import { SlateVoidTextComponent } from "../text/void-text.component";
 import { isDecoratorRangeListEqual } from "../../utils";
 import { ViewType } from "../../types/view";
+import { SlateErrorCode } from "../../types";
 
 @Component({
     selector: 'slate-descendant',
@@ -78,17 +79,21 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     getCommonContext(): { selection: Range; decorations: Range[] } {
         const path = AngularEditor.findPath(this.viewContext.editor, this.context.parent);
         const p = path.concat(this.index);
-        const range = Editor.range(this.viewContext.editor, p);
-        const sel = this.context.selection && Range.intersection(range, this.context.selection);
-        const ds = this.context.decorate([this.descendant, p]);
-
-        for (const dec of this.context.decorations) {
-            const d = Range.intersection(dec, range);
-            if (d) {
-                ds.push(d);
+        try {
+            const range = Editor.range(this.viewContext.editor, p);
+            const sel = this.context.selection && Range.intersection(range, this.context.selection);
+            const ds = this.context.decorate([this.descendant, p]);
+            for (const dec of this.context.decorations) {
+                const d = Range.intersection(dec, range);
+                if (d) {
+                    ds.push(d);
+                }
             }
+            return { selection: sel, decorations: ds };
+        } catch (error) {
+            this.viewContext.editor.onError({ code: SlateErrorCode.GetStartPointError, nativeError: error });
+            return { selection: null, decorations: [] };
         }
-        return { selection: sel, decorations: ds };
     }
 
     getContext(): SlateElementContext | SlateTextContext {
