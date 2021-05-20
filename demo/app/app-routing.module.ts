@@ -5,6 +5,7 @@ import { DemoHugeDocumentComponent } from './huge-document/huge-document.compone
 import { DemoMarkdownShortcutsComponent } from './markdown-shorcuts/markdown-shortcuts.component';
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
+import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
 
 const routes: Routes = [
     {
@@ -26,6 +27,10 @@ const routes: Routes = [
     {
         path: 'images',
         component: DemoImagesComponent
+    },
+    {
+        path: 'search-highlighting',
+        component: DemoSearchHighlightingComponent
     }
 ];
 @NgModule({
