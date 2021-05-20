@@ -28,13 +28,16 @@ export class AppComponent implements OnInit {
         {
             url: '/images',
             name: 'Images'
-        }
+        },
+        {
+            url: '/search-highlighting',
+            name: 'Search highlighting'
+        },
     ];
 
     isSelected(item) {
         return window.location.href.endsWith(item.url);
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 }
