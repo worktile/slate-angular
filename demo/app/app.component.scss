@@ -5,7 +5,7 @@ $editor-width: 800px;
     background: #fff;
     color: #333;
     display: flex;
-    height: 52px;
+    height: 54px;
     z-index: 1000;
     position: fixed;
     top: 0;
@@ -15,17 +15,16 @@ $editor-width: 800px;
     box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.05) ;
     .header-logo{
         display: flex;
-        margin-left: 1em;
+        margin-left: 20px;
         .logo{
             display: flex;
-            height: 20px;
             img{
-                height: 20px;
+                height: 23px;
                 width: auto;
                 vertical-align: middle;
             }
             .title{
-                height: 24px;
+                height: 25px;
                 margin-left: 10px;
                 position: relative;
                 top: -1px;
@@ -94,7 +93,7 @@ $editor-width: 800px;
 
             .level-1 {
                 font-size: 14px;
-                line-height: 44px;
+                line-height: 42px;
                 font-weight: 400;
                 padding-left: 20px;
                 margin: 0;
