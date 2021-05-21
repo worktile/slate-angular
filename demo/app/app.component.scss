@@ -2,8 +2,8 @@ $editor-width: 800px;
 
 .header {
     align-items: center;
-    background: #1976d2;
-    color: #fff;
+    background: #fff;
+    color: #333;
     display: flex;
     height: 52px;
     z-index: 1000;
@@ -11,42 +11,70 @@ $editor-width: 800px;
     top: 0;
     left: 0;
     width: 100%;
-
-    /* To appear above the underlay */
-    .title {
+    border-bottom: 1px solid #eee;
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.05) ;
+    .header-logo{
+        display: flex;
         margin-left: 1em;
+        .logo{
+            display: flex;
+            height: 20px;
+            img{
+                height: 20px;
+                width: auto;
+                vertical-align: middle;
+            }
+            .title{
+                height: 24px;
+                margin-left: 10px;
+                position: relative;
+                top: -1px;
+            }
+        }
+        /* To appear above the underlay */
+        .title {
+          margin-left: 10px;
+       
+        }
+    }
+    .header-bars{
+        display: none;
     }
 
     .link {
         margin-left: auto;
         margin-right: 1em;
-
+        font-size: 14px;
         .github,
         .docs {
             margin-left: 1em;
-            color: #fff;
+            color: #666;
             -webkit-text-decoration: none;
             text-decoration: none;
+            &:hover{
+                color: #348fe4;
+            }
         }
+
     }
 }
 
 .sidenav {
-    position: fixed;
-    top: 52px;
-    bottom: 0;
-    left: 0;
-    min-width: 260px;
-    background-color: #f2f2f2;
-    border-right: 1px solid #dbdbdb;
-
     .nav-menu {
-        margin-top: 16px;
+        padding-top: 16px;
+        position: fixed;
+        top: 52px;
+        bottom: 0;
+        left: 0;
+        min-width: 260px;
+        background-color: #f2f2f2;
+        border-right: 1px solid #eee;
+        z-index: 1;
 
         .menu-item {
             .vertical-menu-item {
                 box-sizing: border-box;
-                color: #444;
+                color: #333;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -55,12 +83,12 @@ $editor-width: 800px;
                 text-decoration: none;
 
                 &.selected {
-                    color: #1669bb;
+                    color: #348fe4;
                 }
 
                 &:hover {
-                    background-color: #dbdbdb;
-                    color: #1976d2;
+                    background-color: rgba(52,143,228,0.1);
+                    color: #348fe4;
                     text-shadow: 0 0 5px #fff;
                 }
             }
@@ -71,6 +99,7 @@ $editor-width: 800px;
                 font-weight: 400;
                 padding-left: 20px;
                 margin: 0;
+                color: #666;
                 transition: background-color .2s;
             }
         }
@@ -84,24 +113,16 @@ $editor-width: 800px;
     height: 100%;
     overflow: auto;
     margin-left: 269px;
-    margin-top: 60px;
+    margin-top: 32px;
 }
 
-@media screen and (max-width: 768px) {
-    .sidenav {
-        display: none;
-    }
-    .content {
-        margin-left: 0px;
-    }
-}
 
 .demo-rich-editor-wrapper {
     max-width: 42em;
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
-
+    box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
     .demo-global-toolbar {
         padding: 1px 18px 17px;
         display: flex;
@@ -162,5 +183,64 @@ $editor-width: 800px;
         vertical-align: top;
         padding: 8px;
         cursor: text;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header-bars{
+        display: flex;
+        position: relative;
+        margin-top: 53px;
+        padding-left: 1em;
+        height: 42px;
+        color: #666;
+        align-items: center;
+        .header-bars-name{
+            font-size: 14px;
+            margin-left: 1em;
+        }
+        .material-icons{
+           cursor: pointer;
+        }
+ 
+     }
+    .sidenav {
+        position: relative;
+        top: 0;
+        z-index: 10;
+        left: -100%;
+        transition: all 0.3s;
+        .nav-menu {
+            left: -100%;
+            background-color: #fff;
+            transition: all 0.3s;
+            top: 95px;
+        }
+        &:after{
+            content:'';
+            position: absolute;
+            width: 100%;
+            height: calc(100vh - 95px);
+            background: rgba(0,0,0,0.3);
+
+        }
+    }
+    .animate-sidenav{
+        left: 0;
+        .nav-menu {
+            left: 0;
+            overflow: scroll;
+        }
+    }
+    .content {
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+    .sidenav-content{
+        overflow: hidden;
+        height: calc(100vh - 100px);
+    }
+    .demo-rich-editor-wrapper{
+        margin-top: 0;
     }
 }

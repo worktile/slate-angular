@@ -1,7 +1,4 @@
-import { Route } from '@angular/compiler/src/core';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 @Component({
     selector: 'demo-app-root',
     templateUrl: './app.component.html',
@@ -35,9 +32,22 @@ export class AppComponent implements OnInit {
         },
     ];
 
+    showSideNav: boolean;
+
+    get activeNav() {
+        return this.menus.filter(item=> window.location.href.endsWith(item.url))[0];
+    }
+
+    @ViewChild('sideNav', { static: false }) sideNav: ElementRef
+
     isSelected(item) {
         return window.location.href.endsWith(item.url);
     }
 
-    ngOnInit(): void {}
+    onBreadClick() {
+        this.showSideNav = !this.showSideNav;
+    }
+
+    ngOnInit(): void {
+    }
 }
