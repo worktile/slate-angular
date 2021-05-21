@@ -24,9 +24,6 @@ export class DemoLeafComponent extends BaseLeafComponent {
     }
 
     changeStyle() {
-        const bold = this.leaf.blod ? 'blod' : null;
-        this.renderer.setStyle(this.nativeElement, 'font-weight', bold);
-
         const backgroundColor = this.leaf.highlight ? '#ffeeba' : null;
         this.renderer.setStyle(this.nativeElement, 'backgroundColor', backgroundColor);
     }
