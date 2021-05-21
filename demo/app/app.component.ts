@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
         },
         {
             url: '/search-highlighting',
-            name: 'Search highlighting'
+            name: 'Search Highlighting'
         },
     ];
 

@@ -10,15 +10,8 @@ import { DemoLeafComponent } from './leaf.component';
   styleUrls: ['./search-highlighting.component.scss'],
 })
 export class DemoSearchHighlightingComponent implements OnInit {
-    _keywords = '';
-    get keywords() {
-        return this._keywords;
-    }
-    set keywords(value: string) {
-        this._keywords = value;
-        this.generateDcoreate();
-        this.cdr.markForCheck();
-    }
+    keywords = '';
+
     value = initialValue;
 
     editor = withAngular(createEditor());
@@ -31,7 +24,10 @@ export class DemoSearchHighlightingComponent implements OnInit {
         this.generateDcoreate();
     }
 
-    valueChange(event) {}
+    keywordsChange(event) {
+        this.generateDcoreate();
+        this.cdr.markForCheck();
+    }
 
     generateDcoreate() {
         this.decorate = ([node, path]) => {
