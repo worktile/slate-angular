@@ -6,6 +6,7 @@
                 type="search"
                 placeholder="Search the text..."
                 [(ngModel)]="keywords"
+                (ngModelChange)="keywordsChange($event)"
             />
         </div>
     </div>
@@ -16,7 +17,6 @@
         [renderText]="renderText"
         [decorate]="decorate"
         [renderLeaf]="renderLeaf"
-        (ngModelChange)="valueChange($event)"
     >
     </slate-editable>
 </div>
