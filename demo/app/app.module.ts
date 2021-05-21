@@ -13,6 +13,8 @@ import { DemoMarkTextComponent } from './components/text/text.component';
 import { DemoButtonComponent } from './components/button/button.component';
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
+import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
+import { DemoLeafComponent } from './search-highlighting/leaf.component';
 
 @NgModule({
     declarations: [
@@ -25,22 +27,25 @@ import { DemoImagesComponent } from './images/images.component';
         DemoMarkTextComponent,
         DemoTablesComponent,
         DemoTablesComponent,
-        DemoImagesComponent
+        DemoImagesComponent,
+        DemoSearchHighlightingComponent,
+        DemoLeafComponent,
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         AppRoutingModule,
         FormsModule,
-        SlateModule
+        SlateModule,
     ],
-    entryComponents: [DemoMarkTextComponent, DemoElementImageComponent],
-    providers: [
+    entryComponents: [
+        DemoMarkTextComponent,
+        DemoElementImageComponent,
+        DemoLeafComponent,
     ],
-    bootstrap: [AppComponent]
+    providers: [],
+    bootstrap: [AppComponent],
 })
 export class AppModule {
-    constructor() {
-        
-    }
+  constructor() {}
 }

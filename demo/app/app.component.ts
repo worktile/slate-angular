@@ -25,7 +25,11 @@ export class AppComponent implements OnInit {
         {
             url: '/images',
             name: 'Images'
-        }
+        },
+        {
+            url: '/search-highlighting',
+            name: 'Search Highlighting'
+        },
     ];
 
     showSideNav: boolean;
