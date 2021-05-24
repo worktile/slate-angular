@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/worktile/slate-angular/compare/v0.53.5...v1.0.2) (2021-05-24)
+
+
+### Features
+
+* **core:** add trackBy property #WIK-3849 ([20cdfb1](https://github.com/worktile/slate-angular/commit/20cdfb131dafa02e1a569c60359d858a3187e062)), closes [#WIK-3849](https://github.com/worktile/slate-angular/issues/WIK-3849)
+* **core:** add view module ([49c6430](https://github.com/worktile/slate-angular/commit/49c6430cef5311f5517b1507291fd49a04210b63))
+* **core:** export types ([299341b](https://github.com/worktile/slate-angular/commit/299341b82525066c43f4a5565cd4150f50a14768))
+* **demo:** add image demo #WIK-563 ([c56eebe](https://github.com/worktile/slate-angular/commit/c56eebe7af717efa0d8daf0f5fb34d38add58cfc)), closes [#WIK-563](https://github.com/worktile/slate-angular/issues/WIK-563)
+* **demo:** add richtext demo toolbar ([ad30f66](https://github.com/worktile/slate-angular/commit/ad30f66eff70e5bfa08051ce896861d3ab0a8ca8))
+* **demo:** add search highlighting ([5d46456](https://github.com/worktile/slate-angular/commit/5d464561d75593e9924fe7e3cd289bdbc5b01731))
+* **demo:** add table demo #WIK-697 ([58da9a9](https://github.com/worktile/slate-angular/commit/58da9a99aecdac2159d6e42c8bad788a5d944f08)), closes [#WIK-697](https://github.com/worktile/slate-angular/issues/WIK-697)
+* **demo:** adjust demo style ([542ff98](https://github.com/worktile/slate-angular/commit/542ff9833fd0cb603c366f686593dac1403b177d))
+* **demo:** remove click ([c07b385](https://github.com/worktile/slate-angular/commit/c07b385223bed04200bf61204c9b9893fea13e92))
+* **docs:** add README v1.0 ([731dbee](https://github.com/worktile/slate-angular/commit/731dbee438ef320f5f593c3caeca9dcd261794ce))
+* **docs:** update README ([dae5af5](https://github.com/worktile/slate-angular/commit/dae5af58690676357fb8d900c493a3d269add5cc))
+* **docs:** update README.md ([63cdb5b](https://github.com/worktile/slate-angular/commit/63cdb5b3a936e48d9626e6e41b685349d460acc7))
+* **view:** add base leaf attribute ([f6dd5e3](https://github.com/worktile/slate-angular/commit/f6dd5e35e5f25645e8ed565a0305b729417bf0f8))
+* **view:** add base text attribute ([72a93ec](https://github.com/worktile/slate-angular/commit/72a93ecc46b05da4ee7477829077c03abd51166a))
+* **view:** update isLeafBlock at onchanges ([7d13b12](https://github.com/worktile/slate-angular/commit/7d13b12993f9570bff42c58f6c5c98975537a2b4))
+
+
+### Bug Fixes
+
+* **core:** add directive for base class ([af5f6d8](https://github.com/worktile/slate-angular/commit/af5f6d8b0622b453a87924d3ca94a8b5e60a82ad))
+* **core:** correct element get logic ([532e9b1](https://github.com/worktile/slate-angular/commit/532e9b1deacc6b70292f66096bea88256d1fdb61))
+* **demo:** fix change method ([e337ef7](https://github.com/worktile/slate-angular/commit/e337ef7b1c6bad466bfc53cdec7339ba209122ad))
+* **demo:** fix conflict ([356895b](https://github.com/worktile/slate-angular/commit/356895be2b568523dee4a4d0ef20d976cf36aefe))
+* **docs:** update README and add test Coverage ([beb8cde](https://github.com/worktile/slate-angular/commit/beb8cde73f2738411af2cea0b5a906a31daf2c0c))
+* **view:** catch the invalid data range ([644d7d6](https://github.com/worktile/slate-angular/commit/644d7d6662072f37b10c239857e5ce0a1146f7f8))
+* **view:** correct get editor logic ([687ecff](https://github.com/worktile/slate-angular/commit/687ecffeaabea885e94198eefc5aaab35e42f162))
+* **view:** fix block card and void text ([86f245d](https://github.com/worktile/slate-angular/commit/86f245d14a19021cc35361e7daa5a98c984bcf3d))
+* **view:** fix multiple trigger node onchanges ([a758846](https://github.com/worktile/slate-angular/commit/a758846e3cf74b0f572ed051784cc66c3fcd91e4))
+* **view:** remove repeat input ([0731b00](https://github.com/worktile/slate-angular/commit/0731b008fd81861b02f58dc8cac6c2a7f647b19f))
+* **view:** update ELEMENT_TO_COMPONENT ([f269f93](https://github.com/worktile/slate-angular/commit/f269f93b178797bb1a050d9bc3cdb76f9b38eb9a))
+
 ### [1.0.1](https://github.com/worktile/slate-angular/compare/v0.53.5...v1.0.1) (2021-05-12)
 
 
