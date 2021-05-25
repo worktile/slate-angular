@@ -366,7 +366,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             this.renderer2.listen(target, eventName, (event: Event) => {
                 const beforeInputEvent = extractBeforeInputEvent(event.type, null, event, event.target);
                 if (beforeInputEvent) {
-                    this.onSyntheticBeforeInput(beforeInputEvent);
+                    this.onFallbackBeforeInput(beforeInputEvent);
                 }
                 listener(event);
             })
@@ -611,7 +611,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (this.isComposing === true && !IS_SAFARI && !IS_CHROME_LEGACY && event.data) {
+            if (this.isComposing === true && !IS_SAFARI && event.data) {
                 preventInsertFromComposition(event);
                 Editor.insertText(this.editor, event.data);
             }
@@ -961,7 +961,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    private onSyntheticBeforeInput(event: BeforeInputEvent) {
+    private onFallbackBeforeInput(event: BeforeInputEvent) {
         // COMPAT: Certain browsers don't support the `beforeinput` event, so we
         // fall back to React's leaky polyfill instead just for it. It
         // only works for the `insertText` input type.
@@ -977,8 +977,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 if (!Range.isCollapsed(this.editor.selection)) {
                     Editor.deleteFragment(this.editor);
                 }
-                preventInsertFromComposition(event.nativeEvent);
-
                 // block card
                 const domSelection = window.getSelection();
                 const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
@@ -986,7 +984,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 if (isBlockCard) {
                     return;
                 }
-                Editor.insertText(this.editor, text);
+                // just handle Non-IME input  
+                if (!this.isComposing) {
+                    Editor.insertText(this.editor, text);
+                }
             } catch (error) {
                 this.editor.onError({ code: SlateErrorCode.ToNativeSelectionError, nativeError: error });
             }
