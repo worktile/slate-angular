@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-### [1.0.1](https://github.com/worktile/slate-angular/compare/v0.53.5...v1.0.1) (2021-05-12)
+### [1.0.1](https://github.com/worktile/slate-angular/compare/v1.0.0...v1.0.1) (2021-05-12)
 
 
 ### Features
