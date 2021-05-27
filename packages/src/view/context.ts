@@ -7,6 +7,7 @@ export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
     templateComponent: SlateStringTemplateComponent;
     readonly: boolean;
+    trackBy: (element: Element) => any;
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;
     renderText?: (text: Text) => ViewType;

@@ -147,7 +147,7 @@
       "projectType": "library",
       "root": "packages",
       "sourceRoot": "packages/src",
-      "prefix": "sla",
+      "prefix": "slate",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
