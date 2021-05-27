@@ -1,17 +1,14 @@
-import { Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from "@angular/core";
-import { Element } from 'slate';
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 
 @Component({
-    selector: 'sla-block-card, [slaBlockCard]',
+    selector: 'slate-block-card, [slateBlockCard]',
     templateUrl: 'block-card.component.html'
 })
-export class SlaBlockCardComponent implements OnInit {
+export class SlateBlockCardComponent implements OnInit {
     @ViewChild('centerContianer', { static: true })
     centerContianer: ElementRef;
 
     centerRootNodes: HTMLElement[];
-
-    element: Element;
 
     get nativeElement() {
         return this.elementRef.nativeElement;
@@ -23,12 +20,10 @@ export class SlaBlockCardComponent implements OnInit {
         const fragment = document.createDocumentFragment();
         fragment.append(...this.centerRootNodes);
         this.centerContianer.nativeElement.appendChild(fragment);
-        this.nativeElement.classList.add(`sla-block-card-element`);
-        this.nativeElement.classList.add(`sla-block-card-${this.element.type}`);
+        this.nativeElement.classList.add(`slate-block-card`);
     }
 
-    initializeCenter(rootNodes: HTMLElement[], element: Element) {
+    initializeCenter(rootNodes: HTMLElement[]) {
         this.centerRootNodes = rootNodes;
-        this.element = element;
     }
 }

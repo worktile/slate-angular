@@ -1,9 +1,20 @@
 import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
-import { createEditor, Text as SlateText, Editor, Operation } from 'slate';
+import { createEditor, Text, Editor, Element, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
-import { withAngular } from 'packages/src/public-api';
+import { withAngular } from 'slate-angular';
+import { DemoMarkTextComponent, MarkTypes } from '../components/text/text.component';
+import isHotkey from 'is-hotkey';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
+
+const HOTKEYS = {
+    'mod+b': MarkTypes.bold,
+    'mod+i': MarkTypes.italic,
+    'mod+u': MarkTypes.underline,
+    'mod+`': MarkTypes.strike,
+}
+
+const LIST_TYPES = ['numbered-list', 'bulleted-list']
 
 @Component({
     selector: 'demo-richtext',
@@ -12,10 +23,129 @@ const SLATE_DEV_MODE_KEY = 'slate-dev';
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;
 
-    markTypes = ['bold', 'italic', 'code'];
+    toggleBlock = (format) => {
+        const isActive = this.isBlockActive(format)
+        const isList = LIST_TYPES.includes(format)
 
-    @ViewChild('heading', { read: TemplateRef, static: true })
-    headingTemplate: TemplateRef<any>;
+        Transforms.unwrapNodes(this.editor, {
+            match: n =>
+                LIST_TYPES.includes(
+                    (!Editor.isEditor(n) && Element.isElement(n) && n.type) as string
+                ),
+            split: true,
+        })
+        const newProperties: Partial<Element> = {
+            type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+        }
+        Transforms.setNodes(this.editor, newProperties)
+
+        if (!isActive && isList) {
+            const block = { type: format, children: [] }
+            Transforms.wrapNodes(this.editor, block)
+        }
+    }
+
+    toggleMark = (format) => {
+        const isActive = this.isMarkActive(format)
+
+        if (isActive) {
+            Editor.removeMark(this.editor, format)
+        } else {
+            Editor.addMark(this.editor, format, true)
+        }
+    }
+
+    isBlockActive = (format) => {
+        const [match] = Editor.nodes(this.editor, {
+            match: n =>
+                !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
+        })
+
+        return !!match
+    }
+
+    isMarkActive = (format) => {
+        const marks = Editor.marks(this.editor)
+        return marks ? marks[format] === true : false
+    }
+
+    toolbarItems = [
+        {
+            format: MarkTypes.bold,
+            icon: 'format_bold',
+            active: this.isMarkActive,
+            action: this.toggleMark
+        },
+        {
+            format: MarkTypes.italic,
+            icon: 'format_italic',
+            active: this.isMarkActive,
+            action: this.toggleMark
+        },
+        {
+            format: MarkTypes.underline,
+            icon: 'format_underlined',
+            active: this.isMarkActive,
+            action: this.toggleMark
+        },
+        {
+            format: MarkTypes.code,
+            icon: 'code',
+            active: this.isMarkActive,
+            action: this.toggleMark
+        },
+        {
+            format: 'heading-one',
+            icon: 'looks_one',
+            active: this.isBlockActive,
+            action: this.toggleBlock
+        },
+        {
+            format: 'heading-two',
+            icon: 'looks_two',
+            active: this.isBlockActive,
+            action: this.toggleBlock
+        },
+        {
+            format: 'block-quote',
+            icon: 'format_quote',
+            active: this.isBlockActive,
+            action: this.toggleBlock
+        },
+        {
+            format: 'numbered-list',
+            icon: 'format_list_numbered',
+            active: this.isBlockActive,
+            action: this.toggleBlock
+        },
+        {
+            format: 'bulleted-list',
+            icon: 'format_list_bulleted',
+            active: this.isBlockActive,
+            action: this.toggleBlock
+        },
+    ];
+
+    @ViewChild('heading_1', { read: TemplateRef, static: true })
+    headingOneTemplate: TemplateRef<any>;
+
+    @ViewChild('heading_2', { read: TemplateRef, static: true })
+    headingTwoTemplate: TemplateRef<any>;
+
+    @ViewChild('heading_3', { read: TemplateRef, static: true })
+    headingThreeTemplate: TemplateRef<any>;
+
+    @ViewChild('blockquote', { read: TemplateRef, static: true })
+    blockquoteTemplate: TemplateRef<any>;
+
+    @ViewChild('ul', { read: TemplateRef, static: true })
+    ulTemplate: TemplateRef<any>;
+
+    @ViewChild('ol', { read: TemplateRef, static: true })
+    olTemplate: TemplateRef<any>;
+
+    @ViewChild('li', { read: TemplateRef, static: true })
+    liTemplate: TemplateRef<any>;
 
     editor = withHistory(withAngular(createEditor()));
 
@@ -28,58 +158,48 @@ export class DemoRichtextComponent implements OnInit {
     valueChange(event) {
         if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
             console.log(`anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`);
+            console.log('operations: ', this.editor.operations);
         }
     }
 
-    renderElement = (element: any) => {
-        if (element.type.startsWith('heading')) {
-            return this.headingTemplate;
+    renderElement = (element: Element) => {
+        if (element.type === 'heading-one') {
+            return this.headingOneTemplate;
+        }
+        if (element.type === 'heading-two') {
+            return this.headingTwoTemplate;
+        }
+        if (element.type === 'heading-three') {
+            return this.headingThreeTemplate;
+        }
+        if (element.type === 'block-quote') {
+            return this.blockquoteTemplate;
+        }
+        if (element.type === 'numbered-list') {
+            return this.olTemplate;
+        }
+        if (element.type === 'bulleted-list') {
+            return this.ulTemplate;
+        }
+        if (element.type === 'list-item') {
+            return this.liTemplate;
         }
         return null;
     }
 
-    renderMark = (text: SlateText) => {
-        let rootDOM;
-        let deepestDOM;
-        if (text.bold) {
-            const strong = document.createElement('strong');
-            rootDOM = strong;
-            deepestDOM = strong;
+    renderText = (text: Text) => {
+        if (text.bold || text.italic || text[MarkTypes.code] || text.underlined) {
+            return DemoMarkTextComponent;
         }
-        if (text.italic) {
-            const em = document.createElement('em');
-            if (rootDOM) {
-                em.appendChild(rootDOM);
-            }
-            if (!deepestDOM) {
-                deepestDOM = rootDOM || em;
-            }
-            rootDOM = em;
-        }
-        if (text.code) {
-            const code = document.createElement('code');
-            if (rootDOM) {
-                code.appendChild(rootDOM);
-            }
-            if (!deepestDOM) {
-                deepestDOM = rootDOM || code;
-            }
-            rootDOM = code;
-        }
-        return { rootDOM, deepestDOM };
     }
 
-    isActive(type: string) {
-        const marks = Editor.marks(this.editor);
-        return marks ? marks[type] : false;
-    }
-
-    toggleMark(event: MouseEvent, type: string) {
-        event.preventDefault();
-        if (this.isActive(type)) {
-            Editor.removeMark(this.editor, type);
-        } else {
-            Editor.addMark(this.editor, type, 'true');
+    slaKeyDown = (event: KeyboardEvent) => {
+        for (const hotkey in HOTKEYS) {
+            if (isHotkey(hotkey, event as any)) {
+                event.preventDefault()
+                const mark = HOTKEYS[hotkey]
+                this.toggleMark(mark);
+            }
         }
     }
 }
@@ -92,7 +212,7 @@ const initialValue = [
             { text: ' text, ' },
             { text: 'much', bold: true, italic: true },
             { text: ' better than a ' },
-            { text: '<textarea>', code: true },
+            { text: '<textarea>', 'code-line': true },
             { text: '!' }
         ]
     },
@@ -123,5 +243,9 @@ const initialValue = [
     {
         type: 'paragraph',
         children: [{ text: 'Try it out for yourself!' }]
+    },
+    {
+        type: 'paragraph',
+        children: [{ text: '' }]
     }
 ];
