@@ -2,10 +2,39 @@ import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, 
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
+import { findCurrentLineRange } from '../utils/lines';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
   const e = editor as T & AngularEditor;
-  const { apply, onChange } = e;
+  const { apply, onChange, deleteBackward } = e;
+
+  e.deleteBackward = unit => {
+    if (unit !== 'line') {
+      return deleteBackward(unit);
+    }
+
+    if (editor.selection && Range.isCollapsed(editor.selection)) {
+      const parentBlockEntry = Editor.above(editor, {
+        match: n => Editor.isBlock(editor, n),
+        at: editor.selection,
+      });
+
+      if (parentBlockEntry) {
+        const [, parentBlockPath] = parentBlockEntry
+        const parentElementRange = Editor.range(
+          editor,
+          parentBlockPath,
+          editor.selection.anchor
+        );
+
+        const currentLineRange = findCurrentLineRange(e, parentElementRange);
+
+        if (!Range.isCollapsed(currentLineRange)) {
+          Transforms.delete(editor, { at: currentLineRange });
+        }
+      }
+    }
+  }
 
   e.apply = (op: Operation) => {
     const matches: [Path, Key][] = []
