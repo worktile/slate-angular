@@ -240,8 +240,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     toNativeSelection() {
         try {
             const { selection } = this.editor;
-            const window = AngularEditor.getWindow(this.editor);
-            const domSelection = window.getSelection();
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+            const domSelection = root.getSelection();
 
             if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
                 return;
@@ -380,9 +380,19 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     private toSlateSelection() {
         if (!this.readonly && !this.isComposing && !this.isUpdatingSelection) {
             try {
-                this.useIsFocus();
-                const window = AngularEditor.getWindow(this.editor);
-                const domSelection = window.getSelection();
+                const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+                const { activeElement } = root;
+                const el = AngularEditor.toDOMNode(this.editor, this.editor);
+
+                if (activeElement === el) {
+                    this.latestElement = activeElement;
+                    IS_FOCUSED.set(this.editor, true);
+                  } else {
+                    IS_FOCUSED.delete(this.editor);
+                  }
+
+                // const window = AngularEditor.getWindow(this.editor);
+                // const domSelection = window.getSelection();
                 if (!domSelection) {
                     return Transforms.deselect(this.editor);
                 }
@@ -552,7 +562,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         // one, this is due to the window being blurred when the tab
         // itself becomes unfocused, so we want to abort early to allow to
         // editor to stay focused when the tab becomes focused again.
-        if (this.latestElement === window.document.activeElement) {
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+        if (this.latestElement === root.activeElement) {
             return;
         }
 
@@ -730,8 +741,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             !this.isDOMEventHandled(event, this.focus)
         ) {
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
-            const window = AngularEditor.getWindow(this.editor);
-            this.latestElement = window.document.activeElement;
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            this.latestElement = root.activeElement
 
             // COMPAT: If the editor has nested editable elements, the focus
             // can go to them. In Firefox, this must be prevented because it
@@ -1011,19 +1022,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
     //#endregion
 
-    //#region card
-    useIsFocus() {
-        const window = AngularEditor.getWindow(this.editor);
-        const activeElement = window.document.activeElement;
-        const ediabableElement = AngularEditor.toDOMNode(this.editor, this.editor);
-        if (activeElement === ediabableElement || hasEditableTarget(this.editor, activeElement)) {
-            this.latestElement = activeElement;
-            IS_FOCUSED.set(this.editor, true);
-        } else {
-            IS_FOCUSED.delete(this.editor);
-        }
-    }
-    //#region
     ngOnDestroy() {
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
