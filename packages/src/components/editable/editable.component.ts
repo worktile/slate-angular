@@ -383,6 +383,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
                 const { activeElement } = root;
                 const el = AngularEditor.toDOMNode(this.editor, this.editor);
+                const domSelection = root.getSelection();
 
                 if (activeElement === el) {
                     this.latestElement = activeElement;
@@ -391,8 +392,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                     IS_FOCUSED.delete(this.editor);
                   }
 
-                // const window = AngularEditor.getWindow(this.editor);
-                // const domSelection = window.getSelection();
                 if (!domSelection) {
                     return Transforms.deselect(this.editor);
                 }
