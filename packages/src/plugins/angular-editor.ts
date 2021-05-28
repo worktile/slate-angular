@@ -40,6 +40,7 @@ export interface AngularEditor extends Editor {
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
     onError: (errorData: SlateError) => void;
+    hasRange: (editor: AngularEditor, range: Range) => boolean;
 }
 
 export const AngularEditor = {
@@ -699,5 +700,12 @@ export const AngularEditor = {
         const window = AngularEditor.getWindow(editor);
         const domSelection = window.getSelection();
         domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
-    }
+    },
+
+    hasRange(editor: AngularEditor, range: Range): boolean {
+        const { anchor, focus } = range
+        return (
+            Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path)
+        );
+    },
 };
