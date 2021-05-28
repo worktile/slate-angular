@@ -299,8 +299,16 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                         newDomRange.endOffset
                     );
                 }
-                const leafEl = newDomRange.startContainer.parentElement;
-                scrollIntoView(leafEl, { scrollMode: 'if-needed', boundary: el });
+                const leafEl = newDomRange.startContainer.parentElement!;
+                leafEl.getBoundingClientRect = newDomRange.getBoundingClientRect.bind(
+                    newDomRange
+                );
+                scrollIntoView(leafEl, {
+                    scrollMode: 'if-needed',
+                    boundary: el,
+                });
+                // @ts-ignore
+                delete leafEl.getBoundingClientRect;
             }
 
             setTimeout(() => {
@@ -388,9 +396,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 if (activeElement === el) {
                     this.latestElement = activeElement;
                     IS_FOCUSED.set(this.editor, true);
-                  } else {
+                } else {
                     IS_FOCUSED.delete(this.editor);
-                  }
+                }
 
                 if (!domSelection) {
                     return Transforms.deselect(this.editor);
