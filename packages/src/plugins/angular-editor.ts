@@ -44,8 +44,8 @@ export const AngularEditor = {
     ...Editor,
 
     /**
- * Return the host window of the current editor.
- */
+     * Return the host window of the current editor.
+     */
 
     getWindow(editor: AngularEditor): Window {
         const window = EDITOR_TO_WINDOW.get(editor);
