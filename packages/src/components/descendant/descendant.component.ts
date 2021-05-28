@@ -125,7 +125,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             const textContext: SlateTextContext = {
                 decorations: computedContext.decorations,
                 isLast: isLeafBlock && this.index === this.context.parent.children.length - 1,
-                parent: this.context.parent,
+                parent: this.context.parent as Element,
                 text: this.descendant
             }
             return textContext;
@@ -136,7 +136,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         if (Element.isElement(this.descendant)) {
             return (this.viewContext.renderElement && this.viewContext.renderElement(this.descendant)) || SlateDefaultElementComponent;
         } else {
-            const isVoid = this.viewContext.editor.isVoid(this.context.parent);
+            const isVoid = this.viewContext.editor.isVoid(this.context.parent as Element);
             return isVoid ? SlateVoidTextComponent : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
         }
     }

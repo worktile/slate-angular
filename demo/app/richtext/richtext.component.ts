@@ -29,9 +29,7 @@ export class DemoRichtextComponent implements OnInit {
 
         Transforms.unwrapNodes(this.editor, {
             match: n =>
-                LIST_TYPES.includes(
-                    (!Editor.isEditor(n) && Element.isElement(n) && n.type) as string
-                ),
+                LIST_TYPES.includes(Element.isElement(n) && n.type),
             split: true,
         })
         const newProperties: Partial<Element> = {
@@ -57,8 +55,7 @@ export class DemoRichtextComponent implements OnInit {
 
     isBlockActive = (format) => {
         const [match] = Editor.nodes(this.editor, {
-            match: n =>
-                !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
+            match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
         })
 
         return !!match
@@ -162,7 +159,7 @@ export class DemoRichtextComponent implements OnInit {
         }
     }
 
-    renderElement = (element: Element) => {
+    renderElement = (element: Element & { type: string }) => {
         if (element.type === 'heading-one') {
             return this.headingOneTemplate;
         }
@@ -188,7 +185,7 @@ export class DemoRichtextComponent implements OnInit {
     }
 
     renderText = (text: Text) => {
-        if (text.bold || text.italic || text[MarkTypes.code] || text.underlined) {
+        if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return DemoMarkTextComponent;
         }
     }

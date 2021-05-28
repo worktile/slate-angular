@@ -37,7 +37,7 @@ export class DemoMarkTextComponent extends BaseTextComponent {
         } else {
             this.renderer2.removeClass(this.elementRef.nativeElement, 'code-line');
         }
-        if (this.text.underlined) {
+        if (this.text[MarkTypes.underline]) {
             this.renderer2.setStyle(this.elementRef.nativeElement, 'text-decoration', 'underline');
         } else {
             this.renderer2.removeStyle(this.elementRef.nativeElement, 'text-decoration');

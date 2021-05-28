@@ -16,7 +16,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -44,6 +44,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { isDecoratorRangeListEqual } from '../../utils';
+import { HistoryEditor } from 'slate-history';
 
 const timeDebug = Debug('slate-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -190,7 +191,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         this.onTouchedCallback = fn;
     }
 
-    writeValue(value: Node[]) {
+    writeValue(value: Descendant[]) {
         if (value && value.length) {
             this.editor.children = value;
             this.cdr.markForCheck();
@@ -836,7 +837,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 if (Hotkeys.isRedo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (typeof editor.redo === 'function') {
+                    if (HistoryEditor.isHistoryEditor(editor)) {
                         editor.redo();
                     }
 
@@ -846,7 +847,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 if (Hotkeys.isUndo(nativeEvent)) {
                     event.preventDefault();
 
-                    if (typeof editor.undo === 'function') {
+                    if (HistoryEditor.isHistoryEditor(editor)) {
                         editor.undo();
                     }
 

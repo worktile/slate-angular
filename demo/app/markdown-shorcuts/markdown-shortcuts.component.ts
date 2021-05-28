@@ -2,13 +2,14 @@ import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
+import { BulletedListElement } from '../../custom-types';
 
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html'
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {
-    constructor() {}
+    constructor() { }
 
     value = initialValue;
 
@@ -33,7 +34,7 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
     @ViewChild('heading_6', { read: TemplateRef, static: true })
     headingSixTemplate: TemplateRef<any>;
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     renderElement() {
         return (element: Element) => {
@@ -67,7 +68,7 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
         };
     }
 
-    valueChange(event) {}
+    valueChange(event) { }
 }
 const initialValue = [
     {
@@ -125,7 +126,7 @@ const withShortcuts = editor => {
 
         if (text === ' ' && selection && Range.isCollapsed(selection)) {
             const { anchor } = selection;
-            const block = Editor.above(editor, {
+            const block = Editor.above<Element>(editor, {
                 match: n => Editor.isBlock(editor, n)
             });
             const path = block ? block[1] : [];
@@ -140,9 +141,9 @@ const withShortcuts = editor => {
                 Transforms.setNodes(editor, { type }, { match: n => Editor.isBlock(editor, n) });
 
                 if (type === 'list-item') {
-                    const list = { type: 'bulleted-list', children: [] };
-                    Transforms.wrapNodes(editor, list, {
-                        match: n => n.type === 'list-item'
+                    const list: BulletedListElement = { type: 'bulleted-list', children: [] };
+                    Transforms.wrapNodes<Element>(editor, list, {
+                        match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'list-item'
                     });
                 }
 
@@ -157,7 +158,7 @@ const withShortcuts = editor => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-            const match = Editor.above(editor, {
+            const match = Editor.above<Element>(editor, {
                 match: n => Editor.isBlock(editor, n)
             });
 
@@ -170,7 +171,7 @@ const withShortcuts = editor => {
 
                     if (block.type === 'list-item') {
                         Transforms.unwrapNodes(editor, {
-                            match: n => n.type === 'bulleted-list',
+                            match: n => Element.isElement(n) && n.type === 'bulleted-list',
                             split: true
                         });
                     }
