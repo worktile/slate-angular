@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { withAngular, AngularEditor } from 'slate-angular';
-import { createEditor, Transforms } from 'slate';
+import { withAngular } from 'slate-angular';
+import { createEditor, Transforms, Editor } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
 
 @Component({
@@ -48,7 +48,7 @@ export class DemoImagesComponent implements OnInit {
                 }
             ]
         }
-        Transforms.insertNodes(this.editor, imageNode);
+        Transforms.insertNodes(this.editor, imageNode as any);
     }
 
     addImages() {
@@ -108,10 +108,10 @@ const initialValue = [
     }
 ];
 
-const withImage = (editor: AngularEditor) => {
+const withImage = (editor: Editor) => {
     const { isVoid } = editor;
 
-    editor.isVoid = element => {
+    editor.isVoid = (element) => {
         return element.type === 'image' || isVoid(element);
     };
 

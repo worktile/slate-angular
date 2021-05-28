@@ -24,7 +24,7 @@ export class DemoLeafComponent extends BaseLeafComponent {
     }
 
     changeStyle() {
-        const backgroundColor = this.leaf.highlight ? '#ffeeba' : null;
+        const backgroundColor = this.leaf['highlight'] ? '#ffeeba' : null;
         this.renderer.setStyle(this.nativeElement, 'backgroundColor', backgroundColor);
     }
 }

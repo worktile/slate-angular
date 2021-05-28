@@ -1,4 +1,4 @@
-import { Editor, Node, Path, Point, Range, Transforms, Element } from 'slate';
+import { Editor, Node, Path, Point, Range, Transforms, Element, BaseEditor } from 'slate';
 import {
     EDITOR_TO_ELEMENT,
     ELEMENT_TO_NODE,
@@ -32,7 +32,7 @@ import { IS_CHROME } from '../utils/environment';
  * A React and DOM-specific version of the `Editor` interface.
  */
 
-export interface AngularEditor extends Editor {
+export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
     setFragmentData: (data: DataTransfer) => void;
     onKeydown: (event: KeyboardEvent) => void;
@@ -45,7 +45,6 @@ export interface AngularEditor extends Editor {
 
 export const AngularEditor = {
     ...Editor,
-
     /**
      * Return the host window of the current editor.
      */

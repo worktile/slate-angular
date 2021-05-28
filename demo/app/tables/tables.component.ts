@@ -39,7 +39,7 @@ export class DemoTablesComponent implements OnInit {
   }
 
   renderText = (text: Text) => {
-    if (text.bold || text.italic || text[MarkTypes.code] || text.underlined) {
+    if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
       return DemoMarkTextComponent;
     }
   }
