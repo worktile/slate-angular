@@ -17,6 +17,7 @@ import {
     DOMRange,
     DOMSelection,
     DOMStaticRange,
+    hasShadowRoot,
     isDOMElement,
     isDOMSelection,
     normalizeDOMPoint
@@ -25,6 +26,7 @@ import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
 import { SlateError } from '../types/error'
 import { Key } from '../utils/key';
+import { IS_CHROME } from '../utils/environment';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -111,6 +113,33 @@ export const AngularEditor = {
     },
 
     /**
+   * Find the DOM node that implements DocumentOrShadowRoot for the editor.
+   */
+
+    findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
+        const el = AngularEditor.toDOMNode(editor, editor)
+        const root = el.getRootNode()
+
+        // The below exception will always be thrown for iframes because the document inside an iframe
+        // does not inherit it's prototype from the parent document, therefore we return early
+        if (el.ownerDocument !== document) return el.ownerDocument
+
+        if (!(root instanceof Document || root instanceof ShadowRoot))
+            throw new Error(
+                `Unable to find DocumentOrShadowRoot for editor element: ${el}`
+            )
+
+        // COMPAT: Only Chrome implements the DocumentOrShadowRoot mixin for
+        // ShadowRoot; other browsers still implement it on the Document
+        // interface. (2020/08/08)
+        // https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot#Properties
+        if (root.getSelection === undefined && el.ownerDocument !== null) {
+            return el.ownerDocument
+        }
+        return root;
+    },
+
+    /**
      * Check if the editor is focused.
      */
 
@@ -148,10 +177,10 @@ export const AngularEditor = {
 
     blur(editor: AngularEditor): void {
         const el = AngularEditor.toDOMNode(editor, editor);
+        const root = AngularEditor.findDocumentOrShadowRoot(editor);
         IS_FOCUSED.set(editor, false);
 
-        const window = AngularEditor.getWindow(editor);
-        if (window.document.activeElement === el) {
+        if (root.activeElement === el) {
             el.blur();
         }
     },
@@ -175,9 +204,9 @@ export const AngularEditor = {
      */
 
     deselect(editor: AngularEditor): void {
-        const { selection } = editor;
-        const window = AngularEditor.getWindow(editor)
-        const domSelection = window.getSelection();
+        const { selection } = editor
+        const root = AngularEditor.findDocumentOrShadowRoot(editor)
+        const domSelection = root.getSelection()
 
         if (domSelection && domSelection.rangeCount > 0) {
             domSelection.removeAllRanges();
@@ -476,15 +505,15 @@ export const AngularEditor = {
             // and to the end of previous node
             if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
                 const endPath =
-                  blockPath[blockPath.length - 1] <= 0
-                    ? blockPath
-                    : Path.previous(blockPath);
+                    blockPath[blockPath.length - 1] <= 0
+                        ? blockPath
+                        : Path.previous(blockPath);
                 return AngularEditor.end(editor, endPath);
             }
             // to the of current node
             if (
                 (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
-                AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) &&
+                    AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) &&
                 !isBackward
             ) {
                 return AngularEditor.end(editor, blockPath);
@@ -497,7 +526,7 @@ export const AngularEditor = {
             // and to the start of current node
             if (
                 (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
-                AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) &&
+                    AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) &&
                 isBackward
             ) {
                 return AngularEditor.start(editor, blockPath);
@@ -585,7 +614,17 @@ export const AngularEditor = {
                 anchorOffset = domRange.anchorOffset;
                 focusNode = domRange.focusNode;
                 focusOffset = domRange.focusOffset;
-                isCollapsed = domRange.isCollapsed;
+                // COMPAT: There's a bug in chrome that always returns `true` for
+                // `isCollapsed` for a Selection that comes from a ShadowRoot.
+                // (2020/08/08)
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=447523
+                if (IS_CHROME && hasShadowRoot()) {
+                    isCollapsed =
+                        domRange.anchorNode === domRange.focusNode &&
+                        domRange.anchorOffset === domRange.focusOffset
+                } else {
+                    isCollapsed = domRange.isCollapsed
+                }
             } else {
                 anchorNode = domRange.startContainer;
                 anchorOffset = domRange.startOffset;
@@ -623,8 +662,8 @@ export const AngularEditor = {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
         const cardCenter = blockCardElement.parentElement;
         return options.direction === 'left'
-          ? cardCenter.previousElementSibling
-          : cardCenter.nextElementSibling;
+            ? cardCenter.previousElementSibling
+            : cardCenter.nextElementSibling;
     },
 
     isCardLeft(node: DOMNode) {
