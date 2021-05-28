@@ -886,12 +886,22 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
                 if (Hotkeys.isMoveWordBackward(nativeEvent)) {
                     event.preventDefault();
+
+                    if (selection && Range.isExpanded(selection)) {
+                        Transforms.collapse(editor, { edge: 'focus' })
+                    }
+
                     Transforms.move(editor, { unit: 'word', reverse: !isRTL });
                     return;
                 }
 
                 if (Hotkeys.isMoveWordForward(nativeEvent)) {
                     event.preventDefault();
+
+                    if (selection && Range.isExpanded(selection)) {
+                        Transforms.collapse(editor, { edge: 'focus' })
+                    }
+
                     Transforms.move(editor, { unit: 'word', reverse: isRTL });
                     return;
                 }
