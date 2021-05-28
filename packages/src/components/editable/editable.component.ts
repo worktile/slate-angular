@@ -617,7 +617,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (!IS_SAFARI && !IS_FIREFOX && !IS_CHROME_LEGACY && event.data) {
+            if (this.isComposing === true && !IS_SAFARI && event.data) {
                 preventInsertFromComposition(event, this.editor);
                 Editor.insertText(this.editor, event.data);
             }
