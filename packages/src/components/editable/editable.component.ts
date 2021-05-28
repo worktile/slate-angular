@@ -84,6 +84,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     private selectionChange$ = new Subject<Event>();
 
     isComposing = false;
+    isDraggingInternally = false;
     isUpdatingSelection = false;
     latestElement = null as DOMElement | null;
 
@@ -120,6 +121,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     @Input() cut: (event: ClipboardEvent) => void;
     @Input() dragOver: (event: DragEvent) => void;
     @Input() dragStart: (event: DragEvent) => void;
+    @Input() dragEnd: (event: DragEvent) => void;
     @Input() drop: (event: DragEvent) => void;
     @Input() focus: (event: Event) => void;
     @Input() keyDown: (event: KeyboardEvent) => void;
@@ -229,6 +231,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         this.addEventListener('cut', this.onDOMCut.bind(this));
         this.addEventListener('dragover', this.onDOMDragOver.bind(this));
         this.addEventListener('dragstart', this.onDOMDragStart.bind(this));
+        this.addEventListener('dragend', this.onDOMDragEnd.bind(this));
         this.addEventListener('drop', this.onDOMDrop.bind(this));
         this.addEventListener('focus', this.onDOMFocus.bind(this));
         this.addEventListener('keydown', this.onDOMKeydown.bind(this));
@@ -396,7 +399,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private toSlateSelection() {
-        if (!this.readonly && !this.isComposing && !this.isUpdatingSelection) {
+        if (!this.readonly && !this.isComposing && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
                 const { activeElement } = root;
@@ -729,7 +732,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
-            const voidMatch = Editor.void(this.editor, { at: path });
+            const voidMatch =
+                Editor.isVoid(this.editor, node) ||
+                Editor.void(this.editor, { at: path, voids: true });
 
             // If starting a drag on a void node, make sure it is selected
             // so that it shows up in the selection's fragment.
@@ -738,23 +743,48 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 Transforms.select(this.editor, range);
             }
 
+            this.isDraggingInternally = true;
+
             AngularEditor.setFragmentData(this.editor, event.dataTransfer);
         }
     }
 
     private onDOMDrop(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.drop)) {
-            // COMPAT: Certain browsers don't fire `beforeinput` events at all, and
-            // Chromium browsers don't properly fire them for files being
-            // dropped into a `contenteditable`. (2019/11/26)
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=1028668
-            if (!HAS_BEFORE_INPUT_SUPPORT || (!IS_SAFARI && event.dataTransfer.files.length > 0)) {
-                event.preventDefault();
-                const range = AngularEditor.findEventRange(this.editor, event);
-                const data = event.dataTransfer;
-                Transforms.select(this.editor, range);
-                AngularEditor.insertData(this.editor, data);
+        const editor = this.editor;
+        if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.drop)) {
+            event.preventDefault();
+            // Keep a reference to the dragged range before updating selection
+            const draggedRange = editor.selection;
+
+            // Find the range where the drop happened
+            const range = AngularEditor.findEventRange(editor, event);
+            const data = event.dataTransfer;
+
+            Transforms.select(editor, range);
+
+            if (this.isDraggingInternally) {
+                if (draggedRange) {
+                    Transforms.delete(editor, {
+                        at: draggedRange,
+                    });
+                }
+
+                this.isDraggingInternally = false;
             }
+
+            AngularEditor.insertData(editor, data);
+
+            // When dragging from another source into the editor, it's possible
+            // that the current editor does not have focus.
+            if (!AngularEditor.isFocused(editor)) {
+                AngularEditor.focus(editor);
+            }
+        }
+    }
+
+    private onDOMDragEnd(event: DragEvent) {
+        if (!this.readonly && this.isDraggingInternally && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragEnd)) {
+            this.isDraggingInternally = false;
         }
     }
 
