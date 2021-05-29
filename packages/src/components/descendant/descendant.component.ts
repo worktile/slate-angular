@@ -33,7 +33,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         if (this.blockCardComponentRef) {
             return [this.blockCardComponentRef.instance.nativeElement];
         }
-        return super.rootNodes;
+        return super.getRootNodes();
     }
 
     ngOnInit() {

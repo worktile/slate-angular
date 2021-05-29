@@ -19,7 +19,11 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
 
     @Input() viewContext: SlateViewContext;
 
-    get rootNodes(): HTMLElement[] {
+    get rootNodes() {
+        return this.getRootNodes();
+    }
+
+    getRootNodes(): HTMLElement[] {
         if (this.embeddedViewRef) {
             return this.embeddedViewRef.rootNodes.filter((rootNode) => isDOMElement(rootNode));
         }
