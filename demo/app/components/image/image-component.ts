@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ImageElement } from '../../../custom-types';
+import { ImageElement } from '../../../../custom-types';
 import { BaseElementComponent } from 'slate-angular';
 
 @Component({

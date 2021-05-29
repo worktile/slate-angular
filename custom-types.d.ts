@@ -60,7 +60,7 @@ export type TableRowElement = { type: 'table-row'; children: TableCellElement[] 
 
 export type TitleElement = { type: 'title'; children: Descendant[] }
 
-// export type VideoElement = { type: 'video'; url: string; children: EmptyText[] }
+export type VideoElement = { type: 'video'; url: string; children: EmptyText[] }
 
 type CustomElement =
     | BlockQuoteElement
@@ -83,7 +83,7 @@ type CustomElement =
     | TableRowElement
     | TableCellElement
     | TitleElement
-// | VideoElement
+    | VideoElement;
 
 export type CustomText = {
     bold?: boolean

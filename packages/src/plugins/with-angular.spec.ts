@@ -3,6 +3,7 @@ import { createEditor, Transforms } from 'slate';
 import { withAngular } from './with-angular';
 import { EDITOR_TO_ON_CHANGE } from '../utils/weak-maps';
 import { AngularEditor } from './angular-editor';
+import * as Types from 'custom-types';
 
 describe('with-angular', () => {
     let angularEditor: AngularEditor;
@@ -13,11 +14,11 @@ describe('with-angular', () => {
                 type: 'paragraph',
                 children: [
                     { text: 'This is editable ' },
-                    { text: 'rich', bold: true },
+                    { text: 'rich'},
                     { text: ' text, ' },
-                    { text: 'much', bold: true, italic: true },
+                    { text: 'much' },
                     { text: ' better than a ' },
-                    { text: '<textarea>', code: true },
+                    { text: '<textarea>' },
                     { text: '!' }
                 ]
             }

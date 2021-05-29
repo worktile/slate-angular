@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
-import { BulletedListElement } from '../../custom-types';
+import { BulletedListElement } from '../../../custom-types';
 
 @Component({
     selector: 'demo-markdown-shortcuts',
