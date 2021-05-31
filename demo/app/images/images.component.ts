@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { withAngular } from 'slate-angular';
-import { createEditor, Transforms, Editor } from 'slate';
+import { createEditor, Transforms, Editor, Element } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
+import { ImageElement } from '../../../custom-types';
 
 @Component({
     selector: 'demo-images',
@@ -12,10 +13,10 @@ export class DemoImagesComponent implements OnInit {
 
     editor = withImage(withAngular(createEditor()));
 
-    constructor() {}
+    constructor() { }
 
     renderElement() {
-        return (element: any) => {
+        return (element: Element) => {
             if (element.type === 'image') {
                 return DemoElementImageComponent;
             }
@@ -23,7 +24,7 @@ export class DemoImagesComponent implements OnInit {
         };
     }
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     isImgUrl(imgUrl: string) {
         return new Promise((resolve, reject) => {
@@ -39,16 +40,16 @@ export class DemoImagesComponent implements OnInit {
     }
 
     createImageNode(imgUrl: string) {
-        const imageNode = {
+        const imageNode: ImageElement = {
             type: 'image',
             url: imgUrl,
             children: [
                 {
-                    'text': ''
+                    text: ''
                 }
             ]
         }
-        Transforms.insertNodes(this.editor, imageNode as any);
+        Transforms.insertNodes(this.editor, imageNode);
     }
 
     addImages() {
