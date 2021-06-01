@@ -17,7 +17,8 @@ module.exports = {
                 'browser',
                 'docs',
                 'decorate',
-                'pretter'
+                'pretter',
+                'types'
             ]
         ]
     }
