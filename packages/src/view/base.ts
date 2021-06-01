@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Directive, ElementRef, Input, OnDestroy, OnInit } fr
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
-import { Element, Range } from 'slate';
+import { Descendant, Element, Range, Text } from 'slate';
 import { SlateChildrenContext } from "./context";
 import { hasBeforeContextChange } from "./before-context-change";
 
@@ -59,11 +59,11 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initailzed = false;
 
-    get text() {
+    get text(): Text {
         return this.context && this.context.text;
     }
 
-    get leaf() {
+    get leaf(): Text {
         return this.context && this.context.leaf;
     }
 
@@ -87,19 +87,19 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     childrenContext: SlateChildrenContext;
 
-    get element() {
+    get element(): Element {
         return this._context && this._context.element;
     }
 
-    get selection() {
+    get selection(): Range {
         return this._context && this._context.selection;
     }
 
-    get decorations() {
+    get decorations(): Range[] {
         return this._context && this._context.decorations;
     }
 
-    get children() {
+    get children(): Descendant[] {
         return this._context && this._context.element.children;
     }
 
@@ -155,7 +155,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
     initailzed = false;
 
-    get text() {
+    get text(): Text {
         return this._context.text;
     }
 
