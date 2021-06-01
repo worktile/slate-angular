@@ -87,7 +87,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     childrenContext: SlateChildrenContext;
 
-    get element(): Element {
+    get element(): T {
         return this._context && this._context.element;
     }
 
