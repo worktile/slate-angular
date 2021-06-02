@@ -1,6 +1,6 @@
 {
   "name": "slate-angular",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "dependencies": {
     "tslib": "^2.0.0"
   },
@@ -8,6 +8,8 @@
     "@angular/common": "~10.2.4",
     "@angular/core": "~10.2.4",
     "slate": "^0.58.4",
-    "slate-history": "^0.58.4"
+    "slate-history": "^0.58.4",
+    "direction": "^1.0.3",
+    "is-hotkey": "^0.1.6"
   }
 }
