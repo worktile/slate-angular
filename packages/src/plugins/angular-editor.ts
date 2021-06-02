@@ -24,7 +24,7 @@ import {
 } from '../utils/dom';
 import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
-import { SlateError } from '../types/error'
+import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
 import { IS_CHROME } from '../utils/environment';
 
@@ -44,7 +44,6 @@ export interface AngularEditor extends BaseEditor {
 }
 
 export const AngularEditor = {
-    ...Editor,
     /**
      * Return the host window of the current editor.
      */
@@ -117,24 +116,25 @@ export const AngularEditor = {
    */
 
     findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
-        const el = AngularEditor.toDOMNode(editor, editor)
-        const root = el.getRootNode()
+        const el = AngularEditor.toDOMNode(editor, editor);
+        const root = el.getRootNode();
 
         // The below exception will always be thrown for iframes because the document inside an iframe
         // does not inherit it's prototype from the parent document, therefore we return early
-        if (el.ownerDocument !== document) return el.ownerDocument
+        if (el.ownerDocument !== document) { return el.ownerDocument; }
 
-        if (!(root instanceof Document || root instanceof ShadowRoot))
+        if (!(root instanceof Document || root instanceof ShadowRoot)) {
             throw new Error(
                 `Unable to find DocumentOrShadowRoot for editor element: ${el}`
-            )
+            );
+        }
 
         // COMPAT: Only Chrome implements the DocumentOrShadowRoot mixin for
         // ShadowRoot; other browsers still implement it on the Document
         // interface. (2020/08/08)
         // https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot#Properties
         if (root.getSelection === undefined && el.ownerDocument !== null) {
-            return el.ownerDocument
+            return el.ownerDocument;
         }
         return root;
     },
@@ -204,9 +204,9 @@ export const AngularEditor = {
      */
 
     deselect(editor: AngularEditor): void {
-        const { selection } = editor
-        const root = AngularEditor.findDocumentOrShadowRoot(editor)
-        const domSelection = root.getSelection()
+        const { selection } = editor;
+        const root = AngularEditor.findDocumentOrShadowRoot(editor);
+        const domSelection = root.getSelection();
 
         if (domSelection && domSelection.rangeCount > 0) {
             domSelection.removeAllRanges();
@@ -508,7 +508,7 @@ export const AngularEditor = {
                     blockPath[blockPath.length - 1] <= 0
                         ? blockPath
                         : Path.previous(blockPath);
-                return AngularEditor.end(editor, endPath);
+                return Editor.end(editor, endPath);
             }
             // to the of current node
             if (
@@ -516,12 +516,12 @@ export const AngularEditor = {
                     AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) &&
                 !isBackward
             ) {
-                return AngularEditor.end(editor, blockPath);
+                return Editor.end(editor, blockPath);
             }
             // backward
             // and to the start of next node
             if (AngularEditor.isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
-                return AngularEditor.start(editor, Path.next(blockPath));
+                return Editor.start(editor, Path.next(blockPath));
             }
             // and to the start of current node
             if (
@@ -529,7 +529,7 @@ export const AngularEditor = {
                     AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) &&
                 isBackward
             ) {
-                return AngularEditor.start(editor, blockPath);
+                return Editor.start(editor, blockPath);
             }
         }
 
@@ -625,9 +625,9 @@ export const AngularEditor = {
                 if (IS_CHROME && hasShadowRoot()) {
                     isCollapsed =
                         domRange.anchorNode === domRange.focusNode &&
-                        domRange.anchorOffset === domRange.focusOffset
+                        domRange.anchorOffset === domRange.focusOffset;
                 } else {
-                    isCollapsed = domRange.isCollapsed
+                    isCollapsed = domRange.isCollapsed;
                 }
             } else {
                 anchorNode = domRange.startContainer;
@@ -649,7 +649,7 @@ export const AngularEditor = {
     },
 
     isLeafBlock(editor: AngularEditor, node: Node): boolean {
-        return Element.isElement(node) && !editor.isInline(node) && Editor.hasInlines(editor, node)
+        return Element.isElement(node) && !editor.isInline(node) && Editor.hasInlines(editor, node);
     },
 
     hasCardTarget(node: DOMNode) {
@@ -706,7 +706,7 @@ export const AngularEditor = {
     },
 
     hasRange(editor: AngularEditor, range: Range): boolean {
-        const { anchor, focus } = range
+        const { anchor, focus } = range;
         return (
             Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path)
         );
