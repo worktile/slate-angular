@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
@@ -58,6 +58,8 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
  */
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initailzed = false;
+
+    @HostBinding('attr.data-slate-leaf')  isSlateLeaf = true
 
     get text(): Text {
         return this.context && this.context.text;
