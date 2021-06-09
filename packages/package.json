@@ -7,9 +7,11 @@
   "peerDependencies": {
     "@angular/common": "~10.2.4",
     "@angular/core": "~10.2.4",
-    "slate": "^0.58.4",
-    "slate-history": "^0.58.4",
+    "slate": "^0.63.0",
+    "slate-history": "^0.62.0",
     "direction": "^1.0.3",
-    "is-hotkey": "^0.1.6"
+    "is-hotkey": "^0.1.6",
+    "debug": "^4.1.1",
+    "scroll-into-view-if-needed": "^2.2.20"
   }
 }

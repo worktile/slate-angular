@@ -46,17 +46,11 @@
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2",
     "debug": "^4.1.1",
-    "faker": "^4.1.0",
     "is-hotkey": "^0.1.6",
-    "is-url": "^1.2.2",
-    "lodash": "3.10.1",
-    "lottie-web": "5.4.4",
-    "lz-string": "1.4.4",
     "node-sass": "^4.13.0",
     "scroll-into-view-if-needed": "^2.2.20",
     "slate": "0.63.0",
     "slate-history": "0.62.0",
-    "unified": "^9.1.0",
     "direction": "^1.0.3"
   },
   "devDependencies": {
@@ -89,6 +83,7 @@
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.1",
     "standard-version": "^7.0.1",
-    "coveralls": "^3.0.6"
+    "coveralls": "^3.0.6",
+    "faker": "^4.1.0"
   }
 }
