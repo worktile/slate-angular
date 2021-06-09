@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/worktile/slate-angular/compare/v1.1.1...v1.1.3) (2021-06-09)
+
+
+### Features
+
+* **view:** refactor(view): refactor block-card logic and api
+
+### Bug Fixes
+
+* **core:** fix(core): correct IS_FOCUSED status on block card
+* **core:** fix(core): add data-slate-leaf to BaseLeafComponent #WIK-4119
+
 ### [1.1.1](https://github.com/worktile/slate-angular/compare/v1.1.0...v1.1.1) (2021-06-02)
 
 ## [1.1.0](https://github.com/worktile/slate-angular/compare/v1.0.3...v1.1.0) (2021-06-02)
