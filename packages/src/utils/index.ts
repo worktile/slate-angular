@@ -5,3 +5,4 @@ export * from './view';
 export * from './environment';
 export * from './key';
 export * from './range-list';
+export * from './block-card';

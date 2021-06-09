@@ -43,8 +43,8 @@ import { SlateStringTemplateComponent } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
-import { isDecoratorRangeListEqual } from '../../utils';
 import { HistoryEditor } from 'slate-history';
+import { isDecoratorRangeListEqual } from '../../utils';
 
 const timeDebug = Debug('slate-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -548,14 +548,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                         if (data instanceof DataTransfer) {
                             AngularEditor.insertData(editor, data);
                         } else if (typeof data === 'string') {
-                            // block card
-                            const window = AngularEditor.getWindow(editor)
-                            const domSelection = window.getSelection();
-                            const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
-                                AngularEditor.hasCardTarget(domSelection.focusNode);
-                            if (isBlockCard) {
-                                return;
-                            }
                             Editor.insertText(editor, data);
                         }
                         break;
@@ -664,22 +656,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     private onDOMCompositionStart(event: CompositionEvent) {
         const { selection } = this.editor;
 
-        const domSelection = window.getSelection();
-        const cardTargetAttr = AngularEditor.getCardTargetAttribute(domSelection.anchorNode);
-        const cardTarget = domSelection.anchorNode;
-
         if (selection) {
             // solve the problem of cross node Chinese input
             if (Range.isExpanded(selection)) {
                 Editor.deleteFragment(this.editor);
-                this.forceFlush();
-            }
-            // 当光标是块级光标时，输入中文前需要强制移动选区
-            if (cardTargetAttr) {
-                const cardEntry = AngularEditor.toSlateCardEntry(this.editor, cardTarget);
-                const isCardLeft = AngularEditor.isCardLeftByTargetAttr(cardTargetAttr);
-                const point = isCardLeft ? Editor.before(this.editor, cardEntry[1]) : Editor.after(this.editor, cardEntry[1]);
-                Transforms.select(this.editor, point);
                 this.forceFlush();
             }
         }
@@ -1067,13 +1047,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 const text = event.data;
                 if (!Range.isCollapsed(this.editor.selection)) {
                     Editor.deleteFragment(this.editor);
-                }
-                // block card
-                const domSelection = window.getSelection();
-                const isBlockCard = AngularEditor.hasCardTarget(domSelection.anchorNode) ||
-                    AngularEditor.hasCardTarget(domSelection.focusNode);
-                if (isBlockCard) {
-                    return;
                 }
                 // just handle Non-IME input  
                 if (!this.isComposing) {

@@ -27,6 +27,7 @@ import { NodeEntry } from 'slate';
 import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
 import { IS_CHROME } from '../utils/environment';
+import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -303,9 +304,9 @@ export const AngularEditor = {
         let domPoint: DOMPoint | undefined;
 
         // block card
-        const cardTargetAttr = AngularEditor.getCardTargetAttribute(el);
+        const cardTargetAttr = getCardTargetAttribute(el);
         if (cardTargetAttr) {
-            if (point.offset === -1) {
+            if (point.offset === FAKE_LEFT_BLOCK_CARD_OFFSET) {
                 const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
                 return [cursorNode, 1];
             } else {
@@ -487,14 +488,14 @@ export const AngularEditor = {
         let offset = 0;
 
         // block card
-        const cardTargetAttr = AngularEditor.getCardTargetAttribute(domNode);
+        const cardTargetAttr = getCardTargetAttribute(domNode);
         if (cardTargetAttr) {
             const domSelection = window.getSelection();
             const isBackward = editor.selection && Range.isBackward(editor.selection);
             const blockCardEntry = AngularEditor.toSlateCardEntry(editor, domNode) || AngularEditor.toSlateCardEntry(editor, nearestNode);
             const [, blockPath] = blockCardEntry;
             if (domSelection.isCollapsed) {
-                if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) {
+                if (isCardLeftByTargetAttr(cardTargetAttr)) {
                     return { path: blockPath, offset: -1 };
                 }
                 else {
@@ -503,7 +504,7 @@ export const AngularEditor = {
             }
             // forward
             // and to the end of previous node
-            if (AngularEditor.isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
+            if (isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
                 const endPath =
                     blockPath[blockPath.length - 1] <= 0
                         ? blockPath
@@ -512,21 +513,21 @@ export const AngularEditor = {
             }
             // to the of current node
             if (
-                (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
-                    AngularEditor.isCardRightByTargetAttr(cardTargetAttr)) &&
+                (isCardCenterByTargetAttr(cardTargetAttr) ||
+                isCardRightByTargetAttr(cardTargetAttr)) &&
                 !isBackward
             ) {
                 return Editor.end(editor, blockPath);
             }
             // backward
             // and to the start of next node
-            if (AngularEditor.isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
+            if (isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
                 return Editor.start(editor, Path.next(blockPath));
             }
             // and to the start of current node
             if (
-                (AngularEditor.isCardCenterByTargetAttr(cardTargetAttr) ||
-                    AngularEditor.isCardLeftByTargetAttr(cardTargetAttr)) &&
+                (isCardCenterByTargetAttr(cardTargetAttr) ||
+                isCardLeftByTargetAttr(cardTargetAttr)) &&
                 isBackward
             ) {
                 return Editor.start(editor, blockPath);
@@ -652,12 +653,12 @@ export const AngularEditor = {
         return Element.isElement(node) && !editor.isInline(node) && Editor.hasInlines(editor, node);
     },
 
-    hasCardTarget(node: DOMNode) {
-        return node && (node.parentElement.hasAttribute('card-target') || (node instanceof HTMLElement && node.hasAttribute('card-target')));
+    isBlockCardLeftCursor(editor: AngularEditor) {
+        return editor.selection.anchor.offset === FAKE_LEFT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_LEFT_BLOCK_CARD_OFFSET;
     },
 
-    getCardTargetAttribute(node: DOMNode) {
-        return node.parentElement.attributes['card-target'] || (node instanceof HTMLElement && node.attributes['card-target']);
+    isBlockCardRightCursor(editor: AngularEditor) {
+        return editor.selection.anchor.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET;
     },
 
     getCardCursorNode(editor: AngularEditor, blockCardNode: Node, options: {
@@ -670,23 +671,6 @@ export const AngularEditor = {
             : cardCenter.nextElementSibling;
     },
 
-    isCardLeft(node: DOMNode) {
-        const cardTarget = AngularEditor.getCardTargetAttribute(node);
-        return cardTarget && cardTarget.nodeValue === 'card-left';
-    },
-
-    isCardLeftByTargetAttr(targetAttr: any) {
-        return targetAttr && targetAttr.nodeValue === 'card-left';
-    },
-
-    isCardRightByTargetAttr(targetAttr: any) {
-        return targetAttr && targetAttr.nodeValue === 'card-right';
-    },
-
-    isCardCenterByTargetAttr(targetAttr: any) {
-        return targetAttr && targetAttr.nodeValue === 'card-center';
-    },
-
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
         const element = node.parentElement
             .closest('.slate-block-card')?.querySelector('[card-target="card-center"]')
@@ -696,6 +680,12 @@ export const AngularEditor = {
         return [slateNode, path];
     },
 
+    /**
+     * move native selection to card-left or card-right
+     * @param editor 
+     * @param blockCardNode 
+     * @param options 
+     */
     moveBlockCard(editor: AngularEditor, blockCardNode: Node, options: {
         direction: 'left' | 'right'
     }) {
@@ -703,6 +693,19 @@ export const AngularEditor = {
         const window = AngularEditor.getWindow(editor);
         const domSelection = window.getSelection();
         domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
+    },
+
+    /**
+     * move slate selection to card-left or card-right
+     * @param editor 
+     * @param path 
+     * @param options 
+     */
+    moveBlockCardCursor(editor: AngularEditor, path: Path, options: {
+        direction: 'left' | 'right'
+    }) {
+        const cursor = { path, offset: options.direction === 'left' ? FAKE_LEFT_BLOCK_CARD_OFFSET : FAKE_RIGHT_BLOCK_CARD_OFFSET };
+        Transforms.select(editor, { anchor: cursor, focus: cursor });
     },
 
     hasRange(editor: AngularEditor, range: Range): boolean {
