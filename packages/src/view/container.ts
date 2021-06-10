@@ -45,7 +45,11 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
                     if (record.currentIndex === 0 && firstChildComponent) {
                         const fragment = document.createDocumentFragment();
                         fragment.append(...record.item.rootNodes);
-                        parentElement.insertBefore(fragment, firstChildComponent.rootNodes[0]);
+                        if (firstChildComponent.rootNodes[0] && firstChildComponent.rootNodes[0].parentElement) {
+                            parentElement.insertBefore(fragment, firstChildComponent.rootNodes[0]);
+                        } else {
+                            parentElement.appendChild(fragment);
+                        }
                     } else {
                         // insert afterend of previous component end
                         const previousComponent = this.childrenComponent.find((item, index) => index === record.currentIndex - 1);
