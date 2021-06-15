@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
-import { createEditor, Text } from 'slate';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { withAngular } from 'slate-angular';
 import { MarkTypes, DemoMarkTextComponent } from '../components/text/text.component';
+import { withBlockCard } from '../plugins/block-cards.plugin';
 
 @Component({
   selector: 'demo-tables',
@@ -10,7 +11,7 @@ import { MarkTypes, DemoMarkTextComponent } from '../components/text/text.compon
 export class DemoTablesComponent implements OnInit {
   value = initialValue;
 
-  editor = withAngular(createEditor());
+  editor = withBlockCard(withTable(withAngular(createEditor())));
 
   @ViewChild('tableTemplate', { read: TemplateRef, static: true })
   tableTemplate: TemplateRef<any>;
@@ -287,4 +288,13 @@ const initialValue = [
   }
 ];
 
-
+const withTable = (editor: Editor) => {
+  const { isBlockCard } = editor;
+  editor.isBlockCard = (node: Node) => {
+    if (Element.isElement(node) && node.type === 'table') {
+      return true;
+    }
+    return isBlockCard(node);
+  }
+  return editor;
+}

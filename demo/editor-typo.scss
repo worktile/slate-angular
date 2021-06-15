@@ -1,5 +1,4 @@
 .slate-editable-container {
-    padding: 0px !important;
     .code-line {
         background-color: rgba($color: #000000, $alpha: 0.06);
         border-radius: 2px;
@@ -21,7 +20,7 @@
         margin: 0px;
     }
 
-    &>[data-slate-node="element"] {
-        margin-bottom: 8px;
+    &>[data-slate-node="element"],&>slate-block-card {
+        margin-bottom: 12px;
     }
 }
