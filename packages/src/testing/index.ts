@@ -3,3 +3,5 @@ export * from './events';
 export * from './element-focus';
 export * from './module';
 export * from './basic-editable.component';
+export * from './advanced-editable.component';
+export * from './leaf.component';
