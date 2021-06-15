@@ -122,6 +122,9 @@ $editor-width: 800px;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
+    .slate-editable-container {
+        padding: 0px;
+    }
     .demo-global-toolbar {
         padding: 1px 18px 17px;
         display: flex;
@@ -160,7 +163,11 @@ $editor-width: 800px;
     }
 }
 
-.demo-table-editor-wrapper{
+.demo-table-editor-wrapper {
+    padding: 0px;
+    .slate-editable-container {
+        padding: 40px;
+    }
     table{
         border-spacing: 0;
         word-wrap: break-word;
