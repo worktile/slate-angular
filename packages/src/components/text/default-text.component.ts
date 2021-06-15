@@ -1,7 +1,6 @@
 import {
     Component,
-    ChangeDetectionStrategy,
-    OnInit
+    ChangeDetectionStrategy
 } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
 
