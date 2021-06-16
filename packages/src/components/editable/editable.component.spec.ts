@@ -10,12 +10,12 @@ describe('Editable Component', () => {
         configureBasicEditableTestingModule([AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
         fixture = TestBed.createComponent(AdvancedEditableComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-        flush();
-        fixture.detectChanges();
     }));    
 
     it('decorate', fakeAsync(() => {
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
         let testingLeaf;
         testingLeaf= fixture.debugElement.query(By.css('.testing-leaf'));
         expect(testingLeaf).toBeFalsy();
