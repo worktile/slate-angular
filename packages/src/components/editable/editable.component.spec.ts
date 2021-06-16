@@ -1,13 +1,13 @@
-import { ComponentFixture, fakeAsync, flush, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { BasicEditableComponent, AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule } from '../../testing';
+import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule } from '../../testing';
 
 describe('Editable Component', () => {
     let component: AdvancedEditableComponent;
     let fixture: ComponentFixture<AdvancedEditableComponent>;
 
     beforeEach(fakeAsync(() => {
-        configureBasicEditableTestingModule([BasicEditableComponent, AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
+        configureBasicEditableTestingModule([AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
         fixture = TestBed.createComponent(AdvancedEditableComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -37,5 +37,60 @@ describe('Editable Component', () => {
         testingLeaf = fixture.debugElement.query(By.css('.testing-leaf')).nativeElement;;
         expect(testingLeaf).toBeTruthy();
         expect(testingLeaf.textContent).toEqual(keywords2);
+    }));
+
+    it('should rerender when data reference changes', fakeAsync(() => {
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Stephen Curry' }],
+                key: 'Curry'
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let paragraphElement = document.querySelector('[data-slate-node="element"]');
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Stephen Curry' }],
+                key: 'Curry'
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let newParagraphElement = document.querySelector('[data-slate-node="element"]');
+        expect(paragraphElement === newParagraphElement).toBeFalse();
+    }));
+
+    it('should not rerender when set trackBy', fakeAsync(() => {
+        component.trackBy = (element) => {
+            return element['key'];
+        }
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Stephen Curry' }],
+                key: 'Curry'
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let paragraphElement = document.querySelector('[data-slate-node="element"]');
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Stephen Curry' }],
+                key: 'Curry'
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let newParagraphElement = document.querySelector('[data-slate-node="element"]');
+        expect(paragraphElement === newParagraphElement).toBeTrue();
     }));
 });
