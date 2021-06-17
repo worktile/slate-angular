@@ -125,7 +125,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     @Input() dragEnd: (event: DragEvent) => void;
     @Input() drop: (event: DragEvent) => void;
     @Input() focus: (event: Event) => void;
-    @Input() keyDown: (event: KeyboardEvent) => void;
+    @Input() keydown: (event: KeyboardEvent) => void;
     @Input() paste: (event: KeyboardEvent) => void;
     //#endregion
 
@@ -798,7 +798,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             !this.readonly &&
             hasEditableTarget(editor, event.target) &&
             !this.isComposing &&
-            !this.isDOMEventHandled(event, this.keyDown)
+            !this.isDOMEventHandled(event, this.keydown)
         ) {
             const nativeEvent = event;
             const { selection } = editor;
