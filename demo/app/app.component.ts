@@ -19,6 +19,10 @@ export class AppComponent implements OnInit {
             name: 'Markdown Shortcuts'
         },
         {
+            url: '/mentions',
+            name: 'Mentions'
+        },
+        {
             url: '/tables',
             name: 'Tables'
         },

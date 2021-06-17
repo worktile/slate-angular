@@ -6,6 +6,7 @@ import { DemoMarkdownShortcutsComponent } from './markdown-shorcuts/markdown-sho
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
 import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
+import { DemoMentionsComponent } from './mentions/mentions.component';
 
 const routes: Routes = [
     {
@@ -31,6 +32,10 @@ const routes: Routes = [
     {
         path: 'search-highlighting',
         component: DemoSearchHighlightingComponent
+    },
+    {
+        path: 'mentions',
+        component: DemoMentionsComponent
     }
 ];
 @NgModule({
