@@ -190,7 +190,7 @@ export class DemoRichtextComponent implements OnInit {
         }
     }
 
-    slaKeyDown = (event: KeyboardEvent) => {
+    keydown = (event: KeyboardEvent) => {
         for (const hotkey in HOTKEYS) {
             if (isHotkey(hotkey, event as any)) {
                 event.preventDefault()

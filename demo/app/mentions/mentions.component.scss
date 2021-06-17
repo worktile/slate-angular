@@ -1,0 +1,39 @@
+.demo-mention-view {
+    background: #eee;
+    padding: 0px 8px;
+    border-radius: 12px;
+    color: #666;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0 1px;
+    line-height: 22px;
+    &.focus {
+        box-shadow: 0 0 0 2px #B4D5FF;
+    }
+    cursor: pointer;
+}
+
+.demo-mention-suggestion-list {
+    position: fixed;
+    left: -999px;
+    top: -999px;
+    width: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1;
+    background-color: white;
+    div {
+        padding: 0;
+        margin: 0;
+        line-height: 35px;
+        padding-left: 15px;
+        cursor: pointer;
+        &.active {
+            background-color: #B4D5FF;
+            border-radius: 3px;
+        }
+    }
+    padding: 3px;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.2);
+}
