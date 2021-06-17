@@ -2,7 +2,7 @@
     <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
         (ngModelChange)="valueChange($event)" [renderText]="renderText" [renderElement]="renderElement()">
         <ng-template #tableTemplate let-context="context" let-viewContext="viewContext">
-            <table slateElement [context]="context" [viewContext]="viewContext">
+            <table contenteditable="true" slateElement [context]="context" [viewContext]="viewContext">
             </table>
         </ng-template>
         <ng-template #trTemplate let-context="context" let-viewContext="viewContext">
