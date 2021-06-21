@@ -25,15 +25,21 @@ Slate-angular is inspired by slate-react, and try to keep the style of slate and
 
 [Try out our live demo](http://slate-angular.ngnice.com)
 
-![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
+![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.gif)
 
 
 ## Feature
 
-- Cursor before and after for block elements
-- Custom Element Compoent
-- Custom Text Component 
-- Custom Leaf Component
+- Support element front and rear cursor scheme
+- Support custom component/template rendering Element
+- Support custom component/template to render Text
+- Support custom component/template rendering Leaf
+- Support decorate decoration
+- Support void element
+
+### Compatible browser
+
+Chrome、Edge、Safari、Firefox、QQ Browser
 
 
 ## Who is using slate-angular?
@@ -66,9 +72,9 @@ npm run test               // run unit tests
 
 ### Prerequisites
 
-Angular >= 10.2.4
+Angular >= 10.*
 
-Slate >= 0.58.4
+Slate >= 0.63.0
 
 
 ## Contributing

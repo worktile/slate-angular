@@ -24,15 +24,22 @@ slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular �
 
 [Try out our live demo](http://slate-angular.ngnice.com)
 
-![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.png)
+![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.gif)
 
 
 ### 功能
 
-- 支持块级元素前后光标
-- 支持自定义元素组件/模板
-- 支持自定义文本组件/模板
-- 支持自定义叶子组件/模板
+- 支持Element前后光标方案
+- 支持自定义组件/模版渲染Element
+- 支持自定义组件/模版渲染Text
+- 支持自定义组件/模版渲染Leaf
+- 支持decorate装饰
+- 支持void元素
+
+### 兼容浏览器
+
+Chrome、Edge、Safari、Firefox、QQ Browser
+
 
 
 ## 谁在使用 slate-angular?
@@ -68,7 +75,7 @@ npm run test               // 执行单元测试
 
 Angular >= 10.2.4
 
-Slate >= 0.58.4
+Slate >= 0.63.0
 
 
 ## 贡献代码
