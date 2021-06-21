@@ -18,7 +18,7 @@ Angular view layer for Slate
 
 [Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the model layer and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
 
-Slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
+slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
 
 
 ## Demo
