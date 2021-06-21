@@ -3,5 +3,12 @@
   "dest": "../dist",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": [
+    "slate-history",
+    "debug",
+    "direction",
+    "is-hotkey",
+    "scroll-into-view-if-needed"
+  ]
 }
