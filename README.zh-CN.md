@@ -44,11 +44,11 @@ Chrome、Edge、Safari、Firefox、QQ Browser
 
 ## 谁在使用 slate-angular?
 
-<table>
+<table style="margin-top: 20px;">
   <tr>
-    <td width="240" align="center">
+    <td width="160" align="center" style="padding: 20px">
       <a target="_blank" href="https://pingcode.com/product/wiki?utm_source=github-slate-angular">
-        <img src="https://cdn.pingcode.com/static/pc-charm/assets/images/logo.png?v=2.40.0" height="40"/>
+        <img src="https://cdn.pingcode.com/static/portal/assets/app-icons/app-wiki-square-fill-large.svg" height="40" />
         <br />
         <strong>PingCode Wiki</strong>
       </a>
