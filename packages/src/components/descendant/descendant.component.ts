@@ -55,8 +55,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         NODE_TO_INDEX.set(this.descendant, this.index);
         NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.updateView();
-        const rootNodes = this.rootNodes;
-        this.updateBlockCard(rootNodes)
+        this.createBlockCard();
     }
 
     destroyBlockCard() {
@@ -75,11 +74,8 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
         this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
-    }
 
-    updateBlockCard(rootNodes: HTMLElement[]) {
-        this.createBlockCard();
-        if (this.blockCardComponentRef) {
+        if (this.blockCardComponentRef.instance.nativeElement?.previousSibling) {
             const firstRootNode = rootNodes[0];
             firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
         }
