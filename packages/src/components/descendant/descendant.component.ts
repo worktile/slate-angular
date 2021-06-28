@@ -74,6 +74,9 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
         this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
+
+        const firstRootNode = rootNodes[0];
+        firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
     }
 
     getCommonContext(): { selection: Range; decorations: Range[] } {

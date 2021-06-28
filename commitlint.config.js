@@ -18,7 +18,8 @@ module.exports = {
                 'docs',
                 'decorate',
                 'pretter',
-                'types'
+                'types',
+                'block-card'
             ]
         ]
     }
