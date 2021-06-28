@@ -55,7 +55,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         NODE_TO_INDEX.set(this.descendant, this.index);
         NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.updateView();
-        this.replaceBlockCard();
+        this.updateBlockCard();
     }
 
     destroyBlockCard() {
@@ -76,10 +76,12 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
     }
 
-    replaceBlockCard() {
+    updateBlockCard() {
         this.createBlockCard();
-        const firstRootNode = this.rootNodes[0];
-        firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
+        if (this.blockCardComponentRef) {
+            const firstRootNode = this.rootNodes[0];
+            firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
+        }
     }
 
     getCommonContext(): { selection: Range; decorations: Range[] } {
