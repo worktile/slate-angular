@@ -36,11 +36,17 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         return super.getRootNodes();
     }
 
+    get isBlockCard() {
+        return this.viewContext.editor.isBlockCard(this.descendant);
+    }
+
     ngOnInit() {
         NODE_TO_INDEX.set(this.descendant, this.index);
         NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.createView();
-        this.createBlockCard();
+        if (this.isBlockCard) {
+            this.createBlockCard();
+        }
     }
 
     destroyView() {
@@ -55,7 +61,9 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         NODE_TO_INDEX.set(this.descendant, this.index);
         NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.updateView();
-        this.createBlockCard();
+        if (this.isBlockCard) {
+            this.updateBlockCard();
+        }
     }
 
     destroyBlockCard() {
@@ -66,19 +74,20 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     }
 
     createBlockCard() {
-        const isBlockCard = this.viewContext.editor.isBlockCard(this.descendant);
-        if (!isBlockCard || this.blockCardComponentRef) {
-            return;
-        }
         const rootNodes = this.rootNodes;
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
         this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
+    }
 
-        if (this.blockCardComponentRef.instance.nativeElement?.previousSibling) {
-            const firstRootNode = rootNodes[0];
-            firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
+    updateBlockCard() {
+        if (this.blockCardComponentRef) {
+            return;
         }
+        const rootNodes = this.rootNodes;
+        this.createBlockCard();
+        const firstRootNode = rootNodes[0];
+        firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
     }
 
     getCommonContext(): { selection: Range; decorations: Range[] } {
