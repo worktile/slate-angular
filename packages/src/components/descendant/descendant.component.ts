@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, Input, OnChanges, OnInit } from "@angular/core";
-import { SlateBlockCardComponent } from "../block-card/block-card.component";
+import { ChangeDetectionStrategy, Component, ComponentRef, Input, OnChanges, OnInit } from '@angular/core';
+import { SlateBlockCardComponent } from '../block-card/block-card.component';
 import { ViewContainerItem } from '../../view/container-item';
-import { Descendant, Editor, Range, Element } from "slate";
-import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from "../../view/context";
-import { AngularEditor } from "../../plugins/angular-editor";
-import { NODE_TO_INDEX, NODE_TO_PARENT } from "../../utils/weak-maps";
-import { SlateDefaultElementComponent } from "../element/default-element.component";
-import { BaseElementComponent, BaseTextComponent } from "../../view/base";
-import { SlateDefaultTextComponent } from "../text/default-text.component";
-import { SlateVoidTextComponent } from "../text/void-text.component";
-import { isDecoratorRangeListEqual } from "../../utils";
-import { ViewType } from "../../types/view";
-import { SlateErrorCode } from "../../types";
+import { Descendant, Editor, Range, Element } from 'slate';
+import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from '../../view/context';
+import { AngularEditor } from '../../plugins/angular-editor';
+import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
+import { SlateDefaultElementComponent } from '../element/default-element.component';
+import { BaseElementComponent, BaseTextComponent } from '../../view/base';
+import { SlateDefaultTextComponent } from '../text/default-text.component';
+import { SlateVoidTextComponent } from '../text/void-text.component';
+import { isDecoratorRangeListEqual } from '../../utils';
+import { ViewType } from '../../types/view';
+import { SlateErrorCode } from '../../types';
 
 @Component({
     selector: 'slate-descendant',
@@ -72,8 +72,11 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         }
         const rootNodes = this.rootNodes;
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
-        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
+        this.blockCardComponentRef = this.viewContainerRef.createComponent(componentFactory, null, null);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
+
+        const firstRootNode = rootNodes[0];
+        firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
     }
 
     getCommonContext(): { selection: Range; decorations: Range[] } {
@@ -110,7 +113,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                     'data-slate-key': key.id
                 },
                 decorate: this.context.decorate
-            }
+            };
             if (isInline) {
                 elementContext.attributes['data-slate-inline'] = true;
             }
@@ -127,7 +130,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                 isLast: isLeafBlock && this.index === this.context.parent.children.length - 1,
                 parent: this.context.parent as Element,
                 text: this.descendant
-            }
+            };
             return textContext;
         }
     }
@@ -150,7 +153,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                 (!!prev.selection &&
                     !!next.selection &&
                     Range.equals(prev.selection, next.selection)))
-        )
+        );
     }
 
     memoizedTextContext(prev: SlateTextContext, next: SlateTextContext) {
@@ -159,7 +162,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             next.isLast === prev.isLast &&
             next.text === prev.text &&
             isDecoratorRangeListEqual(next.decorations, prev.decorations)
-        )
+        );
     }
 
     memoizedContext(prev: SlateElementContext | SlateTextContext, next: SlateElementContext | SlateTextContext): boolean {
