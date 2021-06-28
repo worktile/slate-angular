@@ -1,6 +1,13 @@
 # Changelog
 
 
+### [1.1.6](https://github.com/worktile/slate-angular/compare/v1.1.5...v1.1.6) (2021-06-28)
+
+
+### Bug Fixes
+
+* **block-card:** fix(block-card): fix replace exception when node changes and enable ivy
+
 ### [1.1.5](https://github.com/worktile/slate-angular/compare/v1.1.4...v1.1.5) (2021-06-28)
 
 
