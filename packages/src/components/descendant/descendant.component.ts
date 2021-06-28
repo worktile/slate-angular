@@ -55,7 +55,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         NODE_TO_INDEX.set(this.descendant, this.index);
         NODE_TO_PARENT.set(this.descendant, this.context.parent);
         this.updateView();
-        this.createBlockCard();
+        this.replaceBlockCard();
     }
 
     destroyBlockCard() {
@@ -74,8 +74,11 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
         this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
+    }
 
-        const firstRootNode = rootNodes[0];
+    replaceBlockCard() {
+        this.createBlockCard();
+        const firstRootNode = this.rootNodes[0];
         firstRootNode.replaceWith(this.blockCardComponentRef.instance.nativeElement);
     }
 
@@ -113,7 +116,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                     'data-slate-key': key.id
                 },
                 decorate: this.context.decorate
-            }
+            };
             if (isInline) {
                 elementContext.attributes['data-slate-inline'] = true;
             }
@@ -130,7 +133,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                 isLast: isLeafBlock && this.index === this.context.parent.children.length - 1,
                 parent: this.context.parent as Element,
                 text: this.descendant
-            }
+            };
             return textContext;
         }
     }
@@ -153,7 +156,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                 (!!prev.selection &&
                     !!next.selection &&
                     Range.equals(prev.selection, next.selection)))
-        )
+        );
     }
 
     memoizedTextContext(prev: SlateTextContext, next: SlateTextContext) {
@@ -162,7 +165,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             next.isLast === prev.isLast &&
             next.text === prev.text &&
             isDecoratorRangeListEqual(next.decorations, prev.decorations)
-        )
+        );
     }
 
     memoizedContext(prev: SlateElementContext | SlateTextContext, next: SlateElementContext | SlateTextContext): boolean {
