@@ -542,9 +542,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
-                        if (editor.selection && !Range.isCollapsed(editor.selection)) {
-                            Editor.deleteFragment(editor);
-                        }
                         if (data instanceof DataTransfer) {
                             AngularEditor.insertData(editor, data);
                         } else if (typeof data === 'string') {
@@ -1025,9 +1022,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             hasEditableTarget(this.editor, event.target)
         ) {
             event.preventDefault();
-            if (this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
-                Editor.deleteFragment(this.editor);
-            }
             AngularEditor.insertData(this.editor, event.clipboardData);
         }
     }
