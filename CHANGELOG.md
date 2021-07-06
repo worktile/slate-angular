@@ -1,6 +1,13 @@
 # Changelog
 
 
+### [1.1.8](https://github.com/worktile/slate-angular/compare/v1.1.7...v1.1.8) (2021-07-06)
+
+
+### Bug Fixes
+
+* **core:** fix(core): remove call delete fragment when paste
+
 ### [1.1.7](https://github.com/worktile/slate-angular/compare/v1.1.4...v1.1.7) (2021-06-28)
 
 
