@@ -313,6 +313,8 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
   e.onError = (errorData: SlateError) => {
     if (errorData.nativeError) {
       console.error(errorData.nativeError);
+    } else {
+      console.error(errorData);
     }
   };
 

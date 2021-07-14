@@ -7,7 +7,8 @@ export enum SlateErrorCode {
     OnSyntheticBeforeInputError = 2103,
     OnDOMKeydownError = 2104,
     GetStartPointError = 2105,
-    NotFoundPreviousRootNodeError = 3100
+    NotFoundPreviousRootNodeError = 3100,
+    InvalidValueError = 4100,
 }
 
 export interface SlateError {

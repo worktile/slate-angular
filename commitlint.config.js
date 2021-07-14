@@ -19,7 +19,8 @@ module.exports = {
                 'decorate',
                 'pretter',
                 'types',
-                'block-card'
+                'block-card',
+                'global-normalize'
             ]
         ]
     }

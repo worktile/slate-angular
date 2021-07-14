@@ -90,6 +90,7 @@ export type CustomText = {
     italic?: boolean
     code?: boolean
     text: string
+    'code-line': boolean
 }
 
 export type EmptyText = {
