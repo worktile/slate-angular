@@ -1,6 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, IterableDiffers, QueryList } from "@angular/core";
 import { SlateViewContext } from "./context";
 import { ViewContainerItem } from "./container-item";
+import { SlateErrorCode } from "../types/error";
 
 /**
  * the sepcial container for angular template
@@ -53,17 +54,37 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
                         }
                     } else {
                         // insert afterend of previous component end
-                        const previousComponent = this.childrenComponent.find((item, index) => index === record.currentIndex - 1);
-                        let previousRootNode = previousComponent.rootNodes[previousComponent.rootNodes.length - 1];
-                        record.item.rootNodes.forEach((rootNode) => {
-                            previousRootNode.insertAdjacentElement('afterend', rootNode);
-                            previousRootNode = rootNode;
-                        });
+                        let previousRootNode = this.getPreviousRootNode(record.currentIndex);
+                        if (previousRootNode) {
+                            record.item.rootNodes.forEach((rootNode) => {
+                                previousRootNode.insertAdjacentElement('afterend', rootNode);
+                                previousRootNode = rootNode;
+                            });
+                        } else {
+                            this.viewContext.editor.onError({
+                                code: SlateErrorCode.NotFoundPreviousRootNodeError,
+                                name: 'not found previous rootNode',
+                                nativeError: null
+                            })
+                        }
                     }
                 });
             }
             firstChildComponent = this.childrenComponent.first;
         });
+    }
+
+    getPreviousRootNode(currentIndex) {
+        if (currentIndex === 0) {
+            return null;
+        }
+        const previousComponent = this.childrenComponent.find((item, index) => index === currentIndex - 1);
+        let previousRootNode = previousComponent.rootNodes[previousComponent.rootNodes.length - 1];
+        if (previousRootNode) {
+            return previousRootNode;
+        } else {
+            return this.getPreviousRootNode(currentIndex - 1);
+        }
     }
 
     createFragment() {
