@@ -45,6 +45,7 @@ import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
+import { check, normalize } from '../../utils/global-normalize';
 
 const timeDebug = Debug('slate-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -191,9 +192,18 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         this.onTouchedCallback = fn;
     }
 
-    writeValue(value: Descendant[]) {
+    writeValue(value: Element[]) {
         if (value && value.length) {
-            this.editor.children = value;
+            if (check(value)) {
+                this.editor.children = value;
+            } else {
+                this.editor.onError({
+                    code: SlateErrorCode.InvalidValueError,
+                    name: 'initialize invalid data',
+                    data: value
+                });
+                this.editor.children = normalize(value);
+            }
             this.cdr.markForCheck();
         }
     }
