@@ -6,7 +6,8 @@
 ### Bug Fixes
 
 * **core:** fix(core): adjust leaf insert position
-
+* **core:** feat(global-normalize): add and apply global-normalize
+* **core:** fix(view): compat empty children render
 
 
 ### [1.1.8](https://github.com/worktile/slate-angular/compare/v1.1.7...v1.1.8) (2021-07-06)
