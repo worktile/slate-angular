@@ -25,7 +25,6 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         // first diff
         differ.diff(this.childrenComponent);
         const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
-        console.log(parentElement,'parentElement')
         let firstChildComponent = this.childrenComponent.first;
         if (this.childrenComponent.length > 0) {
             parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
