@@ -25,6 +25,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         // first diff
         differ.diff(this.childrenComponent);
         const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
+        console.log(parentElement,'parentElement')
         let firstChildComponent = this.childrenComponent.first;
         if (this.childrenComponent.length > 0) {
             parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
@@ -46,13 +47,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
                     if (record.currentIndex === 0 && firstChildComponent) {
                         const fragment = document.createDocumentFragment();
                         fragment.append(...record.item.rootNodes);
-                        const firstChildNode = value._results.find(item => Array.from(parentElement.childNodes).indexOf(item.rootNodes[0]) > -1);
-                        // compatibility: rootNode is removed in the test environment
-                        if (firstChildNode) {
-                            parentElement.insertBefore(fragment, firstChildNode.rootNodes[0]);
-                        } else {
-                            parentElement.appendChild(fragment);
-                        }
+                        parentElement.prepend(fragment);
                     } else {
                         // insert afterend of previous component end
                         let previousRootNode = this.getPreviousRootNode(record.currentIndex);
