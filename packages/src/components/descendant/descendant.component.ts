@@ -123,7 +123,8 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
                     'data-slate-node': 'element',
                     'data-slate-key': key.id
                 },
-                decorate: this.context.decorate
+                decorate: this.context.decorate,
+                readonly: this.context.readonly
             };
             if (isInline) {
                 elementContext.attributes['data-slate-inline'] = true;
