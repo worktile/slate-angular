@@ -6,7 +6,6 @@ import { ViewType } from "../types/view";
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
     templateComponent: SlateStringTemplateComponent;
-    readonly: boolean;
     trackBy: (element: Element) => any;
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;
@@ -18,6 +17,7 @@ export interface SlateChildrenContext {
     selection: Range;
     decorations: Range[];
     decorate: (entry: NodeEntry) => Range[];
+    readonly: boolean;
 }
 
 export interface SlateElementContext<T extends Element = Element> {
@@ -26,6 +26,7 @@ export interface SlateElementContext<T extends Element = Element> {
     decorations: Range[];
     attributes: SlateElementAttributes;
     decorate: (entry: NodeEntry) => Range[];
+    readonly: boolean;
 }
 
 export interface SlateTextContext {
