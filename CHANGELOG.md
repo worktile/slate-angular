@@ -5,7 +5,7 @@
 
 ### Features
 
-* **core:** feat(core): dynamic handle readonly #99
+* **core:** feat(core): dynamic handle readonly [#99](https://github.com/worktile/slate-angular/issues/99)
 
 ### [1.1.9](https://github.com/worktile/slate-angular/compare/v1.1.8...v1.1.9) (2021-07-16)
 
