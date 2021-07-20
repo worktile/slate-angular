@@ -16,6 +16,7 @@ import { DemoImagesComponent } from './images/images.component';
 import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
 import { DemoLeafComponent } from './search-highlighting/leaf.component';
 import { DemoMentionsComponent } from './mentions/mentions.component';
+import { DemoReadonlyComponent } from './readonly/readonly.component';
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { DemoMentionsComponent } from './mentions/mentions.component';
         DemoImagesComponent,
         DemoSearchHighlightingComponent,
         DemoLeafComponent,
-        DemoMentionsComponent
+        DemoMentionsComponent,
+        DemoReadonlyComponent
     ],
     imports: [
         BrowserModule,
