@@ -186,6 +186,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
             IS_READONLY.set(this.editor, this.readonly);
+            this.toSlateSelection();
         }
     }
 
@@ -454,10 +455,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             } catch (error) {
                 this.editor.onError({ code: SlateErrorCode.ToSlateSelectionError, nativeError: error })
             }
-        } else if (this.readonly) {
-            Transforms.deselect(this.editor);
-            IS_FOCUSED.delete(this.editor);
-            window.getSelection().removeAllRanges();
         }
     }
 
