@@ -7,6 +7,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 export class AppComponent implements OnInit {
     menus = [
         {
+            url: '/readonly',
+            name: 'Readonly'
+        },
+        {
             url: '/',
             name: 'RichText'
         },

@@ -7,8 +7,13 @@ import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
 import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
 import { DemoMentionsComponent } from './mentions/mentions.component';
+import { DemoReadonlyComponent } from './readonly/readonly.component';
 
 const routes: Routes = [
+    {
+        path: 'readonly',
+        component: DemoReadonlyComponent
+    },
     {
         path: '',
         component: DemoRichtextComponent
