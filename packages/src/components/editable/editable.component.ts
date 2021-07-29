@@ -384,7 +384,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     detectContext() {
-        if (this.context.selection !== this.editor.selection || this.context.decorate !== this.decorate) {
+        if (this.context.selection !== this.editor.selection || this.context.decorate.toString() !== this.decorate.toString()) {
             const decorations = this.decorate([this.editor, []]);
             const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
             this.context = {
