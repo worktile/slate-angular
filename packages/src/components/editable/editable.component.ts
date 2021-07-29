@@ -183,6 +183,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         if (decorateChange) {
             this.detectContext();
         }
+        const readonlyChange = simpleChanges['readonly'];
+        if (readonlyChange) {
+            IS_READONLY.set(this.editor, this.readonly);
+            this.toSlateSelection();
+        }
     }
 
     registerOnChange(fn: any) {
@@ -367,7 +372,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             parent: this.editor,
             selection: this.editor.selection,
             decorations: this.decorate([this.editor, []]),
-            decorate: this.decorate
+            decorate: this.decorate,
+            readonly: this.readonly
         };
     }
 
@@ -378,20 +384,22 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
             renderLeaf: this.renderLeaf,
             renderText: this.renderText,
             trackBy: this.trackBy,
-            templateComponent: this.templateComponent,
-            readonly: this.readonly
+            templateComponent: this.templateComponent
         };
     }
 
     detectContext() {
-        if (this.context.selection !== this.editor.selection || this.context.decorate.toString() !== this.decorate.toString()) {
+        if (this.context.selection !== this.editor.selection ||
+            this.context.decorate.toString() !== this.decorate.toString() ||
+            this.context.readonly !== this.readonly) {
             const decorations = this.decorate([this.editor, []]);
             const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
             this.context = {
                 parent: this.editor,
                 selection: this.editor.selection,
                 decorations: isSameDecorations ? this.context.decorations : decorations,
-                decorate: this.decorate
+                decorate: this.decorate,
+                readonly: this.readonly
             };
         }
     }

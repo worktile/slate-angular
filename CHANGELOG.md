@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.0](https://github.com/worktile/slate-angular/compare/v1.2.0...v1.1.9) (2021-07-20)
+
+
+### Features
+
+* **core:** feat(core): dynamic handle readonly [#99](https://github.com/worktile/slate-angular/issues/99)
+
 ### [1.1.9](https://github.com/worktile/slate-angular/compare/v1.1.8...v1.1.9) (2021-07-16)
 
 
@@ -8,7 +15,6 @@
 * **core:** fix(core): adjust leaf insert position
 * **core:** feat(global-normalize): add and apply global-normalize
 * **core:** fix(view): compat empty children render
-
 
 ### [1.1.8](https://github.com/worktile/slate-angular/compare/v1.1.7...v1.1.8) (2021-07-06)
 

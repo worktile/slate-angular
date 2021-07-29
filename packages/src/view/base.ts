@@ -40,10 +40,6 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
         return this.viewContext && this.viewContext.editor;
     }
 
-    get readonly() {
-        return this.viewContext && this.viewContext.readonly;
-    }
-
     get nativeElement(): HTMLElement {
         return this.elementRef.nativeElement;
     }
@@ -109,6 +105,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this.selection && Range.isCollapsed(this.editor.selection);
     }
 
+    get readonly() {
+        return this._context && this._context.readonly;
+    }
+
     ngOnInit() {
         this.updateWeakMap();
         for (const key in this._context.attributes) {
@@ -146,7 +146,8 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             parent: this._context.element,
             selection: this._context.selection,
             decorations: this._context.decorations,
-            decorate: this._context.decorate
+            decorate: this._context.decorate,
+            readonly: this._context.readonly
         };
     }
 }
