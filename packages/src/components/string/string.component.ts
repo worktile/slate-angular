@@ -66,7 +66,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
         // node, so we render a zero-width space so that the selection can be
         // inserted next to it still.
         if (this.context.leaf.text === '') {
-            return this.viewContext.templateComponent.emptyStringTemplate;
+            return this.viewContext.templateComponent.emptyTextTemplate;
         }
 
         // COMPAT: Browsers will collapse trailing new lines at the end of blocks,

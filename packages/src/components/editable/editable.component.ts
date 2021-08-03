@@ -362,8 +362,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     forceFlush() {
         timeDebug('start data sync');
         this.detectContext();
-        this.cdr.detectChanges();
-        this.toNativeSelection();
         timeDebug('end data sync');
     }
 
@@ -401,6 +399,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 decorate: this.decorate,
                 readonly: this.readonly
             };
+            this.cdr.detectChanges();
+            this.toNativeSelection();
         }
     }
 
