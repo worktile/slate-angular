@@ -181,7 +181,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
         }
         const decorateChange = simpleChanges['decorate'];
         if (decorateChange) {
-            this.detectContext();
+            this.forceFlush();
         }
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
