@@ -20,6 +20,9 @@ export class SlateStringTemplateComponent {
     @ViewChild('emptyStringTemplate', { read: TemplateRef, static: true })
     emptyStringTemplate: TemplateRef<any>;
 
+    @ViewChild('emptyTextTemplate', { read: TemplateRef, static: true })
+    emptyTextTemplate: TemplateRef<any>;
+
     @ViewChild('lineBreakEmptyStringTemplate', { read: TemplateRef, static: true })
     lineBreakEmptyStringTemplate: TemplateRef<any>;
 }
