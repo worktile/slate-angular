@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.2.1](https://github.com/worktile/slate-angular/compare/v1.2.1...v1.2.0) (2021-08-03)
+
+### Bug Fixes
+
+* **core:** fix(core): fix cursor problem in shared editor
+
+
+
 ### [1.2.0](https://github.com/worktile/slate-angular/compare/v1.2.0...v1.1.9) (2021-07-20)
 
 
