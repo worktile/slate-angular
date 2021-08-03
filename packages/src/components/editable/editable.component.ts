@@ -362,8 +362,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     forceFlush() {
         timeDebug('start data sync');
         this.detectContext();
-        this.cdr.detectChanges();
-        this.toNativeSelection();
         timeDebug('end data sync');
     }
 
@@ -390,7 +388,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
 
     detectContext() {
         if (this.context.selection !== this.editor.selection ||
-            this.context.decorate.toString() !== this.decorate.toString() ||
+            this.context.decorate !== this.decorate||
             this.context.readonly !== this.readonly) {
             const decorations = this.decorate([this.editor, []]);
             const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
@@ -401,6 +399,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
                 decorate: this.decorate,
                 readonly: this.readonly
             };
+            this.cdr.detectChanges();
+            this.toNativeSelection();
         }
     }
 
