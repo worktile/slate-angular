@@ -1,5 +1,14 @@
 # Changelog
 
+
+### [1.2.2](https://github.com/worktile/slate-angular/compare/v1.2.2...v1.2.1) (2021-08-06)
+
+### Bug Fixes
+
+* **core:** fix(core): fix the dom selection is not converted correctly
+
+
+
 ### [1.2.1](https://github.com/worktile/slate-angular/compare/v1.2.1...v1.2.0) (2021-08-03)
 
 ### Bug Fixes
