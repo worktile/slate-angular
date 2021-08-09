@@ -20,7 +20,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
       });
 
       if (parentBlockEntry) {
-        const [, parentBlockPath] = parentBlockEntry
+        const [, parentBlockPath] = parentBlockEntry;
         const parentElementRange = Editor.range(
           editor,
           parentBlockPath,
@@ -34,21 +34,21 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
       }
     }
-  }
+  };
 
   e.apply = (op: Operation) => {
-    const matches: [Path, Key][] = []
+    const matches: [Path, Key][] = [];
 
     switch (op.type) {
       case 'insert_text':
       case 'remove_text':
       case 'set_node': {
         for (const [node, path] of Editor.levels(e, { at: op.path })) {
-          const key = AngularEditor.findKey(e, node)
-          matches.push([path, key])
+          const key = AngularEditor.findKey(e, node);
+          matches.push([path, key]);
         }
 
-        break
+        break;
       }
 
       case 'insert_node':
@@ -58,31 +58,31 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         for (const [node, path] of Editor.levels(e, {
           at: Path.parent(op.path),
         })) {
-          const key = AngularEditor.findKey(e, node)
-          matches.push([path, key])
+          const key = AngularEditor.findKey(e, node);
+          matches.push([path, key]);
         }
 
-        break
+        break;
       }
 
       case 'move_node': {
         for (const [node, path] of Editor.levels(e, {
           at: Path.common(Path.parent(op.path), Path.parent(op.newPath)),
         })) {
-          const key = AngularEditor.findKey(e, node)
-          matches.push([path, key])
+          const key = AngularEditor.findKey(e, node);
+          matches.push([path, key]);
         }
-        break
+        break;
       }
     }
 
-    apply(op)
+    apply(op);
 
     for (const [path, key] of matches) {
-      const [node] = Editor.node(e, path)
-      NODE_TO_KEY.set(node, key)
+      const [node] = Editor.node(e, path);
+      NODE_TO_KEY.set(node, key);
     }
-  }
+  };
 
   e.onChange = () => {
     const onContextChange = EDITOR_TO_ON_CHANGE.get(e);
@@ -209,21 +209,21 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
   // override slate layer logic
   e.normalizeNode = (entry: NodeEntry) => {
-    const [node, path] = entry
+    const [node, path] = entry;
 
     // There are no core normalizations for text nodes.
     if (Text.isText(node)) {
-      return
+      return;
     }
 
     // Ensure that block and inline nodes have at least one text child.
     if (Element.isElement(node) && node.children.length === 0) {
-      const child = { text: '' }
+      const child = { text: '' };
       Transforms.insertNodes(editor, child, {
         at: path.concat(0),
         voids: true,
-      })
-      return
+      });
+      return;
     }
 
     // Determine whether the node should have block or inline children.
@@ -233,44 +233,44 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
       (editor.isInline(node) ||
         node.children.length === 0 ||
         Text.isText(node.children[0]) ||
-        editor.isInline(node.children[0]))
+        editor.isInline(node.children[0]));
 
     // Since we'll be applying operations while iterating, keep track of an
     // index that accounts for any added/removed nodes.
-    let n = 0
+    let n = 0;
 
     for (let i = 0; i < node.children.length; i++, n++) {
-      const child = node.children[i] as Descendant
-      const prev = node.children[i - 1] as Descendant
-      const isLast = i === node.children.length - 1
+      const child = node.children[i] as Descendant;
+      const prev = node.children[i - 1] as Descendant;
+      const isLast = i === node.children.length - 1;
       const isInlineOrText =
         Text.isText(child) ||
-        (Element.isElement(child) && editor.isInline(child))
+        (Element.isElement(child) && editor.isInline(child));
 
       // Only allow block nodes in the top-level children and parent blocks
       // that only contain block nodes. Similarly, only allow inline nodes in
       // other inline nodes, or parent blocks that only contain inlines and
       // text.
       if (isInlineOrText !== shouldHaveInlines) {
-        Transforms.removeNodes(editor, { at: path.concat(n), voids: true })
-        n--
+        Transforms.removeNodes(editor, { at: path.concat(n), voids: true });
+        n--;
       } else if (Element.isElement(child)) {
         // Ensure that inline nodes are surrounded by text nodes.
         if (editor.isInline(child)) {
           if (prev == null || !Text.isText(prev)) {
-            const newChild = { text: '' }
+            const newChild = { text: '' };
             Transforms.insertNodes(editor, newChild, {
               at: path.concat(n),
               voids: true,
-            })
-            n++
+            });
+            n++;
           } else if (isLast) {
-            const newChild = { text: '' }
+            const newChild = { text: '' };
             Transforms.insertNodes(editor, newChild, {
               at: path.concat(n + 1),
               voids: true,
-            })
-            n++
+            });
+            n++;
           }
         }
       } else {
@@ -280,24 +280,27 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
           if (prev.text === '') {
             // adjust logic: adjust cursor location when empty text is first child of node #WIK-3631
             // ensure current selection in the text #WIK-3762
-            const prevFocused = Range.isCollapsed(editor.selection) && Path.equals(editor.selection.anchor.path, path.concat(n - 1));
+            const prevFocused =
+              editor.selection &&
+              Range.isCollapsed(editor.selection) &&
+              Path.equals(editor.selection.anchor.path, path.concat(n - 1));
             if (prev === node.children[0] && prevFocused) {
               Transforms.select(editor, Editor.start(editor, path.concat(n)));
             }
             Transforms.removeNodes(editor, {
               at: path.concat(n - 1),
               voids: true,
-            })
-            n--
+            });
+            n--;
           } else if (Text.equals(child, prev, { loose: true })) {
-            Transforms.mergeNodes(editor, { at: path.concat(n), voids: true })
-            n--
+            Transforms.mergeNodes(editor, { at: path.concat(n), voids: true });
+            n--;
           } else if (isLast && child.text === '') {
             Transforms.removeNodes(editor, {
               at: path.concat(n),
               voids: true,
-            })
-            n--
+            });
+            n--;
           }
         }
       }
