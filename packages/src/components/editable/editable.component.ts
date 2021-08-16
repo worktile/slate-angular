@@ -13,7 +13,9 @@ import {
     Injector,
     forwardRef,
     OnChanges,
-    SimpleChanges
+    SimpleChanges,
+    AfterViewChecked,
+    DoCheck
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
@@ -48,6 +50,7 @@ import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
 
 const timeDebug = Debug('slate-time');
+const checkTimeSpy = Debug('slate-check-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
 // Chrome Legacy doesn't support `beforeinput` correctly
 const HAS_BEFORE_INPUT_SUPPORT =
@@ -77,7 +80,7 @@ const forceOnDOMPaste = IS_SAFARI;
         multi: true
     }]
 })
-export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
+export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
 
@@ -357,6 +360,14 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy {
     onChange() {
         this.forceFlush();
         this.onChangeCallback(this.editor.children);
+    }
+
+    ngAfterViewChecked() {
+        checkTimeSpy('editable ngAfterViewChecked');
+    }
+
+    ngDoCheck() {
+        checkTimeSpy('editable ngDoCheck');
     }
 
     forceFlush() {
