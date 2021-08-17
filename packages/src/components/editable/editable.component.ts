@@ -49,8 +49,7 @@ import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
 
-const timeDebug = Debug('slate-time');
-const checkTimeSpy = Debug('slate-check-time');
+const timeDebug = Debug('slate-angular-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
 // Chrome Legacy doesn't support `beforeinput` correctly
 const HAS_BEFORE_INPUT_SUPPORT =
@@ -363,11 +362,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     ngAfterViewChecked() {
-        checkTimeSpy('editable ngAfterViewChecked');
+        timeDebug('editable ngAfterViewChecked');
     }
 
     ngDoCheck() {
-        checkTimeSpy('editable ngDoCheck');
+        timeDebug('editable ngDoCheck');
     }
 
     forceFlush() {
@@ -480,7 +479,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     ) {
         const editor = this.editor;
         if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.beforeInput)) {
-            timeDebug('with intent start beforeinput');
             try {
                 const { selection } = editor;
                 const { inputType: type } = event;
@@ -582,7 +580,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             } catch (error) {
                 this.editor.onError({ code: SlateErrorCode.OnDOMBeforeInputError, nativeError: error });
             }
-            timeDebug('with intent end beforeinput');
         }
     }
 
