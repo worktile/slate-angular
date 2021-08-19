@@ -53,7 +53,7 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
  * base class for custom leaf component
  */
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
-    initailzed = false;
+    initialized = false;
 
     @HostBinding('attr.data-slate-leaf')  isSlateLeaf = true
 
@@ -66,11 +66,11 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     }
 
     ngOnInit() {
-        this.initailzed = true;
+        this.initialized = true;
     }
 
     onContextChange() {
-        if (!this.initailzed) {
+        if (!this.initialized) {
             return;
         }
         this.cdr.markForCheck();
@@ -81,7 +81,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
  * base class for custom element component
  */
 export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseComponent<SlateElementContext<T>, K> implements OnInit, OnDestroy {
-    initailzed = false;
+    initialized = false;
 
     childrenContext: SlateChildrenContext;
 
@@ -114,7 +114,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         for (const key in this._context.attributes) {
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
-        this.initailzed = true;
+        this.initialized = true;
     }
 
     updateWeakMap() {
@@ -134,7 +134,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     onContextChange() {
         this.childrenContext = this.getChildrenContext();
-        if (!this.initailzed) {
+        if (!this.initialized) {
             return;
         }
         this.cdr.markForCheck();
@@ -156,7 +156,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
  * base class for custom text component
  */
 export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
-    initailzed = false;
+    initialized = false;
 
     get text(): Text {
         return this._context.text;
@@ -164,7 +164,7 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
 
     ngOnInit() {
         this.updateWeakMap();
-        this.initailzed = true;
+        this.initialized = true;
     }
 
     updateWeakMap() {
@@ -179,7 +179,7 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
     }
 
     onContextChange() {
-        if (!this.initailzed) {
+        if (!this.initialized) {
             return;
         }
 
