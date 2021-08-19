@@ -1,6 +1,13 @@
 # Changelog
 
-### [1.3.0](https://github.com/worktile/slate-angular/compare/v1.3.0...v1.2.2) (2021-08-06)
+### [1.3.1](https://github.com/worktile/slate-angular/compare/v1.3.1...v1.3.0) (2021-08-19)
+
+### Features
+
+* **block-card:** feat(block-card): remove block card contenteditable false
+
+
+### [1.3.0](https://github.com/worktile/slate-angular/compare/v1.3.0...v1.2.2) (2021-08-19)
 
 ### Bug Fixes
 
