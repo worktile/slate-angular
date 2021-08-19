@@ -1,5 +1,15 @@
 # Changelog
 
+### [1.3.0](https://github.com/worktile/slate-angular/compare/v1.3.0...v1.2.2) (2021-08-06)
+
+### Bug Fixes
+
+* **global-normalize:** fix(global-normalize): fix selection is empty
+
+### Features
+
+* **core:** feat(core): feat(core): add editable debug time
+
 
 ### [1.2.2](https://github.com/worktile/slate-angular/compare/v1.2.2...v1.2.1) (2021-08-06)
 
