@@ -28,7 +28,7 @@ export class SlateVoidTextComponent extends BaseTextComponent implements OnInit,
     }
 
     ngOnChanges() {
-        if (!this.initailzed) {
+        if (!this.initialized) {
             return;
         }
         this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
