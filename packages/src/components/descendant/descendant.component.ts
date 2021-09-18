@@ -160,6 +160,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         return (
             prev.element === next.element &&
             (!this.viewContext.isStrictDecorate || prev.decorate === next.decorate) &&
+            prev.readonly === next.readonly &&
             isDecoratorRangeListEqual(prev.decorations, next.decorations) &&
             (prev.selection === next.selection ||
                 (!!prev.selection &&

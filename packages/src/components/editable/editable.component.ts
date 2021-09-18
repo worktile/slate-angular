@@ -189,6 +189,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
             IS_READONLY.set(this.editor, this.readonly);
+            this.detectContext();
             this.toSlateSelection();
         }
     }
