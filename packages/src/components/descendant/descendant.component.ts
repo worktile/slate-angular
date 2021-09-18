@@ -159,7 +159,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     memoizedElementContext(prev: SlateElementContext, next: SlateElementContext) {
         return (
             prev.element === next.element &&
-            prev.decorate === next.decorate &&
+            (!this.viewContext.isStrictDecorate || prev.decorate === next.decorate) &&
             isDecoratorRangeListEqual(prev.decorations, next.decorations) &&
             (prev.selection === next.selection ||
                 (!!prev.selection &&
