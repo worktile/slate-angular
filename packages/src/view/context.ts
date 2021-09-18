@@ -10,6 +10,7 @@ export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;
     renderText?: (text: Text) => ViewType;
+    isStrictDecorate: boolean
 }
 
 export interface SlateChildrenContext {

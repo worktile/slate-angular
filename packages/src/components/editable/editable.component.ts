@@ -110,10 +110,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
+    @Input() isStrictDecorate: boolean = true;
+
     @Input() trackBy: (node: Element) => any = () => null;
 
-    @Input()
-    readonly = false;
+    @Input() readonly = false;
 
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
@@ -395,6 +396,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             renderLeaf: this.renderLeaf,
             renderText: this.renderText,
             trackBy: this.trackBy,
+            isStrictDecorate: this.isStrictDecorate,
             templateComponent: this.templateComponent
         };
     }
