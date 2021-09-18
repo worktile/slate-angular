@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.4.1](https://github.com/worktile/slate-angular/compare/v1.4.0...v1.4.1) (2021-09-18)
+
+### Features
+
+* **decorate:** feat(decorate): support isStrictDecorate
+
+
 ### [1.4.0](https://github.com/worktile/slate-angular/compare/v1.4.0...v1.3.1) (2021-08-31)
 
 ### Bug Fixes
