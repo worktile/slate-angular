@@ -85,8 +85,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private destroy$ = new Subject();
 
-    private selectionChange$ = new Subject<Event>();
-
     isComposing = false;
     isDraggingInternally = false;
     isUpdatingSelection = false;
@@ -223,23 +221,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.addEventListener(
             'selectionchange',
             event => {
-                this.selectionChange$.next(event);
+                this.toSlateSelection();
             },
             window.document
         );
-        this.selectionChange$
-            .pipe(
-                throttle(
-                    (value: Event) => {
-                        return interval(100);
-                    },
-                    { trailing: true, leading: true }
-                ),
-                takeUntil(this.destroy$)
-            )
-            .subscribe(event => {
-                this.toSlateSelection();
-            });
         if (HAS_BEFORE_INPUT_SUPPORT) {
             this.addEventListener('beforeinput', this.onDOMBeforeInput.bind(this));
         }
