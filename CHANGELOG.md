@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.4.2](https://github.com/worktile/slate-angular/compare/v1.4.1...v1.4.2) (2021-09-23)
+
+### Bug Fixes
+
+* **core:** fix(core): remove selectionchange throttle to avoid selection out of sync
+
+
 ### [1.4.1](https://github.com/worktile/slate-angular/compare/v1.4.0...v1.4.1) (2021-09-18)
 
 ### Features
