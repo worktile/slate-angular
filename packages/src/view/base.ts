@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
 import { AngularEditor } from "../plugins/angular-editor";
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
@@ -52,6 +52,10 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
 /**
  * base class for custom leaf component
  */
+@Component({
+    selector: '[BaseLeafComponent]',
+    template: ''
+})
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initialized = false;
 
@@ -80,6 +84,10 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 /**
  * base class for custom element component
  */
+@Component({
+    selector: '[BaseElementComponent]',
+    template: ''
+})
 export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseComponent<SlateElementContext<T>, K> implements OnInit, OnDestroy {
     initialized = false;
 
@@ -155,6 +163,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 /**
  * base class for custom text component
  */
+@Component({
+    selector: '[BaseTextComponent]',
+    template: ''
+})
 export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
     initialized = false;
 
