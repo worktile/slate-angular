@@ -122,15 +122,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "demo/**/*.ts",
+              "demo/**/*.html"
             ]
           }
         },
@@ -173,18 +169,17 @@
             "tsConfig": "packages/tsconfig.spec.json",
             "karmaConfig": "packages/karma.conf.js",
             "codeCoverage": true,
-            "codeCoverageExclude": ["packages/src/testing/**/*"]
+            "codeCoverageExclude": [
+              "packages/src/testing/**/*"
+            ]
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/tsconfig.lib.json",
-              "packages/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "packages/**/*.ts",
+              "packages/**/*.html"
             ]
           }
         }
@@ -193,6 +188,7 @@
   },
   "defaultProject": "demo",
   "cli": {
-    "analytics": "8db354c6-b560-4f8e-9ad8-56c64f03d2c8"
+    "analytics": "8db354c6-b560-4f8e-9ad8-56c64f03d2c8",
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }
