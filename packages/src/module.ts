@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { forwardRef, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlateEditableComponent } from './components/editable/editable.component';
 import { SlateDefaultTextComponent } from './components/text/default-text.component';
@@ -13,6 +13,7 @@ import { SlateBlockCardComponent } from './components/block-card/block-card.comp
 import { SlateLeafComponent } from './components/leaf/leaf.component';
 import { SlateDefaultLeafComponent } from './components/leaf/default-leaf.component';
 import { SlateLeavesComponent } from './components/leaves/leaves.component';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/default-element.component.token';
 
 @NgModule({
     declarations: [
@@ -32,6 +33,12 @@ import { SlateLeavesComponent } from './components/leaves/leaves.component';
     ],
     imports: [CommonModule],
     entryComponents: [SlateBlockCardComponent, SlateStringComponent, SlateDefaultElementComponent, SlateDefaultLeafComponent, SlateVoidTextComponent, SlateDefaultTextComponent],
-    exports: [SlateEditableComponent, SlateChildrenComponent, SlateElementComponent, SlateLeavesComponent, SlateStringComponent]
+    exports: [SlateEditableComponent, SlateChildrenComponent, SlateElementComponent, SlateLeavesComponent, SlateStringComponent],
+    providers: [
+        {
+            provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
+            useValue: SlateDefaultElementComponent
+        },
+    ]
 })
 export class SlateModule { }
