@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
-    "build": "ng build slate-angular && cpx \"./packages/src/**/*.scss\" ./dist/",
+    "build": "ng build slate-angular --configuration production && cpx \"./packages/src/**/*.scss\" ./dist/",
     "build:demo": "ng build demo --configuration production",
     "pub": "npm run build && cd dist && npm publish --access public",
     "patch": "cd packages && npm version patch",
