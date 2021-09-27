@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, Input, OnChanges, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, ComponentRef, Inject, Input, OnChanges, OnInit, ViewContainerRef } from "@angular/core";
 import { SlateBlockCardComponent } from "../block-card/block-card.component";
 import { ViewContainerItem } from '../../view/container-item';
 import { Descendant, Editor, Range, Element } from "slate";
 import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from "../../view/context";
 import { AngularEditor } from "../../plugins/angular-editor";
 import { NODE_TO_INDEX, NODE_TO_PARENT } from "../../utils/weak-maps";
-import { SlateDefaultElementComponent } from "../element/default-element.component";
 import { BaseElementComponent, BaseTextComponent } from "../../view/base";
 import { SlateDefaultTextComponent } from "../text/default-text.component";
 import { SlateVoidTextComponent } from "../text/void-text.component";
 import { isDecoratorRangeListEqual } from "../../utils";
-import { ViewType } from "../../types/view";
+import { ComponentType, ViewType } from "../../types/view";
 import { SlateErrorCode } from "../../types";
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from "../element/default-element.component.token";
 
 @Component({
     selector: 'slate-descendant',
@@ -38,6 +38,12 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
 
     get isBlockCard() {
         return this.viewContext.editor.isBlockCard(this.descendant);
+    }
+
+    constructor(protected viewContainerRef: ViewContainerRef,
+        protected componentFactoryResolver: ComponentFactoryResolver, 
+        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN) public defaultElementComponentType: ComponentType<BaseElementComponent>) {
+        super(viewContainerRef, componentFactoryResolver)
     }
 
     ngOnInit() {
@@ -149,7 +155,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
 
     getViewType(): ViewType {
         if (Element.isElement(this.descendant)) {
-            return (this.viewContext.renderElement && this.viewContext.renderElement(this.descendant)) || SlateDefaultElementComponent;
+            return (this.viewContext.renderElement && this.viewContext.renderElement(this.descendant)) || this.defaultElementComponentType;
         } else {
             const isVoid = this.viewContext.editor.isVoid(this.context.parent as Element);
             return isVoid ? SlateVoidTextComponent : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
