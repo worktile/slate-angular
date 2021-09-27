@@ -52,10 +52,7 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
 /**
  * base class for custom leaf component
  */
-@Component({
-    selector: '[BaseLeafComponent]',
-    template: ''
-})
+@Directive()
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     initialized = false;
 
@@ -84,10 +81,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 /**
  * base class for custom element component
  */
-@Component({
-    selector: '[BaseElementComponent]',
-    template: ''
-})
+@Directive()
 export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseComponent<SlateElementContext<T>, K> implements OnInit, OnDestroy {
     initialized = false;
 
@@ -163,10 +157,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 /**
  * base class for custom text component
  */
-@Component({
-    selector: '[BaseTextComponent]',
-    template: ''
-})
+@Directive()
 export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
     initialized = false;
 
