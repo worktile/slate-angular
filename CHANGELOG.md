@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.0](https://github.com/worktile/slate-angular/compare/v1.4.2...v1.5.0) (2021-09-27)
+
+### Features
+
+* **core:** feat(core): bump angular to 12
+
+
 ### [1.4.2](https://github.com/worktile/slate-angular/compare/v1.4.1...v1.4.2) (2021-09-23)
 
 ### Bug Fixes
