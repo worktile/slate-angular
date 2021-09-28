@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.1](https://github.com/worktile/slate-angular/compare/v1.5.0...v1.5.1) (2021-09-28)
+
+### Bug Fixes
+
+* **view:** fix(view): modify the definition as directive
+
+
 ### [1.5.0](https://github.com/worktile/slate-angular/compare/v1.4.2...v1.5.0) (2021-09-27)
 
 ### Features
