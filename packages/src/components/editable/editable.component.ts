@@ -360,6 +360,27 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         timeDebug('start data sync');
         this.detectContext();
         this.cdr.detectChanges();
+        // when the DOMElement where the selection is located is removed
+        // the compositionupdate and compositionend events will no longer be fired
+        // so isComposing needs to be corrected
+        // need exec after this.cdr.detectChanges() to render HTML
+        // need exec before this.toNativeSelection() to correct native selection
+        if (this.isComposing) {
+            const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
+            const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
+            let textContent = '';
+            // skip decorate text
+            textDOMNode.querySelectorAll('[data-slate-string="true"]').forEach((stringDOMNode) => {
+                textContent += stringDOMNode.textContent;
+                // remove zero with char
+                if (textContent.endsWith('\uFEFF')) {
+                    textContent = textContent.slice(0, textContent.length - 1);
+                }
+            });
+            if (Node.string(textNode).endsWith(textContent)) {
+                this.isComposing = false;
+            }
+        }
         this.toNativeSelection();
         timeDebug('end data sync');
     }
