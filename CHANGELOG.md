@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.2](https://github.com/worktile/slate-angular/compare/v1.5.1...v1.5.2) (2021-09-30)
+
+### Bug Fixes
+
+* **core:** fix(core): correct isComposing for collaboration #WIK-4870
+
+
 ### [1.5.1](https://github.com/worktile/slate-angular/compare/v1.5.0...v1.5.1) (2021-09-28)
 
 ### Bug Fixes
