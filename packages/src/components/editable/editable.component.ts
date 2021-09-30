@@ -372,6 +372,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // skip decorate text
             textDOMNode.querySelectorAll('[data-slate-string="true"]').forEach((stringDOMNode) => {
                 textContent += stringDOMNode.textContent;
+                // remove zero with char
+                if (textContent.endsWith('\uFEFF')) {
+                    textContent = textContent.slice(0, textContent.length - 1);
+                }
             });
             if (Node.string(textNode).endsWith(textContent)) {
                 this.isComposing = false;
