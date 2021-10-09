@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.3](https://github.com/worktile/slate-angular/compare/v1.5.2...v1.5.3) (2021-10-09)
+
+### Bug Fixes
+
+* **core:** fix(core): correct render return value type
+
+
 ### [1.5.2](https://github.com/worktile/slate-angular/compare/v1.5.1...v1.5.2) (2021-09-30)
 
 ### Bug Fixes
