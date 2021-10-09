@@ -100,11 +100,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() editor: AngularEditor;
 
-    @Input() renderElement: (element: Element) => ViewType;
+    @Input() renderElement: (element: Element) => ViewType | null;
 
-    @Input() renderLeaf: (text: SlateText) => ViewType;
+    @Input() renderLeaf: (text: SlateText) => ViewType | null;
 
-    @Input() renderText: (text: SlateText) => ViewType;
+    @Input() renderText: (text: SlateText) => ViewType | null;
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
