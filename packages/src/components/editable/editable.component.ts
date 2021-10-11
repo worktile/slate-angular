@@ -374,12 +374,17 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
             let textContent = '';
             // skip decorate text
-            textDOMNode.querySelectorAll('[data-slate-string="true"]').forEach((stringDOMNode) => {
-                textContent += stringDOMNode.textContent;
+            textDOMNode.querySelectorAll('[editable-text]').forEach((stringDOMNode) => {
+                let text = stringDOMNode.textContent;
+                const zeroChar = '\uFEFF';
                 // remove zero with char
-                if (textContent.endsWith('\uFEFF')) {
-                    textContent = textContent.slice(0, textContent.length - 1);
+                if (text.startsWith(zeroChar)) {
+                    text = text.slice(1);
                 }
+                if (text.endsWith(zeroChar)) {
+                    text = text.slice(0, text.length - 1);
+                }
+                textContent += text;
             });
             if (Node.string(textNode).endsWith(textContent)) {
                 this.isComposing = false;
