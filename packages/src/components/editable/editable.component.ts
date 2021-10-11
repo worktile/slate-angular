@@ -146,6 +146,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     //#endregion
 
     @ViewChild('templateComponent', { static: true }) templateComponent: SlateStringTemplateComponent;
+    @ViewChild('templateComponent', { static: true, read: ElementRef }) templateElementRef: ElementRef<any>;
 
     constructor(
         public elementRef: ElementRef,
@@ -174,6 +175,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         });
         this.initializeViewContext();
         this.initializeContext();
+
+        // remove unused DOM, just keep templateComponent instance
+        this.templateElementRef.nativeElement.remove();
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
