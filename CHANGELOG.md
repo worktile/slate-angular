@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.4](https://github.com/worktile/slate-angular/compare/v1.5.3...v1.5.4) (2021-10-11)
+
+### Bug Fixes
+
+* **core:** fix(core): add editable-text on the span for leaf
+
+
 ### [1.5.3](https://github.com/worktile/slate-angular/compare/v1.5.2...v1.5.3) (2021-10-09)
 
 ### Bug Fixes
