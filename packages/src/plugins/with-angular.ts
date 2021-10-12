@@ -178,9 +178,20 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     data.setData('text/html', div.innerHTML);
     data.setData('text/plain', getPlainText(div));
     document.body.removeChild(div);
-  },
+  };
 
-    e.insertData = (data: DataTransfer) => {
+  e.deleteFragmentData = () => {
+    const { selection } = editor;
+    if (selection) {
+      const node = Node.parent(editor, selection.anchor.path);
+      if (Editor.isVoid(editor, node)) {
+        Transforms.delete(editor);
+      }
+    }
+ 
+  };
+
+  e.insertData = (data: DataTransfer) => {
       const fragment = data.getData(`application/${clipboardFormatKey}`);
 
       if (fragment) {

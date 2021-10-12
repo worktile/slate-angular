@@ -727,12 +727,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             if (selection) {
                 if (Range.isExpanded(selection)) {
                     Editor.deleteFragment(this.editor);
-                } else {
-                    const node = Node.parent(this.editor, selection.anchor.path)
-                    if (Editor.isVoid(this.editor, node)) {
-                        Transforms.delete(this.editor);
-                    }
-                }
+                  } else {
+                    AngularEditor.deleteFragmentdata(this.editor);
+                  }
             }
         }
     }

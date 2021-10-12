@@ -36,6 +36,7 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTarge
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
     setFragmentData: (data: DataTransfer) => void;
+    deleteFragmentData: ()=> void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
@@ -276,6 +277,14 @@ export const AngularEditor = {
 
     setFragmentData(editor: AngularEditor, data: DataTransfer): void {
         editor.setFragmentData(data);
+    },
+
+    /**
+     * Delete currently selected fragment when collapsed is true
+     */
+
+    deleteFragmentdata(editor: AngularEditor): void{
+        editor.deleteFragmentData();
     },
 
     /**
