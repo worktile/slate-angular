@@ -1,5 +1,16 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.6.2](https://github.com/worktile/slate-angular/compare/v1.5.3...v1.6.2) (2021-10-13)
+
+
+### Bug Fixes
+
+* **core:** add editable-text on the span for leaf ([f66262a](https://github.com/worktile/slate-angular/commit/f66262adbe74ad7bbc5b41d22acce6c7e504bd07))
+* **core:** add rewrite function deleteCutData #WIK-4877 ([#138](https://github.com/worktile/slate-angular/issues/138)) ([c9a26b5](https://github.com/worktile/slate-angular/commit/c9a26b547a3dca3371ec41ea57f4bfe77667544b)), closes [#WIK-4877](https://github.com/worktile/slate-angular/issues/WIK-4877)
+* **core:** remove unused template element ([37cd245](https://github.com/worktile/slate-angular/commit/37cd245b2907ea34684320f27c7ca13b25f735ef))
+
 ### [1.5.4](https://github.com/worktile/slate-angular/compare/v1.5.3...v1.5.4) (2021-10-11)
 
 ### Bug Fixes
