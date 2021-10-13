@@ -180,15 +180,18 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     document.body.removeChild(div);
   };
 
-  e.deleteFragmentData = () => {
+  e.deleteCutData = () => {
     const { selection } = editor;
     if (selection) {
-      const node = Node.parent(editor, selection.anchor.path);
-      if (Editor.isVoid(editor, node)) {
-        Transforms.delete(editor);
+      if (Range.isExpanded(selection)) {
+        Editor.deleteFragment(editor);
+      } else {
+        const node = Node.parent(editor, selection.anchor.path);
+        if (Editor.isVoid(editor, node)) {
+          Transforms.delete(editor);
+        }
       }
     }
- 
   };
 
   e.insertData = (data: DataTransfer) => {
