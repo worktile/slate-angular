@@ -279,10 +279,6 @@ export const AngularEditor = {
         editor.setFragmentData(data);
     },
 
-    /**
-     * Delete currently selected fragment when collapsed is true
-     */
-
     deleteCutData(editor: AngularEditor): void{
         editor.deleteCutData();
     },
