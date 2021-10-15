@@ -364,31 +364,38 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         timeDebug('start data sync');
         this.detectContext();
         this.cdr.detectChanges();
+        // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
         // so isComposing needs to be corrected
         // need exec after this.cdr.detectChanges() to render HTML
         // need exec before this.toNativeSelection() to correct native selection
         if (this.isComposing) {
-            const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
-            const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
-            let textContent = '';
-            // skip decorate text
-            textDOMNode.querySelectorAll('[editable-text]').forEach((stringDOMNode) => {
-                let text = stringDOMNode.textContent;
-                const zeroChar = '\uFEFF';
-                // remove zero with char
-                if (text.startsWith(zeroChar)) {
-                    text = text.slice(1);
+            // Compposition input text be not rendered when user composition input with selection is expanded
+            // At this time, the following matching conditions are met, assign isComposing to false, and the status is wrong
+            // this time condition is true and isComposiing is assigned false
+            // Therefore, need to wait for the composition input text to be rendered before performing condition matching
+            setTimeout(() => {
+                const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
+                const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
+                let textContent = '';
+                // skip decorate text
+                textDOMNode.querySelectorAll('[editable-text]').forEach((stringDOMNode) => {
+                    let text = stringDOMNode.textContent;
+                    const zeroChar = '\uFEFF';
+                    // remove zero with char
+                    if (text.startsWith(zeroChar)) {
+                        text = text.slice(1);
+                    }
+                    if (text.endsWith(zeroChar)) {
+                        text = text.slice(0, text.length - 1);
+                    }
+                    textContent += text;
+                });
+                if (Node.string(textNode).endsWith(textContent)) {
+                    this.isComposing = false;
                 }
-                if (text.endsWith(zeroChar)) {
-                    text = text.slice(0, text.length - 1);
-                }
-                textContent += text;
-            });
-            if (Node.string(textNode).endsWith(textContent)) {
-                this.isComposing = false;
-            }
+            }, 0);
         }
         this.toNativeSelection();
         timeDebug('end data sync');
