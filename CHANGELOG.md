@@ -2,12 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.6.2](https://github.com/worktile/slate-angular/compare/v1.5.4...v1.6.2) (2021-10-13)
+### [1.6.3](https://github.com/worktile/slate-angular/compare/v1.6.2...v1.6.3) (2021-10-15)
 
 
 ### Bug Fixes
 
-* **core:** add deleteCutData function for cut
+* **core:** fix the IME input fails when text is selected
+
+
+### [1.6.2](https://github.com/worktile/slate-angular/compare/v1.5.4...v1.6.2) (2021-10-13)
+
+
+### Features
+
+* **plugin:** add deleteCutData function for cut
 
 
 ### [1.5.4](https://github.com/worktile/slate-angular/compare/v1.5.3...v1.5.4) (2021-10-11)
