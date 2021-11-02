@@ -34,7 +34,6 @@ import {
 } from '../../utils/dom';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, throttle } from 'rxjs/operators';
-import scrollIntoView from 'scroll-into-view-if-needed';
 import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
@@ -321,16 +320,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         newDomRange.endOffset
                     );
                 }
-                const leafEl = newDomRange.startContainer.parentElement!;
-                leafEl.getBoundingClientRect = newDomRange.getBoundingClientRect.bind(
-                    newDomRange
-                );
-                scrollIntoView(leafEl, {
-                    scrollMode: 'if-needed',
-                    boundary: el,
-                });
-                // @ts-ignore
-                delete leafEl.getBoundingClientRect;
             }
 
             setTimeout(() => {
