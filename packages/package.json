@@ -6,8 +6,7 @@
     "slate-history": "^0.62.0",
     "debug": "^4.1.1",
     "direction": "^1.0.3",
-    "is-hotkey": "^0.1.6",
-    "scroll-into-view-if-needed": "^2.2.20"
+    "is-hotkey": "^0.1.6"
   },
   "peerDependencies": {
     "slate": ">= 0.63.0"
