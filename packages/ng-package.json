@@ -8,7 +8,6 @@
     "slate-history",
     "debug",
     "direction",
-    "is-hotkey",
-    "scroll-into-view-if-needed"
+    "is-hotkey"
   ]
 }
