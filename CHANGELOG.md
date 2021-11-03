@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.5](https://github.com/worktile/slate-angular/compare/v1.6.4...v1.6.5) (2021-11-03)
+
+
+### Features
+
+* **core:** feat(core): bump slate to 0.67.1 and remove override normalizeNode
+
+
 ### [1.6.4](https://github.com/worktile/slate-angular/compare/v1.6.3...v1.6.4) (2021-11-02)
 
 

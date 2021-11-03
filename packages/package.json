@@ -1,6 +1,6 @@
 {
   "name": "slate-angular",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "dependencies": {
     "tslib": "^2.0.0",
     "slate-history": "^0.62.0",
