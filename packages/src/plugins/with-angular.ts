@@ -195,128 +195,28 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
   };
 
   e.insertData = (data: DataTransfer) => {
-      const fragment = data.getData(`application/${clipboardFormatKey}`);
+    const fragment = data.getData(`application/${clipboardFormatKey}`);
 
-      if (fragment) {
-        const decoded = decodeURIComponent(window.atob(fragment));
-        const parsed = JSON.parse(decoded) as Node[];
-        e.insertFragment(parsed);
-        return;
-      }
-
-      const text = data.getData('text/plain');
-
-      if (text) {
-        const lines = text.split(/\r\n|\r|\n/);
-        let split = false;
-
-        for (const line of lines) {
-          if (split) {
-            Transforms.splitNodes(e, { always: true });
-          }
-
-          e.insertText(line);
-          split = true;
-        }
-      }
-    };
-
-  // override slate layer logic
-  e.normalizeNode = (entry: NodeEntry) => {
-    const [node, path] = entry;
-
-    // There are no core normalizations for text nodes.
-    if (Text.isText(node)) {
+    if (fragment) {
+      const decoded = decodeURIComponent(window.atob(fragment));
+      const parsed = JSON.parse(decoded) as Node[];
+      e.insertFragment(parsed);
       return;
     }
 
-    // Ensure that block and inline nodes have at least one text child.
-    if (Element.isElement(node) && node.children.length === 0) {
-      const child = { text: '' };
-      Transforms.insertNodes(editor, child, {
-        at: path.concat(0),
-        voids: true,
-      });
-      return;
-    }
+    const text = data.getData('text/plain');
 
-    // Determine whether the node should have block or inline children.
-    const shouldHaveInlines = Editor.isEditor(node)
-      ? false
-      : Element.isElement(node) &&
-      (editor.isInline(node) ||
-        node.children.length === 0 ||
-        Text.isText(node.children[0]) ||
-        editor.isInline(node.children[0]));
+    if (text) {
+      const lines = text.split(/\r\n|\r|\n/);
+      let split = false;
 
-    // Since we'll be applying operations while iterating, keep track of an
-    // index that accounts for any added/removed nodes.
-    let n = 0;
-
-    for (let i = 0; i < node.children.length; i++, n++) {
-      const child = node.children[i] as Descendant;
-      const prev = node.children[i - 1] as Descendant;
-      const isLast = i === node.children.length - 1;
-      const isInlineOrText =
-        Text.isText(child) ||
-        (Element.isElement(child) && editor.isInline(child));
-
-      // Only allow block nodes in the top-level children and parent blocks
-      // that only contain block nodes. Similarly, only allow inline nodes in
-      // other inline nodes, or parent blocks that only contain inlines and
-      // text.
-      if (isInlineOrText !== shouldHaveInlines) {
-        Transforms.removeNodes(editor, { at: path.concat(n), voids: true });
-        n--;
-      } else if (Element.isElement(child)) {
-        // Ensure that inline nodes are surrounded by text nodes.
-        if (editor.isInline(child)) {
-          if (prev == null || !Text.isText(prev)) {
-            const newChild = { text: '' };
-            Transforms.insertNodes(editor, newChild, {
-              at: path.concat(n),
-              voids: true,
-            });
-            n++;
-          } else if (isLast) {
-            const newChild = { text: '' };
-            Transforms.insertNodes(editor, newChild, {
-              at: path.concat(n + 1),
-              voids: true,
-            });
-            n++;
-          }
+      for (const line of lines) {
+        if (split) {
+          Transforms.splitNodes(e, { always: true });
         }
-      } else {
-        // Merge adjacent text nodes that are empty or match.
-        if (prev != null && Text.isText(prev)) {
-          // adjust logic: first remove empty text to avoid merge empty text #WIK-3805
-          if (prev.text === '') {
-            // adjust logic: adjust cursor location when empty text is first child of node #WIK-3631
-            // ensure current selection in the text #WIK-3762
-            const prevFocused =
-              editor.selection &&
-              Range.isCollapsed(editor.selection) &&
-              Path.equals(editor.selection.anchor.path, path.concat(n - 1));
-            if (prev === node.children[0] && prevFocused) {
-              Transforms.select(editor, Editor.start(editor, path.concat(n)));
-            }
-            Transforms.removeNodes(editor, {
-              at: path.concat(n - 1),
-              voids: true,
-            });
-            n--;
-          } else if (Text.equals(child, prev, { loose: true })) {
-            Transforms.mergeNodes(editor, { at: path.concat(n), voids: true });
-            n--;
-          } else if (isLast && child.text === '') {
-            Transforms.removeNodes(editor, {
-              at: path.concat(n),
-              voids: true,
-            });
-            n--;
-          }
-        }
+
+        e.insertText(line);
+        split = true;
       }
     }
   };
