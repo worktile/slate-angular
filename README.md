@@ -353,7 +353,7 @@ const initialValue = [
 
 **Start the demo and you will get the following interface**
 
-![image.png](https://atlas-rc.pingcode.com/files/public/61ac30f2e429e861587f55da/origin-url)
+![image.png](https://atlas-rc.pingcode.com/files/public/61ac3e16e429e861587f55db)
 
 > Currently, there is no toolbar. You need to add toolbars and processing functions according to your own icon library.
 
