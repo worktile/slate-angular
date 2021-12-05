@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, DOMElement, withAngular } from 'slate-angular';
-import { MarkTypes, DemoMarkTextComponent } from '../components/text/text.component';
+import { MarkTypes, DemoTextMarkComponent } from '../components/text/text.component';
 import { withBlockCard } from '../plugins/block-cards.plugin';
 
 @Component({
@@ -41,7 +41,7 @@ export class DemoTablesComponent implements OnInit {
 
   renderText = (text: Text) => {
     if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-      return DemoMarkTextComponent;
+      return DemoTextMarkComponent;
     }
   }
 

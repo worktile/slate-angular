@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { createEditor, NodeEntry, Text } from 'slate';
 import { withAngular } from 'slate-angular';
-import { DemoMarkTextComponent, MarkTypes } from '../components/text/text.component';
+import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
 import { DemoLeafComponent } from './leaf.component';
 
 @Component({
@@ -57,7 +57,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoMarkTextComponent;
+            return DemoTextMarkComponent;
         }
     }
 

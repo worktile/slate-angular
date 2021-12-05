@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { SlateModule } from 'slate-angular';
 import { DemoElementImageComponent } from './components/image/image-component';
-import { DemoMarkTextComponent } from './components/text/text.component';
+import { DemoTextMarkComponent } from './components/text/text.component';
 import { DemoButtonComponent } from './components/button/button.component';
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
@@ -26,7 +26,7 @@ import { DemoReadonlyComponent } from './readonly/readonly.component';
         DemoMarkdownShortcutsComponent,
         DemoHugeDocumentComponent,
         DemoElementImageComponent,
-        DemoMarkTextComponent,
+        DemoTextMarkComponent,
         DemoTablesComponent,
         DemoTablesComponent,
         DemoImagesComponent,
@@ -43,7 +43,7 @@ import { DemoReadonlyComponent } from './readonly/readonly.component';
         SlateModule,
     ],
     entryComponents: [
-        DemoMarkTextComponent,
+        DemoTextMarkComponent,
         DemoElementImageComponent,
         DemoLeafComponent,
     ],

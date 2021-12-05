@@ -10,13 +10,13 @@ export enum MarkTypes {
 }
 
 @Component({
-    selector: 'span[markText]',
+    selector: 'span[textMark]',
     template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
     host: {
         'data-slate-node': 'text'
     }
 })
-export class DemoMarkTextComponent extends BaseTextComponent {
+export class DemoTextMarkComponent extends BaseTextComponent {
     attributes = [];
 
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
@@ -29,7 +29,7 @@ export class DemoMarkTextComponent extends BaseTextComponent {
         });
         this.attributes = [];
         for (const key in this.text) {
-            if (Object.prototype.hasOwnProperty.call(this.text, key) && !!this.text[key]) {
+            if (Object.prototype.hasOwnProperty.call(this.text, key) && key !== 'text' && !!this.text[key]) {
                 const attr = `slate-${key}`;
                 this.renderer2.setAttribute(this.elementRef.nativeElement, attr, 'true');
                 this.attributes.push(attr);
