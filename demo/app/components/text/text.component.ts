@@ -17,30 +17,23 @@ export enum MarkTypes {
     }
 })
 export class DemoMarkTextComponent extends BaseTextComponent {
+    attributes = [];
+
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
         super(elementRef, cdr);
     }
     
     applyTextMark() {
-        if (this.text[MarkTypes.bold]) {
-            this.renderer2.setStyle(this.elementRef.nativeElement, 'font-weight', 'bold');
-        } else {
-            this.renderer2.removeStyle(this.elementRef.nativeElement, 'font-weight');
-        }
-        if (this.text[MarkTypes.italic]) {
-            this.renderer2.setStyle(this.elementRef.nativeElement, 'font-style', 'italic');
-        } else {
-            this.renderer2.removeStyle(this.elementRef.nativeElement, 'font-style');
-        }
-        if (this.text[MarkTypes.code]) {
-            this.renderer2.addClass(this.elementRef.nativeElement, 'code-line');
-        } else {
-            this.renderer2.removeClass(this.elementRef.nativeElement, 'code-line');
-        }
-        if (this.text[MarkTypes.underline]) {
-            this.renderer2.setStyle(this.elementRef.nativeElement, 'text-decoration', 'underline');
-        } else {
-            this.renderer2.removeStyle(this.elementRef.nativeElement, 'text-decoration');
+        this.attributes.forEach(attr => {
+            this.renderer2.removeAttribute(this.elementRef.nativeElement, attr);
+        });
+        this.attributes = [];
+        for (const key in this.text) {
+            if (Object.prototype.hasOwnProperty.call(this.text, key) && !!this.text[key]) {
+                const attr = `slate-${key}`;
+                this.renderer2.setAttribute(this.elementRef.nativeElement, attr, 'true');
+                this.attributes.push(attr);
+            }
         }
     }
 
