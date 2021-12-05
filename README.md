@@ -47,13 +47,12 @@ Chrome、Edge、Safari、Firefox、QQ Browser
 
 ```
 "dependencies": {
-  	// ...,
-	"debug": "^4.1.1",
-	"direction": "^1.0.3",
-	"is-hotkey": "^0.1.6",
-	"slate": "0.67.1",
-	"slate-history": "0.62.0",
-  "slate-angular": "1.6.5"
+    "debug": "^4.1.1",
+    "direction": "^1.0.3",
+    "is-hotkey": "^0.1.6",
+    "slate": "0.67.1",
+    "slate-history": "0.62.0",
+    "slate-angular": "1.6.5"
 }
 ```
 
@@ -182,7 +181,7 @@ export class DemoTextMarkComponent extends BaseTextComponent {
 }
 ```
 
-### 5. Apply <slate-editable> component to your component
+### 5. Use slate-editable component
 
 **Template**
 
