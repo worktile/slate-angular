@@ -2,7 +2,7 @@ import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
 import { createEditor, Text, Editor, Element, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
-import { DemoMarkTextComponent, MarkTypes } from '../components/text/text.component';
+import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
 import isHotkey from 'is-hotkey';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
@@ -186,7 +186,7 @@ export class DemoRichtextComponent implements OnInit {
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoMarkTextComponent;
+            return DemoTextMarkComponent;
         }
     }
 
