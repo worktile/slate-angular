@@ -25,7 +25,6 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         // first diff
         differ.diff(this.childrenComponent);
         const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
-        let firstChildComponent = this.childrenComponent.first;
         if (this.childrenComponent.length > 0) {
             parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
             this.elementRef.nativeElement.remove();
@@ -33,39 +32,15 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         this.childrenComponent.changes.subscribe((value) => {
             const iterableChanges = differ.diff(this.childrenComponent);
             if (iterableChanges) {
-                iterableChanges.forEachAddedItem((record: IterableChangeRecord<T>) => {
-                    // first insert
-                    if (this.elementRef.nativeElement.parentElement && this.elementRef.nativeElement.parentElement === parentElement) {
-                        const fragment = document.createDocumentFragment();
-                        fragment.append(...record.item.rootNodes);
-                        parentElement.insertBefore(fragment, this.elementRef.nativeElement);
-                        this.elementRef.nativeElement.remove();
+                iterableChanges.forEachOperation((record: IterableChangeRecord<T>, previousIndex: Number, currentIndex: number) => {
+                    // removed
+                    if (currentIndex === null) {
                         return;
                     }
-                    // insert at start location
-                    if (record.currentIndex === 0 && firstChildComponent) {
-                        const fragment = document.createDocumentFragment();
-                        fragment.append(...record.item.rootNodes);
-                        parentElement.prepend(fragment);
-                    } else {
-                        // insert afterend of previous component end
-                        let previousRootNode = this.getPreviousRootNode(record.currentIndex);
-                        if (previousRootNode) {
-                            record.item.rootNodes.forEach((rootNode) => {
-                                previousRootNode.insertAdjacentElement('afterend', rootNode);
-                                previousRootNode = rootNode;
-                            });
-                        } else {
-                            this.viewContext.editor.onError({
-                                code: SlateErrorCode.NotFoundPreviousRootNodeError,
-                                name: 'not found previous rootNode',
-                                nativeError: null
-                            })
-                        }
-                    }
+                    // added or moved
+                    this.handleContainerItemChange(record, parentElement);
                 });
             }
-            firstChildComponent = this.childrenComponent.first;
         });
     }
 
@@ -88,5 +63,37 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
             fragment.append(...component.rootNodes);
         })
         return fragment;
+    }
+
+    handleContainerItemChange(record: IterableChangeRecord<T>, parentElement: HTMLElement) {
+        // first insert
+        if (this.elementRef.nativeElement.parentElement && this.elementRef.nativeElement.parentElement === parentElement) {
+            const fragment = document.createDocumentFragment();
+            fragment.append(...record.item.rootNodes);
+            parentElement.insertBefore(fragment, this.elementRef.nativeElement);
+            this.elementRef.nativeElement.remove();
+            return;
+        }
+        // insert at start location
+        if (record.currentIndex === 0) {
+            const fragment = document.createDocumentFragment();
+            fragment.append(...record.item.rootNodes);
+            parentElement.prepend(fragment);
+        } else {
+            // insert afterend of previous component end
+            let previousRootNode = this.getPreviousRootNode(record.currentIndex);
+            if (previousRootNode) {
+                record.item.rootNodes.forEach((rootNode) => {
+                    previousRootNode.insertAdjacentElement('afterend', rootNode);
+                    previousRootNode = rootNode;
+                });
+            } else {
+                this.viewContext.editor.onError({
+                    code: SlateErrorCode.NotFoundPreviousRootNodeError,
+                    name: 'not found previous rootNode',
+                    nativeError: null
+                })
+            }
+        }
     }
 }
