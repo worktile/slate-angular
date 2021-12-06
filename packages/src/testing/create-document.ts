@@ -16,3 +16,32 @@ export function createDefaultDocument() {
         }
     ];
 }
+
+export function createMutipleParagraph() {
+    return [
+        {
+            type: 'paragraph',
+            children: [{ text: '0' }]
+        },
+        {
+            type: 'paragraph',
+            children: [{ text: '1' }]
+        },
+        {
+            type: 'paragraph',
+            children: [{ text: '2' }]
+        },
+        {
+            type: 'paragraph',
+            children: [{ text: '3' }]
+        },
+        {
+            type: 'paragraph',
+            children: [{ text: '4' }]
+        },
+        {
+            type: 'paragraph',
+            children: [{ text: '5' }]
+        }
+    ];
+}
