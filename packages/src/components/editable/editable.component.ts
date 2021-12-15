@@ -34,7 +34,7 @@ import {
 } from '../../utils/dom';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, throttle } from 'rxjs/operators';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -1034,6 +1034,31 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         }
 
                         return;
+                    }
+                } else {
+                    if (IS_CHROME || IS_SAFARI) {
+                        // COMPAT: Chrome and Safari support `beforeinput` event but do not fire
+                        // an event when deleting backwards in a selected void inline node
+                        if (
+                            selection &&
+                            (Hotkeys.isDeleteBackward(nativeEvent) ||
+                                Hotkeys.isDeleteForward(nativeEvent)) &&
+                            Range.isCollapsed(selection)
+                        ) {
+                            const currentNode = Node.parent(
+                                editor,
+                                selection.anchor.path
+                            )
+                            if (
+                                Element.isElement(currentNode) &&
+                                Editor.isVoid(editor, currentNode) &&
+                                Editor.isInline(editor, currentNode)
+                            ) {
+                                event.preventDefault()
+                                Editor.deleteBackward(editor, { unit: 'block' })
+                                return
+                            }
+                        }
                     }
                 }
             } catch (error) {
