@@ -117,6 +117,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     }
 
     getContext(): SlateElementContext | SlateTextContext {
+        console.log('this.descendant',this.descendant)
         if (Element.isElement(this.descendant)) {
             const computedContext = this.getCommonContext();
             const key = AngularEditor.findKey(this.viewContext.editor, this.descendant);

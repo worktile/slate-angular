@@ -17,7 +17,7 @@ import {
     AfterViewChecked,
     DoCheck
 } from '@angular/core';
-import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
+import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW, PLACEHOLDER_SYMBOL } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
@@ -47,6 +47,7 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
+import { EmptyText } from 'custom-types';
 
 const timeDebug = Debug('slate-angular-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -112,6 +113,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     @Input() trackBy: (node: Element) => any = () => null;
 
     @Input() readonly = false;
+
+    @Input() placeholder:string;
 
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
@@ -205,17 +208,71 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     writeValue(value: Element[]) {
         if (value && value.length) {
             if (check(value)) {
-                this.editor.children = value;
+                this.editor.children = this.getValueWithPlaceholder(value);
             } else {
                 this.editor.onError({
                     code: SlateErrorCode.InvalidValueError,
                     name: 'initialize invalid data',
                     data: value
                 });
-                this.editor.children = normalize(value);
+                this.editor.children =  this.getValueWithPlaceholder( normalize(value))
             }
             this.cdr.markForCheck();
         }
+    }
+
+    private judgeIsEmptyValue(value:Element[]):boolean {
+        if(value.length !== 1 || (value[0].children.length !== 1)) {
+            return false;
+        }
+        const textElement = value[0].children[0]
+        const text  = (textElement as EmptyText).text
+        if(typeof text !== 'string' || text !== '') {
+            return false
+        }
+       
+        return true
+
+        // const decorations = this.decorate([this.editor, []])
+
+        // if (
+        //   this.placeholder &&
+        //   this.editor.children.length === 1 &&
+        //   Array.from(Node.texts(editor)).length === 1 &&
+        //   Node.string(editor) === '' &&
+        //   !isComposing
+        // ) {
+        //   const start = Editor.start(this.editor, [])
+        //   decorations.push({
+        //     [PLACEHOLDER_SYMBOL]: true,
+        //     placeholder:this.placeholder,
+        //     anchor: start,
+        //     focus: start,
+        //   })
+        // }
+    }
+
+    private getValueWithPlaceholder(value:Element[]):Element[] {
+        if(!this.judgeIsEmptyValue(value)) {
+            return value;
+        } 
+        const placeholder = this.placeholder;
+        if(typeof placeholder !== 'string') {
+            return value;
+        }
+        
+        return [
+            {
+                type: 'paragraph',
+                children: [
+                    {
+                        text: '',
+                        placeholder,
+                        [PLACEHOLDER_SYMBOL]:true
+                    }
+                ]
+            }
+        ]
     }
 
     initialize() {

@@ -86,6 +86,7 @@ type CustomElement =
     | VideoElement;
 
 export type CustomText = {
+    placeholder?: string
     bold?: boolean
     italic?: boolean
     code?: boolean
