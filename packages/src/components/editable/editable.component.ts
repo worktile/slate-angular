@@ -18,7 +18,7 @@ import {
     DoCheck
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW, PLACEHOLDER_SYMBOL } from '../../utils/weak-maps';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant, BaseRange } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -208,71 +208,18 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     writeValue(value: Element[]) {
         if (value && value.length) {
             if (check(value)) {
-                this.editor.children = this.getValueWithPlaceholder(value);
+                this.editor.children = value
             } else {
                 this.editor.onError({
                     code: SlateErrorCode.InvalidValueError,
                     name: 'initialize invalid data',
                     data: value
                 });
-                this.editor.children =  this.getValueWithPlaceholder( normalize(value))
+                this.editor.children = normalize(value);
             }
+            this.initializeContext()
             this.cdr.markForCheck();
         }
-    }
-
-    private judgeIsEmptyValue(value:Element[]):boolean {
-        if(value.length !== 1 || (value[0].children.length !== 1)) {
-            return false;
-        }
-        const textElement = value[0].children[0]
-        const text  = (textElement as EmptyText).text
-        if(typeof text !== 'string' || text !== '') {
-            return false
-        }
-       
-        return true
-
-        // const decorations = this.decorate([this.editor, []])
-
-        // if (
-        //   this.placeholder &&
-        //   this.editor.children.length === 1 &&
-        //   Array.from(Node.texts(editor)).length === 1 &&
-        //   Node.string(editor) === '' &&
-        //   !isComposing
-        // ) {
-        //   const start = Editor.start(this.editor, [])
-        //   decorations.push({
-        //     [PLACEHOLDER_SYMBOL]: true,
-        //     placeholder:this.placeholder,
-        //     anchor: start,
-        //     focus: start,
-        //   })
-        // }
-    }
-
-    private getValueWithPlaceholder(value:Element[]):Element[] {
-        if(!this.judgeIsEmptyValue(value)) {
-            return value;
-        } 
-        const placeholder = this.placeholder;
-        if(typeof placeholder !== 'string') {
-            return value;
-        }
-        
-        return [
-            {
-                type: 'paragraph',
-                children: [
-                    {
-                        text: '',
-                        placeholder,
-                        [PLACEHOLDER_SYMBOL]:true
-                    }
-                ]
-            }
-        ]
     }
 
     initialize() {
@@ -448,13 +395,37 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     initializeContext() {
+        const decorations = this.initDecorations()
+
         this.context = {
             parent: this.editor,
             selection: this.editor.selection,
-            decorations: this.decorate([this.editor, []]),
+            decorations,
             decorate: this.decorate,
             readonly: this.readonly
         };
+    }
+
+    private initDecorations():BaseRange[] {
+        const decorations = this.decorate([this.editor,[]]);
+        const editor = this.editor;
+        if (
+          this.placeholder &&
+          editor.children.length === 1 &&
+          Array.from(Node.texts(editor)).length === 1 &&
+          Node.string(editor) === '' &&
+          !this.isComposing
+        ) {
+          const start = Editor.start(this.editor, [])
+
+          decorations.push({
+            [PLACEHOLDER_SYMBOL]: true,
+            placeholder:this.placeholder,
+            anchor: start,
+            focus: start,
+          } as BaseRange)
+        }
+        return decorations
     }
 
     initializeViewContext() {
@@ -473,7 +444,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         if (this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
             this.context.readonly !== this.readonly) {
-            const decorations = this.decorate([this.editor, []]);
+            // const decorations = this.decorate([this.editor, []]);
+            const decorations = this.initDecorations();
             const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
             this.context = {
                 parent: this.editor,

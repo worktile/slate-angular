@@ -7,7 +7,7 @@ import { BaseLeafComponent } from "../../view/base";
     selector: 'span[slateDefaultLeaf]',
     template: `
         <ng-container *ngIf="context.leaf[placeholderSymbol]">
-            <span contenteditable="false" data-slate-placeholder="true" slate-placeholder="true">{{context.text['placeholder']}}</span>
+            <span contenteditable="false" data-slate-placeholder="true" slate-placeholder="true">{{context.leaf['placeholder']}}</span>
         </ng-container>
         <span slateString [context]="context" [viewContext]="viewContext"><span>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
