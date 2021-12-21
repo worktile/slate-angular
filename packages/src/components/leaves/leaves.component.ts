@@ -26,12 +26,8 @@ export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> impl
 
     ngOnInit() {
         this.leaves = Text.decorations(this.context.text, this.context.decorations);
-        console.log(new Array(8).fill('⬇️').join(' '));
-        console.log('leaves',this.leaves);
         this.leafContexts = this.getLeafCotexts();
-        console.log('leafContexts',this.leafContexts);
         this.initialized = true;
-        console.log(new Array(8).fill('⬆️').join(' '));
     }
 
     getLeafCotexts() {

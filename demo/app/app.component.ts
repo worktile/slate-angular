@@ -38,6 +38,10 @@ export class AppComponent implements OnInit {
             url: '/search-highlighting',
             name: 'Search Highlighting'
         },
+        {
+            url: '/placeholder',
+            name: 'Placeholder'
+        },
     ];
 
     showSideNav: boolean;

@@ -8,6 +8,7 @@ import { DemoImagesComponent } from './images/images.component';
 import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
 import { DemoMentionsComponent } from './mentions/mentions.component';
 import { DemoReadonlyComponent } from './readonly/readonly.component';
+import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
 
 const routes: Routes = [
     {
@@ -41,6 +42,10 @@ const routes: Routes = [
     {
         path: 'mentions',
         component: DemoMentionsComponent
+    },
+    {
+        path: 'placeholder',
+        component: DemoPlaceholderComponent
     }
 ];
 @NgModule({
