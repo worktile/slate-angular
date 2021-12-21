@@ -47,7 +47,6 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
-import { EmptyText } from 'custom-types';
 
 const timeDebug = Debug('slate-angular-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -208,7 +207,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     writeValue(value: Element[]) {
         if (value && value.length) {
             if (check(value)) {
-                this.editor.children = value
+                this.editor.children = value;
             } else {
                 this.editor.onError({
                     code: SlateErrorCode.InvalidValueError,
@@ -444,7 +443,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         if (this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
             this.context.readonly !== this.readonly) {
-            // const decorations = this.decorate([this.editor, []]);
             const decorations = this.initDecorations();
             const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
             this.context = {
