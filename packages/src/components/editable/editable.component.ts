@@ -17,8 +17,8 @@ import {
     AfterViewChecked,
     DoCheck
 } from '@angular/core';
-import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW, PLACEHOLDER_SYMBOL } from '../../utils/weak-maps';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant, BaseRange } from 'slate';
+import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -47,6 +47,7 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
+import { SlatePlaceholder } from '../../types/feature';
 
 const timeDebug = Debug('slate-angular-time');
 // COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
@@ -107,13 +108,29 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
+    @Input() placeholderDecorate: (editor: Editor) => SlatePlaceholder[] = (editor) => {
+        if (this.placeholder &&
+            editor.children.length === 1 &&
+            Array.from(Node.texts(editor)).length === 1 &&
+            Node.string(editor) === '') {
+            const start = Editor.start(editor, []);
+            return [{
+                placeholder: this.placeholder,
+                anchor: start,
+                focus: start
+            }];
+        } else {
+            return [];
+        }
+    };
+
     @Input() isStrictDecorate: boolean = true;
 
     @Input() trackBy: (node: Element) => any = () => null;
 
     @Input() readonly = false;
 
-    @Input() placeholder:string;
+    @Input() placeholder: string;
 
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
@@ -216,7 +233,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 });
                 this.editor.children = normalize(value);
             }
-            this.initializeContext()
+            this.initializeContext();
             this.cdr.markForCheck();
         }
     }
@@ -363,7 +380,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         // need exec after this.cdr.detectChanges() to render HTML
         // need exec before this.toNativeSelection() to correct native selection
         if (this.isComposing) {
-            // Compposition input text be not rendered when user composition input with selection is expanded
+            // Composition input text be not rendered when user composition input with selection is expanded
             // At this time, the following matching conditions are met, assign isComposing to false, and the status is wrong
             // this time condition is true and isComposiing is assigned false
             // Therefore, need to wait for the composition input text to be rendered before performing condition matching
@@ -394,37 +411,13 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     initializeContext() {
-        const decorations = this.initDecorations()
-
         this.context = {
             parent: this.editor,
             selection: this.editor.selection,
-            decorations,
+            decorations: this.generateDecorations(),
             decorate: this.decorate,
             readonly: this.readonly
         };
-    }
-
-    private initDecorations():BaseRange[] {
-        const decorations = this.decorate([this.editor,[]]);
-        const editor = this.editor;
-        if (
-          this.placeholder &&
-          editor.children.length === 1 &&
-          Array.from(Node.texts(editor)).length === 1 &&
-          Node.string(editor) === '' &&
-          !this.isComposing
-        ) {
-          const start = Editor.start(this.editor, [])
-
-          decorations.push({
-            [PLACEHOLDER_SYMBOL]: true,
-            placeholder:this.placeholder,
-            anchor: start,
-            focus: start,
-          } as BaseRange)
-        }
-        return decorations
     }
 
     initializeViewContext() {
@@ -440,19 +433,26 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     detectContext() {
+        const decorations = this.isComposing ? [] : this.generateDecorations();
         if (this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
-            this.context.readonly !== this.readonly) {
-            const decorations = this.initDecorations();
-            const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
+            this.context.readonly !== this.readonly ||
+            !isDecoratorRangeListEqual(this.context.decorations, decorations)) {
             this.context = {
                 parent: this.editor,
                 selection: this.editor.selection,
-                decorations: isSameDecorations ? this.context.decorations : decorations,
+                decorations: decorations,
                 decorate: this.decorate,
                 readonly: this.readonly
             };
         }
+    }
+
+    generateDecorations() {
+        const decorations = this.decorate([this.editor, []]);
+        const placeholderDecorations = this.placeholderDecorate(this.editor);
+        decorations.push(...placeholderDecorations);
+        return decorations;
     }
 
     //#region event proxy
@@ -715,6 +715,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // so we need avoid repeat isnertText by isComposing === true,
             this.isComposing = false;
         }
+        this.onChange();
     }
 
     private onDOMCompositionStart(event: CompositionEvent) {
@@ -730,6 +731,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
             this.isComposing = true;
         }
+        this.onChange();
     }
 
     private onDOMCopy(event: ClipboardEvent) {

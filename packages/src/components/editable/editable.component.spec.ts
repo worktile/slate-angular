@@ -93,4 +93,33 @@ describe('Editable Component', () => {
         let newParagraphElement = document.querySelector('[data-slate-node="element"]');
         expect(paragraphElement === newParagraphElement).toBeTrue();
     }));
+
+    it('should use default logic to show placeholder when set placeholder value',fakeAsync(()=> {
+        const placeholder = 'hello world';
+        component.placeholder = placeholder;
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: '' }]
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        const placeholderLeaf = document.querySelector('[data-slate-placeholder="true"]');
+        expect(placeholderLeaf).not.toBeNull();
+        
+        // and disappear when editor has content
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: 'input...' }]
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let placeholderLeafWithContent = document.querySelector('[data-slate-placeholder="true"]');
+        expect(placeholderLeafWithContent).toBeNull();
+    }))
 });

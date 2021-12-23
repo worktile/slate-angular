@@ -13,6 +13,7 @@ import { TestingLeafComponent } from "./leaf.component";
             [ngModel]="value"
             [decorate]="decorate"
             [renderLeaf]="renderLeaf"
+            [placeholder]="placeholder"
             [trackBy]="trackBy"
             ></slate-editable>
     `
@@ -25,6 +26,8 @@ export class AdvancedEditableComponent implements OnInit {
     decorate = (nodeEntry: NodeEntry) => [];
 
     trackBy = (element: Element) => null;
+
+    placeholder: string;
 
     @ViewChild(SlateEditableComponent, { static: true })
     editableComponent: SlateEditableComponent;
