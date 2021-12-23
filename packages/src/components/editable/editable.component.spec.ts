@@ -1,6 +1,7 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule } from '../../testing';
+import { AngularEditor } from 'slate-angular';
+import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
 
 describe('Editable Component', () => {
     let component: AdvancedEditableComponent;
@@ -108,6 +109,15 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         const placeholderLeaf = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeaf).not.toBeNull();
+        
+        AngularEditor.focus(component.editor);
+        const inputElement = document.querySelector('[editable-text]');
+        dispatchFakeEvent(inputElement, 'compositionstart', true);
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        let placeholderLeafWithComposition = document.querySelector('[data-slate-placeholder="true"]');
+        expect(placeholderLeafWithComposition).toBeNull();
         
         // and disappear when editor has content
         component.value = [

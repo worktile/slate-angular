@@ -433,7 +433,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     detectContext() {
-        const decorations = this.isComposing ? [] : this.generateDecorations();
+        const decorations = this.generateDecorations();
         if (this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
             this.context.readonly !== this.readonly ||
@@ -450,7 +450,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
-        const placeholderDecorations = this.placeholderDecorate(this.editor);
+        const placeholderDecorations =  this.isComposing ? [] : this.placeholderDecorate(this.editor);
         decorations.push(...placeholderDecorations);
         return decorations;
     }
@@ -715,7 +715,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // so we need avoid repeat isnertText by isComposing === true,
             this.isComposing = false;
         }
-        this.onChange();
+        this.detectContext();
+        this.cdr.detectChanges();
     }
 
     private onDOMCompositionStart(event: CompositionEvent) {
@@ -731,7 +732,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
             this.isComposing = true;
         }
-        this.onChange();
+        this.detectContext();
+        this.cdr.detectChanges();
     }
 
     private onDOMCopy(event: ClipboardEvent) {

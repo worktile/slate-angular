@@ -19,17 +19,6 @@
         font-weight: bold;
     }
 
-    [slate-placeholder] {
-        position: absolute;
-        pointer-events: none;
-        width: 100%;
-        max-width: 100%;
-        display: block;
-        opacity: 0.333;
-        user-select: none;
-        text-decoration: none;
-    }
-
     [slate-code-line] {
         margin: 0 4px;
         padding: 2px 3px;
