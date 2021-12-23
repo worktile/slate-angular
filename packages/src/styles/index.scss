@@ -8,6 +8,16 @@
     & [contenteditable="true"] {
         outline: none;
     }
+    & [slate-placeholder] {
+        position: absolute;
+        pointer-events: none;
+        width: 100%;
+        max-width: 100%;
+        display: block;
+        opacity: 0.333;
+        user-select: none;
+        text-decoration: none;
+    }
 }
 .slate-spacer {
     height: 0;

@@ -17,6 +17,7 @@ import { DemoSearchHighlightingComponent } from './search-highlighting/search-hi
 import { DemoLeafComponent } from './search-highlighting/leaf.component';
 import { DemoMentionsComponent } from './mentions/mentions.component';
 import { DemoReadonlyComponent } from './readonly/readonly.component';
+import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { DemoReadonlyComponent } from './readonly/readonly.component';
         DemoSearchHighlightingComponent,
         DemoLeafComponent,
         DemoMentionsComponent,
-        DemoReadonlyComponent
+        DemoReadonlyComponent,
+        DemoPlaceholderComponent
     ],
     imports: [
         BrowserModule,
