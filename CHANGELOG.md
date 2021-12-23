@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.0](https://github.com/worktile/slate-angular/compare/v1.6.5...v1.7.0) (2021-12-23)
+
+
+### Features
+
+* **placeholder:** feat(decorate): add placeholder (#159) 感谢 @FrankWang117
+ 
+
+### Bug Fixes
+
+* **core:** handle move nodes Transforms.moveNodes does not work #150
+* **core:** fix(core): handling of delete in Chrome when inline void node is selected
+
+
 ### [1.6.5](https://github.com/worktile/slate-angular/compare/v1.6.4...v1.6.5) (2021-11-03)
 
 
