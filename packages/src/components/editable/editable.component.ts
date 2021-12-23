@@ -107,6 +107,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
+    @Input() placeholderDecorate: (editor: Editor) => Range[] = () => {
+        // default logic
+        return [];
+    };
+
     @Input() isStrictDecorate: boolean = true;
 
     @Input() trackBy: (node: Element) => any = () => null;
@@ -394,7 +399,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.context = {
             parent: this.editor,
             selection: this.editor.selection,
-            decorations: this.decorate([this.editor, []]),
+            decorations: this.generateDecorations(),
             decorate: this.decorate,
             readonly: this.readonly
         };
@@ -413,19 +418,26 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     detectContext() {
+        const decorations = this.generateDecorations();
         if (this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
-            this.context.readonly !== this.readonly) {
-            const decorations = this.decorate([this.editor, []]);
-            const isSameDecorations = isDecoratorRangeListEqual(this.context.decorations, decorations);
+            this.context.readonly !== this.readonly ||
+            !isDecoratorRangeListEqual(this.context.decorations, decorations)) {
             this.context = {
                 parent: this.editor,
                 selection: this.editor.selection,
-                decorations: isSameDecorations ? this.context.decorations : decorations,
+                decorations: decorations,
                 decorate: this.decorate,
                 readonly: this.readonly
             };
         }
+    }
+
+    generateDecorations() {
+        const decorations = this.decorate([this.editor, []]);
+        const placeholderDecorations = this.placeholderDecorate(this.editor);
+        decorations.push(...placeholderDecorations);
+        return decorations;
     }
 
     //#region event proxy
