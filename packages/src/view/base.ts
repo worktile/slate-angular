@@ -162,7 +162,7 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
     initialized = false;
 
     get text(): Text {
-        return this._context.text;
+        return this._context && this._context.text;
     }
 
     ngOnInit() {
