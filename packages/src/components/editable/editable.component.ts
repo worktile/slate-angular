@@ -108,21 +108,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
-    @Input() placeholderDecorate: (editor: Editor) => SlatePlaceholder[] = (editor) => {
-        if (this.placeholder &&
-            editor.children.length === 1 &&
-            Array.from(Node.texts(editor)).length === 1 &&
-            Node.string(editor) === '') {
-            const start = Editor.start(editor, []);
-            return [{
-                placeholder: this.placeholder,
-                anchor: start,
-                focus: start
-            }];
-        } else {
-            return [];
-        }
-    };
+    @Input() placeholderDecorate: (editor: Editor) => SlatePlaceholder[];
 
     @Input() isStrictDecorate: boolean = true;
 
@@ -448,9 +434,35 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     }
 
+    composePlaceholderDecorate(editor: Editor) {
+        if (this.placeholderDecorate) {
+            return this.placeholderDecorate(editor) || [];
+        }
+
+        if (
+          this.placeholder &&
+          editor.children.length === 1 &&
+          Array.from(Node.texts(editor)).length === 1 &&
+          Node.string(editor) === ''
+        ) {
+          const start = Editor.start(editor, [])
+          return [
+            {
+              placeholder: this.placeholder,
+              anchor: start,
+              focus: start,
+            },
+          ]
+        } else {
+          return []
+        }
+    }
+
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
-        const placeholderDecorations =  this.isComposing ? [] : this.placeholderDecorate(this.editor);
+        const placeholderDecorations = this.isComposing
+          ? []
+          : this.composePlaceholderDecorate(this.editor)
         decorations.push(...placeholderDecorations);
         return decorations;
     }
@@ -1131,7 +1143,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 if (!Range.isCollapsed(this.editor.selection)) {
                     Editor.deleteFragment(this.editor);
                 }
-                // just handle Non-IME input  
+                // just handle Non-IME input
                 if (!this.isComposing) {
                     Editor.insertText(this.editor, text);
                 }
