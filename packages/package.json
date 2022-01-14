@@ -1,6 +1,6 @@
 {
     "name": "slate-angular",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "peerDependencies": {
         "slate": ">= 0.63.0",
         "tslib": "^2.0.0",
