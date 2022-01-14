@@ -9,6 +9,7 @@ import { DemoSearchHighlightingComponent } from './search-highlighting/search-hi
 import { DemoMentionsComponent } from './mentions/mentions.component';
 import { DemoReadonlyComponent } from './readonly/readonly.component';
 import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
+import { DemoInlinesComponent } from './inlines/inlines.component';
 
 const routes: Routes = [
     {
@@ -34,6 +35,10 @@ const routes: Routes = [
     {
         path: 'images',
         component: DemoImagesComponent
+    },
+    {
+        path: 'inlines',
+        component: DemoInlinesComponent
     },
     {
         path: 'search-highlighting',

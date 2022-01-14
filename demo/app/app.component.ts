@@ -35,6 +35,10 @@ export class AppComponent implements OnInit {
             name: 'Images'
         },
         {
+            url: '/inlines',
+            name: 'Inlines'
+        },
+        {
             url: '/search-highlighting',
             name: 'Search Highlighting'
         },
