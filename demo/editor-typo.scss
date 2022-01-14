@@ -2,23 +2,18 @@
     [slate-underlined][slate-strike] {
         text-decoration: underline line-through;
     }
-
     [slate-strike] {
         text-decoration: line-through;
     }
-
     [slate-underlined] {
         text-decoration: underline;
     }
-
     [slate-italic] {
         font-style: italic;
     }
-
     [slate-bold] {
         font-weight: bold;
     }
-
     [slate-code-line] {
         margin: 0 4px;
         padding: 2px 3px;
@@ -26,7 +21,6 @@
         border-radius: 2px;
         background-color: rgba($color: #000000, $alpha: 0.06);
     }
-
     blockquote {
         margin: 0;
         margin-left: 0;
@@ -35,12 +29,24 @@
         padding-left: 10px !important;
         border-left: 4px solid #eee;
     }
-    
-    h1,h2,h3 {
+    h1,
+    h2,
+    h3 {
         margin: 0px;
     }
-
-    &>[data-slate-node="element"],&>slate-block-card {
+    &>[data-slate-node="element"],
+    &>slate-block-card {
         margin-bottom: 12px;
+    }
+    .demo-element-button {
+        margin: 0 0.1em;
+        background-color: #efefef;
+        padding: 2px 6px;
+        border: 1px solid #767676;
+        border-radius: 2px;
+        font-size: 0.9em;
+    }
+    .demo-element-link-active {
+        box-shadow: 0 0 0 3px #ddd;
     }
 }

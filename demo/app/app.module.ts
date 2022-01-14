@@ -18,6 +18,9 @@ import { DemoLeafComponent } from './search-highlighting/leaf.component';
 import { DemoMentionsComponent } from './mentions/mentions.component';
 import { DemoReadonlyComponent } from './readonly/readonly.component';
 import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
+import { DemoElementEditableButtonComponent } from './components/editable-button/editable-button.component';
+import { DemoInlinesComponent } from './inlines/inlines.component';
+import { DemoElementLinkComponent } from './components/link/link.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +38,10 @@ import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
         DemoLeafComponent,
         DemoMentionsComponent,
         DemoReadonlyComponent,
-        DemoPlaceholderComponent
+        DemoPlaceholderComponent,
+        DemoElementEditableButtonComponent,
+        DemoInlinesComponent,
+        DemoElementLinkComponent
     ],
     imports: [
         BrowserModule,
