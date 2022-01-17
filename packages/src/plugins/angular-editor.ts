@@ -35,7 +35,7 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTarge
 
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
-    setFragmentData: (data: DataTransfer) => void;
+    setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
     deleteCutData: ()=> void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
@@ -275,8 +275,8 @@ export const AngularEditor = {
      * Sets data from the currently selected fragment on a `DataTransfer`.
      */
 
-    setFragmentData(editor: AngularEditor, data: DataTransfer): void {
-        editor.setFragmentData(data);
+    setFragmentData(editor: AngularEditor, data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut'): void {
+        editor.setFragmentData(data, originEvent);
     },
 
     deleteCutData(editor: AngularEditor): void{
