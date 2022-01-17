@@ -756,14 +756,14 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const isOutsideSlate = !hasStringTarget(window.getSelection()) && isTargetInsideVoid(this.editor, event.target);
         if (!isOutsideSlate && hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.copy)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData);
+            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'copy');
         }
     }
 
     private onDOMCut(event: ClipboardEvent) {
         if (!this.readonly && hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.cut)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData);
+            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'cut');
             const { selection } = this.editor;
 
             if (selection) {
@@ -802,7 +802,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
             this.isDraggingInternally = true;
 
-            AngularEditor.setFragmentData(this.editor, event.dataTransfer);
+            AngularEditor.setFragmentData(this.editor, event.dataTransfer, 'drag');
         }
     }
 
