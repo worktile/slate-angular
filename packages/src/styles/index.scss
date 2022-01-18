@@ -16,11 +16,13 @@
         opacity: 0.333;
         user-select: none;
         text-decoration: none;
-        top: 0px;
+        top: 0;
     }
-    [data-slate-node='element'] {
-        &.element-placeholder {
+    & [data-slate-leaf="true"] {
+        &.leaf-with-placeholder {
             position: relative;
+            display: inline-block;
+            width: 100%;
         }
     }
 }
