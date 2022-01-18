@@ -1,13 +1,16 @@
 # Changelog
 
+## 1.7.3
+
+### Patch Changes
+
+- [#168](https://github.com/worktile/slate-angular/pull/168) [`4c6d50e`](https://github.com/worktile/slate-angular/commit/4c6d50ec090366f114191b8e696bb4ae9edbeb7c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - refactor placeholder, fix IME input issues
+
 ## 1.7.2
 
 ### Patch Changes
 
 - [`3d7f548`](https://github.com/worktile/slate-angular/commit/3d7f5487b37116fa0113c8fbabff777c32b15eb9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 引入 changesets 工具
-
-
-
 
 ### [1.7.1](https://github.com/worktile/slate-angular/compare/v1.7.0...v1.7.1) (2022-01-12)
 
