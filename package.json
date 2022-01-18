@@ -1,6 +1,5 @@
 {
     "name": "slate-angular",
-    "version": "1.7.1",
     "workspaces": [
         "packages"
     ],
