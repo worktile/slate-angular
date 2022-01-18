@@ -58,7 +58,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 
     placeholderElement: HTMLSpanElement;
 
-    @HostBinding('attr.data-slate-leaf')  isSlateLeaf = true
+    @HostBinding('attr.data-slate-leaf') isSlateLeaf = true
 
     get text(): Text {
         return this.context && this.context.text;
@@ -82,23 +82,18 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     renderPlaceholder() {
         // issue-1: IME input was interrupted
         // issue-2: IME input focus jumping
-        // Issue occurs when the placeholder node is removed (in leaf span)
-        // So add a placeholder span to the block element root node
+        // Issue occurs when the span node of the placeholder is before the slateString span node
         if (this.context.leaf['placeholder']) {
             if (!this.placeholderElement) {
                 this.placeholderElement = document.createElement('span');
                 this.placeholderElement.innerText = this.context.leaf['placeholder'];
                 this.placeholderElement.contentEditable = 'false';
                 this.placeholderElement.setAttribute('data-slate-placeholder', 'true');
-                this.nativeElement.closest('[data-slate-node="element"]')?.classList.add('element-placeholder');
-                this.nativeElement.closest('[data-slate-node="element"]')?.appendChild(this.placeholderElement);
+                this.nativeElement.classList.add('leaf-with-placeholder');
+                this.nativeElement.appendChild(this.placeholderElement);
             }
         } else {
-            if (this.placeholderElement) {
-                this.placeholderElement.remove();
-                this.placeholderElement = null;
-                this.nativeElement.closest('[data-slate-node="element"]')?.classList.remove('element-placeholder');
-            }
+            this.destroyPlaceholder();
         }
     }
 
@@ -106,7 +101,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         if (this.placeholderElement) {
             this.placeholderElement.remove();
             this.placeholderElement = null;
-            this.nativeElement?.closest('[data-slate-node="element"]')?.classList.remove('element-placeholder');
+            this.nativeElement.classList.remove('leaf-with-placeholder');
         }
     }
 }
