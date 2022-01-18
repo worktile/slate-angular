@@ -1,5 +1,4 @@
 @import '../components/block-card/block-card.component.scss';
-
 .slate-editable-container {
     display: block;
     outline: none;
@@ -8,7 +7,7 @@
     & [contenteditable="true"] {
         outline: none;
     }
-    & [slate-placeholder] {
+    & [data-slate-placeholder] {
         position: absolute;
         pointer-events: none;
         width: 100%;
@@ -17,12 +16,18 @@
         opacity: 0.333;
         user-select: none;
         text-decoration: none;
+        top: 0px;
+    }
+    [data-slate-node='element'] {
+        &.element-placeholder {
+            position: relative;
+        }
     }
 }
+
 .slate-spacer {
     height: 0;
     color: transparent;
     outline: none;
     position: absolute;
 }
-

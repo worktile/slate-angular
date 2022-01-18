@@ -5,8 +5,7 @@ module.exports = {
         'scope-empty': [2, 'never'],
         'scope-enum': [
             2,
-            'always',
-            [
+            'always', [
                 'demo',
                 'core',
                 'view',
@@ -20,7 +19,8 @@ module.exports = {
                 'pretter',
                 'types',
                 'block-card',
-                'global-normalize'
+                'global-normalize',
+                'placeholder'
             ]
         ]
     }
