@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.4
+
+### Patch Changes
+
+- [`004015c`](https://github.com/worktile/slate-angular/commit/004015cbb97f45df9d51944147fffe290b31d49e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - correct placeholder position, placeholder span must be inside text node
+
 ## 1.7.3
 
 ### Patch Changes
