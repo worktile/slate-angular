@@ -351,6 +351,8 @@ const initialValue = [
 
 > Before starting, you need to declare the DemoTextMarkComponent  component in NgModule
 
+> You can checkout a [stackblitz implementation of the readme usage](https://stackblitz.com/edit/angular-ivy-pqofah?file=src/app/app.component.ts)
+
 **Start the demo and you will get the following interface**
 
 ![image.png](https://atlas-rc.pingcode.com/files/public/61ac3e16e429e861587f55db)
