@@ -32,8 +32,7 @@ import {
     DOMSelection,
     getDefaultView
 } from '../../utils/dom';
-import { Subject, interval } from 'rxjs';
-import { takeUntil, throttle } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
@@ -182,6 +181,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
         // remove unused DOM, just keep templateComponent instance
         this.templateElementRef.nativeElement.remove();
+
+        // add browser class
+        let browserClass = IS_FIREFOX ? 'firefox' : (IS_SAFARI ? 'safari' : '');
+        browserClass && this.elementRef.nativeElement.classList.add(browserClass);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
