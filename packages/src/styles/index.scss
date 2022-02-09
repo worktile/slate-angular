@@ -21,7 +21,10 @@
     & [data-slate-leaf="true"] {
         &.leaf-with-placeholder {
             position: relative;
-            display: inline-block;
+            // Compatible for firefox, there are two problems with using inline-block
+            // Issue-1: paragraph height becomes taller
+            // Issue-2: blocks focus movement on key down
+            display: inline-flex;
             width: 100%;
         }
     }
