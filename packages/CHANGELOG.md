@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.5
+
+### Patch Changes
+
+- [#173](https://github.com/worktile/slate-angular/pull/173) [`1f164e9`](https://github.com/worktile/slate-angular/commit/1f164e9d556bd893aa79460bde1cc6c91a868923) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Fix focus movement and paragraph height issues under firefox
+
 ## 1.7.4
 
 ### Patch Changes
