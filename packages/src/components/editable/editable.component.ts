@@ -131,7 +131,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     @Input() drop: (event: DragEvent) => void;
     @Input() focus: (event: Event) => void;
     @Input() keydown: (event: KeyboardEvent) => void;
-    @Input() paste: (event: KeyboardEvent) => void;
+    @Input() paste: (event: ClipboardEvent) => void;
     //#endregion
 
     //#region DOM attr
