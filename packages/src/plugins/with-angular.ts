@@ -1,5 +1,5 @@
-import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, Path, Operation } from 'slate';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
+import { Editor, Node, Transforms, Range, Path, Operation } from 'slate';
+import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlateFragmentAttribute } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
@@ -195,31 +195,47 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
   };
 
   e.insertData = (data: DataTransfer) => {
-    const fragment = data.getData(`application/${clipboardFormatKey}`);
+    if (!e.insertFragmentData(data)) {
+      e.insertTextData(data);
+    }
+  };
+
+  e.insertFragmentData = (data: DataTransfer): boolean => {
+    /**
+     * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
+     */
+    const fragment =
+      data.getData(`application/${clipboardFormatKey}`) ||
+      getSlateFragmentAttribute(data)
 
     if (fragment) {
-      const decoded = decodeURIComponent(window.atob(fragment));
-      const parsed = JSON.parse(decoded) as Node[];
-      e.insertFragment(parsed);
-      return;
+      const decoded = decodeURIComponent(window.atob(fragment))
+      const parsed = JSON.parse(decoded) as Node[]
+      e.insertFragment(parsed)
+      return true
     }
+    return false
+  }
 
-    const text = data.getData('text/plain');
+  e.insertTextData = (data: DataTransfer): boolean => {
+    const text = data.getData('text/plain')
 
     if (text) {
-      const lines = text.split(/\r\n|\r|\n/);
-      let split = false;
+      const lines = text.split(/\r\n|\r|\n/)
+      let split = false
 
       for (const line of lines) {
         if (split) {
-          Transforms.splitNodes(e, { always: true });
+          Transforms.splitNodes(e, { always: true })
         }
 
-        e.insertText(line);
-        split = true;
+        e.insertText(line)
+        split = true
       }
+      return true
     }
-  };
+    return false
+  }
 
   e.onKeydown = () => { };
 

@@ -436,29 +436,29 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
 
         if (
-          this.placeholder &&
-          editor.children.length === 1 &&
-          Array.from(Node.texts(editor)).length === 1 &&
-          Node.string(editor) === ''
+            this.placeholder &&
+            editor.children.length === 1 &&
+            Array.from(Node.texts(editor)).length === 1 &&
+            Node.string(editor) === ''
         ) {
-          const start = Editor.start(editor, [])
-          return [
-            {
-              placeholder: this.placeholder,
-              anchor: start,
-              focus: start,
-            },
-          ]
+            const start = Editor.start(editor, [])
+            return [
+                {
+                    placeholder: this.placeholder,
+                    anchor: start,
+                    focus: start,
+                },
+            ]
         } else {
-          return []
+            return []
         }
     }
 
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
         const placeholderDecorations = this.isComposing
-          ? []
-          : this.composePlaceholderDecorate(this.editor)
+            ? []
+            : this.composePlaceholderDecorate(this.editor)
         decorations.push(...placeholderDecorations);
         return decorations;
     }
