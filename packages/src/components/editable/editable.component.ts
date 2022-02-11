@@ -618,8 +618,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
-                        if (data instanceof DataTransfer) {
-                            AngularEditor.insertData(editor, data);
+                        // use a weak comparison instead of 'instanceof' to allow
+                        // programmatic access of paste events coming from external windows
+                        // like cypress where cy.window does not work realibly
+                        if (data?.constructor.name === 'DataTransfer') {
+                            AngularEditor.insertData(editor, data as DataTransfer);
                         } else if (typeof data === 'string') {
                             Editor.insertText(editor, data);
                         }
