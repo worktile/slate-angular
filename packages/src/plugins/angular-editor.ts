@@ -26,7 +26,7 @@ import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
 import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
-import { IS_CHROME } from '../utils/environment';
+import { IS_CHROME, IS_FIREFOX } from '../utils/environment';
 import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
 
 /**
@@ -116,31 +116,21 @@ export const AngularEditor = {
     },
 
     /**
-   * Find the DOM node that implements DocumentOrShadowRoot for the editor.
-   */
+     * Find the DOM node that implements DocumentOrShadowRoot for the editor.
+     */
 
     findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
-        const el = AngularEditor.toDOMNode(editor, editor);
-        const root = el.getRootNode();
+        const el = AngularEditor.toDOMNode(editor, editor)
+        const root = el.getRootNode()
 
-        // The below exception will always be thrown for iframes because the document inside an iframe
-        // does not inherit it's prototype from the parent document, therefore we return early
-        if (el.ownerDocument !== document) { return el.ownerDocument; }
-
-        if (!(root instanceof Document || root instanceof ShadowRoot)) {
-            throw new Error(
-                `Unable to find DocumentOrShadowRoot for editor element: ${el}`
-            );
+        if (
+            (root instanceof Document || root instanceof ShadowRoot) &&
+            root.getSelection != null
+        ) {
+            return root
         }
 
-        // COMPAT: Only Chrome implements the DocumentOrShadowRoot mixin for
-        // ShadowRoot; other browsers still implement it on the Document
-        // interface. (2020/08/08)
-        // https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot#Properties
-        if (root.getSelection === undefined && el.ownerDocument !== null) {
-            return el.ownerDocument;
-        }
-        return root;
+        return el.ownerDocument
     },
 
     /**
@@ -607,7 +597,15 @@ export const AngularEditor = {
             // composition the ASCII characters will be prepended to the zero-width
             // space, so subtract 1 from the offset to account for the zero-width
             // space character.
-            if (domNode && offset === domNode.textContent!.length && parentNode && parentNode.hasAttribute('data-slate-zero-width')) {
+            if (domNode &&
+                offset === domNode.textContent!.length &&
+                (
+                    (parentNode && parentNode.hasAttribute('data-slate-zero-width')) ||
+                    // COMPAT: In Firefox, `range.cloneContents()` returns an extra trailing '\n'
+                    // when the document ends with a new-line character. This results in the offset
+                    // length being off by one, so we need to subtract one to account for this.
+                    (IS_FIREFOX && domNode.textContent?.endsWith('\n\n'))
+                )) {
                 offset--;
             }
         }
