@@ -782,7 +782,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private onDOMDragStart(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
+        if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
             const voidMatch =
