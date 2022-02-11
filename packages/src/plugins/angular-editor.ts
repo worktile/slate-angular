@@ -599,13 +599,8 @@ export const AngularEditor = {
             // space character.
             if (domNode &&
                 offset === domNode.textContent!.length &&
-                (
-                    (parentNode && parentNode.hasAttribute('data-slate-zero-width')) ||
-                    // COMPAT: In Firefox, `range.cloneContents()` returns an extra trailing '\n'
-                    // when the document ends with a new-line character. This results in the offset
-                    // length being off by one, so we need to subtract one to account for this.
-                    (IS_FIREFOX && domNode.textContent?.endsWith('\n\n'))
-                )) {
+                (parentNode && parentNode.hasAttribute('data-slate-zero-width'))
+            ) {
                 offset--;
             }
         }
