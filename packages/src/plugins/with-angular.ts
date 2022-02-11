@@ -94,7 +94,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     onChange();
   };
 
-  e.setFragmentData = (data: DataTransfer) => {
+  e.setFragmentData = (data: Pick<DataTransfer, 'getData' | 'setData'>) => {
     const { selection } = e;
 
     if (!selection) {
@@ -178,6 +178,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     data.setData('text/html', div.innerHTML);
     data.setData('text/plain', getPlainText(div));
     contents.ownerDocument.body.removeChild(div);
+    return data;
   };
 
   e.deleteCutData = () => {
