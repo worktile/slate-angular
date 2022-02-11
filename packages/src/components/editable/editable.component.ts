@@ -33,7 +33,7 @@ import {
     getDefaultView
 } from '../../utils/dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -49,14 +49,7 @@ import { check, normalize } from '../../utils/global-normalize';
 import { SlatePlaceholder } from '../../types/feature';
 
 const timeDebug = Debug('slate-angular-time');
-// COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
-// Chrome Legacy doesn't support `beforeinput` correctly
-const HAS_BEFORE_INPUT_SUPPORT =
-    !IS_CHROME_LEGACY &&
-    !IS_EDGE_LEGACY &&
-    globalThis.InputEvent &&
-    // @ts-ignore The `getTargetRanges` property isn't recognized.
-    typeof globalThis.InputEvent.prototype.getTargetRanges === 'function'
+
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
