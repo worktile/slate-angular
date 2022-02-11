@@ -35,8 +35,10 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTarge
 
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
+    insertFragmentData: (data: DataTransfer) => boolean
+    insertTextData: (data: DataTransfer) => boolean
     setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
-    deleteCutData: ()=> void;
+    deleteCutData: () => void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
@@ -258,6 +260,22 @@ export const AngularEditor = {
     },
 
     /**
+   * Insert fragment data from a `DataTransfer` into the editor.
+   */
+
+    insertFragmentData(editor: AngularEditor, data: DataTransfer): boolean {
+        return editor.insertFragmentData(data)
+    },
+
+    /**
+     * Insert text data from a `DataTransfer` into the editor.
+     */
+
+    insertTextData(editor: AngularEditor, data: DataTransfer): boolean {
+        return editor.insertTextData(data)
+    },
+
+    /**
      * onKeydown hook.
      */
     onKeydown(editor: AngularEditor, data: KeyboardEvent): void {
@@ -279,7 +297,7 @@ export const AngularEditor = {
         editor.setFragmentData(data, originEvent);
     },
 
-    deleteCutData(editor: AngularEditor): void{
+    deleteCutData(editor: AngularEditor): void {
         editor.deleteCutData();
     },
 
@@ -519,7 +537,7 @@ export const AngularEditor = {
             // to the of current node
             if (
                 (isCardCenterByTargetAttr(cardTargetAttr) ||
-                isCardRightByTargetAttr(cardTargetAttr)) &&
+                    isCardRightByTargetAttr(cardTargetAttr)) &&
                 !isBackward
             ) {
                 return Editor.end(editor, blockPath);
@@ -532,7 +550,7 @@ export const AngularEditor = {
             // and to the start of current node
             if (
                 (isCardCenterByTargetAttr(cardTargetAttr) ||
-                isCardLeftByTargetAttr(cardTargetAttr)) &&
+                    isCardLeftByTargetAttr(cardTargetAttr)) &&
                 isBackward
             ) {
                 return Editor.start(editor, blockPath);
