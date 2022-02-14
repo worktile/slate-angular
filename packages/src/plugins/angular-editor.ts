@@ -43,7 +43,7 @@ export interface AngularEditor extends BaseEditor {
     onDragenter:(event: DragEvent)=>void;
     onDragleave:(event: DragEvent)=>void;
     onDragover:(event: DragEvent)=>void;
-    onDrop:(event: DragEvent, isDraggingInternally?: boolean)=>void;
+    onDrop:(event: DragEvent)=>void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
@@ -291,8 +291,8 @@ export const AngularEditor = {
         editor.onDragover(event);
     },
     
-    onDrop(editor: AngularEditor, event: DragEvent, isDraggingInternally?: boolean): void {
-        editor.onDrop(event, isDraggingInternally);
+    onDrop(editor: AngularEditor, event: DragEvent): void {
+        editor.onDrop(event);
     },
 
     /**

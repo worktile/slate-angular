@@ -436,29 +436,29 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
 
         if (
-            this.placeholder &&
-            editor.children.length === 1 &&
-            Array.from(Node.texts(editor)).length === 1 &&
-            Node.string(editor) === ''
+          this.placeholder &&
+          editor.children.length === 1 &&
+          Array.from(Node.texts(editor)).length === 1 &&
+          Node.string(editor) === ''
         ) {
-            const start = Editor.start(editor, [])
-            return [
-                {
-                    placeholder: this.placeholder,
-                    anchor: start,
-                    focus: start,
-                },
-            ]
+          const start = Editor.start(editor, [])
+          return [
+            {
+              placeholder: this.placeholder,
+              anchor: start,
+              focus: start,
+            },
+          ]
         } else {
-            return []
+          return []
         }
     }
 
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
         const placeholderDecorations = this.isComposing
-            ? []
-            : this.composePlaceholderDecorate(this.editor)
+          ? []
+          : this.composePlaceholderDecorate(this.editor)
         decorations.push(...placeholderDecorations);
         return decorations;
     }
@@ -618,7 +618,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
-                        // use a weak comparison instead of 'instanceof' to allow
+                       // use a weak comparison instead of 'instanceof' to allow
                         // programmatic access of paste events coming from external windows
                         // like cypress where cy.window does not work realibly
                         if (data?.constructor.name === 'DataTransfer') {
@@ -770,7 +770,14 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private onDOMDragOver(event: DragEvent) {
         if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragOver)) {
-            AngularEditor.onDragover(this.editor, event);
+            // Only when the target is void, call `preventDefault` to signal
+            // that drops are allowed. Editable content is droppable by
+            // default, and calling `preventDefault` hides the cursor.
+            const node = AngularEditor.toSlateNode(this.editor, event.target);
+
+            if (Editor.isVoid(this.editor, node)) {
+                event.preventDefault();
+            }
         }
     }
 
@@ -796,10 +803,34 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private onDOMDrop(event: DragEvent) {
+        const editor = this.editor;
         if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.drop)) {
-            AngularEditor.onDrop(this.editor, event, this.isDraggingInternally);
-            if(this.isDraggingInternally){
+            event.preventDefault();
+            // Keep a reference to the dragged range before updating selection
+            const draggedRange = editor.selection;
+
+            // Find the range where the drop happened
+            const range = AngularEditor.findEventRange(editor, event);
+            const data = event.dataTransfer;
+
+            Transforms.select(editor, range);
+
+            if (this.isDraggingInternally) {
+                if (draggedRange) {
+                    Transforms.delete(editor, {
+                        at: draggedRange,
+                    });
+                }
+
                 this.isDraggingInternally = false;
+            }
+
+            AngularEditor.insertData(editor, data);
+
+            // When dragging from another source into the editor, it's possible
+            // that the current editor does not have focus.
+            if (!AngularEditor.isFocused(editor)) {
+                AngularEditor.focus(editor);
             }
         }
     }
