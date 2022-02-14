@@ -4,7 +4,7 @@ import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
 
-export const withAngular = <T extends AngularEditor>(
+export const withAngular = <T extends Editor>(
   editor: T,
   clipboardFormatKey = 'x-slate-fragment'
 ) => {
