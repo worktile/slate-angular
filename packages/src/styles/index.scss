@@ -25,6 +25,15 @@
             width: 100%;
         }
     }
+    &.firefox {
+        // Compatible for firefox, there are two problems with using inline-block
+        // Issue-1: paragraph height becomes taller
+        // Issue-2: blocks focus movement on key down
+        .leaf-with-placeholder {
+            display: inline-flex !important;
+        }
+        
+    }
 }
 
 .slate-spacer {

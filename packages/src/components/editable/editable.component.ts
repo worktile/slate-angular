@@ -32,9 +32,8 @@ import {
     DOMSelection,
     getDefaultView
 } from '../../utils/dom';
-import { Subject, interval } from 'rxjs';
-import { takeUntil, throttle } from 'rxjs/operators';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME } from '../../utils/environment';
+import { Subject } from 'rxjs';
+import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -50,14 +49,7 @@ import { check, normalize } from '../../utils/global-normalize';
 import { SlatePlaceholder } from '../../types/feature';
 
 const timeDebug = Debug('slate-angular-time');
-// COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
-// Chrome Legacy doesn't support `beforeinput` correctly
-const HAS_BEFORE_INPUT_SUPPORT =
-    !IS_CHROME_LEGACY &&
-    !IS_EDGE_LEGACY &&
-    globalThis.InputEvent &&
-    // @ts-ignore The `getTargetRanges` property isn't recognized.
-    typeof globalThis.InputEvent.prototype.getTargetRanges === 'function'
+
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
@@ -132,7 +124,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     @Input() drop: (event: DragEvent) => void;
     @Input() focus: (event: Event) => void;
     @Input() keydown: (event: KeyboardEvent) => void;
-    @Input() paste: (event: KeyboardEvent) => void;
+    @Input() paste: (event: ClipboardEvent) => void;
     //#endregion
 
     //#region DOM attr
@@ -182,6 +174,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
         // remove unused DOM, just keep templateComponent instance
         this.templateElementRef.nativeElement.remove();
+
+        // add browser class
+        let browserClass = IS_FIREFOX ? 'firefox' : (IS_SAFARI ? 'safari' : '');
+        browserClass && this.elementRef.nativeElement.classList.add(browserClass);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -440,29 +436,29 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
 
         if (
-          this.placeholder &&
-          editor.children.length === 1 &&
-          Array.from(Node.texts(editor)).length === 1 &&
-          Node.string(editor) === ''
+            this.placeholder &&
+            editor.children.length === 1 &&
+            Array.from(Node.texts(editor)).length === 1 &&
+            Node.string(editor) === ''
         ) {
-          const start = Editor.start(editor, [])
-          return [
-            {
-              placeholder: this.placeholder,
-              anchor: start,
-              focus: start,
-            },
-          ]
+            const start = Editor.start(editor, [])
+            return [
+                {
+                    placeholder: this.placeholder,
+                    anchor: start,
+                    focus: start,
+                },
+            ]
         } else {
-          return []
+            return []
         }
     }
 
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
         const placeholderDecorations = this.isComposing
-          ? []
-          : this.composePlaceholderDecorate(this.editor)
+            ? []
+            : this.composePlaceholderDecorate(this.editor)
         decorations.push(...placeholderDecorations);
         return decorations;
     }
@@ -622,8 +618,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     case 'insertFromYank':
                     case 'insertReplacementText':
                     case 'insertText': {
-                        if (data instanceof DataTransfer) {
-                            AngularEditor.insertData(editor, data);
+                        // use a weak comparison instead of 'instanceof' to allow
+                        // programmatic access of paste events coming from external windows
+                        // like cypress where cy.window does not work realibly
+                        if (data?.constructor.name === 'DataTransfer') {
+                            AngularEditor.insertData(editor, data as DataTransfer);
                         } else if (typeof data === 'string') {
                             Editor.insertText(editor, data);
                         }
@@ -753,14 +752,14 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const isOutsideSlate = !hasStringTarget(window.getSelection()) && isTargetInsideVoid(this.editor, event.target);
         if (!isOutsideSlate && hasTarget(this.editor, event.target) && !this.readonly && !this.isDOMEventHandled(event, this.copy)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData);
+            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'copy');
         }
     }
 
     private onDOMCut(event: ClipboardEvent) {
         if (!this.readonly && hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.cut)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData);
+            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'cut');
             const { selection } = this.editor;
 
             if (selection) {
@@ -776,7 +775,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private onDOMDragStart(event: DragEvent) {
-        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
+        if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
             const voidMatch =
@@ -792,7 +791,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
             this.isDraggingInternally = true;
 
-            AngularEditor.setFragmentData(this.editor, event.dataTransfer);
+            AngularEditor.setFragmentData(this.editor, event.dataTransfer, 'drag');
         }
     }
 

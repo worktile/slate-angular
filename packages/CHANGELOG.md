@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.8.0
+
+### Minor Changes
+
+- [#178](https://github.com/worktile/slate-angular/pull/178) [`eec7fa3`](https://github.com/worktile/slate-angular/commit/eec7fa33fe21f87bfea10343d3ccf4b51ceb8164) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Add insertFragmentData and insertTextData to the AngularEditor API - sync slate-react
+
+* [#178](https://github.com/worktile/slate-angular/pull/178) [`bb9464d`](https://github.com/worktile/slate-angular/commit/bb9464d6af875c220daa2a40bd53e31f61d9ab36) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Add origin event type to setFragmentData to be able to distinguish copy, cut and drag
+
+### Patch Changes
+
+- [#178](https://github.com/worktile/slate-angular/pull/178) [`8db5a01`](https://github.com/worktile/slate-angular/commit/8db5a01fbda8b52dc1b7cfb3b33831d6d8a87f48) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Fix crash on drag and drop image on readOnly editable
+
+* [#178](https://github.com/worktile/slate-angular/pull/178) [`af07fa4`](https://github.com/worktile/slate-angular/commit/af07fa44d76f2721ead57e75f2d84bb49037a53b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Allow setFragmentData to work without copy/paste or DnD data structure
+
+## 1.7.5
+
+### Patch Changes
+
+- [#173](https://github.com/worktile/slate-angular/pull/173) [`1f164e9`](https://github.com/worktile/slate-angular/commit/1f164e9d556bd893aa79460bde1cc6c91a868923) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Fix focus movement and paragraph height issues under firefox
+
 ## 1.7.4
 
 ### Patch Changes

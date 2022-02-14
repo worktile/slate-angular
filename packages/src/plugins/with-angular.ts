@@ -1,18 +1,5 @@
-import {
-  Editor,
-  Node,
-  Transforms,
-  Range,
-  Path,
-  Operation
-} from 'slate';
-import {
-  EDITOR_TO_ON_CHANGE,
-  NODE_TO_KEY,
-  isDOMText,
-  getPlainText,
-  Key
-} from '../utils';
+import { Editor, Node, Transforms, Range, Path, Operation } from 'slate';
+import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlateFragmentAttribute } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
@@ -110,7 +97,7 @@ export const withAngular = <T extends AngularEditor>(
     onChange();
   };
 
-  e.setFragmentData = (data: DataTransfer) => {
+  e.setFragmentData = (data: Pick<DataTransfer, 'getData' | 'setData'>) => {
     const { selection } = e;
 
     if (!selection) {
@@ -171,7 +158,7 @@ export const withAngular = <T extends AngularEditor>(
     // in the HTML, and can be used for intra-Slate pasting. If it's a text
     // node, wrap it in a `<span>` so we have something to set an attribute on.
     if (isDOMText(attach)) {
-      const span = document.createElement('span');
+      const span = attach.ownerDocument.createElement('span');
       // COMPAT: In Chrome and Safari, if we don't add the `white-space` style
       // then leading and trailing spaces will be ignored. (2017/09/21)
       span.style.whiteSpace = 'pre';
@@ -187,13 +174,14 @@ export const withAngular = <T extends AngularEditor>(
     data.setData(`application/${clipboardFormatKey}`, encoded);
 
     // Add the content to a <div> so that we can get its inner HTML.
-    const div = document.createElement('div');
+    const div = contents.ownerDocument.createElement('div');
     div.appendChild(contents);
     div.setAttribute('hidden', 'true');
-    document.body.appendChild(div);
+    contents.ownerDocument.body.appendChild(div);
     data.setData('text/html', div.innerHTML);
     data.setData('text/plain', getPlainText(div));
-    document.body.removeChild(div);
+    contents.ownerDocument.body.removeChild(div);
+    return data;
   };
 
   e.deleteCutData = () => {
@@ -211,37 +199,53 @@ export const withAngular = <T extends AngularEditor>(
   };
 
   e.insertData = (data: DataTransfer) => {
-    const fragment = data.getData(`application/${clipboardFormatKey}`);
+    if (!e.insertFragmentData(data)) {
+      e.insertTextData(data);
+    }
+  };
+
+  e.insertFragmentData = (data: DataTransfer): boolean => {
+    /**
+     * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
+     */
+    const fragment =
+      data.getData(`application/${clipboardFormatKey}`) ||
+      getSlateFragmentAttribute(data)
 
     if (fragment) {
-      const decoded = decodeURIComponent(window.atob(fragment));
-      const parsed = JSON.parse(decoded) as Node[];
-      e.insertFragment(parsed);
-      return;
+      const decoded = decodeURIComponent(window.atob(fragment))
+      const parsed = JSON.parse(decoded) as Node[]
+      e.insertFragment(parsed)
+      return true
     }
+    return false
+  }
 
-    const text = data.getData('text/plain');
+  e.insertTextData = (data: DataTransfer): boolean => {
+    const text = data.getData('text/plain')
 
     if (text) {
-      const lines = text.split(/\r\n|\r|\n/);
-      let split = false;
+      const lines = text.split(/\r\n|\r|\n/)
+      let split = false
 
       for (const line of lines) {
         if (split) {
-          Transforms.splitNodes(e, { always: true });
+          Transforms.splitNodes(e, { always: true })
         }
 
-        e.insertText(line);
-        split = true;
+        e.insertText(line)
+        split = true
       }
+      return true
     }
-  };
+    return false
+  }
 
   e.onKeydown = () => {};
   e.onClick = () => {};
   e.onDragenter = () => {};
   e.onDragleave = () => {};
-  
+
   e.onDragover = (event: DragEvent) => {
     // Only when the target is void, call `preventDefault` to signal
     // that drops are allowed. Editable content is droppable by
