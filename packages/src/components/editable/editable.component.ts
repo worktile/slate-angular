@@ -771,14 +771,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private onDOMDragOver(event: DragEvent) {
         if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragOver)) {
-            // Only when the target is void, call `preventDefault` to signal
-            // that drops are allowed. Editable content is droppable by
-            // default, and calling `preventDefault` hides the cursor.
-            const node = AngularEditor.toSlateNode(this.editor, event.target);
-
-            if (Editor.isVoid(this.editor, node)) {
-                event.preventDefault();
-            }
+            AngularEditor.onDragover(this.editor, event);
         }
     }
 
@@ -804,34 +797,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private onDOMDrop(event: DragEvent) {
-        const editor = this.editor;
         if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.drop)) {
-            event.preventDefault();
-            // Keep a reference to the dragged range before updating selection
-            const draggedRange = editor.selection;
-
-            // Find the range where the drop happened
-            const range = AngularEditor.findEventRange(editor, event);
-            const data = event.dataTransfer;
-
-            Transforms.select(editor, range);
-
-            if (this.isDraggingInternally) {
-                if (draggedRange) {
-                    Transforms.delete(editor, {
-                        at: draggedRange,
-                    });
-                }
-
+            AngularEditor.onDrop(this.editor, event, this.isDraggingInternally);
+            if(this.isDraggingInternally){
                 this.isDraggingInternally = false;
-            }
-
-            AngularEditor.insertData(editor, data);
-
-            // When dragging from another source into the editor, it's possible
-            // that the current editor does not have focus.
-            if (!AngularEditor.isFocused(editor)) {
-                AngularEditor.focus(editor);
             }
         }
     }

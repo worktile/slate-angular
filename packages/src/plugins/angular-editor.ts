@@ -38,6 +38,10 @@ export interface AngularEditor extends BaseEditor {
     setFragmentData: (data: DataTransfer) => void;
     deleteCutData: ()=> void;
     onKeydown: (event: KeyboardEvent) => void;
+    onDragenter:(event: DragEvent)=>void;
+    onDragleave:(event: DragEvent)=>void;
+    onDragover:(event: DragEvent)=>void;
+    onDrop:(event: DragEvent, isDraggingInternally?: boolean)=>void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
@@ -262,6 +266,25 @@ export const AngularEditor = {
      */
     onKeydown(editor: AngularEditor, data: KeyboardEvent): void {
         editor.onKeydown(data);
+    },
+
+     /**
+     * drag and drop hook.
+     */
+    onDragenter(editor: AngularEditor, event: DragEvent): void {
+        editor.onDragenter(event);
+    },
+    
+    onDragleave(editor: AngularEditor, event: DragEvent): void {
+        editor.onDragleave(event);
+    },
+
+    onDragover(editor: AngularEditor, event: DragEvent): void {
+        editor.onDragover(event);
+    },
+    
+    onDrop(editor: AngularEditor, event: DragEvent, isDraggingInternally?: boolean): void {
+        editor.onDrop(event, isDraggingInternally);
     },
 
     /**

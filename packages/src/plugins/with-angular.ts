@@ -1,10 +1,26 @@
-import { Editor, Node, Transforms, Range, Text, Element, NodeEntry, Descendant, Path, Operation } from 'slate';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
+import {
+  Editor,
+  Node,
+  Transforms,
+  Range,
+  Path,
+  Operation
+} from 'slate';
+import {
+  EDITOR_TO_ON_CHANGE,
+  NODE_TO_KEY,
+  isDOMText,
+  getPlainText,
+  Key
+} from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
 
-export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
+export const withAngular = <T extends AngularEditor>(
+  editor: T,
+  clipboardFormatKey = 'x-slate-fragment'
+) => {
   const e = editor as T & AngularEditor;
   const { apply, onChange, deleteBackward } = e;
 
@@ -221,9 +237,49 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     }
   };
 
-  e.onKeydown = () => { };
+  e.onKeydown = () => {};
+  e.onClick = () => {};
+  e.onDragenter = () => {};
+  e.onDragleave = () => {};
+  
+  e.onDragover = (event: DragEvent) => {
+    // Only when the target is void, call `preventDefault` to signal
+    // that drops are allowed. Editable content is droppable by
+    // default, and calling `preventDefault` hides the cursor.
+    const node = AngularEditor.toSlateNode(editor, event.target as HTMLElement);
 
-  e.onClick = () => { };
+    if (Editor.isVoid(editor, node)) {
+        event.preventDefault();
+    }
+  };
+
+  e.onDrop = (event: DragEvent, isDraggingInternally: boolean) => {
+    event.preventDefault();
+    // Keep a reference to the dragged range before updating selection
+    const draggedRange = editor.selection;
+
+    // Find the range where the drop happened
+    const range = AngularEditor.findEventRange(editor, event);
+    const data = event.dataTransfer;
+
+    Transforms.select(editor, range);
+
+    if (isDraggingInternally) {
+      if (draggedRange) {
+        Transforms.delete(editor, {
+          at: draggedRange,
+        });
+      }
+    }
+
+    AngularEditor.insertData(editor, data);
+
+    // When dragging from another source into the editor, it's possible
+    // that the current editor does not have focus.
+    if (!AngularEditor.isFocused(editor)) {
+      AngularEditor.focus(editor);
+    }
+  };
 
   e.isBlockCard = (element) => false;
 
