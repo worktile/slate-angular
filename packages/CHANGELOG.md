@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.0
+
+### Minor Changes
+
+- [#182](https://github.com/worktile/slate-angular/pull/182) [`2d3eb49`](https://github.com/worktile/slate-angular/commit/2d3eb49235aa8868d230268df8f851d8c949b605) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Solve the dom loss when moving nodes
+
 ## 1.8.0
 
 ### Minor Changes
