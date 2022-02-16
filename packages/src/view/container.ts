@@ -95,5 +95,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
                 })
             }
         }
+        // Solve the block-card DOMElement loss when moving nodes
+        record.item.appendBlockCardElement();
     }
 }
