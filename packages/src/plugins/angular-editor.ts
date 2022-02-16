@@ -26,7 +26,7 @@ import { Injector } from '@angular/core';
 import { NodeEntry } from 'slate';
 import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
-import { IS_CHROME } from '../utils/environment';
+import { IS_CHROME, IS_FIREFOX } from '../utils/environment';
 import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
 
 /**
@@ -35,8 +35,10 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTarge
 
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
-    setFragmentData: (data: DataTransfer) => void;
-    deleteCutData: ()=> void;
+    insertFragmentData: (data: DataTransfer) => boolean
+    insertTextData: (data: DataTransfer) => boolean
+    setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
+    deleteCutData: () => void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
@@ -114,31 +116,21 @@ export const AngularEditor = {
     },
 
     /**
-   * Find the DOM node that implements DocumentOrShadowRoot for the editor.
-   */
+     * Find the DOM node that implements DocumentOrShadowRoot for the editor.
+     */
 
     findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
-        const el = AngularEditor.toDOMNode(editor, editor);
-        const root = el.getRootNode();
+        const el = AngularEditor.toDOMNode(editor, editor)
+        const root = el.getRootNode()
 
-        // The below exception will always be thrown for iframes because the document inside an iframe
-        // does not inherit it's prototype from the parent document, therefore we return early
-        if (el.ownerDocument !== document) { return el.ownerDocument; }
-
-        if (!(root instanceof Document || root instanceof ShadowRoot)) {
-            throw new Error(
-                `Unable to find DocumentOrShadowRoot for editor element: ${el}`
-            );
+        if (
+            (root instanceof Document || root instanceof ShadowRoot) &&
+            root.getSelection != null
+        ) {
+            return root
         }
 
-        // COMPAT: Only Chrome implements the DocumentOrShadowRoot mixin for
-        // ShadowRoot; other browsers still implement it on the Document
-        // interface. (2020/08/08)
-        // https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot#Properties
-        if (root.getSelection === undefined && el.ownerDocument !== null) {
-            return el.ownerDocument;
-        }
-        return root;
+        return el.ownerDocument
     },
 
     /**
@@ -258,6 +250,22 @@ export const AngularEditor = {
     },
 
     /**
+   * Insert fragment data from a `DataTransfer` into the editor.
+   */
+
+    insertFragmentData(editor: AngularEditor, data: DataTransfer): boolean {
+        return editor.insertFragmentData(data)
+    },
+
+    /**
+     * Insert text data from a `DataTransfer` into the editor.
+     */
+
+    insertTextData(editor: AngularEditor, data: DataTransfer): boolean {
+        return editor.insertTextData(data)
+    },
+
+    /**
      * onKeydown hook.
      */
     onKeydown(editor: AngularEditor, data: KeyboardEvent): void {
@@ -275,11 +283,11 @@ export const AngularEditor = {
      * Sets data from the currently selected fragment on a `DataTransfer`.
      */
 
-    setFragmentData(editor: AngularEditor, data: DataTransfer): void {
-        editor.setFragmentData(data);
+    setFragmentData(editor: AngularEditor, data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut'): void {
+        editor.setFragmentData(data, originEvent);
     },
 
-    deleteCutData(editor: AngularEditor): void{
+    deleteCutData(editor: AngularEditor): void {
         editor.deleteCutData();
     },
 
@@ -519,7 +527,7 @@ export const AngularEditor = {
             // to the of current node
             if (
                 (isCardCenterByTargetAttr(cardTargetAttr) ||
-                isCardRightByTargetAttr(cardTargetAttr)) &&
+                    isCardRightByTargetAttr(cardTargetAttr)) &&
                 !isBackward
             ) {
                 return Editor.end(editor, blockPath);
@@ -532,7 +540,7 @@ export const AngularEditor = {
             // and to the start of current node
             if (
                 (isCardCenterByTargetAttr(cardTargetAttr) ||
-                isCardLeftByTargetAttr(cardTargetAttr)) &&
+                    isCardLeftByTargetAttr(cardTargetAttr)) &&
                 isBackward
             ) {
                 return Editor.start(editor, blockPath);
@@ -589,7 +597,10 @@ export const AngularEditor = {
             // composition the ASCII characters will be prepended to the zero-width
             // space, so subtract 1 from the offset to account for the zero-width
             // space character.
-            if (domNode && offset === domNode.textContent!.length && parentNode && parentNode.hasAttribute('data-slate-zero-width')) {
+            if (domNode &&
+                offset === domNode.textContent!.length &&
+                (parentNode && parentNode.hasAttribute('data-slate-zero-width'))
+            ) {
                 offset--;
             }
         }

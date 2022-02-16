@@ -14,13 +14,19 @@ export class SlateBlockCardComponent implements OnInit {
         return this.elementRef.nativeElement;
     }
 
+    get centerContainerElement() {
+        return this.centerContianer.nativeElement as HTMLElement;
+    }
+
     constructor(private elementRef: ElementRef) {}
 
     ngOnInit() {
-        const fragment = document.createDocumentFragment();
-        fragment.append(...this.centerRootNodes);
-        this.centerContianer.nativeElement.appendChild(fragment);
+        this.append();
         this.nativeElement.classList.add(`slate-block-card`);
+    }
+
+    append() {
+        this.centerRootNodes.forEach((rootNode) => !this.centerContainerElement.contains(rootNode) && this.centerContainerElement.appendChild(rootNode));
     }
 
     initializeCenter(rootNodes: HTMLElement[]) {

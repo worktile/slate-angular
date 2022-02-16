@@ -19,8 +19,6 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from "../element/default-elemen
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateDescendantComponent extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent> implements OnInit, OnChanges {
-    blockCardComponentRef: ComponentRef<SlateBlockCardComponent>;
-
     @Input() descendant: Descendant;
 
     @Input() context: SlateChildrenContext;
