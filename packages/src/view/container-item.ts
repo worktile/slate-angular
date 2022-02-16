@@ -1,4 +1,5 @@
 import { ComponentFactoryResolver, ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
+import { SlateBlockCardComponent } from "../components/block-card/block-card.component";
 import { ViewType } from "../types/view";
 import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
 import { BaseComponent, BaseEmbeddedView } from "./base";
@@ -14,6 +15,7 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
     initialized = false;
     embeddedViewRef: EmbeddedViewRef<BaseEmbeddedView<T>>;
     embeddedViewContext: BaseEmbeddedView<T>;
+    blockCardComponentRef: ComponentRef<SlateBlockCardComponent>;
     componentRef: ComponentRef<K>;
     viewType: ViewType;
 
@@ -108,6 +110,12 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
                 this.destroyView();
                 this.componentRef = componentRef;
             }
+        }
+    }
+
+    appendBlockCardElement() {
+        if (this.blockCardComponentRef) {
+            this.blockCardComponentRef.instance.append();
         }
     }
 }
