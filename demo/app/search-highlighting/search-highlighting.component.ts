@@ -21,15 +21,15 @@ export class DemoSearchHighlightingComponent implements OnInit {
     constructor(private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
-        this.generateDcoreate();
+        this.generateDecorate();
     }
 
     keywordsChange(event) {
-        this.generateDcoreate();
+        this.generateDecorate();
         this.cdr.markForCheck();
     }
 
-    generateDcoreate() {
+    generateDecorate() {
         this.decorate = ([node, path]) => {
             const ranges = [];
 
