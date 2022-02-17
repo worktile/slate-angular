@@ -22,7 +22,7 @@ describe('Editable Component', () => {
         expect(testingLeaf).toBeFalsy();
 
         const keywords1 = 'text';
-        component.generateDcoreate(keywords1);
+        component.generateDecorate(keywords1);
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
@@ -31,7 +31,7 @@ describe('Editable Component', () => {
         expect(testingLeaf.textContent).toEqual(keywords1);
 
         const keywords2 = 'text';
-        component.generateDcoreate(keywords2);
+        component.generateDecorate(keywords2);
         fixture.detectChanges();
         flush();
         fixture.detectChanges();

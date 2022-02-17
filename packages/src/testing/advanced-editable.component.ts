@@ -32,7 +32,7 @@ export class AdvancedEditableComponent implements OnInit {
     @ViewChild(SlateEditableComponent, { static: true })
     editableComponent: SlateEditableComponent;
 
-    generateDcoreate(keywords: string) {
+    generateDecorate(keywords: string) {
         this.decorate = ([node, path]) => {
             const ranges = [];
 
