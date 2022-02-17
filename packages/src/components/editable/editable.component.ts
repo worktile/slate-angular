@@ -322,6 +322,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         newDomRange.endOffset
                     );
                 }
+            } else {
+                domSelection.removeAllRanges();
             }
 
             setTimeout(() => {
