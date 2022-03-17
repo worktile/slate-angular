@@ -66,11 +66,16 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
       }
 
       case 'move_node': {
-        for (const [node, path] of Editor.levels(e, {
-          at: Path.common(Path.parent(op.path), Path.parent(op.newPath)),
-        })) {
-          const key = AngularEditor.findKey(e, node);
-          matches.push([path, key]);
+        const commonPath = Path.common(Path.parent(op.path), Path.parent(op.newPath));
+        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.path) })) {
+            const key = AngularEditor.findKey(e, node);
+            matches.push([path, key]);
+        }
+        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.newPath) })) {
+            if(path.length > commonPath.length){
+                const key = AngularEditor.findKey(e, node);
+                matches.push([path, key]);
+            }
         }
         break;
       }
