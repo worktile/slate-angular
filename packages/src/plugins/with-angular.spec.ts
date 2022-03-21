@@ -173,7 +173,6 @@ describe("with-angular", () => {
           at: oldPath,
           to: newPath,
         });
-        console.log(moveNodeEditor.children)
         validKey(moveNodeEditor, matches);
       });
 
