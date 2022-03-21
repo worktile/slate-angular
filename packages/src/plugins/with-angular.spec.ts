@@ -127,8 +127,8 @@ describe('with-angular', () => {
         const oldPath = angularEditor.selection.anchor.path;
         const newPath = Path.next(oldPath.slice(0, 2));
         Transforms.moveNodes(angularEditor, {
-          at: oldPath,
-          to: [...newPath, 0],
+          at: oldPath, //  [1, 0, 0, 0]
+          to: [...newPath, 0], // [1, 1, 0]
         });
         let matches = [];
         const commonPath = getCommonPath(oldPath, newPath);
@@ -157,8 +157,8 @@ describe('with-angular', () => {
         expect((angularEditor.children[2] as any).children[0].text).toBe('text1');
         expect((angularEditor.children[3] as any).children[0].text).toBe('text2');
         Transforms.moveNodes(angularEditor, {
-          at: oldPath,
-          to: [...newPath, 0],
+          at: oldPath,  // [2, 0]
+          to: [...newPath, 0], // [3, 0]
         });
         let matches = [];
         const commonPath = getCommonPath(oldPath, newPath);
@@ -190,15 +190,15 @@ describe('with-angular', () => {
         const oldPath = listItemPath.slice(0, 3);
         expect(angularEditor.children.length).toBe(4);
         Transforms.moveNodes(angularEditor, {
-          at: oldPath,
-          to: newPath, 
+          at: oldPath, // [1, 1, 0]
+          to: newPath, // [2]
         });
         flush();
         let matches = [];
         const commonPath = getCommonPath(oldPath, newPath);
         expect(commonPath.length).toBe(0);
         matches = getOldPathMatches(angularEditor, oldPath, matches);
-        expect(matches.length).toBe(3); // []、[1] 、[1, 0]
+        expect(matches.length).toBe(3); // []、[1] 、[1, 1]
         matches = getNewPathMatches(angularEditor, commonPath, newPath, matches);
         expect(matches.length).toBe(3);
         expect(angularEditor.children.length).toBe(5);
@@ -217,13 +217,12 @@ describe('with-angular', () => {
         flush();
         const oldPath = angularEditor.selection.anchor.path;
         const newPath = [1, 1, 0, 0];
-        expect(angularEditor.children.length).toBe(4);
         expect((angularEditor.children[2] as any).children[0].text).toBe('text1');
         const node = Node.get(angularEditor, newPath) as any;
         expect(node.text).toBe('');
         Transforms.moveNodes(angularEditor, {
-          at: oldPath,
-          to: newPath,
+          at: oldPath, // [2, 0]
+          to: newPath, // [1, 1, 0, 0]
         });
         flush();
         let matches = [];
@@ -233,7 +232,6 @@ describe('with-angular', () => {
         expect(matches.length).toBe(2); // []、[2]
         matches = getNewPathMatches(angularEditor, commonPath, newPath, matches);
         expect(matches.length).toBe(5); // []、[1]、[1, 1]、[1, 1, 0]、[2]
-        expect(angularEditor.children.length).toBe(4);
         expect((angularEditor.children[2] as any).children[0].text).toBe('');
         expect((Node.get(angularEditor, newPath) as any).text).toBe('text1');
       }));
