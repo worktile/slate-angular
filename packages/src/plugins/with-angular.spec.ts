@@ -306,6 +306,6 @@ const getCommonPath = (oldPath, newPath) => {
 const validKey = (moveNodeEditor, matches) => {
   for (const [path, key] of matches) {
     const [node] = Editor.node(moveNodeEditor, path);
-    expect(NODE_TO_KEY.get(node).id === key.id);
+    expect(NODE_TO_KEY.get(node)).toEqual(key);
   }
 };
