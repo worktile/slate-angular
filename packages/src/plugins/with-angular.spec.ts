@@ -265,7 +265,7 @@ describe("with-angular", () => {
           newPath,
           matches
         );
-        expect(matches.length).toBe(6); // []、[0, 0]、[0, 0, 0], [0, 0, 0, 0]、 [0, 0, 0, 2]
+        expect(matches.length).toBe(6); // []、[0]、[0, 0]、[0, 0, 0], [0, 0, 0, 0]、 [0, 0, 0, 2]
         Transforms.moveNodes(moveNodeEditor, {
           at: oldPath,
           to: newPath,
