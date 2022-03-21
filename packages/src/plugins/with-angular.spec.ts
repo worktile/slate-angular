@@ -125,10 +125,14 @@ describe('with-angular', () => {
         });
         flush();
         const oldPath = angularEditor.selection.anchor.path;
-        const newPath = Path.next(oldPath.slice(0, 2));
+        const newPath = [...Path.next(oldPath.slice(0, 2)), 0, 0];
+        let firstItem = Node.get(angularEditor, oldPath) as any;
+        let lastItem = Node.get(angularEditor, newPath) as any;
+        expect(firstItem.text).toBe('a');
+        expect(lastItem.text).toBe('');
         Transforms.moveNodes(angularEditor, {
           at: oldPath, //  [1, 0, 0, 0]
-          to: [...newPath, 0], // [1, 1, 0]
+          to: newPath, // [1, 1, 0, 0]
         });
         let matches = [];
         const commonPath = getCommonPath(oldPath, newPath);
@@ -137,7 +141,11 @@ describe('with-angular', () => {
         matches = getOldPathMatches(angularEditor, oldPath, matches);
         expect(matches.length).toBe(4); // []、[1] 、[1, 0]、[1, 0, 0]
         matches = getNewPathMatches(angularEditor, commonPath, newPath, matches);
-        expect(matches.length).toBe(4);
+        expect(matches.length).toBe(6); // []、[1] 、[1, 0]、[1, 0, 0]、[1, 1]、[1, 1, 0]
+        firstItem = Node.get(angularEditor, oldPath) as any;
+        lastItem = Node.get(angularEditor, newPath) as any;
+        expect(firstItem.text).toBe('');
+        expect(lastItem.text).toBe('a');
         expect(angularEditor.children.length).toBe(4);
       }));
       it('move node to sibling when there is no common parent', fakeAsync(() => {
