@@ -1,5 +1,5 @@
 import { Component, ViewChild } from "@angular/core";
-import { createEditor } from "slate";
+import { createEditor, Element } from "slate";
 import { SlateEditableComponent } from "../components/editable/editable.component";
 import { withAngular } from "../plugins/with-angular";
 import { createDefaultDocument } from "./create-document";
@@ -16,7 +16,7 @@ import { createDefaultDocument } from "./create-document";
 export class BasicEditableComponent {
     editor = withAngular(createEditor());
 
-    value = createDefaultDocument();
+    value: Element[] = createDefaultDocument() as Element[];
 
     @ViewChild(SlateEditableComponent, { static: true })
     editableComponent: SlateEditableComponent;

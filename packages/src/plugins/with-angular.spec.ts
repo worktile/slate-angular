@@ -1,9 +1,11 @@
-import { fakeAsync, flush } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { createEditor, Editor, Path, Transforms, Node } from "slate";
 import { withAngular } from "./with-angular";
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from "../utils/weak-maps";
 import { AngularEditor } from "./angular-editor";
+import { BasicEditableComponent } from '../testing/basic-editable.component'
 import * as Types from "custom-types";
+import { configureBasicEditableTestingModule } from "../testing/module";
 
 describe("with-angular", () => {
   let angularEditor: AngularEditor;
@@ -32,55 +34,6 @@ describe("with-angular", () => {
           {
             type: "table-row",
             children: [
-              {
-                type: "table-cell",
-                children: [
-                  {
-                    type: "numbered-list",
-                    children: [
-                      {
-                        type: "list-item",
-                        children: [
-                          {
-                            type: "paragraph",
-                            children: [
-                              {
-                                text: "a",
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        type: "list-item",
-                        children: [
-                          {
-                            type: "paragraph",
-                            children: [
-                              {
-                                text: "b",
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        type: "list-item",
-                        children: [
-                          {
-                            type: "paragraph",
-                            children: [
-                              {
-                                text: "",
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
             ],
           },
         ],
@@ -142,169 +95,235 @@ describe("with-angular", () => {
     }));
   });
 
-  describe("apply", () => {
-    describe("move_node", () => {
-      it("move node to sibling when there have a common parent", () => {
-        Transforms.select(moveNodeEditor, {
-          anchor: {
-            path: [0, 0, 0, 0, 0],
-            offset: 0,
-          },
-          focus: {
-            path: [0, 0, 0, 0, 0],
-            offset: 0,
-          },
-        });
-        const oldPath = moveNodeEditor.selection.anchor.path;
-        const newPath = [0, 0, 0, 0, 1];
-        let matches = [];
-        const commonPath = getCommonPath(oldPath, newPath);
-        expect(commonPath.length).toBe(4);
-        matches = getOldPathMatches(moveNodeEditor, oldPath, matches);
-        expect(matches.length).toBe(5); // []、[0] 、[0, 0]、[0, 0, 0], [0, 0, 0, 0]
-        matches = getNewPathMatches(
-          moveNodeEditor,
-          commonPath,
-          newPath,
-          matches
-        );
-        expect(matches.length).toBe(5);
-        Transforms.moveNodes(moveNodeEditor, {
-          at: oldPath,
-          to: newPath,
-        });
-        validKey(moveNodeEditor, matches);
-      });
+  describe('apply', () => {
+    let component: BasicEditableComponent;
+    let fixture: ComponentFixture<BasicEditableComponent>;
 
-      it("move node to sibling when there is no common parent", () => {
-        Transforms.select(moveNodeEditor, {
-          anchor: {
-            path: [1],
-            offset: 0,
-          },
-          focus: {
-            path: [1],
-            offset: 0,
-          },
-        });
-        const oldPath = moveNodeEditor.selection.anchor.path;
-        const newPath = [2];
-        let matches = [];
-        const commonPath = getCommonPath(oldPath, newPath);
-        expect(commonPath.length).toBe(0);
-        matches = getOldPathMatches(moveNodeEditor, oldPath, matches);
-        expect(matches.length).toBe(1); // []
-        matches = getNewPathMatches(
-          moveNodeEditor,
-          commonPath,
-          newPath,
-          matches
-        );
-        expect(matches.length).toBe(1);
-        Transforms.moveNodes(moveNodeEditor, {
-          at: oldPath,
-          to: newPath
-        });
-        validKey(moveNodeEditor, matches);
-      });
+    beforeEach(fakeAsync(() => {
+      configureBasicEditableTestingModule([BasicEditableComponent]);
+      fixture = TestBed.createComponent(BasicEditableComponent);
+      component = fixture.componentInstance;
+      component.value = [
+        { type: 'paragraph', children: [{ text: 'first text!' }] },
+        {
+          type: "table",
+          children: [
+            {
+              type: "table-row",
+              children: [
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '1!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '2!' }]
+                    }
+                  ]
+                },
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '3!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '4!' }]
+                    }
+                  ]
+                },
+              ],
+            },
+            {
+              type: "table-row",
+              children: [
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '5!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '6!' }]
+                    }
+                  ]
+                },
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '7!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '8!' }]
+                    }
+                  ]
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "table",
+          children: [
+            {
+              type: "table-row",
+              children: [
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '1!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '2!' }]
+                    }
+                  ]
+                },
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '3!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '4!' }]
+                    }
+                  ]
+                },
+              ],
+            },
+            {
+              type: "table-row",
+              children: [
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '5!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '6!' }]
+                    }
+                  ]
+                },
+                {
+                  type: "table-cell",
+                  children: [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '7!' }]
+                    },
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '8!' }]
+                    }
+                  ]
+                },
+              ],
+            },
+          ],
+        },
+        { type: 'paragraph', children: [{ text: 'last text!' }] }
+      ];
+      fixture.detectChanges();
+      flush();
+      fixture.detectChanges();
+    }));
 
-      it("move from child node to outside", () => {
-        Transforms.select(moveNodeEditor, {
-          anchor: {
-            path: [0, 0, 0, 0, 2],
-            offset: 0,
-          },
-          focus: {
-            path: [0, 0, 0, 0, 2],
-            offset: 0,
-          },
-        });
-        const oldPath = moveNodeEditor.selection.anchor.path;
-        const newPath = [0, 0, 0, 1];
-        let matches = [];
-        const commonPath = getCommonPath(oldPath, newPath);
-        expect(commonPath.length).toBe(3);
-        matches = getOldPathMatches(moveNodeEditor, oldPath, matches);
-        expect(matches.length).toBe(5); //[]、[0] 、[0, 0]、[0, 0, 0], [0, 0, 0, 0]
-        matches = getNewPathMatches(
-          moveNodeEditor,
-          commonPath,
-          newPath,
-          matches
-        );
-        expect(matches.length).toBe(5);
-        Transforms.moveNodes(moveNodeEditor, {
-          at: oldPath,
-          to: newPath,
-        });
-        validKey(moveNodeEditor, matches);
-      });
-
-      it("move to child node from outside", () => {
-        Transforms.select(moveNodeEditor, {
-          anchor: {
-            path: [1],
-            offset: 0,
-          },
-          focus: {
-            path: [1],
-            offset: 0,
-          },
-        });
-        const oldPath = moveNodeEditor.selection.anchor.path;
-        const newPath = [0, 0, 0, 0, 2, 0];
-        let matches = [];
-        const commonPath = getCommonPath(oldPath, newPath);
-        expect(commonPath.length).toBe(0);
-        matches = getOldPathMatches(moveNodeEditor, oldPath, matches);
-        expect(matches.length).toBe(1); // []
-        matches = getNewPathMatches(
-          moveNodeEditor,
-          commonPath,
-          newPath,
-          matches
-        );
-        expect(matches.length).toBe(6); // []、[0]、[0, 0]、[0, 0, 0], [0, 0, 0, 0]、 [0, 0, 0, 2]
-        Transforms.moveNodes(moveNodeEditor, {
-          at: oldPath,
-          to: newPath,
-        });
-        validKey(moveNodeEditor, matches);
-      });
+    afterEach(() => {
+      fixture.destroy();
     });
+
+    it('move node to sibling when there have a common parent', fakeAsync(() => {
+      const oldPath = [1,0,0,0];
+      const newPath = [1,0,0,1];
+      const tablePath = [1];
+      const tableRowPath = [1, 0];
+      const tableCellPath = [1, 0, 0];
+      const tableNode = Node.get(component.editor, tablePath);
+      const tableRowNode = Node.get(component.editor, tableRowPath);
+      const tableCellNode = Node.get(component.editor, tableCellPath);
+      Transforms.moveNodes(component.editor, {
+        at: oldPath,
+        to: newPath,
+      });
+      tick(100);
+      const newTableNode = Node.get(component.editor, tablePath);
+      const newTableRowNode = Node.get(component.editor, tableRowPath);
+      const newTableCellNode = Node.get(component.editor, tableCellPath);
+      expect(tableNode).not.toEqual(newTableNode);
+      validKey(tableNode, newTableNode);
+      expect(tableRowNode).not.toEqual(newTableRowNode);
+      validKey(tableRowNode, newTableRowNode);
+      expect(tableCellNode).not.toEqual(newTableCellNode);
+      validKey(tableCellNode, newTableCellNode);
+    }));
+
+    it('move node to sibling when there is no common parent', fakeAsync(() => {
+      const oldPath = [1,0,0,0];
+      const newPath = [2,0,0,1];
+
+      const tablePath = [1];
+      const tableRowPath = [1, 0];
+      const tableCellPath = [1, 0, 0];
+      const tableNode = Node.get(component.editor, tablePath);
+      const tableRowNode = Node.get(component.editor, tableRowPath);
+      const tableCellNode = Node.get(component.editor, tableCellPath);
+
+      const tablePath2 = [2];
+      const tableRowPath2 = [2, 0];
+      const tableCellPath2 = [2, 0, 0];
+      const tableNode2 = Node.get(component.editor, tablePath2);
+      const tableRowNode2 = Node.get(component.editor, tableRowPath2);
+      const tableCellNode2 = Node.get(component.editor, tableCellPath2);
+
+      Transforms.moveNodes(component.editor, {
+        at: oldPath,
+        to: newPath,
+      });
+      tick(100);
+
+      // valid move origin
+      const newTableNode = Node.get(component.editor, tablePath);
+      const newTableRowNode = Node.get(component.editor, tableRowPath);
+      const newTableCellNode = Node.get(component.editor, tableCellPath);
+      expect(tableNode).not.toEqual(newTableNode);
+      validKey(tableNode, newTableNode);
+      expect(tableRowNode).not.toEqual(newTableRowNode);
+      validKey(tableRowNode, newTableRowNode);
+      expect(tableCellNode).not.toEqual(newTableCellNode);
+      validKey(tableCellNode, newTableCellNode);
+
+      // valid move targit
+      const newTableNode2 = Node.get(component.editor, tablePath2);
+      const newTableRowNode2 = Node.get(component.editor, tableRowPath2);
+      const newTableCellNode2 = Node.get(component.editor, tableCellPath2);
+      expect(tableNode2).not.toEqual(newTableNode2);
+      validKey(tableNode2, newTableNode2);
+      expect(tableRowNode2).not.toEqual(newTableRowNode2);
+      validKey(tableRowNode2, newTableRowNode2);
+      expect(tableCellNode2).not.toEqual(newTableCellNode2);
+      validKey(tableCellNode2, newTableCellNode2);
+    }));
   });
 });
 
-const getOldPathMatches = (moveNodeEditor, oldPath, matches) => {
-  for (const [node, path] of Editor.levels(moveNodeEditor, {
-    at: Path.parent(oldPath),
-  })) {
-    const key = AngularEditor.findKey(moveNodeEditor, node);
-    matches.push([path, key]);
-  }
-  return matches;
-};
-
-const getNewPathMatches = (moveNodeEditor, commonPath, newPath, matches) => {
-  for (const [node, path] of Editor.levels(moveNodeEditor, {
-    at: Path.parent(newPath),
-  })) {
-    if (path.length > commonPath.length) {
-      const key = AngularEditor.findKey(moveNodeEditor, node);
-      matches.push([path, key]);
-    }
-  }
-  return matches;
-};
-
-const getCommonPath = (oldPath, newPath) => {
-  const commonPath = Path.common(Path.parent(oldPath), Path.parent(newPath));
-  return commonPath || [];
-};
-
-const validKey = (moveNodeEditor, matches) => {
-  for (const [path, key] of matches) {
-    const [node] = Editor.node(moveNodeEditor, path);
-    expect(NODE_TO_KEY.get(node)).toEqual(key);
-  }
+const validKey = (oldNode, newNode) => {
+  expect(NODE_TO_KEY.get(oldNode)).toEqual(NODE_TO_KEY.get(newNode));
 };
