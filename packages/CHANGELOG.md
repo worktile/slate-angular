@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.1
+
+### Patch Changes
+
+- [#185](https://github.com/worktile/slate-angular/pull/185) [`bb237a8`](https://github.com/worktile/slate-angular/commit/bb237a8243aec0a4f1386b131cc5726b008aa7a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove native DOM selection when slate selection is null
+
+* [#188](https://github.com/worktile/slate-angular/pull/188) [`4e50b91`](https://github.com/worktile/slate-angular/commit/4e50b912b2f970e754cdb571f9fc9e570d89ba17) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - modify the method of getting matches in move_node
+
 ## 1.9.0
 
 ### Minor Changes
