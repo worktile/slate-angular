@@ -1,7 +1,7 @@
 import { TestBed, ComponentFixture, tick, fakeAsync, flush } from '@angular/core/testing';
 import { AngularEditor } from './angular-editor';
 import { BasicEditableComponent, configureBasicEditableTestingModule } from '../testing';
-import { Transforms } from 'slate';
+import { Transforms, Element } from 'slate';
 import { createEmptyDocument } from 'slate-angular/testing/create-document';
 
 describe('AngularEditor', () => {
@@ -12,7 +12,7 @@ describe('AngularEditor', () => {
         configureBasicEditableTestingModule([BasicEditableComponent]);
         fixture = TestBed.createComponent(BasicEditableComponent);
         component = fixture.componentInstance;
-        component.value = createEmptyDocument();
+        component.value = createEmptyDocument() as Element[];
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
