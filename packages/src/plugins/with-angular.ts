@@ -99,7 +99,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     apply(op);
 
     for (const [source, key] of matches) {
-      let [node] = Editor.node(e, Path.isPath(source) ? source: source.current);
+      const [node] = Editor.node(e, Path.isPath(source) ? source: source.current);
       NODE_TO_KEY.set(node, key);
     }
   };
