@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
-import { createEditor, Editor, Path, Transforms, Node } from "slate";
+import { createEditor, Transforms, Node, Element, Editor } from "slate";
 import { withAngular } from "./with-angular";
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from "../utils/weak-maps";
 import { AngularEditor } from "./angular-editor";
@@ -9,10 +9,8 @@ import { configureBasicEditableTestingModule } from "../testing/module";
 
 describe("with-angular", () => {
   let angularEditor: AngularEditor;
-  let moveNodeEditor: AngularEditor;
   function configEditor() {
     angularEditor = withAngular(createEditor());
-    moveNodeEditor = withAngular(createEditor());
     angularEditor.children = [
       {
         type: "paragraph",
@@ -24,34 +22,6 @@ describe("with-angular", () => {
           { text: " better than a " },
           { text: "<textarea>" },
           { text: "!" },
-        ],
-      },
-    ];
-    moveNodeEditor.children = [
-      {
-        type: "table",
-        children: [
-          {
-            type: "table-row",
-            children: [
-            ],
-          },
-        ],
-      },
-      {
-        type: "paragraph",
-        children: [
-          {
-            text: "text1",
-          },
-        ],
-      },
-      {
-        type: "paragraph",
-        children: [
-          {
-            text: "text2",
-          },
         ],
       },
     ];
@@ -321,9 +291,29 @@ describe("with-angular", () => {
       expect(tableCellNode2).not.toEqual(newTableCellNode2);
       validKey(tableCellNode2, newTableCellNode2);
     }));
-  });
+
+    it('can correctly insert the list in the last row', fakeAsync(() => {
+      Transforms.select(component.editor, Editor.end(component.editor, [3]));
+      component.editor.insertBreak();
+      Transforms.wrapNodes(
+        component.editor,
+        { type: 'list-item', children: [] },
+        {
+            at: [4],
+            split: true
+        }
+      );
+      Transforms.wrapNodes(component.editor, { type: 'numbered-list', children: [] } as any, {
+        at: [4, 0, 0],
+        match: node => Element.isElement(node) && node.type === 'list-item'
+      });
+
+      expect(component.editor.children.length).toBe(5);
+      expect((component.editor.children[4] as any).type).toBe('numbered-list');
+    }));
+  })
 });
 
 const validKey = (oldNode, newNode) => {
   expect(NODE_TO_KEY.get(oldNode)).toEqual(NODE_TO_KEY.get(newNode));
-};
+}
