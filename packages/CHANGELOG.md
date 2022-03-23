@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.2
+
+### Patch Changes
+
+- [#191](https://github.com/worktile/slate-angular/pull/191) [`1f32060`](https://github.com/worktile/slate-angular/commit/1f320608e9e968f2fb8d1b963cfdd09ed4efab5a) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - in move_node, replace path with pathRef
+
 ## 1.9.1
 
 ### Patch Changes
