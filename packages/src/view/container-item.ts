@@ -1,7 +1,7 @@
 import { ComponentFactoryResolver, ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
 import { SlateBlockCardComponent } from "../components/block-card/block-card.component";
 import { ViewType } from "../types/view";
-import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
+import { isComponentType, isDOMElement, isTemplateRef, IS_NATIVE_TYPING } from "../utils";
 import { BaseComponent, BaseEmbeddedView } from "./base";
 import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextContext, SlateViewContext } from "./context";
 
@@ -89,7 +89,9 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
                 if (this.memoizedContext(this.embeddedViewContext.context, context)) {
                     return;
                 }
-                this.embeddedViewContext.context = context;
+                if (!IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+                    this.embeddedViewContext.context = context;
+                }
             }
         } else {
             this.viewType = viewType;

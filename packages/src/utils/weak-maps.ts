@@ -51,3 +51,5 @@ export const PLACEHOLDER_SYMBOL = (Symbol('placeholder') as unknown) as string;
  * Weak map for associating the html element with the component.
  */
 export const ELEMENT_TO_COMPONENT: WeakMap<Node, BaseElementComponent> = new WeakMap();
+
+export const IS_NATIVE_TYPING: WeakMap<Editor, boolean> = new WeakMap();

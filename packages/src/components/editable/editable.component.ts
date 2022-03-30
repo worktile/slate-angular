@@ -17,7 +17,7 @@ import {
     AfterViewChecked,
     DoCheck
 } from '@angular/core';
-import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
+import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW, IS_NATIVE_TYPING } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
@@ -390,7 +390,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 }
             }, 0);
         }
-        this.toNativeSelection();
+        if (!IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+            this.toNativeSelection();
+        }
         timeDebug('end data sync');
     }
 
@@ -529,12 +531,68 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     ) {
         const editor = this.editor;
+        IS_NATIVE_TYPING.set(editor, false);
         if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.beforeInput)) {
             try {
                 const { selection } = editor;
                 const { inputType: type } = event;
                 const data = event.dataTransfer || event.data || undefined;
-                event.preventDefault();
+
+                // These two types occur while a user is composing text and can't be
+                // cancelled. Let them through and wait for the composition to end.
+                if (
+                    type === 'insertCompositionText' ||
+                    type === 'deleteCompositionText'
+                ) {
+                    return
+                }
+
+                let native = false
+                if (
+                    type === 'insertText' &&
+                    selection &&
+                    Range.isCollapsed(selection) &&
+                    // Only use native character insertion for single characters a-z or space for now.
+                    // Long-press events (hold a + press 4 = ä) to choose a special character otherwise
+                    // causes duplicate inserts.
+                    event.data &&
+                    event.data.length === 1 &&
+                    /[a-z ]/i.test(event.data) &&
+                    // Chrome has issues correctly editing the start of nodes: https://bugs.chromium.org/p/chromium/issues/detail?id=1249405
+                    // When there is an inline element, e.g. a link, and you select
+                    // right after it (the start of the next node).
+                    selection.anchor.offset !== 0
+                ) {
+                    native = true
+
+                    // Skip native if there are marks, as
+                    // `insertText` will insert a node, not just text.
+                    if (editor.marks) {
+                        native = false
+                    }
+
+                    // Chrome also has issues correctly editing the end of nodes: https://bugs.chromium.org/p/chromium/issues/detail?id=1259100
+                    // Therefore we don't allow native events to insert text at the end of nodes.
+                    const { anchor } = selection
+                    const inline = Editor.above(editor, {
+                        at: anchor,
+                        match: n => Editor.isInline(editor, n),
+                        mode: 'highest',
+                    })
+                    if (inline) {
+                        const [, inlinePath] = inline
+
+                        if (Editor.isEnd(editor, selection.anchor, inlinePath)) {
+                            native = false
+                        }
+                    }
+                }
+
+                if (native) {
+                    IS_NATIVE_TYPING.set(editor, true);
+                } else {
+                    event.preventDefault();
+                }
 
                 // COMPAT: If the selection is expanded, even if the command seems like
                 // a delete forward/backward command it should delete the selection.
