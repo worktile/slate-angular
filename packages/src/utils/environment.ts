@@ -28,8 +28,10 @@ export const IS_CHROME =
 
 // Native beforeInput events don't work well with react on Chrome 75 and older, Chrome 76+ can use beforeInput
 export const IS_CHROME_LEGACY =
-    typeof navigator !== 'undefined' &&
-    /Chrome?\/(?:[0-7][0-5]|[0-6][0-9])/i.test(navigator.userAgent);
+    typeof navigator !== 'undefined' && 
+    /Chrome?\/(?:[0-7][0-5]|[0-6][0-9])/i.test(navigator.userAgent) &&
+    // Exclude Chrome version greater than 3 bits，Chrome releases v100 on 2022.03.30
+    !/Chrome?\/(?:\d{3,})/i.test(navigator.userAgent); 
 
 
 // Firefox did not support `beforeInput` until `v87`.
