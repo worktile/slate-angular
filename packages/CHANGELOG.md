@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.3
+
+### Patch Changes
+
+- [#195](https://github.com/worktile/slate-angular/pull/195) [`9d00976`](https://github.com/worktile/slate-angular/commit/9d00976573608d15a5accb1131785d025f207274) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - [utils]: Fix the RegExp of judging the old version of chrome
+
 ## 1.9.2
 
 ### Patch Changes

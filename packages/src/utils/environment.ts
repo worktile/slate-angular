@@ -30,7 +30,7 @@ export const IS_CHROME =
 export const IS_CHROME_LEGACY =
     typeof navigator !== 'undefined' && 
     /Chrome?\/(?:[0-7][0-5]|[0-6][0-9])/i.test(navigator.userAgent) &&
-    // Exclude Chrome version greater than 3 bits，Chrome releases v100 on 2022.03.30
+    // Exclude Chrome version greater than 3 bits，Chrome releases v100 on 2022.03.29
     !/Chrome?\/(?:\d{3,})/i.test(navigator.userAgent); 
 
 
