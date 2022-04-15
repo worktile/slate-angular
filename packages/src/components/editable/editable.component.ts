@@ -390,7 +390,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 }
             }, 0);
         }
-        if (!IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+        // do not sync native selection when native type
+        if (IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+            // reset typing state
+            IS_NATIVE_TYPING.set(this.viewContext.editor, false);
+        } else {
             this.toNativeSelection();
         }
         timeDebug('end data sync');
@@ -531,7 +535,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     ) {
         const editor = this.editor;
-        IS_NATIVE_TYPING.set(editor, false);
         if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.beforeInput)) {
             try {
                 const { selection } = editor;

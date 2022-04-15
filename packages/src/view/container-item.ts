@@ -89,7 +89,9 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
                 if (this.memoizedContext(this.embeddedViewContext.context, context)) {
                     return;
                 }
-                if (!IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+                if (IS_NATIVE_TYPING.get(this.viewContext.editor)) {
+                    // prevent angular detect and appy native modify
+                } else {
                     this.embeddedViewContext.context = context;
                 }
             }
