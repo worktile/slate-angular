@@ -191,6 +191,10 @@ export class DemoRichtextComponent implements OnInit {
     }
 
     keydown = (event: KeyboardEvent) => {
+        if (isHotkey('shift+enter', event)) {
+            event.preventDefault();
+            this.editor.insertText('\n');
+        }
         for (const hotkey in HOTKEYS) {
             if (isHotkey(hotkey, event as any)) {
                 event.preventDefault()
