@@ -586,8 +586,19 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         const [, inlinePath] = inline
 
                         if (Editor.isEnd(editor, selection.anchor, inlinePath)) {
-                            native = false
+                            native = false;
                         }
+                    }
+
+                    // Ends with '\n' need detect change
+                    // Because the template for text rendering will definitely change
+                    const block = Editor.above(editor, {
+                        at: anchor,
+                        match: n => Editor.isBlock(editor, n),
+                        mode: 'highest',
+                    })
+                    if (Node.string(block[0]).endsWith('\n')) {
+                        native = false;
                     }
                 }
 
