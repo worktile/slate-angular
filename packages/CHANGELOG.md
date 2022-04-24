@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.9.3
+
+### Patch Changes
+
+- [#195](https://github.com/worktile/slate-angular/pull/195) [`9d00976`](https://github.com/worktile/slate-angular/commit/9d00976573608d15a5accb1131785d025f207274) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - [utils]: Fix the RegExp of judging the old version of chrome
+
+## 1.9.2
+
+### Patch Changes
+
+- [#191](https://github.com/worktile/slate-angular/pull/191) [`1f32060`](https://github.com/worktile/slate-angular/commit/1f320608e9e968f2fb8d1b963cfdd09ed4efab5a) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - in move_node, replace path with pathRef
+
+## 1.9.1
+
+### Patch Changes
+
+- [#185](https://github.com/worktile/slate-angular/pull/185) [`bb237a8`](https://github.com/worktile/slate-angular/commit/bb237a8243aec0a4f1386b131cc5726b008aa7a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove native DOM selection when slate selection is null
+
+* [#188](https://github.com/worktile/slate-angular/pull/188) [`4e50b91`](https://github.com/worktile/slate-angular/commit/4e50b912b2f970e754cdb571f9fc9e570d89ba17) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - modify the method of getting matches in move_node
+
 ## 1.9.0
 
 ### Minor Changes

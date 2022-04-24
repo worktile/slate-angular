@@ -30,7 +30,7 @@ import { IS_CHROME, IS_FIREFOX } from '../utils/environment';
 import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
 
 /**
- * A React and DOM-specific version of the `Editor` interface.
+ * An Angular and DOM-specific version of the `Editor` interface.
  */
 
 export interface AngularEditor extends BaseEditor {

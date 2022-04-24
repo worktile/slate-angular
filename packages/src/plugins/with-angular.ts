@@ -1,5 +1,20 @@
-import { Editor, Node, Transforms, Range, Path, Operation } from 'slate';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlateFragmentAttribute } from '../utils';
+import {
+  Editor,
+  Node,
+  Transforms,
+  Range,
+  Path,
+  Operation,
+  PathRef
+} from 'slate';
+import {
+  EDITOR_TO_ON_CHANGE,
+  NODE_TO_KEY,
+  isDOMText,
+  getPlainText,
+  Key,
+  getSlateFragmentAttribute
+} from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
@@ -37,7 +52,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
   };
 
   e.apply = (op: Operation) => {
-    const matches: [Path, Key][] = [];
+    const matches: [Path | PathRef, Key][] = [];
 
     switch (op.type) {
       case 'insert_text':
@@ -66,11 +81,16 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
       }
 
       case 'move_node': {
-        for (const [node, path] of Editor.levels(e, {
-          at: Path.common(Path.parent(op.path), Path.parent(op.newPath)),
-        })) {
+        const commonPath = Path.common(Path.parent(op.path), Path.parent(op.newPath));
+        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.path) })) {
           const key = AngularEditor.findKey(e, node);
-          matches.push([path, key]);
+          matches.push([Editor.pathRef(editor, path), key]);
+        }
+        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.newPath) })) {
+          if(path.length > commonPath.length){
+            const key = AngularEditor.findKey(e, node);
+            matches.push([Editor.pathRef(editor, path), key]);
+          }
         }
         break;
       }
@@ -78,8 +98,8 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
     apply(op);
 
-    for (const [path, key] of matches) {
-      const [node] = Editor.node(e, path);
+    for (const [source, key] of matches) {
+      const [node] = Editor.node(e, Path.isPath(source) ? source: source.current);
       NODE_TO_KEY.set(node, key);
     }
   };
@@ -207,36 +227,36 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
      */
     const fragment =
       data.getData(`application/${clipboardFormatKey}`) ||
-      getSlateFragmentAttribute(data)
+      getSlateFragmentAttribute(data);
 
     if (fragment) {
-      const decoded = decodeURIComponent(window.atob(fragment))
-      const parsed = JSON.parse(decoded) as Node[]
-      e.insertFragment(parsed)
-      return true
+      const decoded = decodeURIComponent(window.atob(fragment));
+      const parsed = JSON.parse(decoded) as Node[];
+      e.insertFragment(parsed);
+      return true;
     }
-    return false
-  }
+    return false;
+  };
 
   e.insertTextData = (data: DataTransfer): boolean => {
-    const text = data.getData('text/plain')
+    const text = data.getData('text/plain');
 
     if (text) {
-      const lines = text.split(/\r\n|\r|\n/)
-      let split = false
+      const lines = text.split(/\r\n|\r|\n/);
+      let split = false;
 
       for (const line of lines) {
         if (split) {
-          Transforms.splitNodes(e, { always: true })
+          Transforms.splitNodes(e, { always: true });
         }
 
-        e.insertText(line)
-        split = true
+        e.insertText(line);
+        split = true;
       }
-      return true
+      return true;
     }
-    return false
-  }
+    return false;
+  };
 
   e.onKeydown = () => { };
 
