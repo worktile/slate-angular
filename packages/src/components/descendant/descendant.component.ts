@@ -80,7 +80,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     createBlockCard() {
         const rootNodes = this.rootNodes;
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
-        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory, null, null);
+        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
     }
 
