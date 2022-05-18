@@ -1,5 +1,11 @@
 # Changelog
 
+## 13.0.0
+
+### Major Changes
+
+- [#203](https://github.com/worktile/slate-angular/pull/203) [`4809484`](https://github.com/worktile/slate-angular/commit/4809484df20a81ff61307606dbb23be6afd12f18) Thanks [@why520crazy](https://github.com/why520crazy)! - [deps] upgrade angular 13
+
 ## 1.9.3
 
 ### Patch Changes
