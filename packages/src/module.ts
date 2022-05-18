@@ -32,7 +32,6 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/defa
         SlateDefaultLeafComponent
     ],
     imports: [CommonModule],
-    entryComponents: [SlateBlockCardComponent, SlateStringComponent, SlateDefaultElementComponent, SlateDefaultLeafComponent, SlateVoidTextComponent, SlateDefaultTextComponent],
     exports: [SlateEditableComponent, SlateChildrenComponent, SlateElementComponent, SlateLeavesComponent, SlateStringComponent],
     providers: [
         {
