@@ -1,4 +1,4 @@
-import { ComponentFactoryResolver, ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
+import { ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
 import { SlateBlockCardComponent } from "../components/block-card/block-card.component";
 import { ViewType } from "../types/view";
 import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
@@ -36,8 +36,7 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
     }
 
     constructor(
-        protected viewContainerRef: ViewContainerRef,
-        protected componentFactoryResolver: ComponentFactoryResolver
+        protected viewContainerRef: ViewContainerRef
     ) { }
 
     destroyView() {
@@ -67,8 +66,7 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
             this.embeddedViewRef = embeddedViewRef;
         }
         if (isComponentType(this.viewType)) {
-            const componentFactory = this.componentFactoryResolver.resolveComponentFactory<K>(this.viewType);
-            const componentRef = this.viewContainerRef.createComponent(componentFactory);
+            const componentRef = this.viewContainerRef.createComponent(this.viewType);
             componentRef.instance.context = context;
             componentRef.instance.viewContext = this.viewContext;
             this.componentRef = componentRef;
@@ -102,8 +100,7 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
                 this.embeddedViewRef = embeddedViewRef;
             }
             if (isComponentType(this.viewType)) {
-                const componentFactory = this.componentFactoryResolver.resolveComponentFactory<K>(this.viewType);
-                const componentRef = this.viewContainerRef.createComponent(componentFactory);
+                const componentRef = this.viewContainerRef.createComponent(this.viewType);
                 componentRef.instance.context = context;
                 componentRef.instance.viewContext = this.viewContext;
                 firstRootNode.replaceWith(componentRef.instance.nativeElement);

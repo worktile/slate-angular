@@ -9,14 +9,15 @@ import { TestingLeafComponent } from "./leaf.component";
 
 export function configureBasicEditableTestingModule(declarations: any[], entryComponents: any[] = [], providers: Provider[] = []) {
     TestBed.configureTestingModule({
-        imports: [
-            CommonModule, BrowserModule, SlateModule, FormsModule
-        ],
-        declarations: [...declarations],
-        providers: [
-            ...providers
-        ],
-    }).overrideModule(BrowserDynamicTestingModule, {
+    imports: [
+        CommonModule, BrowserModule, SlateModule, FormsModule
+    ],
+    declarations: [...declarations],
+    providers: [
+        ...providers
+    ],
+    teardown: { destroyAfterEach: false }
+}).overrideModule(BrowserDynamicTestingModule, {
         set: {
             entryComponents: entryComponents,
         }

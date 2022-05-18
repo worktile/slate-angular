@@ -28,6 +28,7 @@ import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
 import { IS_CHROME, IS_FIREFOX } from '../utils/environment';
 import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
+import { SafeAny } from '../types';
 
 /**
  * An Angular and DOM-specific version of the `Editor` interface.
@@ -122,10 +123,9 @@ export const AngularEditor = {
     findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
         const el = AngularEditor.toDOMNode(editor, editor)
         const root = el.getRootNode()
-
         if (
             (root instanceof Document || root instanceof ShadowRoot) &&
-            root.getSelection != null
+            (root as Document).getSelection != null
         ) {
             return root
         }
@@ -200,7 +200,7 @@ export const AngularEditor = {
     deselect(editor: AngularEditor): void {
         const { selection } = editor;
         const root = AngularEditor.findDocumentOrShadowRoot(editor);
-        const domSelection = root.getSelection();
+        const domSelection = (root as Document).getSelection();
 
         if (domSelection && domSelection.rangeCount > 0) {
             domSelection.removeAllRanges();
@@ -463,7 +463,7 @@ export const AngularEditor = {
         }
 
         // Else resolve a range from the caret position where the drop occured.
-        let domRange;
+        let domRange: DOMRange;
         const window = AngularEditor.getWindow(editor);
         const { document } = window;
 
@@ -471,7 +471,7 @@ export const AngularEditor = {
         if (document.caretRangeFromPoint) {
             domRange = document.caretRangeFromPoint(x, y);
         } else {
-            const position = document.caretPositionFromPoint(x, y);
+            const position = (document as SafeAny).caretPositionFromPoint(x, y);
 
             if (position) {
                 domRange = document.createRange();

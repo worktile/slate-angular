@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
 import { ButtonElement, LinkElement } from '../../../../custom-types';
 import { BaseElementComponent } from 'slate-angular';
-import { element } from 'protractor';
 
 @Component({
     selector: 'a[demo-element-link]',

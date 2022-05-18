@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, ComponentRef, Inject, Input, OnChanges, OnInit, ViewContainerRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnInit, ViewContainerRef } from "@angular/core";
 import { SlateBlockCardComponent } from "../block-card/block-card.component";
 import { ViewContainerItem } from '../../view/container-item';
 import { Descendant, Editor, Range, Element } from "slate";
@@ -39,9 +39,8 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
     }
 
     constructor(protected viewContainerRef: ViewContainerRef,
-        protected componentFactoryResolver: ComponentFactoryResolver, 
         @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN) public defaultElementComponentType: ComponentType<BaseElementComponent>) {
-        super(viewContainerRef, componentFactoryResolver)
+        super(viewContainerRef)
     }
 
     ngOnInit() {
@@ -79,8 +78,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
 
     createBlockCard() {
         const rootNodes = this.rootNodes;
-        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SlateBlockCardComponent);
-        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(componentFactory);
+        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(SlateBlockCardComponent);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
     }
 
