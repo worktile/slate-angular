@@ -1,5 +1,11 @@
 # Changelog
 
+## 13.0.1
+
+### Patch Changes
+
+- [`75de637`](https://github.com/worktile/slate-angular/commit/75de637821f650d64c7410ed5ef5d07de24e8d7f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - [build] add license for npm package
+
 ## 13.0.0
 
 ### Major Changes
