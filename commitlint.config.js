@@ -7,6 +7,7 @@ module.exports = {
             2,
             'always', [
                 'demo',
+                'deps',
                 'core',
                 'view',
                 'release',

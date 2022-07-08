@@ -50,13 +50,8 @@ import { DemoElementLinkComponent } from './components/link/link.component';
         FormsModule,
         SlateModule,
     ],
-    entryComponents: [
-        DemoTextMarkComponent,
-        DemoElementImageComponent,
-        DemoLeafComponent,
-    ],
     providers: [],
-    bootstrap: [AppComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor() {}

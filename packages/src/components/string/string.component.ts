@@ -22,7 +22,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
     @Input() context: SlateLeafContext;
 
     constructor(private elementRef: ElementRef<any>, protected viewContainerRef: ViewContainerRef) {
-        super(viewContainerRef, null);
+        super(viewContainerRef);
      }
 
     ngOnInit(): void {

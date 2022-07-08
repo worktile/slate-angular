@@ -1,6 +1,10 @@
 {
     "name": "slate-angular",
-    "version": "1.9.3",
+    "version": "13.0.1",
+    "description": "Angular view layer for Slate",
+    "author": "pubuzhixing <pubuzhixing@gmail.com>",
+    "homepage": "https://github.com/worktile/slate-angular#readme",
+    "license": "MIT",
     "peerDependencies": {
         "slate": ">= 0.63.0",
         "tslib": "^2.0.0",
@@ -8,5 +12,16 @@
         "debug": "^4.1.1",
         "direction": "^1.0.3",
         "is-hotkey": "^0.1.6"
+    },
+    "exports": {
+        ".": {
+            "sass": "./styles/index.scss"
+        },
+        "./styles": {
+            "sass": "./styles/index.scss"
+        },
+        "./styles/index.scss": {
+            "sass": "./styles/index.scss"
+        }
     }
 }
