@@ -1,5 +1,11 @@
 # Changelog
 
+## 13.0.2
+
+### Patch Changes
+
+- [#207](https://github.com/worktile/slate-angular/pull/207) [`625886b`](https://github.com/worktile/slate-angular/commit/625886b20efbfa3f2e21e67a9834f08b05687fea) Thanks [@donaldxdonald](https://github.com/donaldxdonald)! - Allow copying of slate nodes in readonly mode
+
 ## 13.0.1
 
 ### Patch Changes
