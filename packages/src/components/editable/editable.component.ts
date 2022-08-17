@@ -486,7 +486,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 const el = AngularEditor.toDOMNode(this.editor, this.editor);
                 const domSelection = (root as Document).getSelection();
 
-                if (activeElement === el || hasEditableTarget(this.editor, activeElement)) {
+                if (activeElement === el) {
                     this.latestElement = activeElement;
                     IS_FOCUSED.set(this.editor, true);
                 } else {
