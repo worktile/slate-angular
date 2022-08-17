@@ -50,7 +50,7 @@ Chrome、Edge、Safari、Firefox、QQ Browser
     "direction": "^1.0.3",
     "is-hotkey": "^0.1.6",
     "slate": "0.67.1",
-    "slate-history": "0.62.0",
+    "slate-history": "0.66.0",
     "slate-angular": "1.6.5"
 }
 ```
