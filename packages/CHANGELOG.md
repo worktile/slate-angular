@@ -5,6 +5,11 @@
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+## 13.0.3
+
+### Patch Changes
+
+- [`ed86a61`](https://github.com/worktile/slate-angular/commit/ed86a618348eb7c0d9b539a3cc3300a6170e7f9a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Solve the problem that the editable area in the Void node is abnormally out of focus
 
 ## 13.0.2
 
