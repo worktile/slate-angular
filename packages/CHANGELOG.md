@@ -5,6 +5,12 @@
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+## 13.0.4
+
+### Patch Changes
+
+- [`2c3d403`](https://github.com/worktile/slate-angular/commit/2c3d403977f8b1933049f194d0e3bd6f3596e43e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - stop keydown action when focus node
+
 ## 13.0.3
 
 ### Patch Changes
