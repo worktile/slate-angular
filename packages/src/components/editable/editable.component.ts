@@ -529,7 +529,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     ) {
         const editor = this.editor;
-        if (!this.readonly && hasEditableTarget(editor, event.target) && !this.isDOMEventHandled(event, this.beforeInput)) {
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+        const { activeElement } = root;
+        if (!this.readonly && hasEditableTarget(editor, event.target) && !isTargetInsideVoid(editor, activeElement) && !this.isDOMEventHandled(event, this.beforeInput)) {
             try {
                 const { selection } = editor;
                 const { inputType: type } = event;
