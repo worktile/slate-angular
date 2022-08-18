@@ -868,9 +868,12 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private onDOMKeydown(event: KeyboardEvent) {
         const editor = this.editor;
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+        const { activeElement } = root;
         if (
             !this.readonly &&
             hasEditableTarget(editor, event.target) &&
+            !isTargetInsideVoid(editor, activeElement) && // stop fire keydown handle when focus void node
             !this.isComposing &&
             !this.isDOMEventHandled(event, this.keydown)
         ) {
