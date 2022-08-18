@@ -5,6 +5,12 @@
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+## 13.0.5
+
+### Patch Changes
+
+- [`e79030a`](https://github.com/worktile/slate-angular/commit/e79030ab6e1d22a8d99601e268f1e55f0dbe0955) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - stop beforeinput event handle when focus void node
+
 ## 13.0.4
 
 ### Patch Changes
