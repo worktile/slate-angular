@@ -135,6 +135,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this.selection && Range.isCollapsed(this.editor.selection);
     }
 
+    get isCollapsedAndNonReadonly() {
+        return this.selection && Range.isCollapsed(this.editor.selection) && !this.readonly;
+    }
+
     get readonly() {
         return this._context && this._context.readonly;
     }
