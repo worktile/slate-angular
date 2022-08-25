@@ -1,5 +1,5 @@
 {
-  "name": "@rea.ch/slate-angular",
+  "name": "slate-angular",
   "workspaces": [
     "packages"
   ],
