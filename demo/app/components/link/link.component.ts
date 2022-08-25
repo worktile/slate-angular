@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
-import { ButtonElement, LinkElement } from '../../../../custom-types';
+import { LinkElement } from 'custom-types';
 import { BaseElementComponent } from 'slate-angular';
 
 @Component({

@@ -1,6 +1,6 @@
 {
     "name": "slate-angular",
-    "version": "13.0.2",
+    "version": "14.0.0",
     "description": "Angular view layer for Slate",
     "author": "pubuzhixing <pubuzhixing@gmail.com>",
     "homepage": "https://github.com/worktile/slate-angular#readme",
@@ -8,7 +8,7 @@
     "peerDependencies": {
         "slate": ">= 0.63.0",
         "tslib": "^2.0.0",
-        "slate-history": "^0.62.0",
+        "slate-history": "^0.66.0",
         "debug": "^4.1.1",
         "direction": "^1.0.3",
         "is-hotkey": "^0.1.6"
