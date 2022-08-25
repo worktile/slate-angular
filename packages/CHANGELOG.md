@@ -1,5 +1,11 @@
 # Changelog
 
+## 14.0.0
+
+### Major Changes
+
+- [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+
 ## 13.0.2
 
 ### Patch Changes
