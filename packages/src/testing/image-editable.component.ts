@@ -4,52 +4,47 @@ import { SlateEditableComponent } from "../components/editable/editable.componen
 import { withAngular } from "../plugins/with-angular";
 
 @Component({
-    selector: 'image-editable',
-    template: `
-        <slate-editable 
-            [editor]="editor"
-            [ngModel]="value"
-        ></slate-editable>
-    `
+  selector: "image-editable",
+  template: `
+    <slate-editable [editor]="editor" [ngModel]="value"></slate-editable>
+  `
 })
 export class ImageEditableComponent implements OnInit {
-    editor = withImage(withAngular(createEditor()));
+  editor = withImage(withAngular(createEditor()));
 
-    value = [
+  value = [
+    {
+      type: "image",
+      url: "https://source.unsplash.com/kFrdX5IeQzI",
+      children: [
         {
-            "type": "image",
-            "url": "https://source.unsplash.com/kFrdX5IeQzI",
-            "children": [
-                {
-                    "text": ""
-                }
-            ]
+          text: ""
         }
-    ];
-
-    @ViewChild(SlateEditableComponent, { static: true })
-    editableComponent: SlateEditableComponent;
-
-    ngOnInit() {
+      ]
     }
+  ];
 
-    constructor() {
-    }
+  @ViewChild(SlateEditableComponent, { static: true })
+  editableComponent: SlateEditableComponent;
+
+  ngOnInit() {}
+
+  constructor() {}
 }
 
 const withImage = (editor: Editor) => {
-    const { isBlockCard, isVoid } = editor;
-    editor.isBlockCard = (node: Element) => {
-        if (Element.isElement(node) && node.type === 'image') {
-            return true;
-        }
-        return isBlockCard(node);
+  const { isBlockCard, isVoid } = editor;
+  editor.isBlockCard = (node: Element) => {
+    if (Element.isElement(node) && node.type === "image") {
+      return true;
     }
-    editor.isVoid = (node: Element) => {
-        if (Element.isElement(node) && node.type === 'image') {
-            return true;
-        }
-        return isVoid(node);
+    return isBlockCard(node);
+  };
+  editor.isVoid = (node: Element) => {
+    if (Element.isElement(node) && node.type === "image") {
+      return true;
     }
-    return editor;
-}
+    return isVoid(node);
+  };
+  return editor;
+};

@@ -1,34 +1,49 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChildren } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChildren
+} from "@angular/core";
 import { SlateDescendantComponent } from "../descendant/descendant.component";
-import { Descendant } from 'slate';
+import { Descendant } from "slate";
 import { AngularEditor } from "../../plugins/angular-editor";
 import { SlateChildrenContext, SlateViewContext } from "../../view/context";
 import { ViewContainer } from "../../view/container";
 
 @Component({
-    selector: 'slate-children',
-    template: `<slate-descendant 
-                    [descendant]="descendant"
-                    [context]="context" [viewContext]="viewContext"
-                    [viewContext]="viewContext"
-                    [index]="index"
-                    *ngFor="let descendant of children;let index = index; trackBy: trackBy"></slate-descendant>`,
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "slate-children",
+  template: `
+    <slate-descendant
+      [descendant]="descendant"
+      [context]="context"
+      [viewContext]="viewContext"
+      [viewContext]="viewContext"
+      [index]="index"
+      *ngFor="let descendant of children; let index = index; trackBy: trackBy"
+    ></slate-descendant>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateChildrenComponent extends ViewContainer<SlateDescendantComponent> implements OnInit {
-    @Input() children: Descendant[];
+export class SlateChildrenComponent
+  extends ViewContainer<SlateDescendantComponent>
+  implements OnInit {
+  @Input() children: Descendant[];
 
-    @Input() context: SlateChildrenContext;
+  @Input() context: SlateChildrenContext;
 
-    @Input() viewContext: SlateViewContext;
+  @Input() viewContext: SlateViewContext;
 
-    @ViewChildren(SlateDescendantComponent, { read: SlateDescendantComponent })
-    childrenComponent: QueryList<SlateDescendantComponent>;
+  @ViewChildren(SlateDescendantComponent, { read: SlateDescendantComponent })
+  childrenComponent: QueryList<SlateDescendantComponent>;
 
-    ngOnInit() {
-    }
+  ngOnInit() {}
 
-    trackBy = (index, node) => {
-        return this.viewContext.trackBy(node) || AngularEditor.findKey(this.viewContext.editor, node);
-    }
+  trackBy = (index, node) => {
+    return (
+      this.viewContext.trackBy(node) ||
+      AngularEditor.findKey(this.viewContext.editor, node)
+    );
+  };
 }

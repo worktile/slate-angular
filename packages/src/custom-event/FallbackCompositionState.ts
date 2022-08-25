@@ -22,50 +22,50 @@ let startText = null;
 let fallbackText = null;
 
 export function initialize(nativeEventTarget) {
-    root = nativeEventTarget;
-    startText = getText();
-    return true;
+  root = nativeEventTarget;
+  startText = getText();
+  return true;
 }
 
 export function reset() {
-    root = null;
-    startText = null;
-    fallbackText = null;
+  root = null;
+  startText = null;
+  fallbackText = null;
 }
 
 export function getData() {
-    if (fallbackText) {
-        return fallbackText;
-    }
-
-    let start;
-    const startValue = startText;
-    const startLength = startValue.length;
-    let end;
-    const endValue = getText();
-    const endLength = endValue.length;
-
-    for (start = 0; start < startLength; start++) {
-        if (startValue[start] !== endValue[start]) {
-            break;
-        }
-    }
-
-    const minEnd = startLength - start;
-    for (end = 1; end <= minEnd; end++) {
-        if (startValue[startLength - end] !== endValue[endLength - end]) {
-            break;
-        }
-    }
-
-    const sliceTail = end > 1 ? 1 - end : undefined;
-    fallbackText = endValue.slice(start, sliceTail);
+  if (fallbackText) {
     return fallbackText;
+  }
+
+  let start;
+  const startValue = startText;
+  const startLength = startValue.length;
+  let end;
+  const endValue = getText();
+  const endLength = endValue.length;
+
+  for (start = 0; start < startLength; start++) {
+    if (startValue[start] !== endValue[start]) {
+      break;
+    }
+  }
+
+  const minEnd = startLength - start;
+  for (end = 1; end <= minEnd; end++) {
+    if (startValue[startLength - end] !== endValue[endLength - end]) {
+      break;
+    }
+  }
+
+  const sliceTail = end > 1 ? 1 - end : undefined;
+  fallbackText = endValue.slice(start, sliceTail);
+  return fallbackText;
 }
 
 export function getText() {
-    if ('value' in root) {
-        return root.value;
-    }
-    return root.textContent;
+  if ("value" in root) {
+    return root.value;
+  }
+  return root.textContent;
 }

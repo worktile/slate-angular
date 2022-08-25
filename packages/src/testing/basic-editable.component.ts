@@ -5,25 +5,24 @@ import { withAngular } from "../plugins/with-angular";
 import { createDefaultDocument } from "./create-document";
 
 @Component({
-    selector: 'basic-editable',
-    template: `
-        <slate-editable 
-            [editor]="editor"
-            [(ngModel)]="value"
-            (ngModelChange)="ngModelChange()"></slate-editable>
-    `
+  selector: "basic-editable",
+  template: `
+    <slate-editable
+      [editor]="editor"
+      [(ngModel)]="value"
+      (ngModelChange)="ngModelChange()"
+    ></slate-editable>
+  `
 })
 export class BasicEditableComponent {
-    editor = withAngular(createEditor());
+  editor = withAngular(createEditor());
 
-    value: Element[] = createDefaultDocument() as Element[];
+  value: Element[] = createDefaultDocument() as Element[];
 
-    @ViewChild(SlateEditableComponent, { static: true })
-    editableComponent: SlateEditableComponent;
+  @ViewChild(SlateEditableComponent, { static: true })
+  editableComponent: SlateEditableComponent;
 
-    ngModelChange() {
-    }
+  ngModelChange() {}
 
-    constructor() {
-    }
+  constructor() {}
 }

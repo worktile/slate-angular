@@ -47,9 +47,10 @@
     "debug": "^4.1.1",
     "direction": "^1.0.3",
     "is-hotkey": "^0.1.6",
+    "lodash": "^4.17.4",
     "rxjs": "~6.6.0",
-    "slate": "0.72.8",
-    "slate-history": "0.66.0",
+    "slate": ">= 0.82.1",
+    "slate-history": ">= 0.81.3",
     "tslib": "^2.4.0",
     "zone.js": "~0.11.4"
   },
@@ -64,11 +65,14 @@
     "@angular/cli": "~13.3.5",
     "@angular/compiler-cli": "~13.3.8",
     "@angular/language-service": "~13.3.8",
+    "@changesets/changelog-github": "^0.3.0",
+    "@changesets/cli": "^2.19.0",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@types/codemirror": "0.0.81",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/lodash": "^4.14.184",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",
@@ -77,6 +81,7 @@
     "eslint": "^7.26.0",
     "faker": "^4.1.0",
     "husky": "^4.3.0",
+    "is-url": "^1.2.2",
     "jasmine": "~4.0.0",
     "jasmine-core": "~4.0.0",
     "karma": "^6.3.4",
@@ -89,9 +94,6 @@
     "prettier": "^1.19.1",
     "standard-version": "^7.0.1",
     "ts-node": "~8.3.0",
-    "typescript": "~4.6.4",
-    "is-url": "^1.2.2",
-    "@changesets/changelog-github": "^0.3.0",
-    "@changesets/cli": "^2.19.0"
+    "typescript": "~4.6.4"
   }
 }

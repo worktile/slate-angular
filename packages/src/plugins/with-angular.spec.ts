@@ -1,9 +1,15 @@
-import { ComponentFixture, fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+  tick
+} from "@angular/core/testing";
 import { createEditor, Transforms, Node, Element, Editor } from "slate";
 import { withAngular } from "./with-angular";
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from "../utils/weak-maps";
 import { AngularEditor } from "./angular-editor";
-import { BasicEditableComponent } from '../testing/basic-editable.component'
+import { BasicEditableComponent } from "../testing/basic-editable.component";
 import * as Types from "custom-types";
 import { configureBasicEditableTestingModule } from "../testing/module";
 
@@ -21,9 +27,9 @@ describe("with-angular", () => {
           { text: "much" },
           { text: " better than a " },
           { text: "<textarea>" },
-          { text: "!" },
-        ],
-      },
+          { text: "!" }
+        ]
+      }
     ];
   }
   beforeEach(() => {
@@ -35,12 +41,12 @@ describe("with-angular", () => {
       Transforms.select(angularEditor, {
         anchor: {
           path: [0, 0],
-          offset: 0,
+          offset: 0
         },
         focus: {
           path: [0, 0],
-          offset: 3,
-        },
+          offset: 3
+        }
       });
       flush();
       expect(angularEditor.onChange).toHaveBeenCalled();
@@ -53,19 +59,19 @@ describe("with-angular", () => {
       Transforms.select(angularEditor, {
         anchor: {
           path: [0, 0],
-          offset: 0,
+          offset: 0
         },
         focus: {
           path: [0, 0],
-          offset: 3,
-        },
+          offset: 3
+        }
       });
       flush();
       expect(isOnChanged).toBeTruthy();
     }));
   });
 
-  describe('apply', () => {
+  describe("apply", () => {
     let component: BasicEditableComponent;
     let fixture: ComponentFixture<BasicEditableComponent>;
 
@@ -74,7 +80,7 @@ describe("with-angular", () => {
       fixture = TestBed.createComponent(BasicEditableComponent);
       component = fixture.componentInstance;
       component.value = [
-        { type: 'paragraph', children: [{ text: 'first text!' }] },
+        { type: "paragraph", children: [{ text: "first text!" }] },
         {
           type: "table",
           children: [
@@ -85,12 +91,12 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '1!' }]
+                      type: "paragraph",
+                      children: [{ text: "1!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '2!' }]
+                      type: "paragraph",
+                      children: [{ text: "2!" }]
                     }
                   ]
                 },
@@ -98,16 +104,16 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '3!' }]
+                      type: "paragraph",
+                      children: [{ text: "3!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '4!' }]
+                      type: "paragraph",
+                      children: [{ text: "4!" }]
                     }
                   ]
-                },
-              ],
+                }
+              ]
             },
             {
               type: "table-row",
@@ -116,12 +122,12 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '5!' }]
+                      type: "paragraph",
+                      children: [{ text: "5!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '6!' }]
+                      type: "paragraph",
+                      children: [{ text: "6!" }]
                     }
                   ]
                 },
@@ -129,18 +135,18 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '7!' }]
+                      type: "paragraph",
+                      children: [{ text: "7!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '8!' }]
+                      type: "paragraph",
+                      children: [{ text: "8!" }]
                     }
                   ]
-                },
-              ],
-            },
-          ],
+                }
+              ]
+            }
+          ]
         },
         {
           type: "table",
@@ -152,12 +158,12 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '1!' }]
+                      type: "paragraph",
+                      children: [{ text: "1!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '2!' }]
+                      type: "paragraph",
+                      children: [{ text: "2!" }]
                     }
                   ]
                 },
@@ -165,16 +171,16 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '3!' }]
+                      type: "paragraph",
+                      children: [{ text: "3!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '4!' }]
+                      type: "paragraph",
+                      children: [{ text: "4!" }]
                     }
                   ]
-                },
-              ],
+                }
+              ]
             },
             {
               type: "table-row",
@@ -183,12 +189,12 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '5!' }]
+                      type: "paragraph",
+                      children: [{ text: "5!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '6!' }]
+                      type: "paragraph",
+                      children: [{ text: "6!" }]
                     }
                   ]
                 },
@@ -196,20 +202,20 @@ describe("with-angular", () => {
                   type: "table-cell",
                   children: [
                     {
-                      type: 'paragraph',
-                      children: [{ text: '7!' }]
+                      type: "paragraph",
+                      children: [{ text: "7!" }]
                     },
                     {
-                      type: 'paragraph',
-                      children: [{ text: '8!' }]
+                      type: "paragraph",
+                      children: [{ text: "8!" }]
                     }
                   ]
-                },
-              ],
-            },
-          ],
+                }
+              ]
+            }
+          ]
         },
-        { type: 'paragraph', children: [{ text: 'last text!' }] }
+        { type: "paragraph", children: [{ text: "last text!" }] }
       ];
       fixture.detectChanges();
       flush();
@@ -220,9 +226,9 @@ describe("with-angular", () => {
       fixture.destroy();
     });
 
-    it('move node to sibling when there have a common parent', fakeAsync(() => {
-      const oldPath = [1,0,0,0];
-      const newPath = [1,0,0,1];
+    it("move node to sibling when there have a common parent", fakeAsync(() => {
+      const oldPath = [1, 0, 0, 0];
+      const newPath = [1, 0, 0, 1];
       const tablePath = [1];
       const tableRowPath = [1, 0];
       const tableCellPath = [1, 0, 0];
@@ -231,7 +237,7 @@ describe("with-angular", () => {
       const tableCellNode = Node.get(component.editor, tableCellPath);
       Transforms.moveNodes(component.editor, {
         at: oldPath,
-        to: newPath,
+        to: newPath
       });
       tick(100);
       const newTableNode = Node.get(component.editor, tablePath);
@@ -245,9 +251,9 @@ describe("with-angular", () => {
       validKey(tableCellNode, newTableCellNode);
     }));
 
-    it('move node to sibling when there is no common parent', fakeAsync(() => {
-      const oldPath = [1,0,0,0];
-      const newPath = [2,0,0,1];
+    it("move node to sibling when there is no common parent", fakeAsync(() => {
+      const oldPath = [1, 0, 0, 0];
+      const newPath = [2, 0, 0, 1];
 
       const tablePath = [1];
       const tableRowPath = [1, 0];
@@ -265,7 +271,7 @@ describe("with-angular", () => {
 
       Transforms.moveNodes(component.editor, {
         at: oldPath,
-        to: newPath,
+        to: newPath
       });
       tick(100);
 
@@ -292,28 +298,32 @@ describe("with-angular", () => {
       validKey(tableCellNode2, newTableCellNode2);
     }));
 
-    it('can correctly insert the list in the last row', fakeAsync(() => {
+    it("can correctly insert the list in the last row", fakeAsync(() => {
       Transforms.select(component.editor, Editor.end(component.editor, [3]));
       component.editor.insertBreak();
       Transforms.wrapNodes(
         component.editor,
-        { type: 'list-item', children: [] },
+        { type: "list-item", children: [] },
         {
-            at: [4],
-            split: true
+          at: [4],
+          split: true
         }
       );
-      Transforms.wrapNodes(component.editor, { type: 'numbered-list', children: [] } as any, {
-        at: [4, 0, 0],
-        match: node => Element.isElement(node) && node.type === 'list-item'
-      });
+      Transforms.wrapNodes(
+        component.editor,
+        { type: "numbered-list", children: [] } as any,
+        {
+          at: [4, 0, 0],
+          match: node => Element.isElement(node) && node.type === "list-item"
+        }
+      );
 
       expect(component.editor.children.length).toBe(5);
-      expect((component.editor.children[4] as any).type).toBe('numbered-list');
+      expect((component.editor.children[4] as any).type).toBe("numbered-list");
     }));
-  })
+  });
 });
 
 const validKey = (oldNode, newNode) => {
   expect(NODE_TO_KEY.get(oldNode)).toEqual(NODE_TO_KEY.get(newNode));
-}
+};

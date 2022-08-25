@@ -10,9 +10,9 @@ let n = 0;
  */
 
 export class Key {
-    id: string;
+  id: string;
 
-    constructor() {
-        this.id = `${n++}`;
-    }
+  constructor() {
+    this.id = `${n++}`;
+  }
 }

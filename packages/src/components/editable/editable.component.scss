@@ -1,0 +1,19 @@
+:host {
+    // in some cases, a decoration needs access to the range / selection to decorate a text node,
+    // then you will select the whole text node when you select part the of text
+    // this magic zIndex="-1" will fix it
+    z-index: -1;
+
+    // Allow positioning relative to the editable element.
+    position: 'relative';
+    
+    // Prevent the default outline styles.
+    outline: 'none';
+
+    // Preserve adjacent whitespace and new lines.
+    white-space: 'pre-wrap';
+
+    // Allow words to break if they are too long.
+    word-wrap: 'break-word';
+    // Allow for passed-in styles to override anything.
+}

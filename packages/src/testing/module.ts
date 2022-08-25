@@ -7,19 +7,21 @@ import { FormsModule } from "@angular/forms";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { TestingLeafComponent } from "./leaf.component";
 
-export function configureBasicEditableTestingModule(declarations: any[], entryComponents: any[] = [], providers: Provider[] = []) {
-    TestBed.configureTestingModule({
-    imports: [
-        CommonModule, BrowserModule, SlateModule, FormsModule
-    ],
+export function configureBasicEditableTestingModule(
+  declarations: any[],
+  entryComponents: any[] = [],
+  providers: Provider[] = []
+) {
+  TestBed.configureTestingModule({
+    imports: [CommonModule, BrowserModule, SlateModule, FormsModule],
     declarations: [...declarations],
-    providers: [
-        ...providers
-    ],
+    providers: [...providers],
     teardown: { destroyAfterEach: false }
-}).overrideModule(BrowserDynamicTestingModule, {
-        set: {
-            entryComponents: entryComponents,
-        }
-    }).compileComponents();
+  })
+    .overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: entryComponents
+      }
+    })
+    .compileComponents();
 }

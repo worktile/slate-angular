@@ -6,68 +6,66 @@ import { createDefaultDocument } from "./create-document";
 import { TestingLeafComponent } from "./leaf.component";
 
 @Component({
-    selector: 'basic-editable',
-    template: `
-        <slate-editable 
-            [editor]="editor"
-            [ngModel]="value"
-            [decorate]="decorate"
-            [renderLeaf]="renderLeaf"
-            [placeholder]="placeholder"
-            [trackBy]="trackBy"
-            ></slate-editable>
-    `
+  selector: "basic-editable",
+  template: `
+    <slate-editable
+      [editor]="editor"
+      [ngModel]="value"
+      [decorate]="decorate"
+      [renderLeaf]="renderLeaf"
+      [placeholder]="placeholder"
+      [trackBy]="trackBy"
+    ></slate-editable>
+  `
 })
 export class AdvancedEditableComponent implements OnInit {
-    editor = withAngular(createEditor());
+  editor = withAngular(createEditor());
 
-    value: any = createDefaultDocument();
+  value: any = createDefaultDocument();
 
-    decorate = (nodeEntry: NodeEntry) => [];
+  decorate = (nodeEntry: NodeEntry) => [];
 
-    trackBy = (element: Element) => null;
+  trackBy = (element: Element) => null;
 
-    placeholder: string;
+  placeholder: string;
 
-    @ViewChild(SlateEditableComponent, { static: true })
-    editableComponent: SlateEditableComponent;
+  @ViewChild(SlateEditableComponent, { static: true })
+  editableComponent: SlateEditableComponent;
 
-    generateDecorate(keywords: string) {
-        this.decorate = ([node, path]) => {
-            const ranges = [];
+  generateDecorate(keywords: string) {
+    this.decorate = ([node, path]) => {
+      const ranges = [];
 
-            if (keywords && Text.isText(node)) {
-                const { text } = node;
-                const parts = text.split(keywords);
-                let offset = 0;
+      if (keywords && Text.isText(node)) {
+        const { text } = node;
+        const parts = text.split(keywords);
+        let offset = 0;
 
-                parts.forEach((part, i) => {
-                    if (i !== 0) {
-                        ranges.push({
-                            anchor: { path, offset: offset - keywords.length },
-                            focus: { path, offset },
-                            highlight: true,
-                        });
-                    }
+        parts.forEach((part, i) => {
+          if (i !== 0) {
+            ranges.push({
+              anchor: { path, offset: offset - keywords.length },
+              focus: { path, offset },
+              highlight: true
+            });
+          }
 
-                    offset = offset + part.length + keywords.length;
-                });
-            }
+          offset = offset + part.length + keywords.length;
+        });
+      }
 
-            return ranges;
-        };
+      return ranges;
+    };
+  }
+
+  renderLeaf = (text: Text) => {
+    if (text["highlight"]) {
+      return TestingLeafComponent;
     }
+    return null;
+  };
 
-    renderLeaf = (text: Text) => {
-        if (text['highlight']) {
-            return TestingLeafComponent;
-        }
-        return null;
-    }
+  ngOnInit() {}
 
-    ngOnInit() {
-    }
-
-    constructor() {
-    }
+  constructor() {}
 }

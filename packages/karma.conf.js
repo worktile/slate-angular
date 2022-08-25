@@ -10,22 +10,22 @@ module.exports = function(config) {
       require("karma-chrome-launcher"),
       require("karma-jasmine-html-reporter"),
       require("karma-coverage"),
-      require("@angular-devkit/build-angular/plugins/karma"),
+      require("@angular-devkit/build-angular/plugins/karma")
     ],
     client: {
-      clearContext: false, // leave Jasmine Spec Runner output visible in browser
+      clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     jasmineHtmlReporter: {
-      suppressAll: true, // removes the duplicated traces
+      suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
       dir: require("path").join(__dirname, "../coverage/slate-angular"),
       subdir: ".",
       reporters: [
         { type: "html" },
-        { type: "text-summary"},
-        { type: 'lcovonly', subdir: '..', file: 'lcov.info' },
-      ],
+        { type: "text-summary" },
+        { type: "lcovonly", subdir: "..", file: "lcov.info" }
+      ]
     },
     files: [],
     reporters: ["progress", "kjhtml"],
@@ -38,9 +38,9 @@ module.exports = function(config) {
     customLaunchers: {
       ChromeHeadlessCI: {
         base: "ChromeHeadless",
-        flags: ["--no-sandbox"],
-      },
+        flags: ["--no-sandbox"]
+      }
     },
-    restartOnFileChange: true,
+    restartOnFileChange: true
   });
 };
