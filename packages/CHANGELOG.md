@@ -5,6 +5,12 @@
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+## 13.1.0
+
+### Minor Changes
+
+- [`cbc2b33`](https://github.com/worktile/slate-angular/commit/cbc2b33364c2454529f67ff01f81cf25abc52292) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use context selection calc isCollapsed and resolve editor is undefined error
+
 ## 13.0.6
 
 ### Patch Changes
