@@ -99,6 +99,7 @@ const hotkeys = {
     isMoveWordBackward: create('moveWordBackward'),
     isMoveWordForward: create('moveWordForward'),
     isRedo: create('redo'),
+    isSoftBreak: create("insertSoftBreak"),
     isSplitBlock: create('splitBlock'),
     isTransposeCharacter: create('transposeCharacter'),
     isUndo: create('undo')

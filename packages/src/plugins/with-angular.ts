@@ -5,7 +5,8 @@ import {
   Range,
   Path,
   Operation,
-  PathRef
+  PathRef,
+  Point
 } from 'slate';
 import {
   EDITOR_TO_ON_CHANGE,
@@ -13,15 +14,59 @@ import {
   isDOMText,
   getPlainText,
   Key,
-  getSlateFragmentAttribute
+  getSlateFragmentAttribute,
+  EDITOR_TO_SCHEDULE_FLUSH,
+  EDITOR_TO_PENDING_INSERTION_MARKS,
+  EDITOR_TO_PENDING_DIFFS,
+  EDITOR_TO_USER_MARKS,
+  transformTextDiff,
+  TextDiff,
+  EDITOR_TO_PENDING_SELECTION,
+  transformPendingRange,
+  EDITOR_TO_PENDING_ACTION,
+  transformPendingPoint,
+  EDITOR_TO_USER_SELECTION
 } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
+import { SafeAny } from '../types';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
   const e = editor as T & AngularEditor;
-  const { apply, onChange, deleteBackward } = e;
+  const { apply, onChange, deleteBackward, addMark, removeMark } = e;
+
+  e.addMark = (key, value) => {
+    EDITOR_TO_SCHEDULE_FLUSH.get(e)?.();
+
+    if (
+      !EDITOR_TO_PENDING_INSERTION_MARKS.get(e) &&
+      EDITOR_TO_PENDING_DIFFS.get(e)?.length
+    ) {
+      // Ensure the current pending diffs originating from changes before the addMark
+      // are applied with the current formatting
+      EDITOR_TO_PENDING_INSERTION_MARKS.set(e, null);
+    }
+
+    EDITOR_TO_USER_MARKS.delete(e);
+
+    addMark(key, value);
+  };
+
+  e.removeMark = key => {
+    if (
+      !EDITOR_TO_PENDING_INSERTION_MARKS.get(e) &&
+      EDITOR_TO_PENDING_DIFFS.get(e)?.length
+    ) {
+      // Ensure the current pending diffs originating from changes before the addMark
+      // are applied with the current formatting
+      EDITOR_TO_PENDING_INSERTION_MARKS.set(e, null);
+    }
+
+    EDITOR_TO_USER_MARKS.delete(e);
+
+    removeMark(key);
+  };
 
   e.deleteBackward = unit => {
     if (unit !== 'line') {
@@ -52,55 +97,77 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
   };
 
   e.apply = (op: Operation) => {
-    const matches: [Path | PathRef, Key][] = [];
+    const matches: [Path, Key][] = []
+
+    const pendingDiffs = EDITOR_TO_PENDING_DIFFS.get(e)
+    if (pendingDiffs?.length) {
+      const transformed = pendingDiffs
+        .map(textDiff => transformTextDiff(textDiff, op))
+        .filter(Boolean) as TextDiff[]
+
+      EDITOR_TO_PENDING_DIFFS.set(e, transformed)
+    }
+
+    const pendingSelection = EDITOR_TO_PENDING_SELECTION.get(e)
+    if (pendingSelection) {
+      EDITOR_TO_PENDING_SELECTION.set(
+        e,
+        transformPendingRange(e, pendingSelection, op)
+      )
+    }
+
+    const pendingAction = EDITOR_TO_PENDING_ACTION.get(e)
+    if (pendingAction?.at) {
+      const at = Point.isPoint(pendingAction?.at)
+        ? transformPendingPoint(e, pendingAction.at, op)
+        : transformPendingRange(e, pendingAction.at, op)
+
+      EDITOR_TO_PENDING_ACTION.set(e, at ? { ...pendingAction, at } : null)
+    }
 
     switch (op.type) {
       case 'insert_text':
       case 'remove_text':
-      case 'set_node': {
-        for (const [node, path] of Editor.levels(e, { at: op.path })) {
-          const key = AngularEditor.findKey(e, node);
-          matches.push([path, key]);
-        }
+      case 'set_node':
+      case 'split_node': {
+        matches.push(...getMatches(e, op.path))
+        break
+      }
 
-        break;
+      case 'set_selection': {
+        // Selection was manually set, don't restore the user selection after the change.
+        EDITOR_TO_USER_SELECTION.get(e)?.unref()
+        EDITOR_TO_USER_SELECTION.delete(e)
+        break
       }
 
       case 'insert_node':
-      case 'remove_node':
-      case 'merge_node':
-      case 'split_node': {
-        for (const [node, path] of Editor.levels(e, {
-          at: Path.parent(op.path),
-        })) {
-          const key = AngularEditor.findKey(e, node);
-          matches.push([path, key]);
-        }
+      case 'remove_node': {
+        matches.push(...getMatches(e, Path.parent(op.path)))
+        break
+      }
 
-        break;
+      case 'merge_node': {
+        const prevPath = Path.previous(op.path)
+        matches.push(...getMatches(e, prevPath))
+        break
       }
 
       case 'move_node': {
-        const commonPath = Path.common(Path.parent(op.path), Path.parent(op.newPath));
-        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.path) })) {
-          const key = AngularEditor.findKey(e, node);
-          matches.push([Editor.pathRef(editor, path), key]);
-        }
-        for (const [node, path] of Editor.levels(e, { at: Path.parent(op.newPath) })) {
-          if(path.length > commonPath.length){
-            const key = AngularEditor.findKey(e, node);
-            matches.push([Editor.pathRef(editor, path), key]);
-          }
-        }
-        break;
+        const commonPath = Path.common(
+          Path.parent(op.path),
+          Path.parent(op.newPath)
+        )
+        matches.push(...getMatches(e, commonPath))
+        break
       }
     }
 
-    apply(op);
+    apply(op)
 
-    for (const [source, key] of matches) {
-      const [node] = Editor.node(e, Path.isPath(source) ? source: source.current);
-      NODE_TO_KEY.set(node, key);
+    for (const [path, key] of matches) {
+      const [node] = Editor.node(e, path)
+      NODE_TO_KEY.set(node, key)
     }
   };
 
@@ -136,8 +203,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     let attach = contents.childNodes[0] as HTMLElement;
 
     // Make sure attach is non-empty, since empty nodes will not get copied.
-    const contentsArray = Array.from(contents.children);
-    contentsArray.forEach(node => {
+    contents.childNodes.forEach(node => {
       if (node.textContent && node.textContent.trim() !== '') {
         attach = node as HTMLElement;
       }
@@ -274,3 +340,12 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
   return e;
 };
+
+const getMatches = (e: Editor, path: Path) => {
+  const matches: [Path, Key][] = []
+  for (const [n, p] of Editor.levels(e, { at: path })) {
+    const key = AngularEditor.findKey(e, n)
+    matches.push([p, key])
+  }
+  return matches
+}

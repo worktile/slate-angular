@@ -1,3 +1,5 @@
+import { AngularEditor } from "../plugins/angular-editor";
+
 /**
  * Types.
  */
@@ -254,3 +256,45 @@ export const getClipboardData = (dataTransfer: DataTransfer, clipboardFormatKey 
     }
     return dataTransfer
 }
+
+/**
+ * Check whether a mutation originates from a editable element inside the editor.
+ */
+
+ export const isTrackedMutation = (
+    editor: AngularEditor,
+    mutation: MutationRecord,
+    batch: MutationRecord[]
+  ): boolean => {
+    const { target } = mutation;
+    if (isDOMElement(target) && target.matches('[contentEditable="false"]')) {
+      return false;
+    }
+  
+    const { document } = AngularEditor.getWindow(editor);
+    if (document.contains(target)) {
+      return AngularEditor.hasDOMNode(editor, target, { editable: true });
+    }
+  
+    const parentMutation = batch.find(({ addedNodes, removedNodes }) => {
+      for (const node of addedNodes) {
+        if (node === target || node.contains(target)) {
+          return true;
+        }
+      }
+  
+      for (const node of removedNodes) {
+        if (node === target || node.contains(target)) {
+          return true;
+        }
+      }
+    });
+  
+    if (!parentMutation || parentMutation === mutation) {
+      return false;
+    }
+  
+    // Target add/remove is tracked. Track the mutation if we track the parent mutation.
+    return isTrackedMutation(editor, parentMutation, batch);
+  };
+  
