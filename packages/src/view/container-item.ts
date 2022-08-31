@@ -67,8 +67,8 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
         }
         if (isComponentType(this.viewType)) {
             const componentRef = this.viewContainerRef.createComponent(this.viewType);
-            componentRef.instance.context = context;
             componentRef.instance.viewContext = this.viewContext;
+            componentRef.instance.context = context;
             this.componentRef = componentRef;
         }
     }

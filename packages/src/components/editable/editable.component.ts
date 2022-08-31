@@ -1290,6 +1290,8 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
 
     private onDOMKeydown(event: KeyboardEvent) {
         const editor = this.editor;
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+        const { activeElement } = root;
         if (
             !this.readonly &&
             hasEditableTarget(editor, event.target)
