@@ -5,6 +5,10 @@
     "author": "pubuzhixing <pubuzhixing@gmail.com>",
     "homepage": "https://github.com/worktile/slate-angular#readme",
     "license": "MIT",
+    "dependencies": {
+        "lodash": "^4.17.4",
+        "scroll-into-view-if-needed": ">= 2.2.29"
+    },
     "peerDependencies": {
         "slate": ">= 0.82.1",
         "tslib": "^2.0.0",
