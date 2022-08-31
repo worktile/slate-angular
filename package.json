@@ -19,18 +19,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "lint-staged": {
-    "packages/**/*.{ts}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
-    }
-  },
   "private": true,
   "repository": {
     "type": "git",
