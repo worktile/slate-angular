@@ -6,9 +6,9 @@
     "homepage": "https://github.com/worktile/slate-angular#readme",
     "license": "MIT",
     "peerDependencies": {
-        "slate": ">= 0.63.0",
+        "slate": ">= 0.82.1",
         "tslib": "^2.0.0",
-        "slate-history": "^0.66.0",
+        "slate-history": ">= 0.81.3",
         "debug": "^4.1.1",
         "direction": "^1.0.3",
         "is-hotkey": "^0.1.6"
