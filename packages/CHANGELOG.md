@@ -5,6 +5,35 @@
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+## 13.1.0
+
+### Minor Changes
+
+- [`cbc2b33`](https://github.com/worktile/slate-angular/commit/cbc2b33364c2454529f67ff01f81cf25abc52292) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use context selection calc isCollapsed and resolve editor is undefined error
+
+## 13.0.6
+
+### Patch Changes
+
+- [`deeed17`](https://github.com/worktile/slate-angular/commit/deeed17c488a830913763bdb62f3e501ab260be1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add isCollapsedAndNonReadonly property
+
+## 13.0.5
+
+### Patch Changes
+
+- [`e79030a`](https://github.com/worktile/slate-angular/commit/e79030ab6e1d22a8d99601e268f1e55f0dbe0955) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - stop beforeinput event handle when focus void node
+
+## 13.0.4
+
+### Patch Changes
+
+- [`2c3d403`](https://github.com/worktile/slate-angular/commit/2c3d403977f8b1933049f194d0e3bd6f3596e43e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - stop keydown action when focus node
+
+## 13.0.3
+
+### Patch Changes
+
+- [`ed86a61`](https://github.com/worktile/slate-angular/commit/ed86a618348eb7c0d9b539a3cc3300a6170e7f9a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Solve the problem that the editable area in the Void node is abnormally out of focus
 
 ## 13.0.2
 
