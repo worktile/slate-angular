@@ -33,7 +33,7 @@ const RESOLVE_DELAY = 25;
 const FLUSH_DELAY = 200;
 
 // Replace with `const debug = console.log` to debug
-const debug = console.info; // (..._: unknown[]) => {};
+const debug = (..._: unknown[]) => {};
 
 export type CreateAndroidInputManagerOptions = {
   editor: AngularEditor;
