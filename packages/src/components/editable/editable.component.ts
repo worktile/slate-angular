@@ -18,14 +18,13 @@ import {
     DoCheck
 } from '@angular/core';
 import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW, EDITOR_TO_USER_SELECTION, IS_COMPOSING, EDITOR_TO_PENDING_INSERTION_MARKS, EDITOR_TO_USER_MARKS } from '../../utils/weak-maps';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
     DOMElement,
     DOMNode,
     isDOMNode,
-    DOMStaticRange,
     DOMRange,
     isDOMElement,
     isPlainTextOnlyPaste,
@@ -34,7 +33,7 @@ import {
     DOMText
 } from '../../utils/dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, IS_FIREFOX_LEGACY, IS_IOS, IS_QQBROWSER, IS_WECHATBROWSER, IS_UC_MOBILE } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, IS_FIREFOX_LEGACY, IS_IOS, IS_QQBROWSER, IS_WECHATBROWSER, IS_UC_MOBILE } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -44,11 +43,9 @@ import { SlateStringTemplateComponent } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
-import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
 import { SlatePlaceholder } from '../../types/feature';
-import { SlateRestoreDomDirective } from '../restore-dom/restore-dom.directive';
 import { useRef } from '../../utils/react-workaround';
 import { AndroidInputManager } from '../../hooks/android-input-manager/android-input-manager';
 import { useTrackUserInput } from '../../hooks';
@@ -58,9 +55,6 @@ import { TRIPLE_CLICK } from '../../utils/constants';
 import scrollIntoView from 'scroll-into-view-if-needed';
 
 const timeDebug = Debug('slate-angular-time');
-
-// not correctly clipboardData on beforeinput
-const forceOnDOMPaste = IS_SAFARI;
 
 type DeferredOperation = () => void;
 
@@ -86,7 +80,7 @@ type DeferredOperation = () => void;
         multi: true
     }]
 })
-export class SlateEditableComponent extends SlateRestoreDomDirective implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
+export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
 
@@ -176,14 +170,12 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
     private onUserInput!: () => void;
 
     constructor(
-        elementRef: ElementRef,
+        public elementRef: ElementRef,
         public renderer2: Renderer2,
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
         private injector: Injector
-    ) {
-        super(elementRef)
-    }
+    ) {}
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -191,7 +183,6 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
 
         const { onUserInput, receivedUserInput } = useTrackUserInput(this.editor);
         this.onUserInput = onUserInput;
-        this.receivedUserInput = receivedUserInput;
     
         this.androidInputManager = useAndroidInputManager(this.editor, {
           node: this.elementRef.nativeElement,
@@ -1611,8 +1602,6 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
     //#endregion
 
     ngOnDestroy() {
-        super.ngOnDestroy();
-
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
             manualListener();
