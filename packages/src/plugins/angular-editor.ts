@@ -6,10 +6,10 @@ import {
     IS_READONLY,
     NODE_TO_INDEX,
     NODE_TO_PARENT,
-    NODE_TO_ELEMENT,
     NODE_TO_KEY,
     EDITOR_TO_WINDOW,
-    IS_COMPOSING
+    IS_COMPOSING,
+    EDITOR_TO_KEY_TO_ELEMENT
 } from '../utils/weak-maps';
 import {
     DOMElement,
@@ -313,9 +313,10 @@ export const AngularEditor = {
      */
 
     toDOMNode(editor: AngularEditor, node: Node): HTMLElement {
+        const KEY_TO_ELEMENT = EDITOR_TO_KEY_TO_ELEMENT.get(editor);
         const domNode = Editor.isEditor(node)
             ? EDITOR_TO_ELEMENT.get(editor)
-            : NODE_TO_ELEMENT.get(node);
+            : KEY_TO_ELEMENT?.get(AngularEditor.findKey(editor, node));
 
         if (!domNode) {
             throw new Error(`Cannot resolve a DOM node from Slate node: ${JSON.stringify(node)}`);

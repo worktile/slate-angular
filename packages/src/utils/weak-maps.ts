@@ -1,6 +1,5 @@
 import { Node, Ancestor, Editor, RangeRef, Range } from 'slate';
 import { Key } from './key';
-import { BaseElementComponent } from '../view/base';
 import { TextDiff } from './diff-text';
 import { Action } from '../hooks/android-input-manager/android-input-manager';
 
@@ -16,7 +15,6 @@ export const NODE_TO_PARENT: WeakMap<Node, Ancestor> = new WeakMap();
  * Weak maps that allow us to go between Slate nodes and DOM nodes. These
  * are used to resolve DOM event-related logic into Slate actions.
  */
-
 export const EDITOR_TO_WINDOW: WeakMap<Editor, Window> = new WeakMap();
 export const EDITOR_TO_ELEMENT: WeakMap<Editor, HTMLElement> = new WeakMap();
 export const EDITOR_TO_PLACEHOLDER: WeakMap<Editor, string> = new WeakMap();
@@ -25,10 +23,8 @@ export const EDITOR_TO_PLACEHOLDER_ELEMENT: WeakMap<
   HTMLElement
 > = new WeakMap();
 export const ELEMENT_TO_NODE: WeakMap<HTMLElement, Node> = new WeakMap();
-// Deprecated
 export const NODE_TO_ELEMENT: WeakMap<Node, HTMLElement> = new WeakMap();
 export const NODE_TO_KEY: WeakMap<Node, Key> = new WeakMap();
-export const KEY_TO_ELEMENT: WeakMap<Key, HTMLElement> = new WeakMap();
 export const EDITOR_TO_KEY_TO_ELEMENT: WeakMap<
   Editor,
   WeakMap<Key, HTMLElement>
@@ -93,12 +89,7 @@ export const EDITOR_TO_PENDING_SELECTION: WeakMap<
   Range | null
 > = new WeakMap();
 
-export const EDITOR_TO_FORCE_RENDER: WeakMap<
-  Editor,
-  () => void
-> = new WeakMap();
-
-// export const NODE_TO_VIEWNODE = new WeakMap<Node, ViewNode>();
+export const EDITOR_TO_FORCE_RENDER: WeakMap<Editor, () => void> = new WeakMap();
 
 /**
  * Symbols.
@@ -108,8 +99,3 @@ export const PLACEHOLDER_SYMBOL = (Symbol('placeholder') as unknown) as string;
 export const MARK_PLACEHOLDER_SYMBOL = (Symbol(
     "mark-placeholder"
 ) as unknown) as string;
-
-/**
- * Weak map for associating the html element with the component.
- */
-export const ELEMENT_TO_COMPONENT: WeakMap<Node, BaseElementComponent> = new WeakMap();

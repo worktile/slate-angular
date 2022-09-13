@@ -5,7 +5,6 @@ import {
   Range,
   Path,
   Operation,
-  PathRef,
   Point
 } from 'slate';
 import {
@@ -25,16 +24,20 @@ import {
   transformPendingRange,
   EDITOR_TO_PENDING_ACTION,
   transformPendingPoint,
-  EDITOR_TO_USER_SELECTION
+  EDITOR_TO_USER_SELECTION,
+  EDITOR_TO_KEY_TO_ELEMENT
 } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
-import { SafeAny } from '../types';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
   const e = editor as T & AngularEditor;
   const { apply, onChange, deleteBackward, addMark, removeMark } = e;
+
+  // The WeakMap which maps a key to a specific HTMLElement must be scoped to the editor instance to
+  // avoid collisions between editors in the DOM that share the same value.
+  EDITOR_TO_KEY_TO_ELEMENT.set(e, new WeakMap())
 
   e.addMark = (key, value) => {
     EDITOR_TO_SCHEDULE_FLUSH.get(e)?.();

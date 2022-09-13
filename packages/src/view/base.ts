@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
 import { AngularEditor } from "../plugins/angular-editor";
-import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
+import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
 import { Descendant, Element, Range, Text } from 'slate';
 import { SlateChildrenContext } from "./context";
 import { hasBeforeContextChange } from "./before-context-change";
+import { EDITOR_TO_KEY_TO_ELEMENT, Key } from "../utils";
 
 /**
  * base class for template
@@ -154,15 +155,11 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     updateWeakMap() {
         NODE_TO_ELEMENT.set(this.element, this.nativeElement);
         ELEMENT_TO_NODE.set(this.nativeElement, this.element);
-        ELEMENT_TO_COMPONENT.set(this.element, this);
     }
 
     ngOnDestroy() {
         if (NODE_TO_ELEMENT.get(this.element) === this.nativeElement) {
             NODE_TO_ELEMENT.delete(this.element);
-        }
-        if (ELEMENT_TO_COMPONENT.get(this.element) === this) {
-            ELEMENT_TO_COMPONENT.delete(this.element);
         }
     }
 
@@ -197,18 +194,29 @@ export class BaseTextComponent extends BaseComponent<SlateTextContext> implement
         return this._context && this._context.text;
     }
 
+    private get key(): Key {
+        return AngularEditor.findKey(this.editor, this.text);
+    }
+    
+    private get KEY_TO_ELEMENT(): WeakMap<Key, HTMLElement> {
+        return EDITOR_TO_KEY_TO_ELEMENT.get(this.editor);
+    }
+
+
     ngOnInit() {
         this.updateWeakMap();
         this.initialized = true;
     }
 
     updateWeakMap() {
+        this.KEY_TO_ELEMENT?.set(this.key, this.nativeElement)
         ELEMENT_TO_NODE.set(this.nativeElement, this.text);
         NODE_TO_ELEMENT.set(this.text, this.nativeElement);
     }
 
     ngOnDestroy() {
         if (NODE_TO_ELEMENT.get(this.text) === this.nativeElement) {
+            this.KEY_TO_ELEMENT?.delete(this.key)
             NODE_TO_ELEMENT.delete(this.text);
         }
     }
