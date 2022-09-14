@@ -1104,6 +1104,9 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
                 }
             }
         }
+        
+        this.detectContext();
+        this.cdr.detectChanges();
     }
 
     private onDOMCompositionUpdate(event: CompositionEvent) {
@@ -1116,6 +1119,9 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
                 IS_COMPOSING.set(this.editor, true);
             }
         }
+        
+        this.detectContext();
+        this.cdr.detectChanges();
     }
 
     private onDOMCompositionStart(event: CompositionEvent) {
@@ -1150,6 +1156,9 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
                 }
             }
         }
+
+        this.detectContext();
+        this.cdr.detectChanges();
     }
 
     private onDOMCopy(event: ClipboardEvent) {
