@@ -144,6 +144,14 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.readonly;
     }
 
+    private get key(): Key {
+        return AngularEditor.findKey(this.editor, this.element);
+    }
+    
+    private get KEY_TO_ELEMENT(): WeakMap<Key, HTMLElement> {
+        return EDITOR_TO_KEY_TO_ELEMENT.get(this.editor);
+    }
+
     ngOnInit() {
         this.updateWeakMap();
         for (const key in this._context.attributes) {
@@ -153,12 +161,14 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     }
 
     updateWeakMap() {
+        this.KEY_TO_ELEMENT?.set(this.key, this.nativeElement)
         NODE_TO_ELEMENT.set(this.element, this.nativeElement);
         ELEMENT_TO_NODE.set(this.nativeElement, this.element);
     }
 
     ngOnDestroy() {
         if (NODE_TO_ELEMENT.get(this.element) === this.nativeElement) {
+            this.KEY_TO_ELEMENT?.delete(this.key)
             NODE_TO_ELEMENT.delete(this.element);
         }
     }

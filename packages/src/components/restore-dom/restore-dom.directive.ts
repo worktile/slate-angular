@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy } from "@angular/core";
+import { AfterViewChecked, Directive, ElementRef, Input, OnDestroy } from "@angular/core";
 import { IS_ANDROID, UseRef } from "../../utils";
 import { AngularEditor } from "../../plugins/angular-editor";
 import { SlateChildrenContext, SlateViewContext } from "../../view/context";
@@ -17,7 +17,7 @@ const MUTATION_OBSERVER_CONFIG: MutationObserverInit = {
 @Directive({
   selector: "[slateRestoreDom]"
 })
-export class SlateRestoreDomDirective implements OnDestroy {
+export class SlateRestoreDomDirective implements OnDestroy, AfterViewChecked {
   @Input()
   public editor: AngularEditor;
 
@@ -38,15 +38,29 @@ export class SlateRestoreDomDirective implements OnDestroy {
   @Input()
   public viewContext: SlateViewContext;
 
+  protected _context: SlateChildrenContext;
+
   @Input()
-  public context: SlateChildrenContext;
+  public set context(context: SlateChildrenContext) {
+    this._context = context;
+    this.restoreDOM();
+  }
+
+  public get context(): SlateChildrenContext {
+    return this._context
+  }
 
   protected manager: RestoreDOMManager | null = null;
   protected mutationObserver: MutationObserver | null = null;
 
   protected _init = false;
+  private _observing = false;
 
   constructor(protected readonly elementRef: ElementRef<HTMLElement>) {}
+
+  ngAfterViewChecked(): void {
+    this.observe();
+  }
 
   public init(): void {
     if (this._init === false) {
@@ -67,7 +81,19 @@ export class SlateRestoreDomDirective implements OnDestroy {
     }
   }
 
+  restoreDOM(): void {
+    const pendingMutations = this.mutationObserver?.takeRecords()
+    if (pendingMutations?.length) {
+      this.manager?.registerMutations(pendingMutations)
+    }
+
+    this._observing = false;
+    this.mutationObserver?.disconnect()
+    this.manager?.restoreDOM()
+  }
+
   ngOnDestroy(): void {
+    this._observing = false;
     this.mutationObserver?.disconnect();
   }
 
@@ -76,9 +102,12 @@ export class SlateRestoreDomDirective implements OnDestroy {
       throw new Error("Failed to attach MutationObserver, `node` is undefined");
     }
 
-    this.mutationObserver?.observe(
-      this.elementRef.nativeElement,
-      MUTATION_OBSERVER_CONFIG
-    );
+    if (this.mutationObserver && this._init && !this._observing) {
+      this.mutationObserver?.observe(
+        this.elementRef.nativeElement,
+        MUTATION_OBSERVER_CONFIG
+      );
+    }
+
   }
 }

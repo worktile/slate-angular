@@ -9,7 +9,9 @@ import {
     NODE_TO_KEY,
     EDITOR_TO_WINDOW,
     IS_COMPOSING,
-    EDITOR_TO_KEY_TO_ELEMENT
+    EDITOR_TO_KEY_TO_ELEMENT,
+    EDITOR_TO_SCHEDULE_FLUSH,
+    EDITOR_TO_PENDING_DIFFS
 } from '../utils/weak-maps';
 import {
     DOMElement,
@@ -877,5 +879,19 @@ export const AngularEditor = {
         return (
             Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path)
         );
+    },
+
+    /**
+     * Experimental and android specific: Flush all pending diffs and cancel composition at the next possible time.
+     */
+    androidScheduleFlush(editor: Editor) {
+      EDITOR_TO_SCHEDULE_FLUSH.get(editor)?.()
+    },
+  
+    /**
+     * Experimental and android specific: Get pending diffs
+     */
+    androidPendingDiffs(editor: Editor) {
+      return EDITOR_TO_PENDING_DIFFS.get(editor)
     },
 };

@@ -46,7 +46,10 @@
               "remark-parse",
               "remark-slate",
               "rxjs/internal/scheduler/asap",
-              "faker"
+              "faker",
+              "is-url",
+              "is-hotkey",
+              "direction"
             ],
             "vendorChunk": true,
             "extractLicenses": false,

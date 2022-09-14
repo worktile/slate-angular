@@ -88,7 +88,6 @@ type DeferredOperation = () => void;
 })
 export class SlateEditableComponent extends SlateRestoreDomDirective implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
-    context: SlateChildrenContext;
 
     private destroy$ = new Subject();
 
@@ -457,6 +456,7 @@ export class SlateEditableComponent extends SlateRestoreDomDirective implements 
     }
 
     ngAfterViewChecked() {
+        super.ngAfterViewChecked();
         timeDebug('editable ngAfterViewChecked');
     }
 
