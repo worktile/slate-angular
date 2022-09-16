@@ -11,7 +11,7 @@ export enum MarkTypes {
 
 @Component({
     selector: 'span[textMark]',
-    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
+    template: `<slate-leaves [context]="context" [viewContext]="viewContext"></slate-leaves>`,
     host: {
         'data-slate-node': 'text'
     }
