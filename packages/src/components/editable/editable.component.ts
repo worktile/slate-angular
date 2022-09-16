@@ -617,6 +617,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         this.isComposing = false;
                         preventInsertFromComposition(event, this.editor);
                     }
+                        break;
                     case 'insertFromDrop':
                     case 'insertFromPaste':
                     case 'insertFromYank':
