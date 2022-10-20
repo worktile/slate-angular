@@ -56,7 +56,7 @@ export class SlateRestoreDomDirective implements OnDestroy, AfterViewChecked {
   protected _init = false;
   private _observing = false;
 
-  constructor(protected readonly elementRef: ElementRef<HTMLElement>) {}
+  constructor(public readonly elementRef: ElementRef<HTMLElement>) {}
 
   ngAfterViewChecked(): void {
     this.observe();
