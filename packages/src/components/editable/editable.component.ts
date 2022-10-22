@@ -254,7 +254,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     toNativeSelection() {
         try {
             const { selection } = this.editor;
-            const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            const { activeElement } = root;
             const domSelection = (root as Document).getSelection();
 
             if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
@@ -284,6 +285,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 hasStringTarget(domSelection) &&
                 Range.equals(AngularEditor.toSlateRange(this.editor, domSelection), selection)
             ) {
+                return;
+            }
+            
+            // prevent updating native selection when active element is void element
+            if (isTargetInsideVoid(this.editor, activeElement)) {
                 return;
             }
 
@@ -508,8 +514,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 // for example, double-click the last cell of the table to select a non-editable DOM
                 const range = AngularEditor.toSlateRange(this.editor, domSelection);
                 if (this.editor.selection && Range.equals(range, this.editor.selection) && !hasStringTarget(domSelection)) {
-                    // force adjust DOMSelection
-                    this.toNativeSelection();
+                    if (!isTargetInsideVoid(this.editor, activeElement)) {
+                        // force adjust DOMSelection
+                        this.toNativeSelection();
+                    }
                 } else {
                     Transforms.select(this.editor, range);
                 }
