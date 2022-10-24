@@ -85,15 +85,27 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         // Issue occurs when the span node of the placeholder is before the slateString span node
         if (this.context.leaf['placeholder']) {
             if (!this.placeholderElement) {
-                this.placeholderElement = document.createElement('span');
-                this.placeholderElement.innerText = this.context.leaf['placeholder'];
-                this.placeholderElement.contentEditable = 'false';
-                this.placeholderElement.setAttribute('data-slate-placeholder', 'true');
-                this.nativeElement.classList.add('leaf-with-placeholder');
-                this.nativeElement.appendChild(this.placeholderElement);
+                this.createPlaceholder();
             }
+            this.updatePlaceholder();
         } else {
             this.destroyPlaceholder();
+        }
+    }
+
+    createPlaceholder() {
+        const placeholderElement = document.createElement('span');
+        placeholderElement.innerText = this.context.leaf['placeholder'];
+        placeholderElement.contentEditable = 'false';
+        placeholderElement.setAttribute('data-slate-placeholder', 'true');
+        this.placeholderElement = placeholderElement;
+        this.nativeElement.classList.add('leaf-with-placeholder');
+        this.nativeElement.appendChild(placeholderElement);
+    }
+
+    updatePlaceholder() {
+        if (this.placeholderElement.innerText !== this.context.leaf['placeholder']) {
+            this.placeholderElement.innerText = this.context.leaf['placeholder'];
         }
     }
 
