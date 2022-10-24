@@ -131,5 +131,26 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         let placeholderLeafWithContent = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeafWithContent).toBeNull();
-    }))
+    }));
+    it('should update placeholder text when reset plaeceholder parameter',fakeAsync(()=> {
+        const placeholder = 'hello world';
+        component.placeholder = placeholder;
+        component.value = [
+            {
+                type: 'paragraph',
+                children: [{ text: '' }]
+            }
+        ];
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        const placeholderLeaf = document.querySelector<HTMLSpanElement>('[data-slate-placeholder="true"]');
+        expect(placeholderLeaf.innerText).toEqual(placeholder);
+        const newPlaceholder = 'new placeholder ...';
+        component.placeholder = newPlaceholder;
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        expect(placeholderLeaf.innerText).toEqual(newPlaceholder);
+    }));
 });
