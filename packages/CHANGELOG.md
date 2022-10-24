@@ -1,10 +1,17 @@
 # Changelog
 
+## 14.1.1
+
+### Patch Changes
+
+- [`98548be`](https://github.com/worktile/slate-angular/commit/98548bede7a0ea8e94cc34e4bfd4caf4310c89ad) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - prevent updating native selection when active element is void element
+
 ## 14.0.0
 
 ### Major Changes
 
 - [`c065c98`](https://github.com/worktile/slate-angular/commit/c065c986ef41aff45ee20626ba0b16575574fbef) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 升级 Angular 14
+
 ## 13.1.0
 
 ### Minor Changes
