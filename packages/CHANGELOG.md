@@ -1,5 +1,11 @@
 # Changelog
 
+## 14.1.2
+
+### Patch Changes
+
+- [`3a538b0`](https://github.com/worktile/slate-angular/commit/3a538b09422031b2bac9e1561401ef64421b1742) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support dynamic placeholder
+
 ## 14.1.1
 
 ### Patch Changes
