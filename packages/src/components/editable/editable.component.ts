@@ -38,7 +38,6 @@ import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
 import { SlateErrorCode } from '../../types/error';
-import Debug from 'debug';
 import { SlateStringTemplateComponent } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
@@ -47,8 +46,6 @@ import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { check, normalize } from '../../utils/global-normalize';
 import { SlatePlaceholder } from '../../types/feature';
-
-const timeDebug = Debug('slate-angular-time');
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -291,7 +288,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             ) {
                 return;
             }
-            
+
             // prevent updating native selection when active element is void element
             if (isTargetInsideVoid(this.editor, activeElement)) {
                 return;
@@ -356,15 +353,12 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     ngAfterViewChecked() {
-        timeDebug('editable ngAfterViewChecked');
     }
 
     ngDoCheck() {
-        timeDebug('editable ngDoCheck');
     }
 
     forceFlush() {
-        timeDebug('start data sync');
         this.detectContext();
         this.cdr.detectChanges();
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
@@ -401,7 +395,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             }, 0);
         }
         this.toNativeSelection();
-        timeDebug('end data sync');
     }
 
     initializeContext() {
