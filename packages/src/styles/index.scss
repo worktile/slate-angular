@@ -3,7 +3,7 @@
     display: block;
     outline: none;
     padding: 32px;
-    white-space: pre-wrap;
+    white-space: break-spaces;
     & [contenteditable="true"] {
         outline: none;
     }
