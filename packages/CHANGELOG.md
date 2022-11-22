@@ -1,5 +1,13 @@
 # Changelog
 
+## 14.1.3
+
+### Patch Changes
+
+- [#220](https://github.com/worktile/slate-angular/pull/220) [`b3525ab`](https://github.com/worktile/slate-angular/commit/b3525ab1d5579fc47800b37aeee14b2ed480a8b9) Thanks [@donaldxdonald](https://github.com/donaldxdonald)! - fix legacy check for Edge and Firefox v100+
+
+* [`27591d4`](https://github.com/worktile/slate-angular/commit/27591d4dd8e02dc8944b71e650d804f357879afa) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use break-spaces value for white-space, avoid end-of-line hang
+
 ## 14.1.2
 
 ### Patch Changes
