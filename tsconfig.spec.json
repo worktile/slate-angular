@@ -6,7 +6,6 @@
       "jasmine",
       "node"
     ],
-    "target": "es5",
   },
   "files": [
     "demo/test.ts",

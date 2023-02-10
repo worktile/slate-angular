@@ -1,5 +1,6 @@
-import { ComponentRef, Directive, EmbeddedViewRef, Input, ViewContainerRef } from "@angular/core";
+import { ComponentRef, Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from "@angular/core";
 import { SlateBlockCardComponent } from "../components/block-card/block-card.component";
+import { AngularEditor } from "../public-api";
 import { ViewType } from "../types/view";
 import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
 import { BaseComponent, BaseEmbeddedView } from "./base";
@@ -62,11 +63,11 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
         const context = this.getContext();
         if (isTemplateRef(this.viewType)) {
             this.embeddedViewContext = { context, viewContext: this.viewContext };
-            const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType, this.embeddedViewContext);
+            const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType as TemplateRef<BaseEmbeddedView<T, AngularEditor>>, this.embeddedViewContext);
             this.embeddedViewRef = embeddedViewRef;
         }
         if (isComponentType(this.viewType)) {
-            const componentRef = this.viewContainerRef.createComponent(this.viewType);
+            const componentRef = this.viewContainerRef.createComponent(this.viewType) as ComponentRef<any>;
             componentRef.instance.viewContext = this.viewContext;
             componentRef.instance.context = context;
             this.componentRef = componentRef;
@@ -94,13 +95,13 @@ export abstract class ViewContainerItem<T = SlateElementContext | SlateTextConte
             const firstRootNode = this.rootNodes[0];
             if (isTemplateRef(this.viewType)) {
                 this.embeddedViewContext = { context, viewContext: this.viewContext };
-                const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType, this.embeddedViewContext);
+                const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(this.viewType as TemplateRef<BaseEmbeddedView<T, AngularEditor>>,  this.embeddedViewContext);
                 firstRootNode.replaceWith(...embeddedViewRef.rootNodes.filter((rootNode) => isDOMElement(rootNode)));
                 this.destroyView();
                 this.embeddedViewRef = embeddedViewRef;
             }
             if (isComponentType(this.viewType)) {
-                const componentRef = this.viewContainerRef.createComponent(this.viewType);
+                const componentRef = this.viewContainerRef.createComponent(this.viewType) as ComponentRef<any>;
                 componentRef.instance.context = context;
                 componentRef.instance.viewContext = this.viewContext;
                 firstRootNode.replaceWith(componentRef.instance.nativeElement);

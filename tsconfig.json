@@ -1,38 +1,35 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "./",
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "downlevelIteration": true,
-        "experimentalDecorators": true,
-        "module": "es2020",
-        "moduleResolution": "node",
-        "importHelpers": true,
-        "target": "es2015",
-        "typeRoots": [
-            "node_modules/@types"
+      "baseUrl": "./",
+      "outDir": "./dist/out-tsc",
+      "sourceMap": true,
+      "declaration": false,
+      "downlevelIteration": true,
+      "experimentalDecorators": true,
+      "module": "es2020",
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "target": "ES2022",
+      "typeRoots": [
+        "node_modules/@types"
+      ],
+      "lib": [
+        "es2020",
+        "dom.iterable",
+        "dom"
+      ],
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "paths": {
+        "slate-angular": [
+          "packages/src/public-api"
         ],
-        "lib": [
-            "es2020",
-            "dom.iterable",
-            "dom"
-        ],
-        "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
-        "paths": {
-            // "slate-angular": [
-            //     "dist",
-            //     "dist/slate-angular"
-            // ],
-            "slate-angular": [
-                "packages/src/public-api"
-            ],
-            "slate-angular/*": [
-                "packages/src/*"
-            ]
-        }
+        "slate-angular/*": [
+          "packages/src/*"
+        ]
+      },
+      "useDefineForClassFields": false
     },
     "angularCompilerOptions": {
         "fullTemplateTypeCheck": true,
