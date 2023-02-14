@@ -43,8 +43,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { isDecoratorRangeListEqual } from '../../utils';
-import { check, normalize } from '../../utils/global-normalize';
+import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 
 // not correctly clipboardData on beforeinput
