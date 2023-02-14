@@ -1,6 +1,7 @@
 import { ComponentRef, Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from "@angular/core";
+import { AngularEditor } from "../plugins/angular-editor";
 import { SlateBlockCardComponent } from "../components/block-card/block-card.component";
-import { AngularEditor } from "../public-api";
+
 import { ViewType } from "../types/view";
 import { isComponentType, isDOMElement, isTemplateRef } from "../utils";
 import { BaseComponent, BaseEmbeddedView } from "./base";
