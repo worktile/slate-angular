@@ -1,5 +1,13 @@
 # Changelog
 
+## 15.0.0
+
+### Major Changes
+
+- [#223](https://github.com/worktile/slate-angular/pull/223) [`ad8ce3f`](https://github.com/worktile/slate-angular/commit/ad8ce3fc87bc221d811a17947e30f9dc21144f21) Thanks [@Maple13](https://github.com/Maple13)! - optimizing angular 15 upgrade
+
+* [#222](https://github.com/worktile/slate-angular/pull/222) [`33095ae`](https://github.com/worktile/slate-angular/commit/33095ae08bd56b69723ad8777e04e45c23cc5f28) Thanks [@Ashy6](https://github.com/Ashy6)! - 升级 Angular 15
+
 ## 14.1.3
 
 ### Patch Changes
