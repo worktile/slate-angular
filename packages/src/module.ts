@@ -37,7 +37,7 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/defa
         {
             provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
             useValue: SlateDefaultElementComponent
-        },
+        }
     ]
 })
-export class SlateModule { }
+export class SlateModule {}

@@ -16,7 +16,7 @@ describe('ViewContainer Class', () => {
         component.value = createMutipleParagraph();
         editor = component.editor;
     }));
-    
+
     describe('move nodes', () => {
         it('move node from [0] to [1]', fakeAsync(() => {
             fixture.detectChanges();

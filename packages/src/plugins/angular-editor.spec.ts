@@ -58,4 +58,3 @@ describe('AngularEditor', () => {
         expect(nativeRange.endOffset).toEqual(insertText.length);
     }));
 });
-

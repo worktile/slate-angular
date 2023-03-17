@@ -5,9 +5,7 @@ describe('global-normalize', () => {
     const invalidData3: any[] = [
         {
             type: 'paragraph',
-            children: [
-                { text: '' }
-            ]
+            children: [{ text: '' }]
         },
         {
             type: 'numbered-list',
@@ -85,9 +83,7 @@ describe('global-normalize', () => {
     });
 
     it('should return false', () => {
-        const invalidData1: any[] = [
-            { text: '' }
-        ];
+        const invalidData1: any[] = [{ text: '' }];
 
         const result1 = check(invalidData1);
         expect(result1).toBeFalse();
@@ -110,5 +106,5 @@ describe('global-normalize', () => {
         const result3 = normalize(invalidData3);
         expect(result3.length).toEqual(1);
         expect(result3[0]).toEqual(invalidData3[0]);
-    })
+    });
 });

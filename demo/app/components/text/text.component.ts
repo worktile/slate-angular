@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, Renderer2 } from "@angular/core";
-import { BaseTextComponent } from "slate-angular";
+import { ChangeDetectorRef, Component, ElementRef, Renderer2 } from '@angular/core';
+import { BaseTextComponent } from 'slate-angular';
 
 export enum MarkTypes {
     bold = 'bold',
@@ -22,7 +22,7 @@ export class DemoTextMarkComponent extends BaseTextComponent {
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
         super(elementRef, cdr);
     }
-    
+
     applyTextMark() {
         this.attributes.forEach(attr => {
             this.renderer2.removeAttribute(this.elementRef.nativeElement, attr);

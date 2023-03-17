@@ -1,5 +1,5 @@
-import { BaseRange } from "slate";
+import { BaseRange } from 'slate';
 
 export interface SlatePlaceholder extends BaseRange {
-  placeholder: string;
+    placeholder: string;
 }

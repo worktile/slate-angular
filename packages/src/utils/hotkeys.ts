@@ -104,4 +104,4 @@ const hotkeys = {
     isUndo: create('undo')
 };
 export default hotkeys;
-export { hotkeys } ;
+export { hotkeys };

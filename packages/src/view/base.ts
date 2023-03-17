@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from "@angular/core";
-import { AngularEditor } from "../plugins/angular-editor";
-import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from "../utils/weak-maps";
-import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from "./context";
+import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import { AngularEditor } from '../plugins/angular-editor';
+import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
+import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
 import { Descendant, Element, Range, Text } from 'slate';
-import { SlateChildrenContext } from "./context";
-import { hasBeforeContextChange } from "./before-context-change";
+import { SlateChildrenContext } from './context';
+import { hasBeforeContextChange } from './before-context-change';
 
 /**
  * base class for template
@@ -18,7 +18,10 @@ export interface BaseEmbeddedView<T, K extends AngularEditor = AngularEditor> {
  * base class for custom element component or text component
  */
 @Directive()
-export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
+export abstract class BaseComponent<
+    T = SlateTextContext | SlateLeafContext | SlateElementContext,
+    K extends AngularEditor = AngularEditor
+> {
     protected _context: T;
 
     @Input()
@@ -44,7 +47,7 @@ export abstract class BaseComponent<T = SlateTextContext | SlateLeafContext | Sl
         return this.elementRef.nativeElement;
     }
 
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef) { }
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef) {}
 
     abstract onContextChange();
 }
@@ -58,7 +61,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 
     placeholderElement: HTMLSpanElement;
 
-    @HostBinding('attr.data-slate-leaf') isSlateLeaf = true
+    @HostBinding('attr.data-slate-leaf') isSlateLeaf = true;
 
     get text(): Text {
         return this.context && this.context.text;
@@ -122,7 +125,10 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
  * base class for custom element component
  */
 @Directive()
-export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseComponent<SlateElementContext<T>, K> implements OnInit, OnDestroy {
+export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor>
+    extends BaseComponent<SlateElementContext<T>, K>
+    implements OnInit, OnDestroy
+{
     initialized = false;
 
     childrenContext: SlateChildrenContext;

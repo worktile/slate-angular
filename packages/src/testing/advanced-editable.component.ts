@@ -1,21 +1,21 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { createEditor, Element, NodeEntry, Text } from "slate";
-import { SlateEditableComponent } from "../components/editable/editable.component";
-import { withAngular } from "../plugins/with-angular";
-import { createDefaultDocument } from "./create-document";
-import { TestingLeafComponent } from "./leaf.component";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { createEditor, Element, NodeEntry, Text } from 'slate';
+import { SlateEditableComponent } from '../components/editable/editable.component';
+import { withAngular } from '../plugins/with-angular';
+import { createDefaultDocument } from './create-document';
+import { TestingLeafComponent } from './leaf.component';
 
 @Component({
     selector: 'basic-editable',
     template: `
-        <slate-editable 
+        <slate-editable
             [editor]="editor"
             [ngModel]="value"
             [decorate]="decorate"
             [renderLeaf]="renderLeaf"
             [placeholder]="placeholder"
             [trackBy]="trackBy"
-            ></slate-editable>
+        ></slate-editable>
     `
 })
 export class AdvancedEditableComponent implements OnInit {
@@ -46,7 +46,7 @@ export class AdvancedEditableComponent implements OnInit {
                         ranges.push({
                             anchor: { path, offset: offset - keywords.length },
                             focus: { path, offset },
-                            highlight: true,
+                            highlight: true
                         });
                     }
 
@@ -63,11 +63,9 @@ export class AdvancedEditableComponent implements OnInit {
             return TestingLeafComponent;
         }
         return null;
-    }
+    };
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
-    constructor() {
-    }
+    constructor() {}
 }

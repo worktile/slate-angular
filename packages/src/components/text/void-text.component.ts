@@ -1,10 +1,4 @@
-
-import {
-    Component,
-    ChangeDetectionStrategy,
-    OnInit,
-    OnChanges
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnChanges } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
 import { AngularEditor } from '../../plugins/angular-editor';
 
@@ -14,8 +8,8 @@ import { AngularEditor } from '../../plugins/angular-editor';
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[attr.contenteditable]': 'isLeafBlock',
-        'data-slate-spacer': "true",
-        'class': 'slate-spacer',
+        'data-slate-spacer': 'true',
+        class: 'slate-spacer',
         'data-slate-node': 'text'
     }
 })

@@ -11,10 +11,10 @@ const HOTKEYS = {
     'mod+b': MarkTypes.bold,
     'mod+i': MarkTypes.italic,
     'mod+u': MarkTypes.underline,
-    'mod+`': MarkTypes.strike,
-}
+    'mod+`': MarkTypes.strike
+};
 
-const LIST_TYPES = ['numbered-list', 'bulleted-list']
+const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 
 @Component({
     selector: 'demo-richtext',
@@ -23,48 +23,47 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list']
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;
 
-    toggleBlock = (format) => {
-        const isActive = this.isBlockActive(format)
-        const isList = LIST_TYPES.includes(format)
+    toggleBlock = format => {
+        const isActive = this.isBlockActive(format);
+        const isList = LIST_TYPES.includes(format);
 
         Transforms.unwrapNodes(this.editor, {
-            match: n =>
-                LIST_TYPES.includes(Element.isElement(n) && n.type),
-            split: true,
-        })
+            match: n => LIST_TYPES.includes(Element.isElement(n) && n.type),
+            split: true
+        });
         const newProperties: Partial<Element> = {
-            type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-        }
-        Transforms.setNodes(this.editor, newProperties)
+            type: isActive ? 'paragraph' : isList ? 'list-item' : format
+        };
+        Transforms.setNodes(this.editor, newProperties);
 
         if (!isActive && isList) {
-            const block = { type: format, children: [] }
-            Transforms.wrapNodes(this.editor, block)
+            const block = { type: format, children: [] };
+            Transforms.wrapNodes(this.editor, block);
         }
-    }
+    };
 
-    toggleMark = (format) => {
-        const isActive = this.isMarkActive(format)
+    toggleMark = format => {
+        const isActive = this.isMarkActive(format);
 
         if (isActive) {
-            Editor.removeMark(this.editor, format)
+            Editor.removeMark(this.editor, format);
         } else {
-            Editor.addMark(this.editor, format, true)
+            Editor.addMark(this.editor, format, true);
         }
-    }
+    };
 
-    isBlockActive = (format) => {
+    isBlockActive = format => {
         const [match] = Editor.nodes(this.editor, {
-            match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
-        })
+            match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === format
+        });
 
-        return !!match
-    }
+        return !!match;
+    };
 
-    isMarkActive = (format) => {
-        const marks = Editor.marks(this.editor)
-        return marks ? marks[format] === true : false
-    }
+    isMarkActive = format => {
+        const marks = Editor.marks(this.editor);
+        return marks ? marks[format] === true : false;
+    };
 
     toolbarItems = [
         {
@@ -120,7 +119,7 @@ export class DemoRichtextComponent implements OnInit {
             icon: 'format_list_bulleted',
             active: this.isBlockActive,
             action: this.toggleBlock
-        },
+        }
     ];
 
     @ViewChild('heading_1', { read: TemplateRef, static: true })
@@ -154,7 +153,9 @@ export class DemoRichtextComponent implements OnInit {
 
     valueChange(event) {
         if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
-            console.log(`anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`);
+            console.log(
+                `anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`
+            );
             console.log('operations: ', this.editor.operations);
         }
     }
@@ -182,23 +183,23 @@ export class DemoRichtextComponent implements OnInit {
             return this.liTemplate;
         }
         return null;
-    }
+    };
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return DemoTextMarkComponent;
         }
-    }
+    };
 
     keydown = (event: KeyboardEvent) => {
         for (const hotkey in HOTKEYS) {
             if (isHotkey(hotkey, event as any)) {
-                event.preventDefault()
-                const mark = HOTKEYS[hotkey]
+                event.preventDefault();
+                const mark = HOTKEYS[hotkey];
                 this.toggleMark(mark);
             }
         }
-    }
+    };
 }
 const initialValue = [
     {

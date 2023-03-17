@@ -1,17 +1,28 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren } from "@angular/core";
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    QueryList,
+    SimpleChanges,
+    ViewChildren
+} from '@angular/core';
 import { Text } from 'slate';
-import { SlateLeafContext, SlateTextContext, SlateViewContext } from "../../view/context";
-import { ViewContainer } from "../../view/container";
-import { SlateLeafComponent } from "../leaf/leaf.component";
-import { isDecoratorRangeListEqual } from "../../utils/range-list";
+import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../../view/context';
+import { ViewContainer } from '../../view/container';
+import { SlateLeafComponent } from '../leaf/leaf.component';
+import { isDecoratorRangeListEqual } from '../../utils/range-list';
 
 @Component({
     selector: 'slate-leaves',
     template: `<slate-leaf
-                    [context]="context" [viewContext]="viewContext"
-                    [viewContext]="viewContext"
-                    *ngFor="let context of leafContexts; trackBy: trackBy"></slate-leaf>
-    `,
+        [context]="context"
+        [viewContext]="viewContext"
+        [viewContext]="viewContext"
+        *ngFor="let context of leafContexts; trackBy: trackBy"
+    ></slate-leaf> `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
@@ -38,7 +49,7 @@ export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> impl
                 parent: this.context.parent,
                 index,
                 isLast: this.context.isLast && index === this.leaves.length - 1
-            }
+            };
         });
     }
 

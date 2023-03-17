@@ -2,22 +2,14 @@ import { Component, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/co
 import { BaseLeafComponent } from 'slate-angular';
 
 @Component({
-  selector: 'span[testingLeaf]',
-  template: `
-    <span slateString [context]="context" [viewContext]="viewContext"
-      ><span></span
-    ></span>
-  `,
-  host: {
-      'class': 'testing-leaf'
-  }
+    selector: 'span[testingLeaf]',
+    template: ` <span slateString [context]="context" [viewContext]="viewContext"><span></span></span> `,
+    host: {
+        class: 'testing-leaf'
+    }
 })
 export class TestingLeafComponent extends BaseLeafComponent {
-    constructor(
-        public elementRef: ElementRef,
-        public cdr: ChangeDetectorRef,
-        private renderer: Renderer2
-    ) {
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, private renderer: Renderer2) {
         super(elementRef, cdr);
     }
 

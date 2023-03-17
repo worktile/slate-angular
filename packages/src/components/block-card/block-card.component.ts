@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'slate-block-card, [slateBlockCard]',
@@ -26,7 +26,9 @@ export class SlateBlockCardComponent implements OnInit {
     }
 
     append() {
-        this.centerRootNodes.forEach((rootNode) => !this.centerContainerElement.contains(rootNode) && this.centerContainerElement.appendChild(rootNode));
+        this.centerRootNodes.forEach(
+            rootNode => !this.centerContainerElement.contains(rootNode) && this.centerContainerElement.appendChild(rootNode)
+        );
     }
 
     initializeCenter(rootNodes: HTMLElement[]) {

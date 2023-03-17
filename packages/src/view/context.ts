@@ -1,7 +1,7 @@
-import { NodeEntry, Range, Element, Ancestor, Text } from "slate";
-import { SlateStringTemplateComponent } from "../components/string/template.component";
-import { AngularEditor } from "../plugins/angular-editor";
-import { ViewType } from "../types/view";
+import { NodeEntry, Range, Element, Ancestor, Text } from 'slate';
+import { SlateStringTemplateComponent } from '../components/string/template.component';
+import { AngularEditor } from '../plugins/angular-editor';
+import { ViewType } from '../types/view';
 
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
@@ -10,7 +10,7 @@ export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;
     renderText?: (text: Text) => ViewType;
-    isStrictDecorate: boolean
+    isStrictDecorate: boolean;
 }
 
 export interface SlateChildrenContext {
@@ -49,7 +49,7 @@ export interface SlateElementAttributes {
     'data-slate-node': 'element';
     'data-slate-void'?: boolean;
     'data-slate-inline'?: boolean;
-    'contenteditable'?: boolean;
+    contenteditable?: boolean;
     'data-slate-key'?: string;
     dir?: 'rtl';
 }

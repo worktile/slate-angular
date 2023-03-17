@@ -2,25 +2,21 @@
  * Utilities for single-line deletion
  */
 
-import { Range, Editor } from 'slate'
+import { Range, Editor } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
 
 const doRectsIntersect = (rect: DOMRect, compareRect: DOMRect) => {
-    const middle = (compareRect.top + compareRect.bottom) / 2
+    const middle = (compareRect.top + compareRect.bottom) / 2;
 
-    return rect.top <= middle && rect.bottom >= middle
-}
+    return rect.top <= middle && rect.bottom >= middle;
+};
 
-const areRangesSameLine = (
-    editor: AngularEditor,
-    range1: Range,
-    range2: Range
-) => {
-    const rect1 = AngularEditor.toDOMRange(editor, range1).getBoundingClientRect()
-    const rect2 = AngularEditor.toDOMRange(editor, range2).getBoundingClientRect()
+const areRangesSameLine = (editor: AngularEditor, range1: Range, range2: Range) => {
+    const rect1 = AngularEditor.toDOMRange(editor, range1).getBoundingClientRect();
+    const rect2 = AngularEditor.toDOMRange(editor, range2).getBoundingClientRect();
 
-    return doRectsIntersect(rect1, rect2) && doRectsIntersect(rect2, rect1)
-}
+    return doRectsIntersect(rect1, rect2) && doRectsIntersect(rect2, rect1);
+};
 
 /**
  * A helper utility that returns the end portion of a `Range`
@@ -30,10 +26,7 @@ const areRangesSameLine = (
  * @param {Range} parentRange The parent range to compare against
  * @returns {Range} A valid portion of the parentRange which is one a single line
  */
-export const findCurrentLineRange = (
-    editor: AngularEditor,
-    parentRange: Range
-): Range => {
+export const findCurrentLineRange = (editor: AngularEditor, parentRange: Range): Range => {
     const parentRangeBoundary = Editor.range(editor, Range.end(parentRange));
     const positions = Array.from(Editor.positions(editor, { at: parentRange }));
 
@@ -41,32 +34,16 @@ export const findCurrentLineRange = (
     let right = positions.length;
     let middle = Math.floor(right / 2);
 
-    if (
-        areRangesSameLine(
-            editor,
-            Editor.range(editor, positions[left]),
-            parentRangeBoundary
-        )
-    ) {
+    if (areRangesSameLine(editor, Editor.range(editor, positions[left]), parentRangeBoundary)) {
         return Editor.range(editor, positions[left], parentRangeBoundary);
     }
 
     if (positions.length < 2) {
-        return Editor.range(
-            editor,
-            positions[positions.length - 1],
-            parentRangeBoundary
-        );
+        return Editor.range(editor, positions[positions.length - 1], parentRangeBoundary);
     }
 
     while (middle !== positions.length && middle !== left) {
-        if (
-            areRangesSameLine(
-                editor,
-                Editor.range(editor, positions[middle]),
-                parentRangeBoundary
-            )
-        ) {
+        if (areRangesSameLine(editor, Editor.range(editor, positions[middle]), parentRangeBoundary)) {
             right = middle;
         } else {
             left = middle;
@@ -76,4 +53,4 @@ export const findCurrentLineRange = (
     }
 
     return Editor.range(editor, positions[right], parentRangeBoundary);
-}
+};

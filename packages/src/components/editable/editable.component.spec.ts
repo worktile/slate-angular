@@ -11,14 +11,14 @@ describe('Editable Component', () => {
         configureBasicEditableTestingModule([AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
         fixture = TestBed.createComponent(AdvancedEditableComponent);
         component = fixture.componentInstance;
-    }));    
+    }));
 
     it('decorate', fakeAsync(() => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
         let testingLeaf;
-        testingLeaf= fixture.debugElement.query(By.css('.testing-leaf'));
+        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf'));
         expect(testingLeaf).toBeFalsy();
 
         const keywords1 = 'text';
@@ -35,7 +35,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf')).nativeElement;;
+        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf')).nativeElement;
         expect(testingLeaf).toBeTruthy();
         expect(testingLeaf.textContent).toEqual(keywords2);
     }));
@@ -67,9 +67,9 @@ describe('Editable Component', () => {
     }));
 
     it('should not rerender when set trackBy', fakeAsync(() => {
-        component.trackBy = (element) => {
+        component.trackBy = element => {
             return element['key'];
-        }
+        };
         component.value = [
             {
                 type: 'paragraph',
@@ -95,7 +95,7 @@ describe('Editable Component', () => {
         expect(paragraphElement === newParagraphElement).toBeTrue();
     }));
 
-    it('should use default logic to show placeholder when set placeholder value',fakeAsync(()=> {
+    it('should use default logic to show placeholder when set placeholder value', fakeAsync(() => {
         const placeholder = 'hello world';
         component.placeholder = placeholder;
         component.value = [
@@ -109,7 +109,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         const placeholderLeaf = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeaf).not.toBeNull();
-        
+
         AngularEditor.focus(component.editor);
         const inputElement = document.querySelector('[editable-text]');
         dispatchFakeEvent(inputElement, 'compositionstart', true);
@@ -118,7 +118,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         let placeholderLeafWithComposition = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeafWithComposition).toBeNull();
-        
+
         // and disappear when editor has content
         component.value = [
             {
@@ -132,7 +132,7 @@ describe('Editable Component', () => {
         let placeholderLeafWithContent = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeafWithContent).toBeNull();
     }));
-    it('should update placeholder text when reset plaeceholder parameter',fakeAsync(()=> {
+    it('should update placeholder text when reset plaeceholder parameter', fakeAsync(() => {
         const placeholder = 'hello world';
         component.placeholder = placeholder;
         component.value = [

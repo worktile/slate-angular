@@ -43,16 +43,10 @@ import { DemoElementLinkComponent } from './components/link/link.component';
         DemoInlinesComponent,
         DemoElementLinkComponent
     ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        FormsModule,
-        SlateModule,
-    ],
+    imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule, FormsModule, SlateModule],
     providers: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor() {}
+    constructor() {}
 }

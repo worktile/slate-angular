@@ -13,7 +13,7 @@ describe('Block Card Component', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-    }));    
+    }));
 
     it('The block-card component should be created', fakeAsync(() => {
         let blockCardElement: HTMLElement;

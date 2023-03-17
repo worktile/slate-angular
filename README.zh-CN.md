@@ -9,16 +9,13 @@
 [coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/worktile/slate-angular
 
-
 基于 Slate 的 Angular 视图层
-
 
 ## 介绍
 
-[Slate](https://github.com/ianstormtaylor/slate) 是一款架构良好、高扩展性的富文本编辑器框架，包括核心模型和视图层，但slate官方只提供了基于react的视图层，slate-angular 是 slate 视图层实现的补充，可帮助您使用 slate 和 angular 构建富文本编辑器。
+[Slate](https://github.com/ianstormtaylor/slate) 是一款架构良好、高扩展性的富文本编辑器框架，包括核心模型和视图层，但 slate 官方只提供了基于 react 的视图层，slate-angular 是 slate 视图层实现的补充，可帮助您使用 slate 和 angular 构建富文本编辑器。
 
 slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular 各自的风格, 对中文输入友好, 开启你的 slate-angular 之旅吧。
-
 
 ## 示例
 
@@ -26,22 +23,21 @@ slate-angular 以 slate-react 为灵感，并且尽量保持 slate 和 angular �
 
 ![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.gif)
 
-
 ### 功能
 
-- 支持Element前后光标方案
-- 支持自定义组件/模版渲染Element
-- 支持自定义组件/模版渲染Text
-- 支持自定义组件/模版渲染Leaf
-- 支持decorate装饰
-- 支持void元素
+-   支持 Element 前后光标方案
+-   支持自定义组件/模版渲染 Element
+-   支持自定义组件/模版渲染 Text
+-   支持自定义组件/模版渲染 Leaf
+-   支持 decorate 装饰
+-   支持 void 元素
 
 ### 兼容浏览器
 
 Chrome、Edge、Safari、Firefox、QQ Browser
 
-
 ## Usage
+
 ### 1. 安装依赖
 
 ```
@@ -111,7 +107,7 @@ src/styles.scss
         padding-left: 10px !important;
         border-left: 4px solid #eee;
     }
-    
+
     h1,h2,h3 {
         margin: 0px;
     }
@@ -157,7 +153,7 @@ export class DemoTextMarkComponent extends BaseTextComponent {
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
         super(elementRef, cdr);
     }
-    
+
     applyTextMark() {
         this.attributes.forEach(attr => {
             this.renderer2.removeAttribute(this.elementRef.nativeElement, attr);
@@ -285,7 +281,7 @@ export class AppComponent {
         }
         return null;
     }
-    
+
     renderText = (text: any) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return DemoTextMarkComponent;
@@ -343,8 +339,6 @@ const initialValue = [
 
 ```
 
-
-
 ### 6. 启动
 
 > 记得在 NgModule 中声明刚刚创建的 DemoTextMarkComponent 组件
@@ -355,10 +349,7 @@ const initialValue = [
 
 > 现在基础使用中还没有实现工具栏，你可以根据你自己的需要引入图标库或者组件库实现工具栏.
 
-基础使用代码仓储: [https://github.com/pubuzhixing8/slate-angular-basic](https://github.com/pubuzhixing8/slate-angular-basic)  
-
-
-
+基础使用代码仓储: [https://github.com/pubuzhixing8/slate-angular-basic](https://github.com/pubuzhixing8/slate-angular-basic)
 
 ## 谁在使用 slate-angular?
 
@@ -374,7 +365,6 @@ const initialValue = [
   </tr>
 </table>
 
-
 ## 💻 开发
 
 ```bash
@@ -388,14 +378,12 @@ npm run build              // 重新构建 slate-angular
 npm run test               // 执行单元测试
 ```
 
-
 ## 依赖
 
 Angular >= 10.2.4
 
 Slate >= 0.63.0
 
-
 ## 贡献代码
 
-欢迎 🌟 Stars 和 📥 Pull requests! 
+欢迎 🌟 Stars 和 📥 Pull requests!

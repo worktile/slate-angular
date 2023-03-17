@@ -1,29 +1,29 @@
 {
-    "name": "slate-angular",
-    "version": "15.0.0",
-    "description": "Angular view layer for Slate",
-    "author": "pubuzhixing <pubuzhixing@gmail.com>",
-    "homepage": "https://github.com/worktile/slate-angular#readme",
-    "license": "MIT",
-    "peerDependencies": {
-        "slate": ">= 0.63.0",
-        "slate-history": "^0.66.0",
-        "debug": "^4.1.1",
-        "direction": "^1.0.3",
-        "is-hotkey": "^0.1.6"
+  "name": "slate-angular",
+  "version": "15.0.0",
+  "description": "Angular view layer for Slate",
+  "author": "pubuzhixing <pubuzhixing@gmail.com>",
+  "homepage": "https://github.com/worktile/slate-angular#readme",
+  "license": "MIT",
+  "peerDependencies": {
+    "slate": ">= 0.63.0",
+    "slate-history": "^0.66.0",
+    "debug": "^4.1.1",
+    "direction": "^1.0.3",
+    "is-hotkey": "^0.1.6"
+  },
+  "dependencies": {
+    "tslib": "^2.5.0"
+  },
+  "exports": {
+    ".": {
+      "sass": "./styles/index.scss"
     },
-    "dependencies": {
-        "tslib": "^2.5.0"
+    "./styles": {
+      "sass": "./styles/index.scss"
     },
-    "exports": {
-        ".": {
-            "sass": "./styles/index.scss"
-        },
-        "./styles": {
-            "sass": "./styles/index.scss"
-        },
-        "./styles/index.scss": {
-            "sass": "./styles/index.scss"
-        }
+    "./styles/index.scss": {
+      "sass": "./styles/index.scss"
     }
+  }
 }

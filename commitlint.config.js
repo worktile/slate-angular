@@ -5,7 +5,8 @@ module.exports = {
         'scope-empty': [2, 'never'],
         'scope-enum': [
             2,
-            'always', [
+            'always',
+            [
                 'demo',
                 'deps',
                 'core',

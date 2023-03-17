@@ -1,18 +1,21 @@
 <div class="demo-rich-editor-wrapper demo-table-editor-wrapper">
-    <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
-        (ngModelChange)="valueChange($event)" [renderText]="renderText" [renderElement]="renderElement()"
-        (mousedown)="mousedown($event)">
-        <ng-template #tableTemplate let-context="context" let-viewContext="viewContext">
-            <table contenteditable="true" slateElement [context]="context" [viewContext]="viewContext">
-            </table>
-        </ng-template>
-        <ng-template #trTemplate let-context="context" let-viewContext="viewContext">
-            <tr slateElement [context]="context" [viewContext]="viewContext">
-            </tr>
-        </ng-template>
-        <ng-template #tdTemplate let-context="context" let-viewContext="viewContext">
-            <td slateElement [context]="context" [viewContext]="viewContext">
-            </td>
-        </ng-template>
-    </slate-editable>
+  <slate-editable
+    class="demo-slate-angular-editor"
+    [editor]="editor"
+    [(ngModel)]="value"
+    (ngModelChange)="valueChange($event)"
+    [renderText]="renderText"
+    [renderElement]="renderElement()"
+    (mousedown)="mousedown($event)"
+  >
+    <ng-template #tableTemplate let-context="context" let-viewContext="viewContext">
+      <table contenteditable="true" slateElement [context]="context" [viewContext]="viewContext"></table>
+    </ng-template>
+    <ng-template #trTemplate let-context="context" let-viewContext="viewContext">
+      <tr slateElement [context]="context" [viewContext]="viewContext"></tr>
+    </ng-template>
+    <ng-template #tdTemplate let-context="context" let-viewContext="viewContext">
+      <td slateElement [context]="context" [viewContext]="viewContext"></td>
+    </ng-template>
+  </slate-editable>
 </div>

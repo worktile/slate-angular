@@ -1,24 +1,27 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnInit, ViewContainerRef } from "@angular/core";
-import { SlateBlockCardComponent } from "../block-card/block-card.component";
+import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnInit, ViewContainerRef } from '@angular/core';
+import { SlateBlockCardComponent } from '../block-card/block-card.component';
 import { ViewContainerItem } from '../../view/container-item';
-import { Descendant, Editor, Range, Element } from "slate";
-import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from "../../view/context";
-import { AngularEditor } from "../../plugins/angular-editor";
-import { NODE_TO_INDEX, NODE_TO_PARENT } from "../../utils/weak-maps";
-import { BaseElementComponent, BaseTextComponent } from "../../view/base";
-import { SlateDefaultTextComponent } from "../text/default-text.component";
-import { SlateVoidTextComponent } from "../text/void-text.component";
-import { isDecoratorRangeListEqual } from "../../utils";
-import { ComponentType, ViewType } from "../../types/view";
-import { SlateErrorCode } from "../../types";
-import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from "../element/default-element.component.token";
+import { Descendant, Editor, Range, Element } from 'slate';
+import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from '../../view/context';
+import { AngularEditor } from '../../plugins/angular-editor';
+import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
+import { BaseElementComponent, BaseTextComponent } from '../../view/base';
+import { SlateDefaultTextComponent } from '../text/default-text.component';
+import { SlateVoidTextComponent } from '../text/void-text.component';
+import { isDecoratorRangeListEqual } from '../../utils';
+import { ComponentType, ViewType } from '../../types/view';
+import { SlateErrorCode } from '../../types';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
 
 @Component({
     selector: 'slate-descendant',
     template: '',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateDescendantComponent extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent> implements OnInit, OnChanges {
+export class SlateDescendantComponent
+    extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent>
+    implements OnInit, OnChanges
+{
     @Input() descendant: Descendant;
 
     @Input() context: SlateChildrenContext;
@@ -38,9 +41,12 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
         return this.viewContext.editor.isBlockCard(this.descendant);
     }
 
-    constructor(protected viewContainerRef: ViewContainerRef,
-        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN) public defaultElementComponentType: ComponentType<BaseElementComponent>) {
-        super(viewContainerRef)
+    constructor(
+        protected viewContainerRef: ViewContainerRef,
+        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
+        public defaultElementComponentType: ComponentType<BaseElementComponent>
+    ) {
+        super(viewContainerRef);
     }
 
     ngOnInit() {
@@ -107,7 +113,10 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             }
             return { selection: sel, decorations: ds };
         } catch (error) {
-            this.viewContext.editor.onError({ code: SlateErrorCode.GetStartPointError, nativeError: error });
+            this.viewContext.editor.onError({
+                code: SlateErrorCode.GetStartPointError,
+                nativeError: error
+            });
             return { selection: null, decorations: [] };
         }
     }
@@ -154,7 +163,9 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             return (this.viewContext.renderElement && this.viewContext.renderElement(this.descendant)) || this.defaultElementComponentType;
         } else {
             const isVoid = this.viewContext.editor.isVoid(this.context.parent as Element);
-            return isVoid ? SlateVoidTextComponent : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
+            return isVoid
+                ? SlateVoidTextComponent
+                : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
         }
     }
 
@@ -164,10 +175,7 @@ export class SlateDescendantComponent extends ViewContainerItem<SlateElementCont
             (!this.viewContext.isStrictDecorate || prev.decorate === next.decorate) &&
             prev.readonly === next.readonly &&
             isDecoratorRangeListEqual(prev.decorations, next.decorations) &&
-            (prev.selection === next.selection ||
-                (!!prev.selection &&
-                    !!next.selection &&
-                    Range.equals(prev.selection, next.selection)))
+            (prev.selection === next.selection || (!!prev.selection && !!next.selection && Range.equals(prev.selection, next.selection)))
         );
     }
 
