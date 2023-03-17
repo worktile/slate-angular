@@ -1,17 +1,17 @@
 <div class="demo-rich-editor-wrapper single">
-    <div class="demo-global-toolbar">
-        <div class="search-highlighting-toolbar">
-            <span class="material-icons">search</span>
-            <input type="search" placeholder="Search the text..." [(ngModel)]="keywords" (ngModelChange)="keywordsChange($event)" />
-        </div>
+  <div class="demo-global-toolbar">
+    <div class="search-highlighting-toolbar">
+      <span class="material-icons">search</span>
+      <input type="search" placeholder="Search the text..." [(ngModel)]="keywords" (ngModelChange)="keywordsChange($event)" />
     </div>
-    <slate-editable
-        class="demo-slate-angular-editor demo-image-editor"
-        [editor]="editor"
-        [(ngModel)]="value"
-        [renderText]="renderText"
-        [decorate]="decorate"
-        [renderLeaf]="renderLeaf"
-    >
-    </slate-editable>
+  </div>
+  <slate-editable
+    class="demo-slate-angular-editor demo-image-editor"
+    [editor]="editor"
+    [(ngModel)]="value"
+    [renderText]="renderText"
+    [decorate]="decorate"
+    [renderLeaf]="renderLeaf"
+  >
+  </slate-editable>
 </div>
