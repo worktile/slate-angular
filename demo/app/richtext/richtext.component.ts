@@ -226,24 +226,8 @@ const initialValue = [
         type: 'paragraph',
         children: [
             {
-                text: `Since it's rich text, you can do things like turn a selection of text `
-            },
-            { text: 'bold', bold: true },
-            {
-                text: ', or add a semantically rendered block quote in the middle of the page, like this:'
+                text: `Since`
             }
         ]
-    },
-    {
-        type: 'block-quote',
-        children: [{ text: 'A wise quote.' }]
-    },
-    {
-        type: 'paragraph',
-        children: [{ text: 'Try it out for yourself!' }]
-    },
-    {
-        type: 'paragraph',
-        children: [{ text: '' }]
     }
 ];

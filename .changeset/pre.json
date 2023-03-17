@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "slate-angular": "15.0.0"
+  },
+  "changesets": []
+}

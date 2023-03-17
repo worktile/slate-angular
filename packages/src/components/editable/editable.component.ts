@@ -41,7 +41,7 @@ import {
     getDefaultView
 } from '../../utils/dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -53,6 +53,7 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
+import { restoreDom } from '../../utils/restore-dom';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -270,7 +271,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             const { activeElement } = root;
             const domSelection = (root as Document).getSelection();
 
-            if (this.isComposing || !domSelection || !AngularEditor.isFocused(this.editor)) {
+            if ((this.isComposing && !IS_ANDROID) || !domSelection || !AngularEditor.isFocused(this.editor)) {
                 return;
             }
 
@@ -362,6 +363,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     onChange() {
+        console.log(JSON.stringify(this.editor.operations));
+        console.log(JSON.stringify(this.editor.children));
         this.forceFlush();
         this.onChangeCallback(this.editor.children);
     }
@@ -489,7 +492,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private toSlateSelection() {
-        if (!this.isComposing && !this.isUpdatingSelection && !this.isDraggingInternally) {
+        if ((!this.isComposing || IS_ANDROID) && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
                 const { activeElement } = root;
@@ -547,6 +550,33 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const editor = this.editor;
         const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
         const { activeElement } = root;
+        const { selection } = editor;
+        const { inputType: type } = event;
+        const data = event.dataTransfer || event.data || undefined;
+        if (IS_ANDROID) {
+            if (type === 'insertCompositionText') {
+                if (data && data.toString().includes('\n')) {
+                    restoreDom(editor, () => {
+                        Editor.insertBreak(editor);
+                    });
+                } else {
+                    let [nativeTargetRange] = (event as any).getTargetRanges();
+                    if (nativeTargetRange) {
+                        const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
+                        if (data) {
+                            setTimeout(() => {
+                                Transforms.insertText(editor, data.toString(), { at: targetRange });
+                            }, 0);
+                        } else {
+                            restoreDom(editor, () => {
+                                Transforms.delete(editor, { at: targetRange });
+                            });
+                        }
+                    }
+                }
+                return;
+            }
+        }
         if (
             !this.readonly &&
             hasEditableTarget(editor, event.target) &&
@@ -554,9 +584,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             !this.isDOMEventHandled(event, this.beforeInput)
         ) {
             try {
-                const { selection } = editor;
-                const { inputType: type } = event;
-                const data = event.dataTransfer || event.data || undefined;
                 event.preventDefault();
 
                 // COMPAT: If the selection is expanded, even if the command seems like
@@ -582,7 +609,11 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     }
 
                     case 'deleteContentBackward': {
-                        Editor.deleteBackward(editor);
+                        if (IS_ANDROID) {
+                            restoreDom(editor, () => {
+                                Editor.deleteBackward(editor);
+                            });
+                        }
                         break;
                     }
 
@@ -745,7 +776,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
             // ends since it will already have been committed to the DOM.
-            if (this.isComposing === true && !IS_SAFARI && event.data) {
+            if (this.isComposing === true && !IS_SAFARI && !IS_ANDROID && event.data) {
                 preventInsertFromComposition(event, this.editor);
                 Editor.insertText(this.editor, event.data);
             }
