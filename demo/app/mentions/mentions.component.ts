@@ -25,10 +25,9 @@ export class DemoMentionsComponent implements OnInit {
     @ViewChild('suggestionList', { static: true })
     suggestionList: ElementRef;
 
-    constructor(private renderer2: Renderer2, private cdr: ChangeDetectorRef) { }
+    constructor(private renderer2: Renderer2, private cdr: ChangeDetectorRef) {}
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     renderElement = (element: Element) => {
         if (element.type === 'mention') {
@@ -74,11 +73,13 @@ export class DemoMentionsComponent implements OnInit {
         }
     };
 
-
     valueChange(value: Element[]) {
         const { selection, operations } = this.editor;
         if (operations[0].type === 'insert_text' && operations[0].text === this.trigger) {
-            this.target = { anchor: Editor.before(this.editor, selection.anchor), focus: selection.focus };
+            this.target = {
+                anchor: Editor.before(this.editor, selection.anchor),
+                focus: selection.focus
+            };
             this.searchText = '';
             this.activeIndex = 0;
             this.updateSuggestionsLocation();
@@ -104,24 +105,14 @@ export class DemoMentionsComponent implements OnInit {
     }
 
     updateSuggestionsLocation() {
-        this.suggestions = CHARACTERS
-            .filter(suggestion => {
-                return suggestion.toLowerCase().includes(this.searchText.toLowerCase());
-            })
-            .slice(0, 10);
+        this.suggestions = CHARACTERS.filter(suggestion => {
+            return suggestion.toLowerCase().includes(this.searchText.toLowerCase());
+        }).slice(0, 10);
         if (this.target && this.suggestions.length) {
             const nativeRange = AngularEditor.toDOMRange(this.editor, this.target);
             const rect = nativeRange.getBoundingClientRect();
-            this.renderer2.setStyle(
-                this.suggestionList.nativeElement,
-                'left',
-                `${rect.left + window.pageXOffset}px`
-            );
-            this.renderer2.setStyle(
-                this.suggestionList.nativeElement,
-                'top',
-                `${rect.top + window.pageYOffset + 25}px`
-            );
+            this.renderer2.setStyle(this.suggestionList.nativeElement, 'left', `${rect.left + window.pageXOffset}px`);
+            this.renderer2.setStyle(this.suggestionList.nativeElement, 'top', `${rect.top + window.pageYOffset + 25}px`);
             return;
         }
         this.renderer2.removeStyle(this.suggestionList.nativeElement, 'left');
@@ -147,19 +138,23 @@ export class DemoMentionsComponent implements OnInit {
     }
 }
 
-const withMentions = (editor) => {
+const withMentions = editor => {
     const { isVoid, isInline } = editor;
-    editor.isInline = (element) => {
+    editor.isInline = element => {
         return element.type === 'mention' ? true : isInline(element);
     };
-    editor.isVoid = (element) => {
+    editor.isVoid = element => {
         return element.type === 'mention' ? true : isVoid(element);
     };
     return editor;
 };
 
 const insertMention = (editor: Editor, character: string) => {
-    const mention: MentionElement = { type: 'mention', character, children: [{ text: '' }] };
+    const mention: MentionElement = {
+        type: 'mention',
+        character,
+        children: [{ text: '' }]
+    };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
 };
@@ -604,5 +599,5 @@ const CHARACTERS = [
     'Zam Wesell',
     'Zev Senesca',
     'Ziro the Hutt',
-    'Zuckuss',
-]
+    'Zuckuss'
+];

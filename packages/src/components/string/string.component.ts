@@ -1,13 +1,4 @@
-import {
-    Component,
-    OnInit,
-    Input,
-    ChangeDetectionStrategy,
-    OnChanges,
-    ElementRef,
-    ViewContainerRef,
-    AfterViewInit
-} from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, ElementRef, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { Editor, Path, Node } from 'slate';
 import { ViewContainerItem } from '../../view/container-item';
 import { SlateLeafContext, SlateStringContext } from '../../view/context';
@@ -23,7 +14,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
 
     constructor(private elementRef: ElementRef<any>, protected viewContainerRef: ViewContainerRef) {
         super(viewContainerRef);
-     }
+    }
 
     ngOnInit(): void {
         this.createView();
@@ -79,7 +70,10 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
     }
 
     getContext(): SlateStringContext {
-        return { text: this.context.leaf.text, elementStringLength: Node.string(this.context.parent).length };
+        return {
+            text: this.context.leaf.text,
+            elementStringLength: Node.string(this.context.parent).length
+        };
     }
 
     memoizedContext(prev: SlateStringContext, next: SlateStringContext): boolean {

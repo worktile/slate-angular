@@ -12,21 +12,13 @@ import DOMText = globalThis.Text;
 import DOMRange = globalThis.Range;
 import DOMSelection = globalThis.Selection;
 import DOMStaticRange = globalThis.StaticRange;
-export {
-    DOMNode,
-    DOMComment,
-    DOMElement,
-    DOMText,
-    DOMRange,
-    DOMSelection,
-    DOMStaticRange
-};
+export { DOMNode, DOMComment, DOMElement, DOMText, DOMRange, DOMSelection, DOMStaticRange };
 
 declare global {
     interface Window {
-        Selection: typeof Selection['constructor'];
-        DataTransfer: typeof DataTransfer['constructor'];
-        Node: typeof Node['constructor'];
+        Selection: (typeof Selection)['constructor'];
+        DataTransfer: (typeof DataTransfer)['constructor'];
+        Node: (typeof Node)['constructor'];
     }
 }
 
@@ -36,10 +28,8 @@ export type DOMPoint = [Node, number];
  * Returns the host window of a DOM node
  */
 export const getDefaultView = (value: any): Window | null => {
-    return (
-        (value && value.ownerDocument && value.ownerDocument.defaultView) || null
-    );
-}
+    return (value && value.ownerDocument && value.ownerDocument.defaultView) || null;
+};
 
 /**
  * Check if a DOM node is a comment node.
@@ -59,7 +49,7 @@ export const isDOMElement = (value: any): value is DOMElement => {
  * Check if a value is a DOM node.
  */
 export const isDOMNode = (value: any): value is DOMNode => {
-    const window = getDefaultView(value)
+    const window = getDefaultView(value);
     return !!window && value instanceof window.Node;
 };
 
@@ -67,9 +57,9 @@ export const isDOMNode = (value: any): value is DOMNode => {
  * Check if a value is a DOM selection.
  */
 export const isDOMSelection = (value: any): value is DOMSelection => {
-    const window = value && value.anchorNode && getDefaultView(value.anchorNode)
-    return !!window && value instanceof window.Selection
-}
+    const window = value && value.anchorNode && getDefaultView(value.anchorNode);
+    return !!window && value instanceof window.Selection;
+};
 
 /**
  * Check if a DOM node is an element node.
@@ -82,11 +72,7 @@ export const isDOMText = (value: any): value is DOMText => {
  * Checks whether a paste event is a plaintext-only event.
  */
 export const isPlainTextOnlyPaste = (event: ClipboardEvent) => {
-    return (
-        event.clipboardData &&
-        event.clipboardData.getData('text/plain') !== '' &&
-        event.clipboardData.types.length === 1
-    );
+    return event.clipboardData && event.clipboardData.getData('text/plain') !== '' && event.clipboardData.types.length === 1;
 };
 
 /**
@@ -100,9 +86,7 @@ export const normalizeDOMPoint = (domPoint: DOMPoint): DOMPoint => {
     if (isDOMElement(node) && node.childNodes.length) {
         let isLast = offset === node.childNodes.length;
         let index = isLast ? offset - 1 : offset;
-        ;[node, index] = getEditableChildAndIndex(node,
-            index,
-            isLast ? 'backward' : 'forward');
+        [node, index] = getEditableChildAndIndex(node, index, isLast ? 'backward' : 'forward');
 
         // If the editable child found is in front of input offset, we instead seek to its end
         isLast = index < offset;
@@ -115,8 +99,7 @@ export const normalizeDOMPoint = (domPoint: DOMPoint): DOMPoint => {
         }
 
         // Determine the new offset inside the text node.
-        offset =
-            isLast && node.textContent != null ? node.textContent.length : 0;
+        offset = isLast && node.textContent != null ? node.textContent.length : 0;
     }
 
     // Return the node and offset.
@@ -128,21 +111,15 @@ export const normalizeDOMPoint = (domPoint: DOMPoint): DOMPoint => {
  */
 
 export const hasShadowRoot = () => {
-    return !!(
-        window.document.activeElement && window.document.activeElement.shadowRoot
-    )
-}
+    return !!(window.document.activeElement && window.document.activeElement.shadowRoot);
+};
 
 /**
  * Get the nearest editable child and index at `index` in a `parent`, preferring
  * `direction`.
  */
 
-export const getEditableChildAndIndex = (
-    parent: DOMElement,
-    index: number,
-    direction: 'forward' | 'backward'
-): [DOMNode, number] => {
+export const getEditableChildAndIndex = (parent: DOMElement, index: number, direction: 'forward' | 'backward'): [DOMNode, number] => {
     const { childNodes } = parent;
     let child = childNodes[index];
     let i = index;
@@ -180,21 +157,17 @@ export const getEditableChildAndIndex = (
     }
 
     return [child, index];
-}
+};
 
 /**
  * Get the nearest editable child at `index` in a `parent`, preferring
  * `direction`.
  */
 
-export const getEditableChild = (
-    parent: DOMElement,
-    index: number,
-    direction: 'forward' | 'backward'
-): DOMNode => {
+export const getEditableChild = (parent: DOMElement, index: number, direction: 'forward' | 'backward'): DOMNode => {
     const [child] = getEditableChildAndIndex(parent, index, direction);
     return child;
-}
+};
 
 /**
  * Get a plaintext representation of the content of a node, accounting for block
@@ -227,14 +200,12 @@ export const getPlainText = (domNode: DOMNode) => {
 /**
  * Get x-slate-fragment attribute from data-slate-fragment
  */
-const catchSlateFragment = /data-slate-fragment="(.+?)"/m
-export const getSlateFragmentAttribute = (
-    dataTransfer: DataTransfer
-): string | void => {
-    const htmlData = dataTransfer.getData('text/html')
-    const [, fragment] = htmlData.match(catchSlateFragment) || []
-    return fragment
-}
+const catchSlateFragment = /data-slate-fragment="(.+?)"/m;
+export const getSlateFragmentAttribute = (dataTransfer: DataTransfer): string | void => {
+    const htmlData = dataTransfer.getData('text/html');
+    const [, fragment] = htmlData.match(catchSlateFragment) || [];
+    return fragment;
+};
 
 /**
  * Get the x-slate-fragment attribute that exist in text/html data
@@ -242,15 +213,15 @@ export const getSlateFragmentAttribute = (
  */
 export const getClipboardData = (dataTransfer: DataTransfer, clipboardFormatKey = 'x-slate-fragment'): DataTransfer => {
     if (!dataTransfer.getData(`application/${clipboardFormatKey}`)) {
-        const fragment = getSlateFragmentAttribute(dataTransfer)
+        const fragment = getSlateFragmentAttribute(dataTransfer);
         if (fragment) {
-            const clipboardData = new DataTransfer()
+            const clipboardData = new DataTransfer();
             dataTransfer.types.forEach(type => {
-                clipboardData.setData(type, dataTransfer.getData(type))
-            })
-            clipboardData.setData(`application/${clipboardFormatKey}`, fragment)
-            return clipboardData
+                clipboardData.setData(type, dataTransfer.getData(type));
+            });
+            clipboardData.setData(`application/${clipboardFormatKey}`, fragment);
+            return clipboardData;
         }
     }
-    return dataTransfer
-}
+    return dataTransfer;
+};

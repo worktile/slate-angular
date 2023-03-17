@@ -2,11 +2,9 @@ export function createEmptyDocument() {
     return [
         {
             type: 'paragraph',
-            children: [
-                { text: '' }
-            ]
+            children: [{ text: '' }]
         }
-    ]
+    ];
 }
 export function createDefaultDocument() {
     return [

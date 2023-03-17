@@ -21,7 +21,7 @@ export class DemoElementLinkComponent extends BaseElementComponent<LinkElement> 
         return this.isCollapsed;
     }
 
-    @HostBinding("attr.href")
+    @HostBinding('attr.href')
     get herf() {
         return this.element.url;
     }

@@ -1,15 +1,15 @@
 {
-    "$schema": "https://unpkg.com/@changesets/config@1.5.0/schema.json",
-    "changelog": [
-        "@changesets/changelog-github",
-        {
-            "repo": "worktile/slate-angular"
-        }
-    ],
-    "commit": false,
-    "linked": [],
-    "access": "public",
-    "baseBranch": "master",
-    "updateInternalDependencies": "patch",
-    "ignore": []
+  "$schema": "https://unpkg.com/@changesets/config@1.5.0/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "worktile/slate-angular"
+    }
+  ],
+  "commit": false,
+  "linked": [],
+  "access": "public",
+  "baseBranch": "master",
+  "updateInternalDependencies": "patch",
+  "ignore": []
 }

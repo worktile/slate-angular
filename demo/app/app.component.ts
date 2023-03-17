@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 @Component({
     selector: 'demo-app-root',
     templateUrl: './app.component.html',
-    providers: [],
+    providers: []
 })
 export class AppComponent implements OnInit {
     menus = [
@@ -45,16 +45,16 @@ export class AppComponent implements OnInit {
         {
             url: '/placeholder',
             name: 'Placeholder'
-        },
+        }
     ];
 
     showSideNav: boolean;
 
     get activeNav() {
-        return this.menus.filter(item=> window.location.href.endsWith(item.url))[0];
+        return this.menus.filter(item => window.location.href.endsWith(item.url))[0];
     }
 
-    @ViewChild('sideNav', { static: false }) sideNav: ElementRef
+    @ViewChild('sideNav', { static: false }) sideNav: ElementRef;
 
     isSelected(item) {
         return window.location.href.endsWith(item.url);
@@ -64,6 +64,5 @@ export class AppComponent implements OnInit {
         this.showSideNav = !this.showSideNav;
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 }

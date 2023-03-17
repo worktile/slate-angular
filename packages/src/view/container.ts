@@ -1,7 +1,7 @@
-import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, IterableDiffers, QueryList } from "@angular/core";
-import { SlateViewContext } from "./context";
-import { ViewContainerItem } from "./container-item";
-import { SlateErrorCode } from "../types/error";
+import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, IterableDiffers, QueryList } from '@angular/core';
+import { SlateViewContext } from './context';
+import { ViewContainerItem } from './container-item';
+import { SlateErrorCode } from '../types/error';
 
 /**
  * the sepcial container for angular template
@@ -14,9 +14,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
 
     @Input() viewContext: SlateViewContext;
 
-    constructor(protected elementRef: ElementRef<any>,
-        protected differs: IterableDiffers) {
-    }
+    constructor(protected elementRef: ElementRef<any>, protected differs: IterableDiffers) {}
 
     ngAfterViewInit() {
         const differ = this.differs.find(this.childrenComponent).create((index, item) => {
@@ -29,7 +27,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
             parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
             this.elementRef.nativeElement.remove();
         }
-        this.childrenComponent.changes.subscribe((value) => {
+        this.childrenComponent.changes.subscribe(value => {
             const iterableChanges = differ.diff(this.childrenComponent);
             if (iterableChanges) {
                 iterableChanges.forEachOperation((record: IterableChangeRecord<T>, previousIndex: Number, currentIndex: number) => {
@@ -61,7 +59,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         const fragment = document.createDocumentFragment();
         this.childrenComponent.forEach((component, index) => {
             fragment.append(...component.rootNodes);
-        })
+        });
         return fragment;
     }
 
@@ -83,7 +81,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
             // insert afterend of previous component end
             let previousRootNode = this.getPreviousRootNode(record.currentIndex);
             if (previousRootNode) {
-                record.item.rootNodes.forEach((rootNode) => {
+                record.item.rootNodes.forEach(rootNode => {
                     previousRootNode.insertAdjacentElement('afterend', rootNode);
                     previousRootNode = rootNode;
                 });
@@ -92,7 +90,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
                     code: SlateErrorCode.NotFoundPreviousRootNodeError,
                     name: 'not found previous rootNode',
                     nativeError: null
-                })
+                });
             }
         }
         // Solve the block-card DOMElement loss when moving nodes

@@ -1,10 +1,9 @@
-
-import { ChangeDetectionStrategy, Component, OnDestroy } from "@angular/core";
-import { BaseLeafComponent } from "../../view/base";
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { BaseLeafComponent } from '../../view/base';
 
 @Component({
     selector: 'span[slateDefaultLeaf]',
-    template: `<span slateString [context]="context" [viewContext]="viewContext"><span>`,
+    template: `<span slateString [context]="context" [viewContext]="viewContext"><span></span></span>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         'data-slate-leaf': 'true'

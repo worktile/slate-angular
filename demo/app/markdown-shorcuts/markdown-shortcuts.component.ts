@@ -9,7 +9,7 @@ import { BulletedListElement } from '../../../custom-types';
     templateUrl: 'markdown-shortcuts.component.html'
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {
-    constructor() { }
+    constructor() {}
 
     value = initialValue;
 
@@ -34,7 +34,7 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
     @ViewChild('heading_6', { read: TemplateRef, static: true })
     headingSixTemplate: TemplateRef<any>;
 
-    ngOnInit() { }
+    ngOnInit() {}
 
     renderElement() {
         return (element: Element) => {
@@ -68,15 +68,14 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
         };
     }
 
-    valueChange(event) { }
+    valueChange(event) {}
 }
 const initialValue = [
     {
         type: 'paragraph',
         children: [
             {
-                text:
-                    'The editor gives you full control over the logic you can add. For example, it\'s fairly common to want to add markdown-like shortcuts to editors. So that, when you start a line with "> " you get a blockquote that looks like this:'
+                text: 'The editor gives you full control over the logic you can add. For example, it\'s fairly common to want to add markdown-like shortcuts to editors. So that, when you start a line with "> " you get a blockquote that looks like this:'
             }
         ]
     },
@@ -141,7 +140,10 @@ const withShortcuts = editor => {
                 Transforms.setNodes(editor, { type }, { match: n => Editor.isBlock(editor, n) });
 
                 if (type === 'list-item') {
-                    const list: BulletedListElement = { type: 'bulleted-list', children: [] };
+                    const list: BulletedListElement = {
+                        type: 'bulleted-list',
+                        children: []
+                    };
                     Transforms.wrapNodes<Element>(editor, list, {
                         match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'list-item'
                     });

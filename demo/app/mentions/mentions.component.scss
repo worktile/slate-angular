@@ -8,7 +8,7 @@
     margin: 0 1px;
     line-height: 22px;
     &.focus {
-        box-shadow: 0 0 0 2px #B4D5FF;
+        box-shadow: 0 0 0 2px #b4d5ff;
     }
     cursor: pointer;
 }
@@ -29,11 +29,11 @@
         padding-left: 15px;
         cursor: pointer;
         &.active {
-            background-color: #B4D5FF;
+            background-color: #b4d5ff;
             border-radius: 3px;
         }
     }
     padding: 3px;
     border-radius: 4px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.2);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }

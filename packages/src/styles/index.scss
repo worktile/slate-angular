@@ -4,7 +4,7 @@
     outline: none;
     padding: 32px;
     white-space: break-spaces;
-    & [contenteditable="true"] {
+    & [contenteditable='true'] {
         outline: none;
     }
     & [data-slate-placeholder] {
@@ -18,7 +18,7 @@
         text-decoration: none;
         top: 0;
     }
-    & [data-slate-leaf="true"] {
+    & [data-slate-leaf='true'] {
         &.leaf-with-placeholder {
             position: relative;
             display: inline-block;
@@ -32,7 +32,6 @@
         .leaf-with-placeholder {
             display: inline-flex !important;
         }
-        
     }
 }
 

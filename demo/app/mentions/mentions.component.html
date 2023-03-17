@@ -1,13 +1,29 @@
-<div class="demo-rich-editor-wrapper" style="position: relative;">
-    <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
-        (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [keydown]="onKeydown">
+<div class="demo-rich-editor-wrapper" style="position: relative">
+    <slate-editable
+        class="demo-slate-angular-editor"
+        [editor]="editor"
+        [(ngModel)]="value"
+        (ngModelChange)="valueChange($event)"
+        [renderElement]="renderElement"
+        [keydown]="onKeydown"
+    >
     </slate-editable>
     <ng-template #mention let-context="context" let-viewContext="viewContext">
-        <span slateElement [context]="context" [viewContext]="viewContext" class="demo-mention-view"
-            [ngClass]="{ focus: context.selection }">@{{context.element.character}}</span>
+        <span
+            slateElement
+            [context]="context"
+            [viewContext]="viewContext"
+            class="demo-mention-view"
+            [ngClass]="{ focus: context.selection }"
+            >@{{ context.element.character }}</span
+        >
     </ng-template>
     <div #suggestionList class="demo-mention-suggestion-list">
-        <div (mousedown)="mousedown($event, item)" [ngClass]="{ active: i === activeIndex }" *ngFor="let item of suggestions; let i = index">
+        <div
+            (mousedown)="mousedown($event, item)"
+            [ngClass]="{ active: i === activeIndex }"
+            *ngFor="let item of suggestions; let i = index"
+        >
             {{ item }}
         </div>
     </div>

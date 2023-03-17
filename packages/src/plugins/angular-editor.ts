@@ -27,7 +27,14 @@ import { NodeEntry } from 'slate';
 import { SlateError } from '../types/error';
 import { Key } from '../utils/key';
 import { IS_CHROME, IS_FIREFOX } from '../utils/environment';
-import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET, getCardTargetAttribute, isCardCenterByTargetAttr, isCardLeftByTargetAttr, isCardRightByTargetAttr } from '../utils/block-card';
+import {
+    FAKE_LEFT_BLOCK_CARD_OFFSET,
+    FAKE_RIGHT_BLOCK_CARD_OFFSET,
+    getCardTargetAttribute,
+    isCardCenterByTargetAttr,
+    isCardLeftByTargetAttr,
+    isCardRightByTargetAttr
+} from '../utils/block-card';
 import { SafeAny } from '../types';
 
 /**
@@ -36,8 +43,8 @@ import { SafeAny } from '../types';
 
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
-    insertFragmentData: (data: DataTransfer) => boolean
-    insertTextData: (data: DataTransfer) => boolean
+    insertFragmentData: (data: DataTransfer) => boolean;
+    insertTextData: (data: DataTransfer) => boolean;
     setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
     deleteCutData: () => void;
     onKeydown: (event: KeyboardEvent) => void;
@@ -121,16 +128,13 @@ export const AngularEditor = {
      */
 
     findDocumentOrShadowRoot(editor: AngularEditor): Document | ShadowRoot {
-        const el = AngularEditor.toDOMNode(editor, editor)
-        const root = el.getRootNode()
-        if (
-            (root instanceof Document || root instanceof ShadowRoot) &&
-            (root as Document).getSelection != null
-        ) {
-            return root
+        const el = AngularEditor.toDOMNode(editor, editor);
+        const root = el.getRootNode();
+        if ((root instanceof Document || root instanceof ShadowRoot) && (root as Document).getSelection != null) {
+            return root;
         }
 
-        return el.ownerDocument
+        return el.ownerDocument;
     },
 
     /**
@@ -161,7 +165,10 @@ export const AngularEditor = {
             return false;
         }
         const [start, end] = Range.edges(selection);
-        const endBlock = Editor.above(editor, { at: end, match: (node) => Editor.isBlock(editor, node) });
+        const endBlock = Editor.above(editor, {
+            at: end,
+            match: node => Editor.isBlock(editor, node)
+        });
         return Editor.isStart(editor, end, endBlock[1]);
     },
 
@@ -236,9 +243,10 @@ export const AngularEditor = {
             return false;
         }
 
-        return targetEl.closest(`[data-slate-editor]`) === editorEl &&
-            (!editable || targetEl.isContentEditable ||
-                !!targetEl.getAttribute('data-slate-zero-width'));
+        return (
+            targetEl.closest(`[data-slate-editor]`) === editorEl &&
+            (!editable || targetEl.isContentEditable || !!targetEl.getAttribute('data-slate-zero-width'))
+        );
     },
 
     /**
@@ -250,11 +258,11 @@ export const AngularEditor = {
     },
 
     /**
-   * Insert fragment data from a `DataTransfer` into the editor.
-   */
+     * Insert fragment data from a `DataTransfer` into the editor.
+     */
 
     insertFragmentData(editor: AngularEditor, data: DataTransfer): boolean {
-        return editor.insertFragmentData(data)
+        return editor.insertFragmentData(data);
     },
 
     /**
@@ -262,7 +270,7 @@ export const AngularEditor = {
      */
 
     insertTextData(editor: AngularEditor, data: DataTransfer): boolean {
-        return editor.insertTextData(data)
+        return editor.insertTextData(data);
     },
 
     /**
@@ -273,8 +281,8 @@ export const AngularEditor = {
     },
 
     /**
-    * onClick hook.
-    */
+     * onClick hook.
+     */
     onClick(editor: AngularEditor, data: MouseEvent): void {
         editor.onClick(data);
     },
@@ -296,9 +304,7 @@ export const AngularEditor = {
      */
 
     toDOMNode(editor: AngularEditor, node: Node): HTMLElement {
-        const domNode = Editor.isEditor(node)
-            ? EDITOR_TO_ELEMENT.get(editor)
-            : NODE_TO_ELEMENT.get(node);
+        const domNode = Editor.isEditor(node) ? EDITOR_TO_ELEMENT.get(editor) : NODE_TO_ELEMENT.get(node);
 
         if (!domNode) {
             throw new Error(`Cannot resolve a DOM node from Slate node: ${JSON.stringify(node)}`);
@@ -391,13 +397,9 @@ export const AngularEditor = {
         // A slate Point at zero-width Leaf always has an offset of 0 but a native DOM selection at
         // zero-width node has an offset of 1 so we have to check if we are in a zero-width node and
         // adjust the offset accordingly.
-        const startEl = (isDOMElement(startNode)
-            ? startNode
-            : startNode.parentElement) as HTMLElement;
+        const startEl = (isDOMElement(startNode) ? startNode : startNode.parentElement) as HTMLElement;
         const isStartAtZeroWidth = !!startEl.getAttribute('data-slate-zero-width');
-        const endEl = (isDOMElement(endNode)
-            ? endNode
-            : endNode.parentElement) as HTMLElement;
+        const endEl = (isDOMElement(endNode) ? endNode : endNode.parentElement) as HTMLElement;
         const isEndAtZeroWidth = !!endEl.getAttribute('data-slate-zero-width');
 
         domRange.setStart(startNode, isStartAtZeroWidth ? 1 : startOffset);
@@ -448,9 +450,7 @@ export const AngularEditor = {
         // coordinates are closest to.
         if (Editor.isVoid(editor, node)) {
             const rect = target.getBoundingClientRect();
-            const isPrev = editor.isInline(node)
-                ? x - rect.left < rect.left + rect.width - x
-                : y - rect.top < rect.top + rect.height - y;
+            const isPrev = editor.isInline(node) ? x - rect.left < rect.left + rect.width - x : y - rect.top < rect.top + rect.height - y;
 
             const edge = Editor.point(editor, path, {
                 edge: isPrev ? 'start' : 'end'
@@ -510,26 +510,18 @@ export const AngularEditor = {
             if (domSelection.isCollapsed) {
                 if (isCardLeftByTargetAttr(cardTargetAttr)) {
                     return { path: blockPath, offset: -1 };
-                }
-                else {
+                } else {
                     return { path: blockPath, offset: -2 };
                 }
             }
             // forward
             // and to the end of previous node
             if (isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
-                const endPath =
-                    blockPath[blockPath.length - 1] <= 0
-                        ? blockPath
-                        : Path.previous(blockPath);
+                const endPath = blockPath[blockPath.length - 1] <= 0 ? blockPath : Path.previous(blockPath);
                 return Editor.end(editor, endPath);
             }
             // to the of current node
-            if (
-                (isCardCenterByTargetAttr(cardTargetAttr) ||
-                    isCardRightByTargetAttr(cardTargetAttr)) &&
-                !isBackward
-            ) {
+            if ((isCardCenterByTargetAttr(cardTargetAttr) || isCardRightByTargetAttr(cardTargetAttr)) && !isBackward) {
                 return Editor.end(editor, blockPath);
             }
             // backward
@@ -538,11 +530,7 @@ export const AngularEditor = {
                 return Editor.start(editor, Path.next(blockPath));
             }
             // and to the start of current node
-            if (
-                (isCardCenterByTargetAttr(cardTargetAttr) ||
-                    isCardLeftByTargetAttr(cardTargetAttr)) &&
-                isBackward
-            ) {
+            if ((isCardCenterByTargetAttr(cardTargetAttr) || isCardLeftByTargetAttr(cardTargetAttr)) && isBackward) {
                 return Editor.start(editor, blockPath);
             }
         }
@@ -562,12 +550,8 @@ export const AngularEditor = {
                 range.setEnd(nearestNode, nearestOffset);
                 const contents = range.cloneContents();
                 const removals = [
-                    ...Array.prototype.slice.call(
-                        contents.querySelectorAll('[data-slate-zero-width]')
-                    ),
-                    ...Array.prototype.slice.call(
-                        contents.querySelectorAll('[contenteditable=false]')
-                    ),
+                    ...Array.prototype.slice.call(contents.querySelectorAll('[data-slate-zero-width]')),
+                    ...Array.prototype.slice.call(contents.querySelectorAll('[contenteditable=false]'))
                 ];
 
                 removals.forEach(el => {
@@ -597,10 +581,7 @@ export const AngularEditor = {
             // composition the ASCII characters will be prepended to the zero-width
             // space, so subtract 1 from the offset to account for the zero-width
             // space character.
-            if (domNode &&
-                offset === domNode.textContent!.length &&
-                (parentNode && parentNode.hasAttribute('data-slate-zero-width'))
-            ) {
+            if (domNode && offset === domNode.textContent!.length && parentNode && parentNode.hasAttribute('data-slate-zero-width')) {
                 offset--;
             }
         }
@@ -640,9 +621,7 @@ export const AngularEditor = {
                 // (2020/08/08)
                 // https://bugs.chromium.org/p/chromium/issues/detail?id=447523
                 if (IS_CHROME && hasShadowRoot()) {
-                    isCollapsed =
-                        domRange.anchorNode === domRange.focusNode &&
-                        domRange.anchorOffset === domRange.focusOffset;
+                    isCollapsed = domRange.anchorNode === domRange.focusNode && domRange.anchorOffset === domRange.focusOffset;
                 } else {
                     isCollapsed = domRange.isCollapsed;
                 }
@@ -670,27 +649,32 @@ export const AngularEditor = {
     },
 
     isBlockCardLeftCursor(editor: AngularEditor) {
-        return editor.selection.anchor.offset === FAKE_LEFT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_LEFT_BLOCK_CARD_OFFSET;
+        return (
+            editor.selection.anchor.offset === FAKE_LEFT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_LEFT_BLOCK_CARD_OFFSET
+        );
     },
 
     isBlockCardRightCursor(editor: AngularEditor) {
-        return editor.selection.anchor.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET;
+        return (
+            editor.selection.anchor.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET &&
+            editor.selection.focus.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET
+        );
     },
 
-    getCardCursorNode(editor: AngularEditor, blockCardNode: Node, options: {
-        direction: 'left' | 'right' | 'center'
-    }) {
+    getCardCursorNode(
+        editor: AngularEditor,
+        blockCardNode: Node,
+        options: {
+            direction: 'left' | 'right' | 'center';
+        }
+    ) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
         const cardCenter = blockCardElement.parentElement;
-        return options.direction === 'left'
-            ? cardCenter.previousElementSibling
-            : cardCenter.nextElementSibling;
+        return options.direction === 'left' ? cardCenter.previousElementSibling : cardCenter.nextElementSibling;
     },
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
-        const element = node.parentElement
-            .closest('.slate-block-card')?.querySelector('[card-target="card-center"]')
-            .firstElementChild;
+        const element = node.parentElement.closest('.slate-block-card')?.querySelector('[card-target="card-center"]').firstElementChild;
         const slateNode = AngularEditor.toSlateNode(editor, element);
         const path = AngularEditor.findPath(editor, slateNode);
         return [slateNode, path];
@@ -698,13 +682,17 @@ export const AngularEditor = {
 
     /**
      * move native selection to card-left or card-right
-     * @param editor 
-     * @param blockCardNode 
-     * @param options 
+     * @param editor
+     * @param blockCardNode
+     * @param options
      */
-    moveBlockCard(editor: AngularEditor, blockCardNode: Node, options: {
-        direction: 'left' | 'right'
-    }) {
+    moveBlockCard(
+        editor: AngularEditor,
+        blockCardNode: Node,
+        options: {
+            direction: 'left' | 'right';
+        }
+    ) {
         const cursorNode = AngularEditor.getCardCursorNode(editor, blockCardNode, options);
         const window = AngularEditor.getWindow(editor);
         const domSelection = window.getSelection();
@@ -713,21 +701,26 @@ export const AngularEditor = {
 
     /**
      * move slate selection to card-left or card-right
-     * @param editor 
-     * @param path 
-     * @param options 
+     * @param editor
+     * @param path
+     * @param options
      */
-    moveBlockCardCursor(editor: AngularEditor, path: Path, options: {
-        direction: 'left' | 'right'
-    }) {
-        const cursor = { path, offset: options.direction === 'left' ? FAKE_LEFT_BLOCK_CARD_OFFSET : FAKE_RIGHT_BLOCK_CARD_OFFSET };
+    moveBlockCardCursor(
+        editor: AngularEditor,
+        path: Path,
+        options: {
+            direction: 'left' | 'right';
+        }
+    ) {
+        const cursor = {
+            path,
+            offset: options.direction === 'left' ? FAKE_LEFT_BLOCK_CARD_OFFSET : FAKE_RIGHT_BLOCK_CARD_OFFSET
+        };
         Transforms.select(editor, { anchor: cursor, focus: cursor });
     },
 
     hasRange(editor: AngularEditor, range: Range): boolean {
         const { anchor, focus } = range;
-        return (
-            Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path)
-        );
-    },
+        return Editor.hasPath(editor, anchor.path) && Editor.hasPath(editor, focus.path);
+    }
 };

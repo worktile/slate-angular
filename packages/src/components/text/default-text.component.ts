@@ -1,7 +1,4 @@
-import {
-    Component,
-    ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
 
 @Component({
@@ -12,5 +9,4 @@ import { BaseTextComponent } from '../../view/base';
         'data-slate-node': 'text'
     }
 })
-export class SlateDefaultTextComponent extends BaseTextComponent {
-}
+export class SlateDefaultTextComponent extends BaseTextComponent {}

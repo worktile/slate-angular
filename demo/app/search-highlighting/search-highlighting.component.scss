@@ -1,16 +1,16 @@
 .search-highlighting-toolbar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  top: 0.5em;
-  left: 0.5em;
-  color: #ccc;
-  border: 2px solid #ccc;
-  border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    top: 0.5em;
+    left: 0.5em;
+    color: #ccc;
+    border: 2px solid #ccc;
+    border-radius: 4px;
 
-  input {
-    border: none;
-    outline: none;
-    background-color: transparent;
-  }
+    input {
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
 }

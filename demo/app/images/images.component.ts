@@ -13,7 +13,7 @@ export class DemoImagesComponent implements OnInit {
 
     editor = withImage(withAngular(createEditor()));
 
-    constructor() { }
+    constructor() {}
 
     renderElement() {
         return (element: Element) => {
@@ -24,7 +24,7 @@ export class DemoImagesComponent implements OnInit {
         };
     }
 
-    ngOnInit() { }
+    ngOnInit() {}
 
     isImgUrl(imgUrl: string) {
         return new Promise((resolve, reject) => {
@@ -32,11 +32,11 @@ export class DemoImagesComponent implements OnInit {
             imgObj.src = imgUrl;
             imgObj.onload = () => {
                 resolve(true);
-            }
+            };
             imgObj.onerror = () => {
-                reject(false)
-            }
-        }).catch(error => { });
+                reject(false);
+            };
+        }).catch(error => {});
     }
 
     createImageNode(imgUrl: string) {
@@ -48,7 +48,7 @@ export class DemoImagesComponent implements OnInit {
                     text: ''
                 }
             ]
-        }
+        };
         Transforms.insertNodes(this.editor, imageNode);
     }
 
@@ -61,60 +61,59 @@ export class DemoImagesComponent implements OnInit {
                 } else {
                     window.alert('URL is not an image');
                 }
-            })
+            });
         }
     }
 
-    valueChange(event) {
-    }
+    valueChange(event) {}
 }
 const initialValue = [
     {
-        "type": "paragraph",
-        "children": [
+        type: 'paragraph',
+        children: [
             {
-                "text": "In addition to nodes that contain editable text, you can also create other types of nodes, like images or videos."
+                text: 'In addition to nodes that contain editable text, you can also create other types of nodes, like images or videos.'
             }
         ],
-        "key": "HdSTK"
+        key: 'HdSTK'
     },
     {
-        "type": "image",
-        "url": "https://source.unsplash.com/kFrdX5IeQzI",
-        "children": [
+        type: 'image',
+        url: 'https://source.unsplash.com/kFrdX5IeQzI',
+        children: [
             {
-                "text": ""
+                text: ''
             }
         ],
-        "key": "EwcCn",
-        "voids": true
+        key: 'EwcCn',
+        voids: true
     },
     {
-        "type": "paragraph",
-        "children": [
+        type: 'paragraph',
+        children: [
             {
-                "text": "This example shows images in action. It features two ways to add images. You can either add an image via the toolbar icon above, or if you want in on a little secret, copy an image URL to your keyboard and paste it anywhere in the editor!"
+                text: 'This example shows images in action. It features two ways to add images. You can either add an image via the toolbar icon above, or if you want in on a little secret, copy an image URL to your keyboard and paste it anywhere in the editor!'
             }
         ],
-        "key": "ecJaY"
+        key: 'ecJaY'
     },
     {
-        "type": "paragraph",
-        "children": [
+        type: 'paragraph',
+        children: [
             {
-                "text": ""
+                text: ''
             }
         ],
-        "key": "zRTHT"
+        key: 'zRTHT'
     }
 ];
 
 const withImage = (editor: Editor) => {
     const { isVoid } = editor;
 
-    editor.isVoid = (element) => {
+    editor.isVoid = element => {
         return element.type === 'image' || isVoid(element);
     };
 
     return editor;
-}
+};

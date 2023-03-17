@@ -6,5 +6,4 @@ import { BaseElementComponent } from '../../view/base';
     template: `<slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SlateDefaultElementComponent extends BaseElementComponent {
-}
+export class SlateDefaultElementComponent extends BaseElementComponent {}

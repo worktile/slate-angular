@@ -13,13 +13,11 @@ Angular view layer for Slate
 
 [中文文档](https://github.com/worktile/slate-angular/blob/master/README.zh-CN.md)
 
-
 ## Introduction
 
 [Slate](https://github.com/ianstormtaylor/slate) is a completely customizable framework for building rich text editors, including the model layer and view layer, but the slate only provides the view layer based on react, slate-angular is a supplement to the slate view layer, to help you use angular to build rich text editor.
 
 slate-angular is inspired by slate-react, and try to keep the style of slate and angular, friendly to Chinese input, start your slate-angular journey.
-
 
 ## Demo
 
@@ -27,22 +25,21 @@ slate-angular is inspired by slate-react, and try to keep the style of slate and
 
 ![editor-preview.png](https://cdn.worktile.com/open-sources/slate-angular/editor-preview.gif)
 
-
 ## Feature
 
-- Support element front and rear cursor scheme
-- Support custom component/template rendering Element
-- Support custom component/template to render Text
-- Support custom component/template rendering Leaf
-- Support decorate decoration
-- Support void element
+-   Support element front and rear cursor scheme
+-   Support custom component/template rendering Element
+-   Support custom component/template to render Text
+-   Support custom component/template rendering Leaf
+-   Support decorate decoration
+-   Support void element
 
 ### Compatible browser
 
 Chrome、Edge、Safari、Firefox、QQ Browser
 
-
 ## Usage
+
 ### 1. Install dependencies
 
 ```
@@ -112,7 +109,7 @@ src/styles.scss
         padding-left: 10px !important;
         border-left: 4px solid #eee;
     }
-    
+
     h1,h2,h3 {
         margin: 0px;
     }
@@ -158,7 +155,7 @@ export class DemoTextMarkComponent extends BaseTextComponent {
     constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
         super(elementRef, cdr);
     }
-    
+
     applyTextMark() {
         this.attributes.forEach(attr => {
             this.renderer2.removeAttribute(this.elementRef.nativeElement, attr);
@@ -286,7 +283,7 @@ export class AppComponent {
         }
         return null;
     }
-    
+
     renderText = (text: any) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return DemoTextMarkComponent;
@@ -344,11 +341,9 @@ const initialValue = [
 
 ```
 
-
-
 ### 6. Startup basic demo
 
-> Before starting, you need to declare the DemoTextMarkComponent  component in NgModule
+> Before starting, you need to declare the DemoTextMarkComponent component in NgModule
 
 > You can checkout a [stackblitz implementation of the readme usage](https://stackblitz.com/edit/angular-ivy-pqofah?file=src/app/app.component.ts)
 
@@ -358,10 +353,7 @@ const initialValue = [
 
 > Currently, there is no toolbar. You need to add toolbars and processing functions according to your own icon library.
 
-basic usage: [https://github.com/pubuzhixing8/slate-angular-basic](https://github.com/pubuzhixing8/slate-angular-basic)  
-
-
-
+basic usage: [https://github.com/pubuzhixing8/slate-angular-basic](https://github.com/pubuzhixing8/slate-angular-basic)
 
 ## Who is using slate-angular?
 
@@ -377,7 +369,6 @@ basic usage: [https://github.com/pubuzhixing8/slate-angular-basic](https://githu
   </tr>
 </table>
 
-
 ## 💻 Development
 
 ```bash
@@ -391,19 +382,15 @@ npm run build              // build new slate-angular
 npm run test               // run unit tests
 ```
 
-
-
 ### Prerequisites
 
-Angular >= 10.*
+Angular >= 10.\*
 
 Slate >= 0.63.0
 
-
 ## Contributing
 
-🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome! 
-
+🌟 Stars and 📥 Pull requests to worktile/slate-angular are welcome!
 
 ## LICENSE
 

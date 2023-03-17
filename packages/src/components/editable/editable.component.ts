@@ -17,8 +17,16 @@ import {
     AfterViewChecked,
     DoCheck
 } from '@angular/core';
-import { NODE_TO_ELEMENT, IS_FOCUSED, EDITOR_TO_ELEMENT, ELEMENT_TO_NODE, IS_READONLY, EDITOR_TO_ON_CHANGE, EDITOR_TO_WINDOW } from '../../utils/weak-maps';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Descendant } from 'slate';
+import {
+    NODE_TO_ELEMENT,
+    IS_FOCUSED,
+    EDITOR_TO_ELEMENT,
+    ELEMENT_TO_NODE,
+    IS_READONLY,
+    EDITOR_TO_ON_CHANGE,
+    EDITOR_TO_WINDOW
+} from '../../utils/weak-maps';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import getDirection from 'direction';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -33,7 +41,7 @@ import {
     getDefaultView
 } from '../../utils/dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY, IS_CHROME_LEGACY, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -61,11 +69,13 @@ const forceOnDOMPaste = IS_SAFARI;
     },
     templateUrl: 'editable.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [{
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => SlateEditableComponent),
-        multi: true
-    }]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SlateEditableComponent),
+            multi: true
+        }
+    ]
 })
 export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
@@ -82,9 +92,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private initialized: boolean;
 
-    private onTouchedCallback: () => void = () => { };
+    private onTouchedCallback: () => void = () => {};
 
-    private onChangeCallback: (_: any) => void = () => { };
+    private onChangeCallback: (_: any) => void = () => {};
 
     @Input() editor: AngularEditor;
 
@@ -137,8 +147,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
     //#endregion
 
-    @ViewChild('templateComponent', { static: true }) templateComponent: SlateStringTemplateComponent;
-    @ViewChild('templateComponent', { static: true, read: ElementRef }) templateElementRef: ElementRef<any>;
+    @ViewChild('templateComponent', { static: true })
+    templateComponent: SlateStringTemplateComponent;
+    @ViewChild('templateComponent', { static: true, read: ElementRef })
+    templateElementRef: ElementRef<any>;
 
     constructor(
         public elementRef: ElementRef,
@@ -146,7 +158,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
         private injector: Injector
-    ) { }
+    ) {}
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -172,7 +184,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.templateElementRef.nativeElement.remove();
 
         // add browser class
-        let browserClass = IS_FIREFOX ? 'firefox' : (IS_SAFARI ? 'safari' : '');
+        let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
     }
 
@@ -247,7 +259,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.addEventListener('keydown', this.onDOMKeydown.bind(this));
         this.addEventListener('paste', this.onDOMPaste.bind(this));
         BEFORE_INPUT_EVENTS.forEach(event => {
-            this.addEventListener(event.name, () => { });
+            this.addEventListener(event.name, () => {});
         });
     }
 
@@ -299,7 +311,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // and thus it doesn't transform selection on its own
             if (selection && !AngularEditor.hasRange(this.editor, selection)) {
                 this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection);
-                return
+                return;
             }
 
             // Otherwise the DOM selection is out of sync, so update it.
@@ -342,7 +354,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 this.isUpdatingSelection = false;
             });
         } catch (error) {
-            this.editor.onError({ code: SlateErrorCode.ToNativeSelectionError, nativeError: error })
+            this.editor.onError({
+                code: SlateErrorCode.ToNativeSelectionError,
+                nativeError: error
+            });
         }
     }
 
@@ -351,11 +366,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.onChangeCallback(this.editor.children);
     }
 
-    ngAfterViewChecked() {
-    }
+    ngAfterViewChecked() {}
 
-    ngDoCheck() {
-    }
+    ngDoCheck() {}
 
     forceFlush() {
         this.detectContext();
@@ -376,7 +389,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
                 let textContent = '';
                 // skip decorate text
-                textDOMNode.querySelectorAll('[editable-text]').forEach((stringDOMNode) => {
+                textDOMNode.querySelectorAll('[editable-text]').forEach(stringDOMNode => {
                     let text = stringDOMNode.textContent;
                     const zeroChar = '\uFEFF';
                     // remove zero with char
@@ -420,10 +433,12 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     detectContext() {
         const decorations = this.generateDecorations();
-        if (this.context.selection !== this.editor.selection ||
+        if (
+            this.context.selection !== this.editor.selection ||
             this.context.decorate !== this.decorate ||
             this.context.readonly !== this.readonly ||
-            !isDecoratorRangeListEqual(this.context.decorations, decorations)) {
+            !isDecoratorRangeListEqual(this.context.decorations, decorations)
+        ) {
             this.context = {
                 parent: this.editor,
                 selection: this.editor.selection,
@@ -439,30 +454,23 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             return this.placeholderDecorate(editor) || [];
         }
 
-        if (
-            this.placeholder &&
-            editor.children.length === 1 &&
-            Array.from(Node.texts(editor)).length === 1 &&
-            Node.string(editor) === ''
-        ) {
-            const start = Editor.start(editor, [])
+        if (this.placeholder && editor.children.length === 1 && Array.from(Node.texts(editor)).length === 1 && Node.string(editor) === '') {
+            const start = Editor.start(editor, []);
             return [
                 {
                     placeholder: this.placeholder,
                     anchor: start,
-                    focus: start,
-                },
-            ]
+                    focus: start
+                }
+            ];
         } else {
-            return []
+            return [];
         }
     }
 
     generateDecorations() {
         const decorations = this.decorate([this.editor, []]);
-        const placeholderDecorations = this.isComposing
-            ? []
-            : this.composePlaceholderDecorate(this.editor)
+        const placeholderDecorations = this.isComposing ? [] : this.composePlaceholderDecorate(this.editor);
         decorations.push(...placeholderDecorations);
         return decorations;
     }
@@ -483,7 +491,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     private toSlateSelection() {
         if (!this.isComposing && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
-                const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+                const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
                 const { activeElement } = root;
                 const el = AngularEditor.toDOMNode(this.editor, this.editor);
                 const domSelection = (root as Document).getSelection();
@@ -500,7 +508,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 }
 
                 const editorElement = EDITOR_TO_ELEMENT.get(this.editor);
-                const hasDomSelectionInEditor = editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode);
+                const hasDomSelectionInEditor =
+                    editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode);
                 if (!hasDomSelectionInEditor) {
                     Transforms.deselect(this.editor);
                     return;
@@ -518,7 +527,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     Transforms.select(this.editor, range);
                 }
             } catch (error) {
-                this.editor.onError({ code: SlateErrorCode.ToSlateSelectionError, nativeError: error })
+                this.editor.onError({
+                    code: SlateErrorCode.ToSlateSelectionError,
+                    nativeError: error
+                });
             }
         }
     }
@@ -533,9 +545,14 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     ) {
         const editor = this.editor;
-        const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
         const { activeElement } = root;
-        if (!this.readonly && hasEditableTarget(editor, event.target) && !isTargetInsideVoid(editor, activeElement) && !this.isDOMEventHandled(event, this.beforeInput)) {
+        if (
+            !this.readonly &&
+            hasEditableTarget(editor, event.target) &&
+            !isTargetInsideVoid(editor, activeElement) &&
+            !this.isDOMEventHandled(event, this.beforeInput)
+        ) {
             try {
                 const { selection } = editor;
                 const { inputType: type } = event;
@@ -638,7 +655,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     }
                 }
             } catch (error) {
-                this.editor.onError({ code: SlateErrorCode.OnDOMBeforeInputError, nativeError: error });
+                this.editor.onError({
+                    code: SlateErrorCode.OnDOMBeforeInputError,
+                    nativeError: error
+                });
             }
         }
     }
@@ -793,9 +813,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
-            const voidMatch =
-                Editor.isVoid(this.editor, node) ||
-                Editor.void(this.editor, { at: path, voids: true });
+            const voidMatch = Editor.isVoid(this.editor, node) || Editor.void(this.editor, { at: path, voids: true });
 
             // If starting a drag on a void node, make sure it is selected
             // so that it shows up in the selection's fragment.
@@ -826,7 +844,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             if (this.isDraggingInternally) {
                 if (draggedRange) {
                     Transforms.delete(editor, {
-                        at: draggedRange,
+                        at: draggedRange
                     });
                 }
 
@@ -844,7 +862,12 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private onDOMDragEnd(event: DragEvent) {
-        if (!this.readonly && this.isDraggingInternally && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragEnd)) {
+        if (
+            !this.readonly &&
+            this.isDraggingInternally &&
+            hasTarget(this.editor, event.target) &&
+            !this.isDOMEventHandled(event, this.dragEnd)
+        ) {
             this.isDraggingInternally = false;
         }
     }
@@ -858,7 +881,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         ) {
             const el = AngularEditor.toDOMNode(this.editor, this.editor);
             const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
-            this.latestElement = root.activeElement
+            this.latestElement = root.activeElement;
 
             // COMPAT: If the editor has nested editable elements, the focus
             // can go to them. In Firefox, this must be prevented because it
@@ -874,7 +897,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     private onDOMKeydown(event: KeyboardEvent) {
         const editor = this.editor;
-        const root = AngularEditor.findDocumentOrShadowRoot(this.editor)
+        const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
         const { activeElement } = root;
         if (
             !this.readonly &&
@@ -886,10 +909,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             const nativeEvent = event;
             const { selection } = editor;
 
-            const element =
-                editor.children[
-                selection !== null ? selection.focus.path[0] : 0
-                ]
+            const element = editor.children[selection !== null ? selection.focus.path[0] : 0];
             const isRTL = getDirection(Node.string(element)) === 'rtl';
 
             try {
@@ -982,7 +1002,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     event.preventDefault();
 
                     if (selection && Range.isExpanded(selection)) {
-                        Transforms.collapse(editor, { edge: 'focus' })
+                        Transforms.collapse(editor, { edge: 'focus' });
                     }
 
                     Transforms.move(editor, { unit: 'word', reverse: !isRTL });
@@ -993,7 +1013,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     event.preventDefault();
 
                     if (selection && Range.isExpanded(selection)) {
-                        Transforms.collapse(editor, { edge: 'focus' })
+                        Transforms.collapse(editor, { edge: 'focus' });
                     }
 
                     Transforms.move(editor, { unit: 'word', reverse: isRTL });
@@ -1021,7 +1041,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'backward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'backward'
+                            });
                         } else {
                             Editor.deleteBackward(editor);
                         }
@@ -1033,7 +1055,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'forward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'forward'
+                            });
                         } else {
                             Editor.deleteForward(editor);
                         }
@@ -1045,7 +1069,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'backward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'backward'
+                            });
                         } else {
                             Editor.deleteBackward(editor, { unit: 'line' });
                         }
@@ -1057,7 +1083,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'forward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'forward'
+                            });
                         } else {
                             Editor.deleteForward(editor, { unit: 'line' });
                         }
@@ -1069,7 +1097,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'backward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'backward'
+                            });
                         } else {
                             Editor.deleteBackward(editor, { unit: 'word' });
                         }
@@ -1081,7 +1111,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         event.preventDefault();
 
                         if (selection && Range.isExpanded(selection)) {
-                            Editor.deleteFragment(editor, { direction: 'forward' });
+                            Editor.deleteFragment(editor, {
+                                direction: 'forward'
+                            });
                         } else {
                             Editor.deleteForward(editor, { unit: 'word' });
                         }
@@ -1094,28 +1126,29 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         // an event when deleting backwards in a selected void inline node
                         if (
                             selection &&
-                            (Hotkeys.isDeleteBackward(nativeEvent) ||
-                                Hotkeys.isDeleteForward(nativeEvent)) &&
+                            (Hotkeys.isDeleteBackward(nativeEvent) || Hotkeys.isDeleteForward(nativeEvent)) &&
                             Range.isCollapsed(selection)
                         ) {
-                            const currentNode = Node.parent(
-                                editor,
-                                selection.anchor.path
-                            )
+                            const currentNode = Node.parent(editor, selection.anchor.path);
                             if (
                                 Element.isElement(currentNode) &&
                                 Editor.isVoid(editor, currentNode) &&
                                 Editor.isInline(editor, currentNode)
                             ) {
-                                event.preventDefault()
-                                Editor.deleteBackward(editor, { unit: 'block' })
-                                return
+                                event.preventDefault();
+                                Editor.deleteBackward(editor, {
+                                    unit: 'block'
+                                });
+                                return;
                             }
                         }
                     }
                 }
             } catch (error) {
-                this.editor.onError({ code: SlateErrorCode.OnDOMKeydownError, nativeError: error });
+                this.editor.onError({
+                    code: SlateErrorCode.OnDOMKeydownError,
+                    nativeError: error
+                });
             }
         }
     }
@@ -1158,7 +1191,10 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     Editor.insertText(this.editor, text);
                 }
             } catch (error) {
-                this.editor.onError({ code: SlateErrorCode.ToNativeSelectionError, nativeError: error });
+                this.editor.onError({
+                    code: SlateErrorCode.ToNativeSelectionError,
+                    nativeError: error
+                });
             }
         }
     }
@@ -1224,9 +1260,13 @@ const isTargetInsideVoid = (editor: AngularEditor, target: EventTarget | null): 
 };
 
 const hasStringTarget = (domSelection: DOMSelection) => {
-    return (domSelection.anchorNode.parentElement.hasAttribute('data-slate-string') || domSelection.anchorNode.parentElement.hasAttribute('data-slate-zero-width')) &&
-        (domSelection.focusNode.parentElement.hasAttribute('data-slate-string') || domSelection.focusNode.parentElement.hasAttribute('data-slate-zero-width'));
-}
+    return (
+        (domSelection.anchorNode.parentElement.hasAttribute('data-slate-string') ||
+            domSelection.anchorNode.parentElement.hasAttribute('data-slate-zero-width')) &&
+        (domSelection.focusNode.parentElement.hasAttribute('data-slate-string') ||
+            domSelection.focusNode.parentElement.hasAttribute('data-slate-zero-width'))
+    );
+};
 
 /**
  * remove default insert from composition
@@ -1245,4 +1285,4 @@ const preventInsertFromComposition = (event: Event, editor: AngularEditor) => {
         const textNode = domSelection.anchorNode;
         textNode.splitText(textNode.length - insertText.length).remove();
     }
-}
+};

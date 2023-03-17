@@ -1,9 +1,4 @@
-import {
-    Component,
-    ChangeDetectionStrategy,
-    ViewChild,
-    TemplateRef
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@angular/core';
 
 @Component({
     selector: 'slate-string-template',
@@ -23,6 +18,9 @@ export class SlateStringTemplateComponent {
     @ViewChild('emptyTextTemplate', { read: TemplateRef, static: true })
     emptyTextTemplate: TemplateRef<any>;
 
-    @ViewChild('lineBreakEmptyStringTemplate', { read: TemplateRef, static: true })
+    @ViewChild('lineBreakEmptyStringTemplate', {
+        read: TemplateRef,
+        static: true
+    })
     lineBreakEmptyStringTemplate: TemplateRef<any>;
 }

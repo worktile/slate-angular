@@ -1,11 +1,21 @@
 <div class="demo-rich-editor-wrapper">
     <div class="demo-global-toolbar">
-        <demo-button *ngFor="let toolbarItem of toolbarItems" [active]="toolbarItem.active(toolbarItem.format)"
-            (onMouseDown)="toolbarItem.action(toolbarItem.format)"><span class="material-icons">{{ toolbarItem.icon
-                }}</span></demo-button>
+        <demo-button
+            *ngFor="let toolbarItem of toolbarItems"
+            [active]="toolbarItem.active(toolbarItem.format)"
+            (onMouseDown)="toolbarItem.action(toolbarItem.format)"
+            ><span class="material-icons">{{ toolbarItem.icon }}</span></demo-button
+        >
     </div>
-    <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
-        (ngModelChange)="valueChange($event)" [renderElement]="renderElement" [renderText]="renderText" [keydown]="keydown">
+    <slate-editable
+        class="demo-slate-angular-editor"
+        [editor]="editor"
+        [(ngModel)]="value"
+        (ngModelChange)="valueChange($event)"
+        [renderElement]="renderElement"
+        [renderText]="renderText"
+        [keydown]="keydown"
+    >
         <ng-template #heading_1 let-context="context" let-viewContext="viewContext">
             <h1 slateElement [context]="context" [viewContext]="viewContext"></h1>
         </ng-template>

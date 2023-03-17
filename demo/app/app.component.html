@@ -1,8 +1,8 @@
 <div class="header">
     <div class="header-logo">
         <a class="logo" href="javescript:;">
-            <img src="../assets/logo.svg" alt="slate-angular-logo">
-            <img class="title"  src="../assets/text.svg">
+            <img src="../assets/logo.svg" alt="slate-angular-logo" />
+            <img class="title" src="../assets/text.svg" />
         </a>
     </div>
     <div class="link">
@@ -11,18 +11,23 @@
     </div>
 </div>
 <div class="header-bars">
-    <span class="material-icons"  (click)="onBreadClick()">menu</span>
-    <span class="header-bars-name">{{ activeNav?.name}} </span>
+    <span class="material-icons" (click)="onBreadClick()">menu</span>
+    <span class="header-bars-name">{{ activeNav?.name }} </span>
 </div>
-<div class="sidenav" [ngClass]="{'animate-sidenav': showSideNav}"  (click)="onBreadClick()">
+<div class="sidenav" [ngClass]="{ 'animate-sidenav': showSideNav }" (click)="onBreadClick()">
     <div class="nav-menu">
         <div class="menu-item" *ngFor="let item of menus">
-            <a [routerLink]="item.url" class="vertical-menu-item level-1" [ngClass]="{'selected': isSelected(item)}"
-                style="position: relative;" target="_self"><span>{{ item.name }}</span>
+            <a
+                [routerLink]="item.url"
+                class="vertical-menu-item level-1"
+                [ngClass]="{ selected: isSelected(item) }"
+                style="position: relative"
+                target="_self"
+                ><span>{{ item.name }}</span>
             </a>
         </div>
     </div>
 </div>
-<div class="content" [ngClass]="{'sidenav-content': showSideNav}">
+<div class="content" [ngClass]="{ 'sidenav-content': showSideNav }">
     <router-outlet></router-outlet>
 </div>

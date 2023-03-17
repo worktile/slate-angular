@@ -1,0 +1,18 @@
+{
+    "eslintIntegration": true,
+    "stylelintIntegration": true,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "semi": true,
+    "arrowParens": "avoid",
+    "trailingComma": "none",
+    "printWidth": 140,
+    "overrides": [
+        {
+            "files": "*.json",
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

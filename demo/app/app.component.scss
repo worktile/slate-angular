@@ -14,18 +14,18 @@ $editor-width: 800px;
     left: 0;
     width: 100%;
     border-bottom: 1px solid #eee;
-    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.05) ;
-    .header-logo{
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.05);
+    .header-logo {
         display: flex;
         margin-left: 20px;
-        .logo{
+        .logo {
             display: flex;
-            img{
+            img {
                 height: 23px;
                 width: auto;
                 vertical-align: middle;
             }
-            .title{
+            .title {
                 height: 25px;
                 margin-left: 10px;
                 position: relative;
@@ -34,11 +34,10 @@ $editor-width: 800px;
         }
         /* To appear above the underlay */
         .title {
-          margin-left: 10px;
-       
+            margin-left: 10px;
         }
     }
-    .header-bars{
+    .header-bars {
         display: none;
     }
 
@@ -52,11 +51,10 @@ $editor-width: 800px;
             color: #666;
             -webkit-text-decoration: none;
             text-decoration: none;
-            &:hover{
+            &:hover {
                 color: #348fe4;
             }
         }
-
     }
 }
 
@@ -88,7 +86,7 @@ $editor-width: 800px;
                 }
 
                 &:hover {
-                    background-color: rgba(52,143,228,0.1);
+                    background-color: rgba(52, 143, 228, 0.1);
                     color: #348fe4;
                     text-shadow: 0 0 5px #fff;
                 }
@@ -101,7 +99,7 @@ $editor-width: 800px;
                 padding-left: 20px;
                 margin: 0;
                 color: #666;
-                transition: background-color .2s;
+                transition: background-color 0.2s;
             }
         }
     }
@@ -117,13 +115,12 @@ $editor-width: 800px;
     margin-top: 32px;
 }
 
-
 .demo-rich-editor-wrapper {
     max-width: 42em;
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
     .slate-editable-container {
         padding: 0px;
     }
@@ -135,13 +132,13 @@ $editor-width: 800px;
         top: 0;
         z-index: 999;
 
-        &>* {
+        & > * {
             display: inline-block;
             height: 24px;
             line-height: 24px;
         }
 
-        &>*+* {
+        & > * + * {
             margin-left: 15px;
         }
 
@@ -150,16 +147,16 @@ $editor-width: 800px;
         margin-bottom: 20px;
     }
 
-    .demo-element-image{
+    .demo-element-image {
         display: block;
-        img{ 
+        img {
             display: block;
             max-width: 100%;
             max-height: 20em;
             box-shadow: none;
             box-sizing: border-box;
         }
-        .outline{
+        .outline {
             box-shadow: 0 0 0 2px #348fe4;
         }
     }
@@ -170,7 +167,7 @@ $editor-width: 800px;
     .slate-editable-container {
         padding: 40px;
     }
-    table{
+    table {
         border-spacing: 0;
         word-wrap: break-word;
         box-sizing: border-box;
@@ -184,7 +181,7 @@ $editor-width: 800px;
         margin-right: 0px;
         width: 100%;
     }
-    td{
+    td {
         word-wrap: break-word;
         border: 1px solid #ddd;
         border-width: 1px 0 0 1px;
@@ -195,7 +192,7 @@ $editor-width: 800px;
 }
 
 @media screen and (max-width: 768px) {
-    .header-bars{
+    .header-bars {
         display: flex;
         position: relative;
         margin-top: 53px;
@@ -203,15 +200,14 @@ $editor-width: 800px;
         height: 42px;
         color: #666;
         align-items: center;
-        .header-bars-name{
+        .header-bars-name {
             font-size: 14px;
             margin-left: 1em;
         }
-        .material-icons{
-           cursor: pointer;
+        .material-icons {
+            cursor: pointer;
         }
- 
-     }
+    }
     .sidenav {
         position: relative;
         top: 0;
@@ -224,16 +220,15 @@ $editor-width: 800px;
             transition: all 0.3s;
             top: 95px;
         }
-        &:after{
-            content:'';
+        &:after {
+            content: '';
             position: absolute;
             width: 100%;
             height: calc(100vh - 95px);
-            background: rgba(0,0,0,0.3);
-
+            background: rgba(0, 0, 0, 0.3);
         }
     }
-    .animate-sidenav{
+    .animate-sidenav {
         left: 0;
         .nav-menu {
             left: 0;
@@ -244,11 +239,11 @@ $editor-width: 800px;
         margin-left: 0px;
         margin-top: 0px;
     }
-    .sidenav-content{
+    .sidenav-content {
         overflow: hidden;
         height: calc(100vh - 100px);
     }
-    .demo-rich-editor-wrapper{
+    .demo-rich-editor-wrapper {
         margin-top: 0;
     }
 }

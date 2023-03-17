@@ -1,4 +1,3 @@
-
 import { Editor, Path, Transforms, Location } from 'slate';
 import { AngularEditor, hasBlockCard, isCardLeft } from 'slate-angular';
 import { HistoryEditor } from 'slate-history';
@@ -38,7 +37,9 @@ export const withBlockCard = editor => {
             } else {
                 insertParagraph(editor, cursorRootPath);
                 Transforms.select(editor, cursorRootPath);
-                Transforms.removeNodes(editor, { at: Path.next(cursorRootPath) });
+                Transforms.removeNodes(editor, {
+                    at: Path.next(cursorRootPath)
+                });
                 return;
             }
         }
@@ -55,9 +56,10 @@ export const withBlockCard = editor => {
             if (isLeftCursor) {
                 insertParagraph(editor, cursorRootPath);
                 Transforms.select(editor, cursorRootPath);
-                Transforms.removeNodes(editor, { at: Path.next(cursorRootPath) });
+                Transforms.removeNodes(editor, {
+                    at: Path.next(cursorRootPath)
+                });
                 return;
-
             } else {
                 const nextPath = Path.next(cursorRootPath);
                 HistoryEditor.withoutMerging(editor, () => {
@@ -87,18 +89,22 @@ export const withBlockCard = editor => {
             }
         }
         insertText(text);
-    }
+    };
 
     return editor;
 };
 
 const insertParagraph = (editor: Editor, at: Location) => {
-    Transforms.insertNodes(editor, {
-        type: 'paragraph',
-        children: [
-            {
-                text: ''
-            }
-        ]
-    }, { at });
+    Transforms.insertNodes(
+        editor,
+        {
+            type: 'paragraph',
+            children: [
+                {
+                    text: ''
+                }
+            ]
+        },
+        { at }
+    );
 };

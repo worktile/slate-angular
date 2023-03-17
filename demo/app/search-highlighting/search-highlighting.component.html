@@ -2,12 +2,7 @@
     <div class="demo-global-toolbar">
         <div class="search-highlighting-toolbar">
             <span class="material-icons">search</span>
-            <input
-                type="search"
-                placeholder="Search the text..."
-                [(ngModel)]="keywords"
-                (ngModelChange)="keywordsChange($event)"
-            />
+            <input type="search" placeholder="Search the text..." [(ngModel)]="keywords" (ngModelChange)="keywordsChange($event)" />
         </div>
     </div>
     <slate-editable

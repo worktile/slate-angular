@@ -1,4 +1,4 @@
-import { Descendant } from "slate";
+import { Descendant } from 'slate';
 
 export enum SlateErrorCode {
     ToNativeSelectionError = 2100,
@@ -8,7 +8,7 @@ export enum SlateErrorCode {
     OnDOMKeydownError = 2104,
     GetStartPointError = 2105,
     NotFoundPreviousRootNodeError = 3100,
-    InvalidValueError = 4100,
+    InvalidValueError = 4100
 }
 
 export interface SlateError {

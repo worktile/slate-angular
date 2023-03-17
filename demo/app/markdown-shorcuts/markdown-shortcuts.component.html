@@ -1,6 +1,11 @@
 <div class="demo-rich-editor-wrapper">
-    <slate-editable class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"
-        (ngModelChange)="valueChange($event)" [renderElement]="renderElement()">
+    <slate-editable
+        class="demo-slate-angular-editor"
+        [editor]="editor"
+        [(ngModel)]="value"
+        (ngModelChange)="valueChange($event)"
+        [renderElement]="renderElement()"
+    >
         <ng-template #blockquoteTemplate let-context="context" let-viewContext="viewContext">
             <blockquote slateElement [context]="context" [viewContext]="viewContext"></blockquote>
         </ng-template>

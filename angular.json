@@ -34,9 +34,7 @@
                 "output": "/assets"
               }
             ],
-            "styles": [
-              "demo/styles.scss"
-            ],
+            "styles": ["demo/styles.scss"],
             "scripts": [],
             "allowedCommonJsDependencies": [
               "lodash",
@@ -111,23 +109,15 @@
             "polyfills": "demo/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "demo/favicon.ico",
-              "demo/assets"
-            ],
-            "styles": [
-              "demo/styles.scss"
-            ],
+            "assets": ["demo/favicon.ico", "demo/assets"],
+            "styles": ["demo/styles.scss"],
             "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "demo/**/*.ts",
-              "demo/**/*.html"
-            ]
+            "lintFilePatterns": ["demo/**/*.ts", "demo/**/*.html"]
           }
         },
         "e2e": {
@@ -169,18 +159,13 @@
             "tsConfig": "packages/tsconfig.spec.json",
             "karmaConfig": "packages/karma.conf.js",
             "codeCoverage": true,
-            "codeCoverageExclude": [
-              "packages/src/testing/**/*"
-            ]
+            "codeCoverageExclude": ["packages/src/testing/**/*"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "packages/**/*.ts",
-              "packages/**/*.html"
-            ]
+            "lintFilePatterns": ["packages/**/*.ts", "packages/**/*.html"]
           }
         }
       }
