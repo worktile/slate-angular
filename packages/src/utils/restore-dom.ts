@@ -3,7 +3,7 @@ import { EDITOR_TO_ELEMENT } from './weak-maps';
 
 export function restoreDom(editor: Editor, execute: () => void) {
     const editable = EDITOR_TO_ELEMENT.get(editor);
-    const observer = new MutationObserver(mutations => {
+    let observer = new MutationObserver(mutations => {
         mutations.reverse().forEach(mutation => {
             if (mutation.type === 'characterData') {
                 // We don't want to restore the DOM for characterData mutations
@@ -21,13 +21,20 @@ export function restoreDom(editor: Editor, execute: () => void) {
                 console.log('added: ', node);
             });
         });
-        observer.disconnect();
-        console.log('restore dom executed');
+        disconnect();
         execute();
+        console.log('restore dom executed');
     });
     observer.observe(editable, { subtree: true, childList: true, characterData: true, characterDataOldValue: true });
-    setTimeout(() => {
+    const disconnect = () => {
         observer.disconnect();
+        observer = null;
+    }
+    setTimeout(() => {
+        if (observer) {
+            disconnect();
+            execute();
+        }
     }, 0);
 }
 

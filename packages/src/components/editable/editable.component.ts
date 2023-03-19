@@ -564,9 +564,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     if (nativeTargetRange) {
                         const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
                         if (data) {
-                            setTimeout(() => {
+                            restoreDom(editor, () => {
                                 Transforms.insertText(editor, data.toString(), { at: targetRange });
-                            }, 0);
+                            });
                         } else {
                             restoreDom(editor, () => {
                                 Transforms.delete(editor, { at: targetRange });
