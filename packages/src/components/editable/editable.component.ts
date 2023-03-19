@@ -553,6 +553,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { selection } = editor;
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
+        console.log(`type: ${type}`, data && data.toString());
         if (IS_ANDROID) {
             if (type === 'insertCompositionText') {
                 if (data && data.toString().includes('\n')) {
@@ -613,6 +614,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                             restoreDom(editor, () => {
                                 Editor.deleteBackward(editor);
                             });
+                        } else {
+                            Editor.deleteBackward(editor);
                         }
                         break;
                     }
