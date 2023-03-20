@@ -577,7 +577,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             if (type === 'deleteContentBackward') {
                 let [nativeTargetRange] = event.getTargetRanges();
                 const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
-                // Gboard can not prevent default action, so must use restoreDom, Sougou Keyboard can prevent default action.
+                // gboard can not prevent default action, so must use restoreDom,
+                // sougou Keyboard can prevent default action（only in Chinese input mode）.
                 // In order to avoid weird action in Sougou Keyboard, use resotreDom only range's isCollapsed is false (recognize gboard)
                 if (!Range.isCollapsed(targetRange)) {
                     restoreDom(editor, () => {

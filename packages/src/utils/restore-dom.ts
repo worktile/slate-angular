@@ -22,11 +22,11 @@ export function restoreDom(editor: Editor, execute: () => void) {
         disconnect();
         execute();
     });
-    observer.observe(editable, { subtree: true, childList: true, characterData: true, characterDataOldValue: true });
     const disconnect = () => {
         observer.disconnect();
         observer = null;
     };
+    observer.observe(editable, { subtree: true, childList: true, characterData: true, characterDataOldValue: true });
     setTimeout(() => {
         if (observer) {
             disconnect();
