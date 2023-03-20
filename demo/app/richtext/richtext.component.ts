@@ -217,17 +217,5 @@ const initialValue = [
     {
         type: 'heading-one',
         children: [{ text: 'This is h1 ' }]
-    },
-    {
-        type: 'heading-three',
-        children: [{ text: 'This is h3 ' }]
-    },
-    {
-        type: 'paragraph',
-        children: [
-            {
-                text: `Since`
-            }
-        ]
     }
 ];

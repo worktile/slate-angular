@@ -577,6 +577,18 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 }
                 return;
             }
+            if (type === 'deleteContentBackward') {
+                const range = window.getSelection();
+                // Gboard can not prevent default action, so must use restoreDom, Sougou Keyboard can prevent default action.
+                // In order to avoid weird action in Sougou Keyboard, use resotreDom only range's isCollapsed is false (recognize gboard)
+                if (range.isCollapsed === false) {
+                    range.removeAllRanges();
+                    restoreDom(editor, () => {
+                        Editor.deleteBackward(editor);
+                    });
+                    return;
+                }
+            }
         }
         if (
             !this.readonly &&
@@ -610,13 +622,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     }
 
                     case 'deleteContentBackward': {
-                        if (IS_ANDROID) {
-                            restoreDom(editor, () => {
-                                Editor.deleteBackward(editor);
-                            });
-                        } else {
-                            Editor.deleteBackward(editor);
-                        }
+                        Editor.deleteBackward(editor);
                         break;
                     }
 
