@@ -3,6 +3,7 @@ import { Editor, Path, Node } from 'slate';
 import { ViewContainerItem } from '../../view/container-item';
 import { SlateLeafContext, SlateStringContext } from '../../view/context';
 import { AngularEditor } from '../../plugins/angular-editor';
+import { SlateDefaultStringComponent } from './default-string.component';
 
 @Component({
     selector: 'span[slateString]',
@@ -66,7 +67,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
             return this.viewContext.templateComponent.compatStringTemplate;
         }
 
-        return this.viewContext.templateComponent.stringTemplate;
+        return SlateDefaultStringComponent;
     }
 
     getContext(): SlateStringContext {
