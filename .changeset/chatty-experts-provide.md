@@ -1,5 +1,5 @@
 ---
-"slate-angular": patch
+"slate-angular": minor
 ---
 
 android input handing
