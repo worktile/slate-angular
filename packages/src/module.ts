@@ -14,6 +14,7 @@ import { SlateLeafComponent } from './components/leaf/leaf.component';
 import { SlateDefaultLeafComponent } from './components/leaf/default-leaf.component';
 import { SlateLeavesComponent } from './components/leaves/leaves.component';
 import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/default-element.component.token';
+import { SlateDefaultStringComponent } from './components/string/default-string.component';
 
 @NgModule({
     declarations: [
@@ -29,10 +30,18 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/defa
         SlateBlockCardComponent,
         SlateLeafComponent,
         SlateLeavesComponent,
-        SlateDefaultLeafComponent
+        SlateDefaultLeafComponent,
+        SlateDefaultStringComponent
     ],
     imports: [CommonModule],
-    exports: [SlateEditableComponent, SlateChildrenComponent, SlateElementComponent, SlateLeavesComponent, SlateStringComponent],
+    exports: [
+        SlateEditableComponent,
+        SlateChildrenComponent,
+        SlateElementComponent,
+        SlateLeavesComponent,
+        SlateStringComponent,
+        SlateDefaultStringComponent
+    ],
     providers: [
         {
             provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
