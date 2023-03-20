@@ -1,7 +1,9 @@
 import { Editor } from 'slate';
-import { EDITOR_TO_ELEMENT } from './weak-maps';
+import { EDITOR_TO_ELEMENT, IS_RESTORING } from './weak-maps';
 
 export function restoreDom(editor: Editor, execute: () => void) {
+    console.log(`start restore`);
+    IS_RESTORING.set(editor, true);
     const editable = EDITOR_TO_ELEMENT.get(editor);
     let observer = new MutationObserver(mutations => {
         mutations.reverse().forEach(mutation => {
@@ -29,7 +31,9 @@ export function restoreDom(editor: Editor, execute: () => void) {
     const disconnect = () => {
         observer.disconnect();
         observer = null;
-    }
+        IS_RESTORING.delete(editor);
+        console.log(`end restore`);
+    };
     setTimeout(() => {
         if (observer) {
             disconnect();
@@ -37,5 +41,3 @@ export function restoreDom(editor: Editor, execute: () => void) {
         }
     }, 0);
 }
-
-

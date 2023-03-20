@@ -32,6 +32,7 @@ export const IS_READONLY: WeakMap<Editor, boolean> = new WeakMap();
 export const IS_FOCUSED: WeakMap<Editor, boolean> = new WeakMap();
 export const IS_DRAGGING: WeakMap<Editor, boolean> = new WeakMap();
 export const IS_CLICKING: WeakMap<Editor, boolean> = new WeakMap();
+export const IS_RESTORING: WeakMap<Editor, boolean> = new WeakMap();
 
 /**
  * Weak map for associating the context `onChange` context with the plugin.

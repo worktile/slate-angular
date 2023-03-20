@@ -24,7 +24,8 @@ import {
     ELEMENT_TO_NODE,
     IS_READONLY,
     EDITOR_TO_ON_CHANGE,
-    EDITOR_TO_WINDOW
+    EDITOR_TO_WINDOW,
+    IS_RESTORING
 } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import getDirection from 'direction';
@@ -492,6 +493,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private toSlateSelection() {
+        console.log('toSlateSelection');
         if ((!this.isComposing || IS_ANDROID) && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
@@ -561,7 +563,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         Editor.insertBreak(editor);
                     });
                 } else {
-                    let [nativeTargetRange] = (event as any).getTargetRanges();
+                    let [nativeTargetRange] = event.getTargetRanges();
                     if (nativeTargetRange) {
                         const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
                         if (data) {
@@ -578,13 +580,13 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 return;
             }
             if (type === 'deleteContentBackward') {
-                const range = window.getSelection();
+                let [nativeTargetRange] = event.getTargetRanges();
+                const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
                 // Gboard can not prevent default action, so must use restoreDom, Sougou Keyboard can prevent default action.
                 // In order to avoid weird action in Sougou Keyboard, use resotreDom only range's isCollapsed is false (recognize gboard)
-                if (range.isCollapsed === false) {
-                    range.removeAllRanges();
+                if (!Range.isCollapsed(targetRange)) {
                     restoreDom(editor, () => {
-                        Editor.deleteBackward(editor);
+                        Transforms.delete(editor, { at: targetRange });
                     });
                     return;
                 }
