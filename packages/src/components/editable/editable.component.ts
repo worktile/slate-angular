@@ -24,8 +24,7 @@ import {
     ELEMENT_TO_NODE,
     IS_READONLY,
     EDITOR_TO_ON_CHANGE,
-    EDITOR_TO_WINDOW,
-    IS_RESTORING
+    EDITOR_TO_WINDOW
 } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import getDirection from 'direction';
@@ -364,8 +363,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     onChange() {
-        console.log(JSON.stringify(this.editor.operations));
-        console.log(JSON.stringify(this.editor.children));
         this.forceFlush();
         this.onChangeCallback(this.editor.children);
     }
@@ -493,7 +490,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 
     private toSlateSelection() {
-        console.log('toSlateSelection');
         if ((!this.isComposing || IS_ANDROID) && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
@@ -555,7 +551,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { selection } = editor;
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
-        console.log(`type: ${type}`, data && data.toString());
         if (IS_ANDROID) {
             if (type === 'insertCompositionText') {
                 if (data && data.toString().includes('\n')) {

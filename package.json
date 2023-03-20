@@ -6,7 +6,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
-    "start-host": "ng serve demo --host 192.168.10.129",
     "build": "ng build slate-angular --configuration production && cpx \"./packages/src/**/*.scss\" ./dist/",
     "build:demo": "ng build demo --configuration production",
     "pub": "npm run build && cd dist && npm publish --access public",
