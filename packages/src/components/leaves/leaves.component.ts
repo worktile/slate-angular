@@ -22,7 +22,7 @@ import { isDecoratorRangeListEqual } from '../../utils/range-list';
         [viewContext]="viewContext"
         [viewContext]="viewContext"
         *ngFor="let context of leafContexts; trackBy: trackBy"
-    ></slate-leaf> `,
+    ></slate-leaf>`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
