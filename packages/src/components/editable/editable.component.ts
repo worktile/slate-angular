@@ -588,6 +588,13 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                     return;
                 }
             }
+            if (type === 'insertText') {
+                restoreDom(editor, () => {
+                    if (typeof data === 'string') {
+                        Editor.insertText(editor, data);
+                    }
+                });
+            }
         }
         if (
             !this.readonly &&
