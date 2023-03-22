@@ -1,10 +1,4 @@
-import {
-    Component,
-    OnInit,
-    ChangeDetectionStrategy,
-    ElementRef,
-    ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { SlateStringContext } from '../../view/context';
 import { BaseComponent } from '../../view/base';
 
@@ -20,8 +14,8 @@ export class SlateDefaultStringComponent extends BaseComponent<SlateStringContex
 
     onContextChange(): void {
         // Avoid breaking some browser default behaviors, such as spellCheck, android composition input state
-        if (this.nativeElement.innerText !== this.context.text) {
-            this.nativeElement.innerText = this.context.text;
+        if (this.nativeElement.textContent !== this.context.text) {
+            this.nativeElement.textContent = this.context.text;
         }
     }
 
