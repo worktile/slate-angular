@@ -26,9 +26,11 @@ describe('with-angular', () => {
             }
         ];
     }
+    
     beforeEach(() => {
         configEditor();
     });
+
     describe('onChange', () => {
         it('default onChange was called', fakeAsync(() => {
             spyOn(angularEditor, 'onChange').and.callThrough();

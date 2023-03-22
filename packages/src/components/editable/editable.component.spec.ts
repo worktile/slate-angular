@@ -132,6 +132,7 @@ describe('Editable Component', () => {
         let placeholderLeafWithContent = document.querySelector('[data-slate-placeholder="true"]');
         expect(placeholderLeafWithContent).toBeNull();
     }));
+
     it('should update placeholder text when reset plaeceholder parameter', fakeAsync(() => {
         const placeholder = 'hello world';
         component.placeholder = placeholder;
