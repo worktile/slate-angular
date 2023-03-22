@@ -553,7 +553,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
         if (IS_ANDROID) {
-            console.log(`type: ${type}, data: ${ data && data.toString() }`);
             if (type === 'insertCompositionText') {
                 if (data && data.toString().includes('\n')) {
                     restoreDom(editor, () => {
