@@ -366,6 +366,9 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     onChange() {
         this.forceFlush();
         this.onChangeCallback(this.editor.children);
+        console.log(`selection: ${JSON.stringify(this.editor.selection)}`);
+        console.log(`children: ${JSON.stringify(this.editor.children)}`);
+        console.log(`operations: ${JSON.stringify(this.editor.operations)}`);
     }
 
     ngAfterViewChecked() {}
@@ -552,6 +555,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { selection } = editor;
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
+        console.log(`type: ${type}, data: ${data && data.toString()}`);
+
         if (IS_ANDROID) {
             if (type === 'insertCompositionText') {
                 if (data && data.toString().includes('\n')) {
@@ -594,6 +599,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                         Editor.insertText(editor, data);
                     }
                 });
+                return;
             }
         }
         if (
