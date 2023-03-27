@@ -4,5 +4,10 @@
   "initialVersions": {
     "slate-angular": "15.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "chatty-experts-provide",
+    "dry-foxes-invite",
+    "poor-moles-camp",
+    "strong-cats-occur"
+  ]
 }
