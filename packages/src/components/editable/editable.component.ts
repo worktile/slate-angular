@@ -552,17 +552,27 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { selection } = editor;
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
-
         if (IS_ANDROID) {
+            let targetRange: Range | null = null
+            let [nativeTargetRange] = event.getTargetRanges();
+            if (nativeTargetRange) {
+                targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
+            }
+            // COMPAT: SelectionChange event is fired after the action is performed, so we
+            // have to manually get the selection here to ensure it's up-to-date.
+            const window = AngularEditor.getWindow(editor);
+            const domSelection = window.getSelection();
+            if (!targetRange && domSelection) {
+                targetRange = AngularEditor.toSlateRange(editor, domSelection);
+            }
+            targetRange = targetRange ?? editor.selection;
             if (type === 'insertCompositionText') {
                 if (data && data.toString().includes('\n')) {
                     restoreDom(editor, () => {
                         Editor.insertBreak(editor);
                     });
                 } else {
-                    let [nativeTargetRange] = event.getTargetRanges();
-                    if (nativeTargetRange) {
-                        const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
+                    if (targetRange) {
                         if (data) {
                             restoreDom(editor, () => {
                                 Transforms.insertText(editor, data.toString(), { at: targetRange });
@@ -577,8 +587,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 return;
             }
             if (type === 'deleteContentBackward') {
-                let [nativeTargetRange] = event.getTargetRanges();
-                const targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
                 // gboard can not prevent default action, so must use restoreDom,
                 // sougou Keyboard can prevent default action（only in Chinese input mode）.
                 // In order to avoid weird action in Sougou Keyboard, use resotreDom only range's isCollapsed is false (recognize gboard)
