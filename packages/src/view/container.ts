@@ -4,7 +4,7 @@ import { ViewContainerItem } from './container-item';
 import { SlateErrorCode } from '../types/error';
 
 /**
- * the sepcial container for angular template
+ * the special container for angular template
  * Add the rootNodes of each child component to the parentElement
  * Remove useless DOM elements, eg: comment...
  */
