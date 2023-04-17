@@ -1,5 +1,11 @@
 # Changelog
 
+## 15.1.0-next.1
+
+### Patch Changes
+
+- [`64e3f81`](https://github.com/worktile/slate-angular/commit/64e3f81fcb8dac22b6712b257e50e25dd76358e3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - android issue: get targetRange from dom selection when event can not get nativeTargetRange
+
 ## 15.1.0-next.0
 
 ### Minor Changes
