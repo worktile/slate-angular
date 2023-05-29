@@ -28,6 +28,7 @@ import {
 } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
 import getDirection from 'direction';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
     DOMElement,
@@ -345,6 +346,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 domSelection.removeAllRanges();
             }
 
+            defaultScrollSelectionIntoView(this.editor, newDomRange);
+
             setTimeout(() => {
                 // COMPAT: In Firefox, it's not enough to create a range, you also need
                 // to focus the contenteditable element too. (2016/11/16)
@@ -553,7 +556,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         const { inputType: type } = event;
         const data = event.dataTransfer || event.data || undefined;
         if (IS_ANDROID) {
-            let targetRange: Range | null = null
+            let targetRange: Range | null = null;
             let [nativeTargetRange] = event.getTargetRanges();
             if (nativeTargetRange) {
                 targetRange = AngularEditor.toSlateRange(editor, nativeTargetRange);
@@ -1273,6 +1276,19 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         EDITOR_TO_ON_CHANGE.delete(this.editor);
     }
 }
+
+const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: DOMRange) => {
+    // This was affecting the selection of multiple blocks and dragging behavior,
+    // so enabled only if the selection has been collapsed.
+    if (domRange.getBoundingClientRect && (!editor.selection || (editor.selection && Range.isCollapsed(editor.selection)))) {
+        const leafEl = domRange.startContainer.parentElement!;
+        leafEl.getBoundingClientRect = domRange.getBoundingClientRect.bind(domRange);
+        scrollIntoView(leafEl, {
+            scrollMode: 'if-needed'
+        });
+        delete leafEl.getBoundingClientRect;
+    }
+};
 
 /**
  * Check if the target is editable and in the editor.
