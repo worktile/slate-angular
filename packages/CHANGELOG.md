@@ -1,5 +1,11 @@
 # Changelog
 
+## 15.1.0-next.2
+
+### Minor Changes
+
+- [#230](https://github.com/worktile/slate-angular/pull/230) [`b26c34f`](https://github.com/worktile/slate-angular/commit/b26c34f320c07bea2ae5d2c866f5a0fd1f56aa26) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support scrollSelectionIntoView and defaultScrollSelectionIntoView method
+
 ## 15.1.0-next.1
 
 ### Patch Changes
