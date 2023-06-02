@@ -10,7 +10,8 @@
     "slate-history": "^0.66.0",
     "debug": "^4.1.1",
     "direction": "^1.0.3",
-    "is-hotkey": "^0.1.6"
+    "is-hotkey": "^0.1.6",
+    "scroll-into-view-if-needed": "^2.2.20"
   },
   "dependencies": {
     "tslib": "^2.5.0"

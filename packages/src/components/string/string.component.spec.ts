@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
 
-fdescribe('Default String Render', () => {
+describe('Default String Render', () => {
     let component: AdvancedEditableComponent;
     let fixture: ComponentFixture<AdvancedEditableComponent>;
 

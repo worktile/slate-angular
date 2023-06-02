@@ -4,6 +4,8 @@ import { SlateEditableComponent } from '../components/editable/editable.componen
 import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
 import { TestingLeafComponent } from './leaf.component';
+import { AngularEditor } from '../plugins/angular-editor';
+import { DOMRange } from '../utils/dom';
 
 @Component({
     selector: 'basic-editable',
@@ -15,6 +17,7 @@ import { TestingLeafComponent } from './leaf.component';
             [renderLeaf]="renderLeaf"
             [placeholder]="placeholder"
             [trackBy]="trackBy"
+            [scrollSelectionIntoView]="scrollSelectionIntoView"
         ></slate-editable>
     `
 })
@@ -64,6 +67,8 @@ export class AdvancedEditableComponent implements OnInit {
         }
         return null;
     };
+
+    scrollSelectionIntoView = (editor: AngularEditor, domRange: DOMRange) => {};
 
     ngOnInit() {}
 
