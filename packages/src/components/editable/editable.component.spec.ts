@@ -2,6 +2,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testi
 import { By } from '@angular/platform-browser';
 import { AngularEditor } from 'slate-angular';
 import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
+import { Editor, Transforms } from 'slate';
 
 describe('Editable Component', () => {
     let component: AdvancedEditableComponent;
@@ -153,5 +154,31 @@ describe('Editable Component', () => {
         flush();
         fixture.detectChanges();
         expect(placeholderLeaf.innerText).toEqual(newPlaceholder);
+    }));
+
+    it(`should execute custom scroll into view`, fakeAsync(() => {
+        spyOn(component, 'scrollSelectionIntoView').and.callThrough();
+
+        const value = new Array(50).fill(0).map((value, index: number) => {
+            return {
+                type: 'paragraph',
+                children: [{ text: `${index}` }]
+            };
+        });
+        component.value = value;
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+
+        expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(0);
+
+        Transforms.select(component.editor, Editor.end(component.editor, [value.length - 1]));
+        AngularEditor.focus(component.editor);
+
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+
+        expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(1);
     }));
 });

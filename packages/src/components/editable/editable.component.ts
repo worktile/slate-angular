@@ -110,6 +110,8 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
 
     @Input() placeholderDecorate: (editor: Editor) => SlatePlaceholder[];
 
+    @Input() scrollSelectionIntoView: (editor: AngularEditor, domRange: DOMRange) => void = defaultScrollSelectionIntoView;
+
     @Input() isStrictDecorate: boolean = true;
 
     @Input() trackBy: (node: Element) => any = () => null;
@@ -346,7 +348,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 domSelection.removeAllRanges();
             }
 
-            defaultScrollSelectionIntoView(this.editor, newDomRange);
+            this.scrollSelectionIntoView(this.editor, newDomRange);
 
             setTimeout(() => {
                 // COMPAT: In Firefox, it's not enough to create a range, you also need
