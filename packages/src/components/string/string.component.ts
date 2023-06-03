@@ -51,7 +51,8 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
             !this.viewContext.editor.isInline(this.context.parent) &&
             Editor.string(this.viewContext.editor, parentPath) === ''
         ) {
-            return this.viewContext.templateComponent.lineBreakEmptyStringTemplate;
+            console.log(`lineBreakEmptyStringTemplate`);
+            return SlateDefaultStringComponent;
         }
 
         // COMPAT: If the text is empty, it's because it's on the edge of an inline
@@ -67,6 +68,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
             return this.viewContext.templateComponent.compatStringTemplate;
         }
 
+        console.log(`string component`);
         return SlateDefaultStringComponent;
     }
 
