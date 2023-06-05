@@ -4,7 +4,7 @@
     >{{ context.text }}<span data-slate-zero-width>{{ '\uFEFF' }}</span></span
   >
 </ng-template>
-<ng-template #emptyStringTemplate let-context="context" let-viewContext="viewContext">
+<ng-template #voidStringTemplate let-context="context" let-viewContext="viewContext">
   <span editable-text data-slate-zero-width="z" attr.data-slate-length="{{ context.elementStringLength }}">{{ '\uFEFF' }}</span>
 </ng-template>
 <ng-template #emptyTextTemplate let-context="context" let-viewContext="viewContext">

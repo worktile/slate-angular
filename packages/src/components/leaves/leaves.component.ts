@@ -37,11 +37,11 @@ export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> impl
 
     ngOnInit() {
         this.leaves = Text.decorations(this.context.text, this.context.decorations);
-        this.leafContexts = this.getLeafCotexts();
+        this.leafContexts = this.getLeafContexts();
         this.initialized = true;
     }
 
-    getLeafCotexts() {
+    getLeafContexts() {
         return this.leaves.map((leaf, index) => {
             return {
                 leaf,
@@ -63,7 +63,7 @@ export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> impl
         if (previousValue.text !== currentValue.text || !isDecoratorRangeListEqual(previousValue.decorations, currentValue.decorations)) {
             this.leaves = Text.decorations(this.context.text, this.context.decorations);
         }
-        this.leafContexts = this.getLeafCotexts();
+        this.leafContexts = this.getLeafContexts();
     }
 
     trackBy(index, item) {
