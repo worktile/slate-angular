@@ -14,10 +14,4 @@ export class SlateStringTemplateComponent {
 
     @ViewChild('emptyTextTemplate', { read: TemplateRef, static: true })
     emptyTextTemplate: TemplateRef<any>;
-
-    @ViewChild('lineBreakEmptyStringTemplate', {
-        read: TemplateRef,
-        static: true
-    })
-    lineBreakEmptyStringTemplate: TemplateRef<any>;
 }

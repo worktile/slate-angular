@@ -10,6 +10,3 @@
 <ng-template #emptyTextTemplate let-context="context" let-viewContext="viewContext">
   <span editable-text data-slate-zero-width="z" data-slate-length="0">{{ '\uFEFF' }}</span>
 </ng-template>
-<ng-template #lineBreakEmptyStringTemplate let-context="context" let-viewContext="viewContext">
-  <span editable-text data-slate-zero-width="n" attr.data-slate-length="{{ context.elementStringLength }}">{{ '\uFEFF' }}<br /></span>
-</ng-template>
