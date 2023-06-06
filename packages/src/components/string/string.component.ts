@@ -32,48 +32,72 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
         this.elementRef.nativeElement.remove();
     }
 
-    getViewType() {
+    // COMPAT: If this is the last text node in an empty block, render a zero-
+    // width space that will convert into a line break when copying and pasting
+    // to support expected plain text.
+    isLineBreakEmptyString() {
         const path = AngularEditor.findPath(this.viewContext.editor, this.context.text);
         const parentPath = Path.parent(path);
-
-        // COMPAT: Render text inside void nodes with a zero-width space.
-        // So the node can contain selection but the text is not visible.
-        if (this.viewContext.editor.isVoid(this.context.parent)) {
-            return this.viewContext.templateComponent.emptyStringTemplate;
-        }
-
-        // COMPAT: If this is the last text node in an empty block, render a zero-
-        // width space that will convert into a line break when copying and pasting
-        // to support expected plain text.
-        if (
+        return (
             this.context.leaf.text === '' &&
             this.context.parent.children[this.context.parent.children.length - 1] === this.context.text &&
             !this.viewContext.editor.isInline(this.context.parent) &&
             Editor.string(this.viewContext.editor, parentPath) === ''
-        ) {
-            return this.viewContext.templateComponent.lineBreakEmptyStringTemplate;
+        );
+    }
+
+    // COMPAT: If the text is empty, it's because it's on the edge of an inline
+    // node, so we render a zero-width space so that the selection can be
+    // inserted next to it still.
+    isEmptyText() {
+        return this.context.leaf.text === '';
+    }
+
+    // COMPAT: Browsers will collapse trailing new lines at the end of blocks,
+    // so we need to add an extra trailing new lines to prevent that.
+    isCompatibleString() {
+        return this.context.isLast && this.context.leaf.text.slice(-1) === '\n';
+    }
+
+    // COMPAT: Render text inside void nodes with a zero-width space.
+    // So the node can contain selection but the text is not visible.
+    isVoid() {
+        return this.viewContext.editor.isVoid(this.context.parent);
+    }
+
+    getViewType() {
+        if (this.isVoid()) {
+            return this.viewContext.templateComponent.voidStringTemplate;
         }
 
-        // COMPAT: If the text is empty, it's because it's on the edge of an inline
-        // node, so we render a zero-width space so that the selection can be
-        // inserted next to it still.
-        if (this.context.leaf.text === '') {
+        if (this.isLineBreakEmptyString()) {
+            return SlateDefaultStringComponent;
+        }
+
+        if (this.isEmptyText()) {
             return this.viewContext.templateComponent.emptyTextTemplate;
         }
 
-        // COMPAT: Browsers will collapse trailing new lines at the end of blocks,
-        // so we need to add an extra trailing new lines to prevent that.
-        if (this.context.isLast && this.context.leaf.text.slice(-1) === '\n') {
-            return this.viewContext.templateComponent.compatStringTemplate;
+        if (this.isCompatibleString()) {
+            return this.viewContext.templateComponent.compatibleStringTemplate;
         }
 
         return SlateDefaultStringComponent;
     }
 
+    getType(): SlateStringContext['type'] {
+        if (this.isLineBreakEmptyString()) {
+            return 'lineBreakEmptyString';
+        }
+        return 'string';
+    }
+
     getContext(): SlateStringContext {
+        const stringType = this.getType();
         return {
             text: this.context.leaf.text,
-            elementStringLength: Node.string(this.context.parent).length
+            elementStringLength: Node.string(this.context.parent).length,
+            type: stringType
         };
     }
 
