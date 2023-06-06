@@ -6,8 +6,8 @@ import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@ang
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateStringTemplateComponent {
-    @ViewChild('compatStringTemplate', { read: TemplateRef, static: true })
-    compatStringTemplate: TemplateRef<any>;
+    @ViewChild('compatibleStringTemplate', { read: TemplateRef, static: true })
+    compatibleStringTemplate: TemplateRef<any>;
 
     @ViewChild('voidStringTemplate', { read: TemplateRef, static: true })
     voidStringTemplate: TemplateRef<any>;

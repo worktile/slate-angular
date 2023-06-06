@@ -57,5 +57,5 @@ export interface SlateElementAttributes {
 export interface SlateStringContext {
     text: string;
     elementStringLength: number;
-    type: 'string' | 'lineBreakEmptyString' | 'emptyText' | 'voidString' | 'compatString';
+    type: 'string' | 'lineBreakEmptyString';
 }
