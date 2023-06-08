@@ -9,7 +9,16 @@ import { take } from 'rxjs/operators';
     templateUrl: 'huge-document.component.html'
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
+    mode: 'default' | 'component' = 'component';
+
     value = buildInitialValue();
+
+    componentValue = [
+        {
+            type: 'paragraph',
+            children: [{ text: faker.lorem.paragraph() }]
+        }
+    ];
 
     editor = withAngular(createEditor());
 

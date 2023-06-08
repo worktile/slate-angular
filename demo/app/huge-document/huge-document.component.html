@@ -1,4 +1,4 @@
-<div class="demo-rich-editor-wrapper single">
+<div class="demo-rich-editor-wrapper single" *ngIf="mode === 'default'">
   <slate-editable
     class="demo-slate-angular-editor"
     [editor]="editor"
@@ -6,14 +6,25 @@
     (ngModelChange)="valueChange($event)"
     [renderElement]="renderElement()"
   >
-    <ng-template #elementTemplate let-context="context" let-viewContext="viewContext">
-      <h1
-        *ngIf="context.element.type === 'heading-one'"
-        slateElement
-        [context]="context"
-        [viewContext]="viewContext"
-        [viewContext]="viewContext"
-      ></h1>
-    </ng-template>
   </slate-editable>
 </div>
+<div class="demo-rich-editor-wrapper single" *ngIf="mode === 'component'">
+  <slate-editable
+    *ngFor="let item of value"
+    class="demo-slate-angular-editor"
+    [editor]="editor"
+    [(ngModel)]="componentValue"
+    (ngModelChange)="valueChange($event)"
+    [renderElement]="renderElement()"
+  >
+  </slate-editable>
+</div>
+<ng-template #elementTemplate let-context="context" let-viewContext="viewContext">
+  <h1
+    *ngIf="context.element.type === 'heading-one'"
+    slateElement
+    [context]="context"
+    [viewContext]="viewContext"
+    [viewContext]="viewContext"
+  ></h1>
+</ng-template>
