@@ -1,5 +1,11 @@
 # Changelog
 
+## 15.1.0-next.3
+
+### Patch Changes
+
+- [#231](https://github.com/worktile/slate-angular/pull/231) [`fb749c5`](https://github.com/worktile/slate-angular/commit/fb749c5789f7e10312d7821fc92c92eb5acc6b19) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - default string support lineBreakEmptyString
+
 ## 15.1.0-next.2
 
 ### Minor Changes
