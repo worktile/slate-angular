@@ -1,21 +1,32 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, NgZone } from '@angular/core';
 import faker from 'faker';
 import { createEditor } from 'slate';
 import { withAngular } from 'slate-angular';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html'
 })
-export class DemoHugeDocumentComponent implements OnInit {
-    value = initialValue;
+export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
+    value = buildInitialValue();
 
     editor = withAngular(createEditor());
 
     @ViewChild('elementTemplate', { read: TemplateRef, static: true })
     elementTemplate: TemplateRef<any>;
 
-    ngOnInit() {}
+    constructor(private ngZone: NgZone) {}
+
+    ngOnInit() {
+        console.time();
+    }
+
+    ngAfterViewInit(): void {
+        this.ngZone.onStable.pipe(take(1)).subscribe(() => {
+            console.timeEnd();
+        });
+    }
 
     renderElement() {
         return (element: any) => {
@@ -29,20 +40,23 @@ export class DemoHugeDocumentComponent implements OnInit {
     valueChange(event) {}
 }
 
-const HEADINGS = 100;
-const PARAGRAPHS = 7;
-const initialValue = [];
+export const buildInitialValue = () => {
+    const HEADINGS = 200;
+    const PARAGRAPHS = 7;
+    const initialValue = [];
 
-for (let h = 0; h < HEADINGS; h++) {
-    initialValue.push({
-        type: 'heading-one',
-        children: [{ text: faker.lorem.sentence() }]
-    });
-
-    for (let p = 0; p < PARAGRAPHS; p++) {
+    for (let h = 0; h < HEADINGS; h++) {
         initialValue.push({
-            type: 'paragraph',
-            children: [{ text: faker.lorem.paragraph() }]
+            type: 'heading-one',
+            children: [{ text: faker.lorem.sentence() }]
         });
+
+        for (let p = 0; p < PARAGRAPHS; p++) {
+            initialValue.push({
+                type: 'paragraph',
+                children: [{ text: faker.lorem.paragraph() }]
+            });
+        }
     }
-}
+    return initialValue;
+};
