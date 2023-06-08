@@ -9,7 +9,7 @@ import { take } from 'rxjs/operators';
     templateUrl: 'huge-document.component.html'
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
-    mode: 'default' | 'component' = 'component';
+    mode: 'default' | 'component' = 'default';
 
     value = buildInitialValue();
 
