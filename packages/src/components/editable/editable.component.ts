@@ -186,7 +186,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.initializeContext();
 
         // remove unused DOM, just keep templateComponent instance
-        // this.templateElementRef.nativeElement.remove();
+        this.templateElementRef.nativeElement.remove();
 
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
