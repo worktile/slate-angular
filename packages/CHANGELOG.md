@@ -1,5 +1,12 @@
 # Changelog
 
+## 15.1.0-next.4
+
+### Patch Changes
+
+- [`8f443fd`](https://github.com/worktile/slate-angular/commit/8f443fd5c32af182453276c9bbd300750d444026) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove textNode and br on previous type is lineBreakEmptyString
+  export defaultScrollSelectionIntoView function
+
 ## 15.1.0-next.3
 
 ### Patch Changes
