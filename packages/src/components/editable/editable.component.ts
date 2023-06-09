@@ -1280,7 +1280,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
 }
 
-const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: DOMRange) => {
+export const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: DOMRange) => {
     // This was affecting the selection of multiple blocks and dragging behavior,
     // so enabled only if the selection has been collapsed.
     if (domRange.getBoundingClientRect && (!editor.selection || (editor.selection && Range.isCollapsed(editor.selection)))) {

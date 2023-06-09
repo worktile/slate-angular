@@ -23,7 +23,12 @@ export class SlateDefaultStringComponent
     beforeContextChange(value: SlateStringContext) {
         if (this.context) {
             if (this.context.type === 'lineBreakEmptyString') {
-                this.removeLineBreakEmptyStringDOM();
+                if (value.type === 'string') {
+                    this.removeLineBreakEmptyStringDOM();
+                } else {
+                    this.textNode?.remove();
+                    this.brNode?.remove();
+                }
             }
             if (this.context.type === 'string') {
                 if (value.type === 'lineBreakEmptyString') {
