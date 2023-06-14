@@ -125,6 +125,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     @Input() blur: (event: Event) => void;
     @Input() click: (event: MouseEvent) => void;
     @Input() compositionEnd: (event: CompositionEvent) => void;
+    @Input() compositionUpdate: (event: CompositionEvent) => void;
     @Input() compositionStart: (event: CompositionEvent) => void;
     @Input() copy: (event: ClipboardEvent) => void;
     @Input() cut: (event: ClipboardEvent) => void;
@@ -253,6 +254,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         this.addEventListener('blur', this.onDOMBlur.bind(this));
         this.addEventListener('click', this.onDOMClick.bind(this));
         this.addEventListener('compositionend', this.onDOMCompositionEnd.bind(this));
+        this.addEventListener('compositionupdate', this.onDOMCompositionUpdate.bind(this));
         this.addEventListener('compositionstart', this.onDOMCompositionStart.bind(this));
         this.addEventListener('copy', this.onDOMCopy.bind(this));
         this.addEventListener('cut', this.onDOMCut.bind(this));
@@ -798,6 +800,27 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
         }
     }
 
+    private onDOMCompositionStart(event: CompositionEvent) {
+        const { selection } = this.editor;
+
+        if (selection) {
+            // solve the problem of cross node Chinese input
+            if (Range.isExpanded(selection)) {
+                Editor.deleteFragment(this.editor);
+                this.forceFlush();
+            }
+        }
+        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
+            this.isComposing = true;
+        }
+        this.detectContext();
+        this.cdr.detectChanges();
+    }
+
+    private onDOMCompositionUpdate(event: CompositionEvent) {
+        this.isDOMEventHandled(event, this.compositionUpdate);
+    }
+
     private onDOMCompositionEnd(event: CompositionEvent) {
         if (!event.data && !Range.isCollapsed(this.editor.selection)) {
             Transforms.delete(this.editor);
@@ -815,23 +838,6 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
             // COMPAT: In Firefox 87.0 CompositionEnd fire twice
             // so we need avoid repeat isnertText by isComposing === true,
             this.isComposing = false;
-        }
-        this.detectContext();
-        this.cdr.detectChanges();
-    }
-
-    private onDOMCompositionStart(event: CompositionEvent) {
-        const { selection } = this.editor;
-
-        if (selection) {
-            // solve the problem of cross node Chinese input
-            if (Range.isExpanded(selection)) {
-                Editor.deleteFragment(this.editor);
-                this.forceFlush();
-            }
-        }
-        if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
-            this.isComposing = true;
         }
         this.detectContext();
         this.cdr.detectChanges();
@@ -1297,7 +1303,7 @@ export const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: 
  * Check if the target is editable and in the editor.
  */
 
-const hasEditableTarget = (editor: AngularEditor, target: EventTarget | null): target is DOMNode => {
+export const hasEditableTarget = (editor: AngularEditor, target: EventTarget | null): target is DOMNode => {
     return isDOMNode(target) && AngularEditor.hasDOMNode(editor, target, { editable: true });
 };
 
