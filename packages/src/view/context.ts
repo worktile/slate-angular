@@ -30,8 +30,8 @@ export interface SlateElementContext<T extends Element = Element> {
     readonly: boolean;
 }
 
-export interface SlateTextContext {
-    text: Text;
+export interface SlateTextContext<T extends Text = Text> {
+    text: T;
     decorations: Range[];
     isLast: boolean;
     parent: Element;

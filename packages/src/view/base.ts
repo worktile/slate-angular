@@ -208,10 +208,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
  * base class for custom text component
  */
 @Directive()
-export class BaseTextComponent extends BaseComponent<SlateTextContext> implements OnInit, OnDestroy {
+export class BaseTextComponent<T extends Text = Text> extends BaseComponent<SlateTextContext<T>> implements OnInit, OnDestroy {
     initialized = false;
 
-    get text(): Text {
+    get text(): T {
         return this._context && this._context.text;
     }
 
