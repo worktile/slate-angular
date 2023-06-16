@@ -670,7 +670,7 @@ export const AngularEditor = {
     ) {
         const blockCardElement = AngularEditor.toDOMNode(editor, blockCardNode);
         const cardCenter = blockCardElement.parentElement;
-        return options.direction === 'left' ? cardCenter.previousElementSibling : cardCenter.nextElementSibling;
+        return options.direction === 'left' ? cardCenter.previousElementSibling.firstChild : cardCenter.nextElementSibling.firstChild;
     },
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
