@@ -1,5 +1,34 @@
 # Changelog
 
+## 15.1.0
+
+### Minor Changes
+
+- [#230](https://github.com/worktile/slate-angular/pull/230) [`08f1b72`](https://github.com/worktile/slate-angular/commit/08f1b722392a0c7d2873db11dd7cd329c24aba0b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support scrollSelectionIntoView and defaultScrollSelectionIntoView method
+
+- [#227](https://github.com/worktile/slate-angular/pull/227) [`05d46dd`](https://github.com/worktile/slate-angular/commit/05d46dd144d585e0f5795fd294bcc30ed9fcba7d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - android input handing
+
+- [#228](https://github.com/worktile/slate-angular/pull/228) [`afc99b0`](https://github.com/worktile/slate-angular/commit/afc99b066e0e6e0a01b419d882d9becea8c76884) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add default string component
+
+### Patch Changes
+
+- [`8f443fd`](https://github.com/worktile/slate-angular/commit/8f443fd5c32af182453276c9bbd300750d444026) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove textNode and br on previous type is lineBreakEmptyString
+  export defaultScrollSelectionIntoView function
+
+- [`cf4e323`](https://github.com/worktile/slate-angular/commit/cf4e323c09ad60aacc54083d5648e4c33dcf5d2c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - export hasEditableTarget and composition update event
+
+- [`64e3f81`](https://github.com/worktile/slate-angular/commit/64e3f81fcb8dac22b6712b257e50e25dd76358e3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - android issue: get targetRange from dom selection when event can not get nativeTargetRange
+
+- [`1a32c9e`](https://github.com/worktile/slate-angular/commit/1a32c9ef6851f35025b22e5cd5d879d1fd473ada) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - handle scroll issue when cursor in the black card
+
+- [`20b5cb5`](https://github.com/worktile/slate-angular/commit/20b5cb524fcb48b97f20468601112c70d4dbeac5) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - handle insertText in Android device
+
+- [`a691d0b`](https://github.com/worktile/slate-angular/commit/a691d0b1a5077ffee2c3eb868a30f11eb7cbd1bd) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Text nodes support generic T
+
+- [`a7348cd`](https://github.com/worktile/slate-angular/commit/a7348cdbbd49dc263cd7d8176939d575236b3511) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - solved innerText render error for '\n'
+
+- [#231](https://github.com/worktile/slate-angular/pull/231) [`fb749c5`](https://github.com/worktile/slate-angular/commit/fb749c5789f7e10312d7821fc92c92eb5acc6b19) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - default string support lineBreakEmptyString
+
 ## 15.1.0-next.4
 
 ### Patch Changes
