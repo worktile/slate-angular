@@ -351,7 +351,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
                 domSelection.removeAllRanges();
             }
 
-            this.scrollSelectionIntoView(this.editor, newDomRange);
+            newDomRange && this.scrollSelectionIntoView(this.editor, newDomRange);
 
             setTimeout(() => {
                 // COMPAT: In Firefox, it's not enough to create a range, you also need
