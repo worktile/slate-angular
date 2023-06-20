@@ -1,5 +1,11 @@
 # Changelog
 
+## 15.1.1
+
+### Patch Changes
+
+- [`a9610f0`](https://github.com/worktile/slate-angular/commit/a9610f07c407de468433716ee121f8090127210e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - do not invoke scrollSelectionIntoView when newDomRange is null
+
 ## 15.1.0
 
 ### Minor Changes
