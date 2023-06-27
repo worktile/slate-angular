@@ -116,8 +116,8 @@ export abstract class ViewContainerItem<
             }
             if (isComponentType(this.viewType)) {
                 const componentRef = this.viewContainerRef.createComponent(this.viewType) as ComponentRef<any>;
-                componentRef.instance.context = context;
                 componentRef.instance.viewContext = this.viewContext;
+                componentRef.instance.context = context;
                 firstRootNode.replaceWith(componentRef.instance.nativeElement);
                 this.destroyView();
                 this.componentRef = componentRef;

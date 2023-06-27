@@ -20,7 +20,6 @@ import { isDecoratorRangeListEqual } from '../../utils/range-list';
     template: `<slate-leaf
         [context]="context"
         [viewContext]="viewContext"
-        [viewContext]="viewContext"
         *ngFor="let context of leafContexts; trackBy: trackBy"
     ></slate-leaf>`,
     changeDetection: ChangeDetectionStrategy.OnPush
