@@ -104,7 +104,7 @@ export const AngularEditor = {
             const parent = NODE_TO_PARENT.get(child);
 
             if (parent == null) {
-                if (Editor.isEditor(child)) {
+                if (Editor.isEditor(child) && child === editor) {
                     return path;
                 } else {
                     break;
@@ -121,6 +121,32 @@ export const AngularEditor = {
             child = parent;
         }
         throw new Error(`Unable to find the path for Slate node: ${JSON.stringify(node)}`);
+    },
+
+    isNodeInEditor(editor: AngularEditor, node: Node): boolean {
+        let child = node;
+
+        while (true) {
+            const parent = NODE_TO_PARENT.get(child);
+
+            if (parent == null) {
+                if (Editor.isEditor(child) && child === editor) {
+                    return true;
+                } else {
+                    break;
+                }
+            }
+
+            const i = NODE_TO_INDEX.get(child);
+
+            if (i == null) {
+                break;
+            }
+
+            child = parent;
+        }
+
+        return false;
     },
 
     /**
@@ -489,6 +515,12 @@ export const AngularEditor = {
         return range;
     },
 
+    isLeafInEditor(editor: AngularEditor, leafNode: DOMElement): boolean {
+        const textNode = leafNode.closest('[data-slate-node="text"]')!;
+        const node = AngularEditor.toSlateNode(editor, textNode);
+        return AngularEditor.isNodeInEditor(editor, node);
+    },
+
     /**
      * Find a Slate point from a DOM selection's `domNode` and `domOffset`.
      */
@@ -542,7 +574,7 @@ export const AngularEditor = {
 
             // Calculate how far into the text node the `nearestNode` is, so that we
             // can determine what the offset relative to the text node is.
-            if (leafNode) {
+            if (leafNode && AngularEditor.isLeafInEditor(editor, leafNode)) {
                 textNode = leafNode.closest('[data-slate-node="text"]')!;
                 const window = AngularEditor.getWindow(editor);
                 const range = window.document.createRange();
