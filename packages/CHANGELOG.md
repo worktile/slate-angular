@@ -1,5 +1,12 @@
 # Changelog
 
+## 15.1.2
+
+### Patch Changes
+
+- [`e163f01`](https://github.com/worktile/slate-angular/commit/e163f01ed5d9cc7265df17668622543e79bff33d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add isLeafInEditor and isNodeInEditor to test target leaf whether belong to current editor
+  correct selection when focus in void element include slate-angular component
+
 ## 15.1.1
 
 ### Patch Changes
