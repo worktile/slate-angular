@@ -1,5 +1,11 @@
 # Changelog
 
+## 15.1.3
+
+### Patch Changes
+
+- [`dd5c1b2`](https://github.com/worktile/slate-angular/commit/dd5c1b2a60bad3ed17eaad48611515f56001fc94) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should set viewContext before set context
+
 ## 15.1.2
 
 ### Patch Changes
