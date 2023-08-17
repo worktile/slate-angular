@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+    browser-tools: circleci/browser-tools@1.4.3
 jobs:
     build:
         working_directory: ~/slate-angular
