@@ -5,7 +5,12 @@ jobs:
         docker:
             - image: cimg/node:18.16-browsers
         steps:
+            - browser-tools/install-chrome
             - checkout
+            - run: |
+                  node --version
+                  google-chrome --version
+                  which google-chrome
             - restore_cache:
                   key: slate-angular-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - run: npm ci
