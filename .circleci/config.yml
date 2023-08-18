@@ -1,11 +1,18 @@
-version: 2
+version: 2.1
+orbs:
+    browser-tools: circleci/browser-tools@1.4.3
 jobs:
     build:
         working_directory: ~/slate-angular
         docker:
-            - image: circleci/node:16-browsers
+            - image: cimg/node:18.16-browsers
         steps:
+            - browser-tools/install-chrome
             - checkout
+            - run: |
+                  node --version
+                  google-chrome --version
+                  which google-chrome
             - restore_cache:
                   key: slate-angular-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - run: npm ci
