@@ -3,15 +3,15 @@ import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
 import { BulletedListElement } from '../../../custom-types';
-import { SlateElementComponent } from '../../../packages/src/components/element/element.component';
+import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
-import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html',
     standalone: true,
-    imports: [SlateEditableComponent, FormsModule, SlateElementComponent]
+    imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {
     constructor() {}

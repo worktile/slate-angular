@@ -5,7 +5,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
     templateUrl: 'block-card.component.html',
     standalone: true
 })
-export class SlateBlockCardComponent implements OnInit {
+export class SlateBlockCard implements OnInit {
     @ViewChild('centerContianer', { static: true })
     centerContianer: ElementRef;
 

@@ -1,6 +1,6 @@
 import { ComponentRef, Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
-import { SlateBlockCardComponent } from '../components/block-card/block-card.component';
+import { SlateBlockCard } from '../components/block-card/block-card.component';
 
 import { ViewType } from '../types/view';
 import { isComponentType, isDOMElement, isTemplateRef } from '../utils';
@@ -20,7 +20,7 @@ export abstract class ViewContainerItem<
     initialized = false;
     embeddedViewRef: EmbeddedViewRef<BaseEmbeddedView<T>>;
     embeddedViewContext: BaseEmbeddedView<T>;
-    blockCardComponentRef: ComponentRef<SlateBlockCardComponent>;
+    blockCardComponentRef: ComponentRef<SlateBlockCard>;
     componentRef: ComponentRef<K>;
     viewType: ViewType;
 

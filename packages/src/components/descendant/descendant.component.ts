@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnInit, ViewContainerRef } from '@angular/core';
-import { SlateBlockCardComponent } from '../block-card/block-card.component';
+import { SlateBlockCard } from '../block-card/block-card.component';
 import { ViewContainerItem } from '../../view/container-item';
 import { Descendant, Editor, Range, Element } from 'slate';
 import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from '../../view/context';
 import { AngularEditor } from '../../plugins/angular-editor';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
 import { BaseElementComponent, BaseTextComponent } from '../../view/base';
-import { SlateDefaultTextComponent } from '../text/default-text.component';
-import { SlateVoidTextComponent } from '../text/void-text.component';
+import { SlateDefaultText } from '../text/default-text.component';
+import { SlateVoidText } from '../text/void-text.component';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { ComponentType, ViewType } from '../../types/view';
 import { SlateErrorCode } from '../../types';
@@ -19,7 +19,7 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-elemen
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class SlateDescendantComponent
+export class SlateDescendant
     extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent>
     implements OnInit, OnChanges
 {
@@ -85,7 +85,7 @@ export class SlateDescendantComponent
 
     createBlockCard() {
         const rootNodes = this.rootNodes;
-        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCardComponent>(SlateBlockCardComponent);
+        this.blockCardComponentRef = this.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard);
         this.blockCardComponentRef.instance.initializeCenter(rootNodes);
     }
 
@@ -165,8 +165,8 @@ export class SlateDescendantComponent
         } else {
             const isVoid = this.viewContext.editor.isVoid(this.context.parent as Element);
             return isVoid
-                ? SlateVoidTextComponent
-                : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultTextComponent;
+                ? SlateVoidText
+                : (this.viewContext.renderText && this.viewContext.renderText(this.descendant)) || SlateDefaultText;
         }
     }
 

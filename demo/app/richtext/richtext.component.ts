@@ -4,9 +4,9 @@ import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
 import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
 import isHotkey from 'is-hotkey';
-import { SlateElementComponent } from '../../../packages/src/components/element/element.component';
+import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
-import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
 import { NgFor } from '@angular/common';
 
@@ -25,7 +25,7 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
     standalone: true,
-    imports: [NgFor, DemoButtonComponent, SlateEditableComponent, FormsModule, SlateElementComponent]
+    imports: [NgFor, DemoButtonComponent, SlateEditable, FormsModule, SlateElement]
 })
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;

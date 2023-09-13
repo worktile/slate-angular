@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
 import { LinkElement } from 'custom-types';
 import { BaseElementComponent } from 'slate-angular';
-import { SlateChildrenComponent } from '../../../../packages/src/components/children/children.component';
+import { SlateChildren } from '../../../../packages/src/components/children/children.component';
 
 @Component({
     selector: 'a[demo-element-link]',
@@ -12,7 +12,7 @@ import { SlateChildrenComponent } from '../../../../packages/src/components/chil
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [SlateChildrenComponent]
+    imports: [SlateChildren]
 })
 export class DemoElementLinkComponent extends BaseElementComponent<LinkElement> {
     // Put this at the start and end of an inline component to work around this Chromium bug:

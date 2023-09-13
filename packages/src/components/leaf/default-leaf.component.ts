@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { BaseLeafComponent } from '../../view/base';
-import { SlateStringComponent } from '../string/string.component';
+import { SlateString } from '../string/string.component';
 
 @Component({
     selector: 'span[slateDefaultLeaf]',
@@ -10,9 +10,9 @@ import { SlateStringComponent } from '../string/string.component';
         'data-slate-leaf': 'true'
     },
     standalone: true,
-    imports: [SlateStringComponent]
+    imports: [SlateString]
 })
-export class SlateDefaultLeafComponent extends BaseLeafComponent implements OnDestroy {
+export class SlateDefaultLeaf extends BaseLeafComponent implements OnDestroy {
     onContextChange(): void {
         super.onContextChange();
         this.renderPlaceholder();

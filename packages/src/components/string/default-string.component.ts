@@ -10,7 +10,7 @@ import { DOMElement } from '../../utils/dom';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class SlateDefaultStringComponent
+export class SlateDefaultString
     extends BaseComponent<SlateStringContext>
     implements OnInit, BeforeContextChange<SlateStringContext>
 {

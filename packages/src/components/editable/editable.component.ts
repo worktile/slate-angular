@@ -47,7 +47,7 @@ import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
 import { SlateErrorCode } from '../../types/error';
-import { SlateStringTemplateComponent } from '../string/template.component';
+import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
@@ -55,7 +55,7 @@ import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
-import { SlateChildrenComponent } from '../children/children.component';
+import { SlateChildren } from '../children/children.component';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -75,14 +75,14 @@ const forceOnDOMPaste = IS_SAFARI;
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SlateEditableComponent),
+            useExisting: forwardRef(() => SlateEditable),
             multi: true
         }
     ],
     standalone: true,
-    imports: [SlateChildrenComponent, SlateStringTemplateComponent]
+    imports: [SlateChildren, SlateStringTemplate]
 })
-export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
+export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
 
@@ -156,7 +156,7 @@ export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, Aft
     //#endregion
 
     @ViewChild('templateComponent', { static: true })
-    templateComponent: SlateStringTemplateComponent;
+    templateComponent: SlateStringTemplate;
 
     @ViewChild('templateComponent', { static: true, read: ElementRef })
     templateElementRef: ElementRef<any>;

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { createEditor, Element, NodeEntry, Text } from 'slate';
-import { SlateEditableComponent } from '../components/editable/editable.component';
+import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
 import { TestingLeafComponent } from './leaf.component';
@@ -32,8 +32,8 @@ export class AdvancedEditableComponent implements OnInit {
 
     placeholder: string;
 
-    @ViewChild(SlateEditableComponent, { static: true })
-    editableComponent: SlateEditableComponent;
+    @ViewChild(SlateEditable, { static: true })
+    editableComponent: SlateEditable;
 
     generateDecorate(keywords: string) {
         this.decorate = ([node, path]) => {
