@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["slate-history", "debug", "direction", "is-hotkey"]
+  "allowedNonPeerDependencies": ["slate-history", "debug", "direction", "is-hotkey", "slate", "scroll-into-view-if-needed"]
 }
