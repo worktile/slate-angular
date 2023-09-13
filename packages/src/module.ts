@@ -17,7 +17,8 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/defa
 import { SlateDefaultStringComponent } from './components/string/default-string.component';
 
 @NgModule({
-    declarations: [
+    imports: [
+        CommonModule,
         SlateEditableComponent,
         SlateDefaultElementComponent,
         SlateElementComponent,
@@ -33,7 +34,6 @@ import { SlateDefaultStringComponent } from './components/string/default-string.
         SlateDefaultLeafComponent,
         SlateDefaultStringComponent
     ],
-    imports: [CommonModule],
     exports: [
         SlateEditableComponent,
         SlateChildrenComponent,

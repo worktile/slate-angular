@@ -14,6 +14,7 @@ import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../../view
 import { ViewContainer } from '../../view/container';
 import { SlateLeafComponent } from '../leaf/leaf.component';
 import { isDecoratorRangeListEqual } from '../../utils/range-list';
+import { NgFor } from '@angular/common';
 
 @Component({
     selector: 'slate-leaves',
@@ -22,7 +23,9 @@ import { isDecoratorRangeListEqual } from '../../utils/range-list';
         [viewContext]="viewContext"
         *ngFor="let context of leafContexts; trackBy: trackBy"
     ></slate-leaf>`,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgFor, SlateLeafComponent]
 })
 export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
     initialized = false;

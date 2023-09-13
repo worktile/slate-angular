@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 
 export function configureBasicEditableTestingModule(declarations: any[], entryComponents: any[] = [], providers: Provider[] = []) {
     TestBed.configureTestingModule({
+        declarations: declarations,
         imports: [CommonModule, BrowserModule, SlateModule, FormsModule],
-        declarations: [...declarations],
         providers: [...providers],
         teardown: { destroyAfterEach: false }
     }).compileComponents();

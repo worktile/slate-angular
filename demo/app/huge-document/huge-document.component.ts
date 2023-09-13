@@ -3,10 +3,16 @@ import faker from 'faker';
 import { createEditor } from 'slate';
 import { withAngular } from 'slate-angular';
 import { take } from 'rxjs/operators';
+import { SlateElementComponent } from '../../../packages/src/components/element/element.component';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
     selector: 'demo-huge-document',
-    templateUrl: 'huge-document.component.html'
+    templateUrl: 'huge-document.component.html',
+    standalone: true,
+    imports: [NgIf, SlateEditableComponent, FormsModule, NgFor, SlateElementComponent]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     mode: 'default' | 'component' = 'default';

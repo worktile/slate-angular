@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { ButtonElement } from '../../../../custom-types';
 import { BaseElementComponent } from 'slate-angular';
+import { SlateChildrenComponent } from '../../../../packages/src/components/children/children.component';
 
 @Component({
     selector: 'span[demo-element-button]',
@@ -12,7 +13,9 @@ import { BaseElementComponent } from 'slate-angular';
     host: {
         class: 'demo-element-button'
     },
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [SlateChildrenComponent]
 })
 export class DemoElementEditableButtonComponent extends BaseElementComponent<ButtonElement> {
     // Put this at the start and end of an inline component to work around this Chromium bug:

@@ -3,7 +3,8 @@ import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@ang
 @Component({
     selector: 'slate-string-template',
     templateUrl: 'template.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class SlateStringTemplateComponent {
     @ViewChild('compatibleStringTemplate', { read: TemplateRef, static: true })

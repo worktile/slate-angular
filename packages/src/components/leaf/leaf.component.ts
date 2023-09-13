@@ -8,7 +8,8 @@ import { ViewType } from '../../types/view';
 @Component({
     selector: 'slate-leaf',
     template: '',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class SlateLeafComponent extends ViewContainerItem<SlateLeafContext, BaseLeafComponent> implements OnInit, OnChanges {
     @Input() context: SlateLeafContext;

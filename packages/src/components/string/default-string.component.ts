@@ -7,7 +7,8 @@ import { DOMElement } from '../../utils/dom';
 @Component({
     selector: 'span[slateDefaultString]',
     template: '',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class SlateDefaultStringComponent
     extends BaseComponent<SlateStringContext>
