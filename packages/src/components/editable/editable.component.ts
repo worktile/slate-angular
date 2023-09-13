@@ -27,7 +27,7 @@ import {
     EDITOR_TO_WINDOW
 } from '../../utils/weak-maps';
 import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
-import getDirection from 'direction';
+import { direction } from 'direction';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { AngularEditor } from '../../plugins/angular-editor';
 import {
@@ -981,7 +981,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const { selection } = editor;
 
             const element = editor.children[selection !== null ? selection.focus.path[0] : 0];
-            const isRTL = getDirection(Node.string(element)) === 'rtl';
+            const isRTL = direction(Node.string(element)) === 'rtl';
 
             try {
                 // COMPAT: Since we prevent the default behavior on
