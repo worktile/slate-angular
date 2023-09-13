@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ImageElement } from '../../../../custom-types';
 import { BaseElementComponent } from 'slate-angular';
-import { SlateChildrenComponent } from '../../../../packages/src/components/children/children.component';
+import { SlateChildren } from '../../../../packages/src/components/children/children.component';
 
 @Component({
     selector: 'demo-element-image',
@@ -11,6 +11,6 @@ import { SlateChildrenComponent } from '../../../../packages/src/components/chil
         class: 'demo-element-image'
     },
     standalone: true,
-    imports: [SlateChildrenComponent]
+    imports: [SlateChildren]
 })
 export class DemoElementImageComponent extends BaseElementComponent<ImageElement> {}

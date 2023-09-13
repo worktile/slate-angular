@@ -8,7 +8,7 @@ import { isKeyHotkey } from 'is-hotkey';
 import { DemoElementEditableButtonComponent } from '../components/editable-button/editable-button.component';
 import { DemoElementLinkComponent } from '../components/link/link.component';
 import { FormsModule } from '@angular/forms';
-import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
 import { NgFor } from '@angular/common';
 
@@ -16,7 +16,7 @@ import { NgFor } from '@angular/common';
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
     standalone: true,
-    imports: [NgFor, DemoButtonComponent, SlateEditableComponent, FormsModule]
+    imports: [NgFor, DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoInlinesComponent implements OnInit {
     value = initialValue;

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { createEditor, Descendant } from 'slate';
 import { withAngular } from 'slate-angular';
 import { FormsModule } from '@angular/forms';
-import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-readonly',
@@ -12,7 +12,7 @@ import { SlateEditableComponent } from '../../../packages/src/components/editabl
         </div>
     `,
     standalone: true,
-    imports: [SlateEditableComponent, FormsModule]
+    imports: [SlateEditable, FormsModule]
 })
 export class DemoReadonlyComponent {
     constructor() {}

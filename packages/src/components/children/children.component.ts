@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { SlateDescendantComponent } from '../descendant/descendant.component';
+import { SlateDescendant } from '../descendant/descendant.component';
 import { Descendant } from 'slate';
 import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
@@ -18,17 +18,17 @@ import { NgFor } from '@angular/common';
     ></slate-descendant>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [NgFor, SlateDescendantComponent]
+    imports: [NgFor, SlateDescendant]
 })
-export class SlateChildrenComponent extends ViewContainer<SlateDescendantComponent> implements OnInit {
+export class SlateChildren extends ViewContainer<SlateDescendant> implements OnInit {
     @Input() children: Descendant[];
 
     @Input() context: SlateChildrenContext;
 
     @Input() viewContext: SlateViewContext;
 
-    @ViewChildren(SlateDescendantComponent, { read: SlateDescendantComponent })
-    childrenComponent: QueryList<SlateDescendantComponent>;
+    @ViewChildren(SlateDescendant, { read: SlateDescendant })
+    childrenComponent: QueryList<SlateDescendant>;
 
     ngOnInit() {}
 

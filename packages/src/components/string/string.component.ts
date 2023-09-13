@@ -3,7 +3,7 @@ import { Editor, Path, Node } from 'slate';
 import { ViewContainerItem } from '../../view/container-item';
 import { SlateLeafContext, SlateStringContext } from '../../view/context';
 import { AngularEditor } from '../../plugins/angular-editor';
-import { SlateDefaultStringComponent } from './default-string.component';
+import { SlateDefaultString } from './default-string.component';
 
 @Component({
     selector: 'span[slateString]',
@@ -11,7 +11,7 @@ import { SlateDefaultStringComponent } from './default-string.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class SlateStringComponent extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
+export class SlateString extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
     @Input() context: SlateLeafContext;
 
     constructor(private elementRef: ElementRef<any>, protected viewContainerRef: ViewContainerRef) {
@@ -72,7 +72,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
         }
 
         if (this.isLineBreakEmptyString()) {
-            return SlateDefaultStringComponent;
+            return SlateDefaultString;
         }
 
         if (this.isEmptyText()) {
@@ -83,7 +83,7 @@ export class SlateStringComponent extends ViewContainerItem<SlateStringContext> 
             return this.viewContext.templateComponent.compatibleStringTemplate;
         }
 
-        return SlateDefaultStringComponent;
+        return SlateDefaultString;
     }
 
     getType(): SlateStringContext['type'] {

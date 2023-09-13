@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { createEditor, Editor, Element, Node } from 'slate';
-import { SlateEditableComponent } from '../components/editable/editable.component';
+import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
 
 @Component({
@@ -22,8 +22,8 @@ export class ImageEditableComponent implements OnInit {
         }
     ];
 
-    @ViewChild(SlateEditableComponent, { static: true })
-    editableComponent: SlateEditableComponent;
+    @ViewChild(SlateEditable, { static: true })
+    editableComponent: SlateEditable;
 
     ngOnInit() {}
 

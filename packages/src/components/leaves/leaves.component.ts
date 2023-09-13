@@ -12,7 +12,7 @@ import {
 import { Text } from 'slate';
 import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../../view/context';
 import { ViewContainer } from '../../view/container';
-import { SlateLeafComponent } from '../leaf/leaf.component';
+import { SlateLeaf } from '../leaf/leaf.component';
 import { isDecoratorRangeListEqual } from '../../utils/range-list';
 import { NgFor } from '@angular/common';
 
@@ -25,17 +25,17 @@ import { NgFor } from '@angular/common';
     ></slate-leaf>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [NgFor, SlateLeafComponent]
+    imports: [NgFor, SlateLeaf]
 })
-export class SlateLeavesComponent extends ViewContainer<SlateLeafComponent> implements OnInit, AfterViewInit, OnChanges {
+export class SlateLeaves extends ViewContainer<SlateLeaf> implements OnInit, AfterViewInit, OnChanges {
     initialized = false;
     leafContexts: SlateLeafContext[];
     leaves: Text[];
 
     @Input() context: SlateTextContext;
 
-    @ViewChildren(SlateLeafComponent, { read: SlateLeafComponent })
-    childrenComponent: QueryList<SlateLeafComponent>;
+    @ViewChildren(SlateLeaf, { read: SlateLeaf })
+    childrenComponent: QueryList<SlateLeaf>;
 
     ngOnInit() {
         this.leaves = Text.decorations(this.context.text, this.context.decorations);

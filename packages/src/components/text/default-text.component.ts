@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
-import { SlateLeavesComponent } from '../leaves/leaves.component';
+import { SlateLeaves } from '../leaves/leaves.component';
 
 @Component({
     selector: 'span[slateDefaultText]',
@@ -10,6 +10,6 @@ import { SlateLeavesComponent } from '../leaves/leaves.component';
         'data-slate-node': 'text'
     },
     standalone: true,
-    imports: [SlateLeavesComponent]
+    imports: [SlateLeaves]
 })
-export class SlateDefaultTextComponent extends BaseTextComponent {}
+export class SlateDefaultText extends BaseTextComponent {}

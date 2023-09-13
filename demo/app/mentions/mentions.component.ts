@@ -4,15 +4,15 @@ import { withHistory } from 'slate-history';
 import { AngularEditor, withAngular } from 'slate-angular';
 import { MentionElement } from 'custom-types';
 import { NgClass, NgFor } from '@angular/common';
-import { SlateElementComponent } from '../../../packages/src/components/element/element.component';
+import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
-import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
     standalone: true,
-    imports: [SlateEditableComponent, FormsModule, SlateElementComponent, NgClass, NgFor]
+    imports: [SlateEditable, FormsModule, SlateElement, NgClass, NgFor]
 })
 export class DemoMentionsComponent implements OnInit {
     searchText = '';
