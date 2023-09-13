@@ -1,5 +1,15 @@
 # Changelog
 
+## 16.1.0-next
+
+### Minor Changes
+
+- [`406acf4`](https://github.com/worktile/slate-angular/commit/406acf4abf8a7dde716a11246ead9fd9db36f380) Thanks [@why520crazy](https://github.com/why520crazy)! - feat: bump is-hotkey and direction to 0.2.0 and 2.0.1, add dependence of package.json 
+
+- [`d2045d7`](https://github.com/worktile/slate-angular/commit/d2045d79cbd8db0af6238fe92de51cf3dc21cb14) Thanks [@why520crazy](https://github.com/why520crazy)! - feat: remove all Component suffix to simplify usage of standalone components
+
+- [`51cda1a`](https://github.com/worktile/slate-angular/commit/51cda1a3766cb0102e57a119b8c3100f8233a72a) Thanks [@why520crazy](https://github.com/why520crazy)! - feat(core): support standalone components
+
 ## 15.1.3
 
 ### Patch Changes
