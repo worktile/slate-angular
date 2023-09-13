@@ -3,11 +3,15 @@ import { createEditor, NodeEntry, Text } from 'slate';
 import { withAngular } from 'slate-angular';
 import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
 import { DemoLeafComponent } from './leaf.component';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'demo-search-highlight',
     templateUrl: './search-highlighting.component.html',
-    styleUrls: ['./search-highlighting.component.scss']
+    styleUrls: ['./search-highlighting.component.scss'],
+    standalone: true,
+    imports: [FormsModule, SlateEditableComponent]
 })
 export class DemoSearchHighlightingComponent implements OnInit {
     keywords = '';

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { createEditor, Descendant, Editor, Node } from 'slate';
 import { SlatePlaceholder, withAngular } from 'slate-angular';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-placeholder',
@@ -21,7 +23,9 @@ import { SlatePlaceholder, withAngular } from 'slate-angular';
                 [(ngModel)]="otherValue"
             ></slate-editable>
         </div>
-    `
+    `,
+    standalone: true,
+    imports: [SlateEditableComponent, FormsModule]
 })
 export class DemoPlaceholderComponent {
     constructor() {}

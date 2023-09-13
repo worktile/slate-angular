@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { createEditor, Descendant } from 'slate';
 import { withAngular } from 'slate-angular';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-readonly',
@@ -8,7 +10,9 @@ import { withAngular } from 'slate-angular';
         <div class="demo-rich-editor-wrapper">
             <slate-editable [readonly]="true" class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"></slate-editable>
         </div>
-    `
+    `,
+    standalone: true,
+    imports: [SlateEditableComponent, FormsModule]
 })
 export class DemoReadonlyComponent {
     constructor() {}

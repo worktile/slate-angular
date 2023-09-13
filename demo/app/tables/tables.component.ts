@@ -3,10 +3,15 @@ import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, DOMElement, withAngular } from 'slate-angular';
 import { MarkTypes, DemoTextMarkComponent } from '../components/text/text.component';
 import { withBlockCard } from '../plugins/block-cards.plugin';
+import { SlateElementComponent } from '../../../packages/src/components/element/element.component';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
 
 @Component({
     selector: 'demo-tables',
-    templateUrl: 'tables.component.html'
+    templateUrl: 'tables.component.html',
+    standalone: true,
+    imports: [SlateEditableComponent, FormsModule, SlateElementComponent]
 })
 export class DemoTablesComponent implements OnInit {
     value = initialValue;

@@ -16,7 +16,8 @@ import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-elemen
 @Component({
     selector: 'slate-descendant',
     template: '',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class SlateDescendantComponent
     extends ViewContainerItem<SlateElementContext | SlateTextContext, BaseElementComponent | BaseTextComponent>

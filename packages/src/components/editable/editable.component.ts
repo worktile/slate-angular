@@ -55,6 +55,7 @@ import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
+import { SlateChildrenComponent } from '../children/children.component';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -77,7 +78,9 @@ const forceOnDOMPaste = IS_SAFARI;
             useExisting: forwardRef(() => SlateEditableComponent),
             multi: true
         }
-    ]
+    ],
+    standalone: true,
+    imports: [SlateChildrenComponent, SlateStringTemplateComponent]
 })
 export class SlateEditableComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;

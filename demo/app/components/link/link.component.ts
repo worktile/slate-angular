@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, HostListener } from '@angular/core';
 import { LinkElement } from 'custom-types';
 import { BaseElementComponent } from 'slate-angular';
+import { SlateChildrenComponent } from '../../../../packages/src/components/children/children.component';
 
 @Component({
     selector: 'a[demo-element-link]',
@@ -9,7 +10,9 @@ import { BaseElementComponent } from 'slate-angular';
         <slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>
         <span contenteditable="false" style="font-size: 0;">{{ inlineChromiumBugfix }}</span>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [SlateChildrenComponent]
 })
 export class DemoElementLinkComponent extends BaseElementComponent<LinkElement> {
     // Put this at the start and end of an inline component to work around this Chromium bug:

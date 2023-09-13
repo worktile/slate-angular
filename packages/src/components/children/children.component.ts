@@ -4,6 +4,7 @@ import { Descendant } from 'slate';
 import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewContainer } from '../../view/container';
+import { NgFor } from '@angular/common';
 
 @Component({
     selector: 'slate-children',
@@ -15,7 +16,9 @@ import { ViewContainer } from '../../view/container';
         [index]="index"
         *ngFor="let descendant of children; let index = index; trackBy: trackBy"
     ></slate-descendant>`,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgFor, SlateDescendantComponent]
 })
 export class SlateChildrenComponent extends ViewContainer<SlateDescendantComponent> implements OnInit {
     @Input() children: Descendant[];

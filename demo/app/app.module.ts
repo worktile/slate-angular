@@ -23,8 +23,13 @@ import { DemoInlinesComponent } from './inlines/inlines.component';
 import { DemoElementLinkComponent } from './components/link/link.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        FormsModule,
+        SlateModule,
         DemoButtonComponent,
         DemoRichtextComponent,
         DemoMarkdownShortcutsComponent,
@@ -43,7 +48,6 @@ import { DemoElementLinkComponent } from './components/link/link.component';
         DemoInlinesComponent,
         DemoElementLinkComponent
     ],
-    imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule, FormsModule, SlateModule],
     providers: [],
     bootstrap: [AppComponent]
 })

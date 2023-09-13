@@ -7,10 +7,16 @@ import isUrl from 'is-url';
 import { isKeyHotkey } from 'is-hotkey';
 import { DemoElementEditableButtonComponent } from '../components/editable-button/editable-button.component';
 import { DemoElementLinkComponent } from '../components/link/link.component';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { DemoButtonComponent } from '../components/button/button.component';
+import { NgFor } from '@angular/common';
 
 @Component({
     selector: 'demo-inlines',
-    templateUrl: 'inlines.component.html'
+    templateUrl: 'inlines.component.html',
+    standalone: true,
+    imports: [NgFor, DemoButtonComponent, SlateEditableComponent, FormsModule]
 })
 export class DemoInlinesComponent implements OnInit {
     value = initialValue;

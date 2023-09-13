@@ -3,10 +3,15 @@ import { withAngular } from 'slate-angular';
 import { createEditor, Transforms, Editor, Element } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
 import { ImageElement } from '../../../custom-types';
+import { FormsModule } from '@angular/forms';
+import { SlateEditableComponent } from '../../../packages/src/components/editable/editable.component';
+import { DemoButtonComponent } from '../components/button/button.component';
 
 @Component({
     selector: 'demo-images',
-    templateUrl: 'images.component.html'
+    templateUrl: 'images.component.html',
+    standalone: true,
+    imports: [DemoButtonComponent, SlateEditableComponent, FormsModule]
 })
 export class DemoImagesComponent implements OnInit {
     value = initialValue;

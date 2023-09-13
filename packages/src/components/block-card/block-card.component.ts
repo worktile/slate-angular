@@ -2,7 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'slate-block-card, [slateBlockCard]',
-    templateUrl: 'block-card.component.html'
+    templateUrl: 'block-card.component.html',
+    standalone: true
 })
 export class SlateBlockCardComponent implements OnInit {
     @ViewChild('centerContianer', { static: true })

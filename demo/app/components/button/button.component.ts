@@ -16,7 +16,8 @@ import {
     template: '<ng-content></ng-content>',
     host: {
         style: 'cursor: pointer'
-    }
+    },
+    standalone: true
 })
 export class DemoButtonComponent implements OnChanges {
     @Input() active = false;
