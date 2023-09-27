@@ -251,11 +251,11 @@ export const getInitialTableValue = () => {
 
 const withTable = (editor: Editor) => {
     const { isBlockCard } = editor;
-    editor.isBlockCard = (node: Node) => {
-        if (Element.isElement(node) && node.type === 'table') {
-            return true;
-        }
-        return isBlockCard(node);
-    };
+    // editor.isBlockCard = (node: Node) => {
+    //     if (Element.isElement(node) && node.type === 'table') {
+    //         return true;
+    //     }
+    //     return isBlockCard(node);
+    // };
     return editor;
 };

@@ -32,7 +32,7 @@ export abstract class ViewContainerItem<
 
     getRootNodes(): HTMLElement[] {
         if (this.embeddedViewRef) {
-            return this.embeddedViewRef.rootNodes.filter(rootNode => isDOMElement(rootNode));
+            return [this.embeddedViewRef.rootNodes[0]];
         }
         if (this.componentRef) {
             return [this.componentRef.instance.nativeElement];

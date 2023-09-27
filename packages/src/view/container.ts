@@ -25,7 +25,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
         if (this.childrenComponent.length > 0) {
             parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
-            this.elementRef.nativeElement.remove();
+            // this.elementRef.nativeElement.remove();
         }
         this.childrenComponent.changes.subscribe(value => {
             const iterableChanges = differ.diff(this.childrenComponent);
@@ -69,7 +69,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
             const fragment = document.createDocumentFragment();
             fragment.append(...record.item.rootNodes);
             parentElement.insertBefore(fragment, this.elementRef.nativeElement);
-            this.elementRef.nativeElement.remove();
+            // this.elementRef.nativeElement.remove();
             return;
         }
         // insert at start location
@@ -96,4 +96,8 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
         // Solve the block-card DOMElement loss when moving nodes
         record.item.appendBlockCardElement();
     }
+}
+
+export class ViewContainer2 {
+    
 }
