@@ -24,6 +24,7 @@ import { SlateErrorCode } from '../../types/error';
 import { SlateElementContext, SlateTextContext } from '../../view/context';
 import { isComponentType, isTemplateRef } from '../../utils/view';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
+import { ViewContainer2 } from '../../view/container';
 
 @Component({
     selector: '[slateElement]',
@@ -33,7 +34,8 @@ import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
     imports: [SlateChildren]
 })
 export class SlateElement extends BaseElementComponent implements OnInit, AfterViewInit {
-    childrenComponent: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
+    container2: ViewContainer2;
+    // childrenComponent: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
 
     constructor(
         public elementRef: ElementRef<HTMLElement>,
@@ -48,21 +50,17 @@ export class SlateElement extends BaseElementComponent implements OnInit, AfterV
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.childrenComponent = this.children.map((descendant, index) => {
-            NODE_TO_INDEX.set(descendant, index);
-            NODE_TO_PARENT.set(descendant, this.element);
-            return this.createView(index, descendant) as any;
-        }) as (EmbeddedViewRef<any> | ComponentRef<any>)[];
+        this.container2 = new ViewContainer2();
+        this.container2.initialize(this.children, this.element, this.viewContext, this.context,this.defaultElementComponentType, this.viewContainerRef);
+        // this.childrenComponent = this.children.map((descendant, index) => {
+        //     NODE_TO_INDEX.set(descendant, index);
+        //     NODE_TO_PARENT.set(descendant, this.element);
+        //     return this.createView(index, descendant) as any;
+        // }) as (EmbeddedViewRef<any> | ComponentRef<any>)[];
     }
 
     ngAfterViewInit(): void {
-        const differ = this.differs.find(this.children).create((index, item: any) => {
-            return this.viewContext.trackBy(item) || AngularEditor.findKey(this.viewContext.editor, item);
-        });
-        if (this.childrenComponent.length > 0) {
-            this.elementRef.nativeElement.append(...this.createFragment());
-            // this.elementRef.nativeElement.remove();
-        }
+        this.container2.build(this.elementRef.nativeElement);
     }
 
     getCommonContext(index: number, descendant: Descendant): { selection: Range; decorations: Range[] } {
@@ -173,9 +171,9 @@ export class SlateElement extends BaseElementComponent implements OnInit, AfterV
     createFragment() {
         // const fragment = document.createDocumentFragment();
         const res = [];
-        this.childrenComponent.forEach((component, index) => {
-            res.push(...this.getRootNodes(component));
-        });
+        // this.childrenComponent.forEach((component, index) => {
+        //     res.push(...this.getRootNodes(component));
+        // });
         return res;
     }
 }

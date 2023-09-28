@@ -4,7 +4,7 @@ import { SlateString } from '../string/string.component';
 
 @Component({
     selector: 'span[slateDefaultLeaf]',
-    template: `<span slateString [context]="context" [viewContext]="viewContext"><span></span></span>`,
+    template: `<span slateString [context]="context" [viewContext]="viewContext"></span>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         'data-slate-leaf': 'true'

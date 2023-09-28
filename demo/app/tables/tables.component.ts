@@ -28,6 +28,9 @@ export class DemoTablesComponent implements OnInit, AfterViewInit {
     @ViewChild('tdTemplate', { read: TemplateRef, static: true })
     tdTemplate: TemplateRef<any>;
 
+    @ViewChild('pTemplate', { read: TemplateRef, static: true })
+    pTemplate: TemplateRef<any>;
+
     constructor(private ngZone: NgZone) {}
 
     ngOnInit() {
@@ -51,14 +54,17 @@ export class DemoTablesComponent implements OnInit, AfterViewInit {
             if (element.type === 'table-cell') {
                 return this.tdTemplate;
             }
+            if (element.type === 'paragraph') {
+                return this.pTemplate;
+            }
             return null;
         };
     }
 
     renderText = (text: Text) => {
-        if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoTextMarkComponent;
-        }
+        // if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
+        //     return DemoTextMarkComponent;
+        // }
     };
 
     valueChange(event) {}
