@@ -56,7 +56,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 }
 
 export const buildInitialValue = () => {
-    const HEADINGS = 2000;
+    const HEADINGS = 4000;
     const PARAGRAPHS = 7;
     const initialValue = [];
 
