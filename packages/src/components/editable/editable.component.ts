@@ -15,7 +15,10 @@ import {
     OnChanges,
     SimpleChanges,
     AfterViewChecked,
-    DoCheck
+    DoCheck,
+    Inject,
+    ViewContainerRef,
+    AfterViewInit
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -50,12 +53,15 @@ import { SlateErrorCode } from '../../types/error';
 import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
-import { ViewType } from '../../types/view';
+import { ComponentType, ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { SlateChildren } from '../children/children.component';
+import { ViewContainer2 } from '../../view/container';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
+import { BaseElementComponent } from '../../view/base';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -82,9 +88,11 @@ const forceOnDOMPaste = IS_SAFARI;
     standalone: true,
     imports: [SlateChildren, SlateStringTemplate]
 })
-export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
+export class SlateEditable implements OnInit, AfterViewInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
+
+    viewContainer2: ViewContainer2;
 
     private destroy$ = new Subject();
 
@@ -166,7 +174,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         public renderer2: Renderer2,
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
-        private injector: Injector
+        private injector: Injector,
+        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
+        public defaultElementComponentType: ComponentType<BaseElementComponent>,
+        public viewContainerRef: ViewContainerRef
     ) {}
 
     ngOnInit() {
@@ -195,6 +206,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
+        this.viewContainer2 = new ViewContainer2();
+    }
+
+    ngAfterViewInit(): void {
+        this.viewContainer2.build(this.elementRef.nativeElement);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -237,6 +253,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.editor.children = normalize(value);
             }
             this.initializeContext();
+            this.viewContainer2.initialize(
+                this.editor.children,
+                this.editor as any,
+                this.viewContext,
+                this.context as any,
+                this.defaultElementComponentType,
+                this.viewContainerRef
+            );
             this.cdr.markForCheck();
         }
     }
