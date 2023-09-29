@@ -94,7 +94,7 @@ export class DemoTablesComponent implements OnInit, AfterViewInit {
 }
 
 export const getInitialTableValue = () => {
-    const length = 4000;
+    const length = 2000;
     const array = new Array(length).fill(0).map(() => {
         return {
             type: 'table-row',

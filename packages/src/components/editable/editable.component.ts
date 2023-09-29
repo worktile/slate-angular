@@ -18,7 +18,8 @@ import {
     DoCheck,
     Inject,
     ViewContainerRef,
-    AfterViewInit
+    AfterViewInit,
+    afterRender
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -178,7 +179,12 @@ export class SlateEditable implements OnInit, AfterViewInit, OnChanges, OnDestro
         @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
         public defaultElementComponentType: ComponentType<BaseElementComponent>,
         public viewContainerRef: ViewContainerRef
-    ) {}
+    ) {
+        afterRender(() => {
+            console.log('after render');
+            this.viewContainer2.build(this.elementRef.nativeElement);
+        });
+    }
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -210,6 +216,7 @@ export class SlateEditable implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
 
     ngAfterViewInit(): void {
+        console.log('build');
         this.viewContainer2.build(this.elementRef.nativeElement);
     }
 
@@ -252,6 +259,7 @@ export class SlateEditable implements OnInit, AfterViewInit, OnChanges, OnDestro
                 });
                 this.editor.children = normalize(value);
             }
+            console.log('write value');
             this.initializeContext();
             this.viewContainer2.initialize(
                 this.editor.children,
