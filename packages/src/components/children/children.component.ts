@@ -12,7 +12,6 @@ import { NgFor } from '@angular/common';
         [descendant]="descendant"
         [context]="context"
         [viewContext]="viewContext"
-        [viewContext]="viewContext"
         [index]="index"
         *ngFor="let descendant of children; let index = index; trackBy: trackBy"
     ></slate-descendant>`,
