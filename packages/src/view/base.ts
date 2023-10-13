@@ -1,18 +1,24 @@
-import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Directive,
+    ElementRef,
+    HostBinding,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewContainerRef
+} from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
-import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
+import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT, NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
-import { Descendant, Element, Range, Text } from 'slate';
+import { Ancestor, Descendant, Element, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasBeforeContextChange } from './before-context-change';
+import { ViewLoopManager, createLoopManager, getContext } from './loop-manager';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../components/element/default-element.component.token';
+import { ComponentType } from '../types/view';
 
-/**
- * base class for template
- */
-export interface BaseEmbeddedView<T, K extends AngularEditor = AngularEditor> {
-    context: T;
-    viewContext: SlateViewContext<K>;
-}
 
 /**
  * base class for custom element component or text component
@@ -133,6 +139,14 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     childrenContext: SlateChildrenContext;
 
+    viewLoopManager: ViewLoopManager;
+
+    @Inject(ViewContainerRef)
+    viewContainerRef: ViewContainerRef;
+
+    @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
+    defaultElementComponentType: ComponentType<BaseElementComponent>;
+
     get element(): T {
         return this._context && this._context.element;
     }
@@ -167,6 +181,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
+        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef, this.defaultElementComponentType);
     }
 
     updateWeakMap() {

@@ -4,8 +4,9 @@ import { SlateBlockCard } from '../components/block-card/block-card.component';
 
 import { ViewType } from '../types/view';
 import { isComponentType, isDOMElement, isTemplateRef } from '../utils';
-import { BaseComponent, BaseEmbeddedView } from './base';
+import { BaseComponent } from './base';
 import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextContext, SlateViewContext } from './context';
+import { BaseEmbeddedView } from './types';
 
 /**
  * Dynamically create/update components or templates
