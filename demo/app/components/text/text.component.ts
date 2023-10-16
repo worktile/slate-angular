@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewContainerRef } from '@angular/core';
 import { BaseTextComponent } from 'slate-angular';
 import { SlateLeaves } from '../../../../packages/src/components/leaves/leaves.component';
 
@@ -12,7 +12,7 @@ export enum MarkTypes {
 
 @Component({
     selector: 'span[textMark]',
-    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
+    template: ``,
     host: {
         'data-slate-node': 'text'
     },
@@ -22,8 +22,8 @@ export enum MarkTypes {
 export class DemoTextMarkComponent extends BaseTextComponent {
     attributes = [];
 
-    constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
-        super(elementRef, cdr);
+    constructor(public elementRef: ElementRef, public renderer2: Renderer2, public viewContainerRef: ViewContainerRef, cdr: ChangeDetectorRef) {
+        super(elementRef, cdr, viewContainerRef);
     }
 
     applyTextMark() {

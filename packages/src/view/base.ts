@@ -4,7 +4,6 @@ import {
     Directive,
     ElementRef,
     HostBinding,
-    Inject,
     Input,
     OnDestroy,
     OnInit,
@@ -171,11 +170,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this.elementRef.nativeElement;
     }
 
-    constructor(
-        public elementRef: ElementRef,
-        public cdr: ChangeDetectorRef,
-        public viewContainerRef: ViewContainerRef
-    ) {
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public viewContainerRef: ViewContainerRef) {
         super(elementRef, cdr);
     }
 
@@ -232,16 +227,58 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
  * base class for custom text component
  */
 @Directive()
-export class BaseTextComponent<T extends Text = Text> extends BaseComponent<SlateTextContext<T>> implements OnInit, OnDestroy {
+export class BaseTextComponent<T extends Text = Text>
+    extends BaseComponent<SlateTextContext<T>>
+    implements OnInit, AfterViewInit, OnDestroy
+{
     initialized = false;
+
+    private leafContexts: SlateLeafContext[];
+    private leaves: Text[];
+
+    viewLoopManager: ViewLoopManager<SlateLeafContext, SlateTextContext>;
 
     get text(): T {
         return this._context && this._context.text;
     }
 
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public viewContainerRef: ViewContainerRef) {
+        super(elementRef, cdr);
+    }
+
     ngOnInit() {
         this.updateWeakMap();
         this.initialized = true;
+        this.viewLoopManager = new ViewLoopManager<SlateLeafContext, SlateTextContext>({
+            getViewType: (item: Descendant) => {
+                return (this.viewContext.renderLeaf && this.viewContext.renderLeaf(item as Text)) || this.viewContext.defaultLeaf;
+            },
+            viewContext: this.viewContext,
+            viewContainerRef: this.viewContainerRef,
+            getContext: (index: number, item: Descendant, parentContext: SlateTextContext) => {
+                return this.leafContexts[index];
+            },
+            itemCallback: (index: number, item: Descendant) => {}
+        });
+        this.buildLeaves();
+        this.viewLoopManager.initialize(this.leaves, null, this.context);
+    }
+
+    ngAfterViewInit(): void {
+        this.viewLoopManager.mount(this.elementRef.nativeElement);
+    }
+
+    buildLeaves() {
+        this.leaves = Text.decorations(this.context.text, this.context.decorations);
+        this.leafContexts = this.leaves.map((leaf, index) => {
+            return {
+                leaf,
+                text: this.context.text,
+                parent: this.context.parent,
+                index,
+                isLast: this.context.isLast && index === this.leaves.length - 1
+            };
+        });
     }
 
     updateWeakMap() {

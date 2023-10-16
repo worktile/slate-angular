@@ -64,8 +64,10 @@ import { SlateVoidText } from '../text/void-text.component';
 import { SlateDefaultText } from '../text/default-text.component';
 import { SlateDefaultElement } from '../element/default-element.component';
 import { ViewLoopManager, createLoopManager } from '../../view/loop-manager';
-import { BaseElementComponent, BaseTextComponent } from '../../view/base';
+import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { take } from 'rxjs/operators';
+import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
+import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -99,6 +101,10 @@ const forceOnDOMPaste = IS_SAFARI;
         {
             provide: SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN,
             useValue: SlateVoidText
+        },
+        {
+            provide: SLATE_DEFAULT_LEAF_COMPONENT_TOKEN,
+            useValue: SlateDefaultLeaf
         }
     ],
     standalone: true,
@@ -195,7 +201,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         @Inject(SLATE_DEFAULT_TEXT_COMPONENT_TOKEN)
         public defaultText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
-        public defaultVoidText: ComponentType<BaseTextComponent>
+        public defaultVoidText: ComponentType<BaseTextComponent>,
+        @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
+        public defaultLeaf: ComponentType<BaseLeafComponent>
     ) {}
 
     ngOnInit() {
@@ -478,7 +486,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             templateComponent: this.templateComponent,
             defaultElement: this.defaultElement,
             defaultText: this.defaultText,
-            defaultVoidText: this.defaultVoidText
+            defaultVoidText: this.defaultVoidText,
+            defaultLeaf: this.defaultLeaf
         };
     }
 

@@ -10,28 +10,30 @@ import { NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
 
 type Context = SlateLeafContext | SlateTextContext | SlateElementContext;
 
-export interface ViewLoopOptions<T = Context> {
+type ParentContext = SlateChildrenContext | SlateTextContext;
+
+export interface ViewLoopOptions<T = Context, K = ParentContext> {
     getViewType: (item: Descendant, parent: Ancestor) => ViewType;
     viewContext: SlateViewContext;
     viewContainerRef: ViewContainerRef;
-    getContext: (index: number, item: Descendant, parent: Ancestor, childrenContext: SlateChildrenContext) => T;
-    itemCallback: (index: number, item: Descendant, parent: Ancestor) => void;
+    getContext: (index: number, item: Descendant, childrenContext?: K, parent?: Ancestor) => T;
+    itemCallback: (index: number, item: Descendant, parent?: Ancestor) => void;
 }
 
 /**
  * descendant、leaf
  */
-export class ViewLoopManager<T = Context> {
+export class ViewLoopManager<T = Context, K = ParentContext> {
     private childrenViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
     private childrenContexts: T[] = [];
     private mounted = false;
 
-    constructor(private options: ViewLoopOptions<T>) {}
+    constructor(private options: ViewLoopOptions<T, K>) {}
 
-    initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
+    initialize(children: Descendant[], parent?: Ancestor, parentContext?: K) {
         children.forEach((descendant, index) => {
             this.options.itemCallback(index, descendant, parent);
-            const context = this.options.getContext(index, descendant, parent, childrenContext);
+            const context = this.options.getContext(index, descendant, parentContext, parent);
             const view = this.createEmbeddedViewOrComponent(descendant, parent, context);
             this.childrenViews.push(view);
             this.childrenContexts.push(context);
@@ -172,12 +174,33 @@ export function createLoopManager(viewContext: SlateViewContext, viewContainerRe
         },
         viewContext,
         viewContainerRef,
-        getContext: (index: number, item: Descendant, parent: Ancestor, childrenContext: SlateChildrenContext) =>
-            getContext(index, item, parent, viewContext, childrenContext),
+        getContext: (index: number, item: Descendant, parentContext: ParentContext, parent: Ancestor) =>
+            getContext(index, item, parent, viewContext, parentContext as SlateChildrenContext),
         itemCallback: (index: number, item: Descendant, parent: Ancestor) => {
             NODE_TO_INDEX.set(item, index);
             NODE_TO_PARENT.set(item, parent);
         }
+    });
+}
+
+export function createLeafLoopManager(viewContext: SlateViewContext, viewContainerRef: ViewContainerRef) {
+    return new ViewLoopManager({
+        getViewType: (item: Descendant) => {
+            return (this.viewContext.renderLeaf && this.viewContext.renderLeaf(item)) || viewContext.defaultLeaf;
+        },
+        viewContext,
+        viewContainerRef,
+        getContext: (index: number, item: Descendant, parentContext: ParentContext) => {
+            const context = parentContext as SlateTextContext;
+            return {
+                leaf: item,
+                text: context.text,
+                parent: context.parent,
+                index,
+                isLast: context.isLast && index === this.leaves.length - 1
+            };
+        },
+        itemCallback: (index: number, item: Descendant) => {}
     });
 }
 
