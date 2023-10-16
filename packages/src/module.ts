@@ -15,6 +15,7 @@ import { SlateDefaultLeaf } from './components/leaf/default-leaf.component';
 import { SlateLeaves } from './components/leaves/leaves.component';
 import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/default-element.component.token';
 import { SlateDefaultString } from './components/string/default-string.component';
+import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from './components/text/token';
 
 @NgModule({
     imports: [
@@ -41,12 +42,6 @@ import { SlateDefaultString } from './components/string/default-string.component
         SlateLeaves,
         SlateString,
         SlateDefaultString
-    ],
-    providers: [
-        {
-            provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
-            useValue: SlateDefaultElement
-        }
     ]
 })
 export class SlateModule {}

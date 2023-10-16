@@ -6,11 +6,7 @@ import { ComponentRef, EmbeddedViewRef, TemplateRef, ViewContainerRef } from '@a
 import { AngularEditor } from '../plugins/angular-editor';
 import { SlateErrorCode } from '../types/error';
 import { BaseEmbeddedView } from './types';
-import { SlateVoidText } from '../components/text/void-text.component';
-import { SlateDefaultText } from '../components/text/default-text.component';
-import { ComponentType } from '../types/view';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
-import { BaseElementComponent } from './base';
 
 type Context = SlateLeafContext | SlateTextContext | SlateElementContext;
 
@@ -94,11 +90,11 @@ export function getContext(
     index: number,
     item: Descendant,
     parent: Ancestor,
-    childrenContext: SlateChildrenContext,
-    viewContext: SlateViewContext
+    viewContext: SlateViewContext,
+    childrenContext: SlateChildrenContext
 ): SlateElementContext | SlateTextContext {
     if (Element.isElement(item)) {
-        const computedContext = getCommonContext(index, item, parent, childrenContext);
+        const computedContext = getCommonContext(index, item, parent, viewContext, childrenContext);
         const key = AngularEditor.findKey(viewContext.editor, item);
         const isInline = viewContext.editor.isInline(item);
         const isVoid = viewContext.editor.isVoid(item);
@@ -121,7 +117,7 @@ export function getContext(
         }
         return elementContext;
     } else {
-        const computedContext = getCommonContext(index, item, parent, childrenContext);
+        const computedContext = getCommonContext(index, item, parent, viewContext, childrenContext);
         const isLeafBlock = AngularEditor.isLeafBlock(viewContext.editor, childrenContext.parent);
         const textContext: SlateTextContext = {
             decorations: computedContext.decorations,
@@ -137,12 +133,13 @@ export function getCommonContext(
     index: number,
     item: Descendant,
     parent: Ancestor,
+    viewContext: SlateViewContext,
     childrenContext: SlateChildrenContext
 ): { selection: Range; decorations: Range[] } {
-    const path = AngularEditor.findPath(this.options.viewContext.editor, parent);
+    const path = AngularEditor.findPath(viewContext.editor, parent);
     const p = path.concat(index);
     try {
-        const range = Editor.range(this.options.viewContext.editor, p);
+        const range = Editor.range(viewContext.editor, p);
         const sel = childrenContext.selection && Range.intersection(range, childrenContext.selection);
         const ds = childrenContext.decorate([item, p]);
         for (const dec of childrenContext.decorations) {
@@ -161,20 +158,22 @@ export function getCommonContext(
     }
 }
 
-export function createLoopManager(viewContext: SlateViewContext, viewContainerRef: ViewContainerRef, defaultElementComponentType: ComponentType<BaseElementComponent>) {
+export function createLoopManager(viewContext: SlateViewContext, viewContainerRef: ViewContainerRef) {
     return new ViewLoopManager({
         getViewType: (item: Descendant, parent: Ancestor) => {
             if (Element.isElement(item)) {
-                return (viewContext.renderElement && viewContext.renderElement(item)) || this.defaultElementComponentType;
+                return (viewContext.renderElement && viewContext.renderElement(item)) || viewContext.defaultElement;
             } else {
                 const isVoid = viewContext.editor.isVoid(parent as Element);
-                return isVoid ? SlateVoidText : (viewContext.renderText && viewContext.renderText(item)) || SlateDefaultText;
+                return isVoid
+                    ? viewContext.defaultVoidText
+                    : (viewContext.renderText && viewContext.renderText(item)) || viewContext.defaultText;
             }
         },
         viewContext,
         viewContainerRef,
         getContext: (index: number, item: Descendant, parent: Ancestor, childrenContext: SlateChildrenContext) =>
-            getContext(index, item, parent, childrenContext, viewContext),
+            getContext(index, item, parent, viewContext, childrenContext),
         itemCallback: (index: number, item: Descendant, parent: Ancestor) => {
             NODE_TO_INDEX.set(item, index);
             NODE_TO_PARENT.set(item, parent);

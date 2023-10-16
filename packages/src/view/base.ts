@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Directive,
     ElementRef,
@@ -10,15 +11,12 @@ import {
     ViewContainerRef
 } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
-import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT, NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
+import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
-import { Ancestor, Descendant, Element, Range, Text } from 'slate';
+import { Descendant, Element, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasBeforeContextChange } from './before-context-change';
-import { ViewLoopManager, createLoopManager, getContext } from './loop-manager';
-import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../components/element/default-element.component.token';
-import { ComponentType } from '../types/view';
-
+import { ViewLoopManager, createLoopManager } from './loop-manager';
 
 /**
  * base class for custom element component or text component
@@ -133,19 +131,13 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 @Directive()
 export class BaseElementComponent<T extends Element = Element, K extends AngularEditor = AngularEditor>
     extends BaseComponent<SlateElementContext<T>, K>
-    implements OnInit, OnDestroy
+    implements OnInit, AfterViewInit, OnDestroy
 {
     initialized = false;
 
     childrenContext: SlateChildrenContext;
 
     viewLoopManager: ViewLoopManager;
-
-    @Inject(ViewContainerRef)
-    viewContainerRef: ViewContainerRef;
-
-    @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
-    defaultElementComponentType: ComponentType<BaseElementComponent>;
 
     get element(): T {
         return this._context && this._context.element;
@@ -175,13 +167,30 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.readonly;
     }
 
+    get childrenHost(): HTMLElement {
+        return this.elementRef.nativeElement;
+    }
+
+    constructor(
+        public elementRef: ElementRef,
+        public cdr: ChangeDetectorRef,
+        public viewContainerRef: ViewContainerRef
+    ) {
+        super(elementRef, cdr);
+    }
+
     ngOnInit() {
         this.updateWeakMap();
         for (const key in this._context.attributes) {
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
-        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef, this.defaultElementComponentType);
+        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef);
+        this.viewLoopManager.initialize(this.children, this.element, this.childrenContext);
+    }
+
+    ngAfterViewInit(): void {
+        this.viewLoopManager.mount(this.childrenHost);
     }
 
     updateWeakMap() {

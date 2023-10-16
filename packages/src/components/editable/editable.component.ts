@@ -15,7 +15,9 @@ import {
     OnChanges,
     SimpleChanges,
     AfterViewChecked,
-    DoCheck
+    DoCheck,
+    Inject,
+    ViewContainerRef
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -50,12 +52,20 @@ import { SlateErrorCode } from '../../types/error';
 import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
-import { ViewType } from '../../types/view';
+import { ComponentType, ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { SlateChildren } from '../children/children.component';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
+import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from '../text/token';
+import { SlateVoidText } from '../text/void-text.component';
+import { SlateDefaultText } from '../text/default-text.component';
+import { SlateDefaultElement } from '../element/default-element.component';
+import { ViewLoopManager, createLoopManager } from '../../view/loop-manager';
+import { BaseElementComponent, BaseTextComponent } from '../../view/base';
+import { take } from 'rxjs/operators';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -77,6 +87,18 @@ const forceOnDOMPaste = IS_SAFARI;
             provide: NG_VALUE_ACCESSOR,
             useExisting: forwardRef(() => SlateEditable),
             multi: true
+        },
+        {
+            provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
+            useValue: SlateDefaultElement
+        },
+        {
+            provide: SLATE_DEFAULT_TEXT_COMPONENT_TOKEN,
+            useValue: SlateDefaultText
+        },
+        {
+            provide: SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN,
+            useValue: SlateVoidText
         }
     ],
     standalone: true,
@@ -85,9 +107,7 @@ const forceOnDOMPaste = IS_SAFARI;
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
     context: SlateChildrenContext;
-
     private destroy$ = new Subject();
-
     isComposing = false;
     isDraggingInternally = false;
     isUpdatingSelection = false;
@@ -161,12 +181,21 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @ViewChild('templateComponent', { static: true, read: ElementRef })
     templateElementRef: ElementRef<any>;
 
+    viewLoopManager: ViewLoopManager;
+
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
-        private injector: Injector
+        private injector: Injector,
+        private viewContainerRef: ViewContainerRef,
+        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
+        public defaultElement: ComponentType<BaseElementComponent>,
+        @Inject(SLATE_DEFAULT_TEXT_COMPONENT_TOKEN)
+        public defaultText: ComponentType<BaseTextComponent>,
+        @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
+        public defaultVoidText: ComponentType<BaseTextComponent>
     ) {}
 
     ngOnInit() {
@@ -195,6 +224,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
+        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -237,6 +267,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.editor.children = normalize(value);
             }
             this.initializeContext();
+            this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
+            this.ngZone.onStable.pipe(take(1)).subscribe(() => {
+                this.viewLoopManager.mount(this.elementRef.nativeElement);
+            })
             this.cdr.markForCheck();
         }
     }
@@ -379,7 +413,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.onChangeCallback(this.editor.children);
     }
 
-    ngAfterViewChecked() {}
+    ngAfterViewChecked() {
+    }
 
     ngDoCheck() {}
 
@@ -440,7 +475,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             renderText: this.renderText,
             trackBy: this.trackBy,
             isStrictDecorate: this.isStrictDecorate,
-            templateComponent: this.templateComponent
+            templateComponent: this.templateComponent,
+            defaultElement: this.defaultElement,
+            defaultText: this.defaultText,
+            defaultVoidText: this.defaultVoidText
         };
     }
 
