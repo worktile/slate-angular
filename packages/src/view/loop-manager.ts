@@ -26,11 +26,13 @@ export interface ViewLoopOptions<T = Context, K = ParentContext> {
 export class ViewLoopManager<T = Context, K = ParentContext> {
     private childrenViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
     private childrenContexts: T[] = [];
-    private mounted = false;
+    public mounted = false;
+    public initialized = false;
 
     constructor(private options: ViewLoopOptions<T, K>) {}
 
     initialize(children: Descendant[], parent?: Ancestor, parentContext?: K) {
+        this.initialized = true;
         children.forEach((descendant, index) => {
             this.options.itemCallback(index, descendant, parent);
             const context = this.options.getContext(index, descendant, parentContext, parent);
@@ -41,7 +43,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     }
 
     mount(nativeElement: HTMLElement) {
-        if (!this.mounted) {
+        if (this.initialized && !this.mounted) {
             this.mounted = true;
             if (this.childrenViews.length > 0) {
                 nativeElement.append(...this.createFragment());
@@ -74,9 +76,18 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         if (ref instanceof ComponentRef) {
             return [ref.instance.nativeElement];
         } else {
-            return [ref.rootNodes[0]];
+            const result: HTMLElement[] = [];
+            ref.rootNodes.forEach((rootNode) => {
+                const isHTMLElement = rootNode instanceof HTMLElement;
+                if (isHTMLElement && result.every((item) => !item.contains(rootNode))) {
+                    result.push(rootNode);
+                }
+                if (!isHTMLElement) {
+                    rootNode.remove();
+                }
+            });
+            return result;
         }
-        return [];
     }
 
     private createFragment() {

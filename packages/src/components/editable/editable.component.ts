@@ -276,9 +276,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             this.initializeContext();
             this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
-            this.ngZone.onStable.pipe(take(1)).subscribe(() => {
-                this.viewLoopManager.mount(this.elementRef.nativeElement);
-            })
             this.cdr.markForCheck();
         }
     }
@@ -422,6 +419,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     ngAfterViewChecked() {
+        if (this.viewLoopManager.initialized && !this.viewLoopManager.mounted) {
+            this.viewLoopManager.mount(this.elementRef.nativeElement);
+        }
     }
 
     ngDoCheck() {}

@@ -21,6 +21,7 @@
 </div>
 <ng-template #elementTemplate let-context="context" let-viewContext="viewContext">
   <h1
+    *ngIf="context.element.type === 'heading-one'"
     slateElement
     [context]="context"
     [viewContext]="viewContext"
