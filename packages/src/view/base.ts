@@ -167,7 +167,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.readonly;
     }
 
-    get childrenHost(): HTMLElement {
+    getHost = () => {
         return this.elementRef.nativeElement;
     }
 
@@ -181,12 +181,12 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
-        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef);
+        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef, this.getHost);
         this.viewLoopManager.initialize(this.children, this.element, this.childrenContext);
     }
 
     ngAfterViewInit(): void {
-        this.viewLoopManager.mount(this.childrenHost);
+        this.viewLoopManager.mount();
     }
 
     updateWeakMap() {
@@ -244,6 +244,10 @@ export class BaseTextComponent<T extends Text = Text>
         return this._context && this._context.text;
     }
 
+    getHost = () => {
+        return this.elementRef.nativeElement;
+    }
+
     constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public differs: IterableDiffers, public viewContainerRef: ViewContainerRef) {
         super(elementRef, cdr);
     }
@@ -263,14 +267,15 @@ export class BaseTextComponent<T extends Text = Text>
             itemCallback: (index: number, item: Descendant) => {},
             trackBy: (index, node) => {
                 return index;
-            }
+            },
+            getHost: this.getHost
         }, this.differs);
         this.buildLeaves();
         this.viewLoopManager.initialize(this.leaves, null, this.context);
     }
 
     ngAfterViewInit(): void {
-        this.viewLoopManager.mount(this.elementRef.nativeElement);
+        this.viewLoopManager.mount();
     }
 
     buildLeaves() {

@@ -190,6 +190,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     viewLoopManager: ViewLoopManager;
 
+    getHost = () => {
+        return this.elementRef.nativeElement;
+    }
+
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
@@ -234,7 +238,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef);
+        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef, this.getHost);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -422,7 +426,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     ngAfterViewChecked() {
         if (this.viewLoopManager.initialized && !this.viewLoopManager.mounted) {
-            this.viewLoopManager.mount(this.elementRef.nativeElement);
+            this.viewLoopManager.mount();
         }
     }
 
