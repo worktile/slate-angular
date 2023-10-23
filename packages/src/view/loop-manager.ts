@@ -111,7 +111,12 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 console.log('set_context', context);
                 previousView.instance.context = context;
             } else {
-                previousView.context = context;
+                const embeddedViewContext = {
+                    context,
+                    viewContext: this.options.viewContext
+                };
+                previousView.context = embeddedViewContext;
+                previousView.detectChanges();
             }
         } else {
             // this.viewType = viewType;
