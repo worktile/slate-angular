@@ -5,6 +5,7 @@ import {
     ElementRef,
     HostBinding,
     Input,
+    IterableDiffers,
     OnDestroy,
     OnInit,
     ViewContainerRef
@@ -15,7 +16,7 @@ import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafConte
 import { Descendant, Element, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasBeforeContextChange } from './before-context-change';
-import { ViewLoopManager, createLoopManager } from './loop-manager';
+import { ViewLevel, ViewLoopManager, createLoopManager } from './loop-manager';
 
 /**
  * base class for custom element component or text component
@@ -82,7 +83,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         if (!this.initialized) {
             return;
         }
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     renderPlaceholder() {
@@ -170,7 +171,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this.elementRef.nativeElement;
     }
 
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public viewContainerRef: ViewContainerRef) {
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public differs: IterableDiffers, public viewContainerRef: ViewContainerRef) {
         super(elementRef, cdr);
     }
 
@@ -180,7 +181,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
-        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef);
+        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef);
         this.viewLoopManager.initialize(this.children, this.element, this.childrenContext);
     }
 
@@ -208,8 +209,9 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         if (!this.initialized) {
             return;
         }
-        this.cdr.markForCheck();
         this.updateWeakMap();
+        this.viewLoopManager.doCheck(this.children, this.element, this.childrenContext);
+        this.cdr.detectChanges();
     }
 
     getChildrenContext(): SlateChildrenContext {
@@ -242,14 +244,14 @@ export class BaseTextComponent<T extends Text = Text>
         return this._context && this._context.text;
     }
 
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public viewContainerRef: ViewContainerRef) {
+    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, public differs: IterableDiffers, public viewContainerRef: ViewContainerRef) {
         super(elementRef, cdr);
     }
 
     ngOnInit() {
         this.updateWeakMap();
         this.initialized = true;
-        this.viewLoopManager = new ViewLoopManager<SlateLeafContext, SlateTextContext>({
+        this.viewLoopManager = new ViewLoopManager<SlateLeafContext, SlateTextContext>(ViewLevel.leaf, {
             getViewType: (item: Descendant) => {
                 return (this.viewContext.renderLeaf && this.viewContext.renderLeaf(item as Text)) || this.viewContext.defaultLeaf;
             },
@@ -258,8 +260,11 @@ export class BaseTextComponent<T extends Text = Text>
             getContext: (index: number, item: Descendant, parentContext: SlateTextContext) => {
                 return this.leafContexts[index];
             },
-            itemCallback: (index: number, item: Descendant) => {}
-        });
+            itemCallback: (index: number, item: Descendant) => {},
+            trackBy: (index, node) => {
+                return index;
+            }
+        }, this.differs);
         this.buildLeaves();
         this.viewLoopManager.initialize(this.leaves, null, this.context);
     }
@@ -296,8 +301,9 @@ export class BaseTextComponent<T extends Text = Text>
         if (!this.initialized) {
             return;
         }
-
-        this.cdr.markForCheck();
         this.updateWeakMap();
+        this.buildLeaves();
+        this.viewLoopManager.doCheck(this.leaves, null, this.context);
+        this.cdr.detectChanges();
     }
 }

@@ -1,16 +1,22 @@
-import { Ancestor, Descendant, Range, Editor, Element } from 'slate';
+import { Ancestor, Descendant, Range, Editor, Element, Text } from 'slate';
 import { ViewType } from '../types/view';
 import { isComponentType, isTemplateRef } from '../utils/view';
 import { SlateChildrenContext, SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from './context';
-import { ComponentRef, EmbeddedViewRef, TemplateRef, ViewContainerRef } from '@angular/core';
+import { ComponentRef, EmbeddedViewRef, IterableChangeRecord, IterableDiffer, IterableDiffers, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
 import { SlateErrorCode } from '../types/error';
 import { BaseEmbeddedView } from './types';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
+import { isDecoratorRangeListEqual } from '../utils/range-list';
 
 type Context = SlateLeafContext | SlateTextContext | SlateElementContext;
 
 type ParentContext = SlateChildrenContext | SlateTextContext;
+
+export enum ViewLevel {
+    node,
+    leaf
+}
 
 export interface ViewLoopOptions<T = Context, K = ParentContext> {
     getViewType: (item: Descendant, parent: Ancestor) => ViewType;
@@ -18,28 +24,37 @@ export interface ViewLoopOptions<T = Context, K = ParentContext> {
     viewContainerRef: ViewContainerRef;
     getContext: (index: number, item: Descendant, childrenContext?: K, parent?: Ancestor) => T;
     itemCallback: (index: number, item: Descendant, parent?: Ancestor) => void;
+    trackBy: (index, node) => any;
 }
 
 /**
  * descendant、leaf
  */
 export class ViewLoopManager<T = Context, K = ParentContext> {
+    private children: Descendant[];
     private childrenViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
     private childrenContexts: T[] = [];
+    private viewTypes: ViewType[] = [];
     public mounted = false;
     public initialized = false;
+    public differ: IterableDiffer<any>;
 
-    constructor(private options: ViewLoopOptions<T, K>) {}
+    constructor(private viewLevel: ViewLevel, private options: ViewLoopOptions<T, K>, private differs: IterableDiffers) {}
 
     initialize(children: Descendant[], parent?: Ancestor, parentContext?: K) {
+        this.children = children;
         this.initialized = true;
         children.forEach((descendant, index) => {
             this.options.itemCallback(index, descendant, parent);
             const context = this.options.getContext(index, descendant, parentContext, parent);
-            const view = this.createEmbeddedViewOrComponent(descendant, parent, context);
+            const viewType = this.options.getViewType(descendant, parent);
+            const view = this.createEmbeddedViewOrComponent(viewType, descendant, parent, context);
             this.childrenViews.push(view);
             this.childrenContexts.push(context);
+            this.viewTypes.push(viewType);
         });
+        this.differ = this.differs.find(children).create(this.options.trackBy);
+        this.differ.diff(children);
     }
 
     mount(nativeElement: HTMLElement) {
@@ -51,8 +66,114 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         }
     }
 
-    private createEmbeddedViewOrComponent(item: Descendant, parent: Ancestor, context: T) {
+    doCheck(children: Descendant[], parent?: Ancestor, parentContext?: K) {
+        if (children === this.children) {
+            return;
+        }
+        const res = this.differ.diff(children);
+        if (res) {
+            res.forEachIdentityChange(record => {
+                if (this.viewLevel === ViewLevel.node) {
+                    this.options.itemCallback(record.currentIndex, record.item, parent);
+                }
+                this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
+                console.log('forEachIdentityChange', record);
+            });
+            // res.forEachRemovedItem(record => {
+            //     // console.log('forEachRemovedItem', record);
+            //     this.removeView(record.previousIndex);
+            // });
+            // res.forEachAddedItem(record => {
+            //     this.createView(record.currentIndex, record.item, parent, parentContext);
+            // });
+        }
+    }
+
+    createView(index: number, item: Descendant, parent: Ancestor, parentContext?: K) {
+        this.options.itemCallback(index, item, parent);
+        const context = this.options.getContext(index, item, parentContext, parent);
         const viewType = this.options.getViewType(item, parent);
+        const view = this.createEmbeddedViewOrComponent(viewType, item, parent, context);
+        return view;
+    }
+
+    updateView(previousIndex: number, currentIndex: number, item: Descendant, parent: Ancestor, parentContext?: K) {
+        const viewType = this.options.getViewType(item, parent);
+        const context = this.options.getContext(currentIndex, item, parentContext, parent);
+        const previousView = this.childrenViews[previousIndex];
+        const previousViewType = this.viewTypes[previousIndex];
+        const previousContext = this.childrenContexts[previousIndex];
+        if (this.viewLevel === ViewLevel.node && memoizedContext(this.options.viewContext, item, previousContext as any, context as any)) {
+            return;
+        }
+        if (previousViewType === viewType) {
+            if (previousView instanceof ComponentRef) {
+                console.log('set_context', context);
+                previousView.instance.context = context;
+            } else {
+                previousView.context = context;
+            }
+        } else {
+            // this.viewType = viewType;
+            // const firstRootNode = this.rootNodes[0];
+            // if (isTemplateRef(this.viewType)) {
+            //     this.embeddedViewContext = {
+            //         context,
+            //         viewContext: this.viewContext
+            //     };
+            //     const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(
+            //         this.viewType as TemplateRef<BaseEmbeddedView<T, AngularEditor>>,
+            //         this.embeddedViewContext
+            //     );
+            //     firstRootNode.replaceWith(...embeddedViewRef.rootNodes.filter(rootNode => isDOMElement(rootNode)));
+            //     this.destroyView();
+            //     this.embeddedViewRef = embeddedViewRef;
+            // }
+            // if (isComponentType(this.viewType)) {
+            //     const componentRef = this.viewContainerRef.createComponent(this.viewType) as ComponentRef<any>;
+            //     componentRef.instance.viewContext = this.viewContext;
+            //     componentRef.instance.context = context;
+            //     firstRootNode.replaceWith(componentRef.instance.nativeElement);
+            //     this.destroyView();
+            //     this.componentRef = componentRef;
+            // }
+        }
+    }
+
+    removeView(previousIndex: number) {
+        const previousView = this.childrenViews.splice(previousIndex, 1)[0];
+        previousView.onDestroy(() => {});
+        const previousViewType = this.viewTypes.splice(previousIndex, 1)[0];
+        const previousContext = this.childrenContexts.splice(previousIndex, 1)[0];
+    }
+
+    handleContainerItemChange(record: IterableChangeRecord<T>, parentElement: HTMLElement) {
+        // insert at start location
+        // if (record.currentIndex === 0) {
+        //     const fragment = document.createDocumentFragment();
+        //     fragment.append(...record.item.rootNodes);
+        //     parentElement.prepend(fragment);
+        // } else {
+        //     // insert afterend of previous component end
+        //     let previousRootNode = this.getPreviousRootNode(record.currentIndex);
+        //     if (previousRootNode) {
+        //         record.item.rootNodes.forEach(rootNode => {
+        //             previousRootNode.insertAdjacentElement('afterend', rootNode);
+        //             previousRootNode = rootNode;
+        //         });
+        //     } else {
+        //         this.viewContext.editor.onError({
+        //             code: SlateErrorCode.NotFoundPreviousRootNodeError,
+        //             name: 'not found previous rootNode',
+        //             nativeError: null
+        //         });
+        //     }
+        // }
+        // Solve the block-card DOMElement loss when moving nodes
+        // record.item.appendBlockCardElement();
+    }
+
+    private createEmbeddedViewOrComponent(viewType: ViewType, item: Descendant, parent: Ancestor, context: T) {
         if (isTemplateRef(viewType)) {
             const embeddedViewContext = {
                 context,
@@ -77,9 +198,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             return [ref.instance.nativeElement];
         } else {
             const result: HTMLElement[] = [];
-            ref.rootNodes.forEach((rootNode) => {
+            ref.rootNodes.forEach(rootNode => {
                 const isHTMLElement = rootNode instanceof HTMLElement;
-                if (isHTMLElement && result.every((item) => !item.contains(rootNode))) {
+                if (isHTMLElement && result.every(item => !item.contains(rootNode))) {
                     result.push(rootNode);
                 }
                 if (!isHTMLElement) {
@@ -96,6 +217,38 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             result.push(...this.getRootNodes(component));
         });
         return result;
+    }
+}
+
+export function memoizedElementContext(viewContext: SlateViewContext, prev: SlateElementContext, next: SlateElementContext) {
+    return (
+        prev.element === next.element &&
+        (!viewContext.isStrictDecorate || prev.decorate === next.decorate) &&
+        prev.readonly === next.readonly &&
+        isDecoratorRangeListEqual(prev.decorations, next.decorations) &&
+        (prev.selection === next.selection || (!!prev.selection && !!next.selection && Range.equals(prev.selection, next.selection)))
+    );
+}
+
+export function memoizedTextContext(prev: SlateTextContext, next: SlateTextContext) {
+    return (
+        next.parent === prev.parent &&
+        next.isLast === prev.isLast &&
+        next.text === prev.text &&
+        isDecoratorRangeListEqual(next.decorations, prev.decorations)
+    );
+}
+
+export function memoizedContext(
+    viewContext: SlateViewContext,
+    descendant: Descendant,
+    prev: SlateElementContext | SlateTextContext,
+    next: SlateElementContext | SlateTextContext
+): boolean {
+    if (Element.isElement(descendant)) {
+        return memoizedElementContext(viewContext, prev as SlateElementContext, next as SlateElementContext);
+    } else {
+        return memoizedTextContext(prev as SlateTextContext, next as SlateTextContext);
     }
 }
 
@@ -171,48 +324,72 @@ export function getCommonContext(
     }
 }
 
-export function createLoopManager(viewContext: SlateViewContext, viewContainerRef: ViewContainerRef) {
-    return new ViewLoopManager({
-        getViewType: (item: Descendant, parent: Ancestor) => {
-            if (Element.isElement(item)) {
-                return (viewContext.renderElement && viewContext.renderElement(item)) || viewContext.defaultElement;
-            } else {
-                const isVoid = viewContext.editor.isVoid(parent as Element);
-                return isVoid
-                    ? viewContext.defaultVoidText
-                    : (viewContext.renderText && viewContext.renderText(item)) || viewContext.defaultText;
+export function createLoopManager(
+    viewLevel: ViewLevel,
+    viewContext: SlateViewContext,
+    differs: IterableDiffers,
+    viewContainerRef: ViewContainerRef
+) {
+    return new ViewLoopManager(
+        viewLevel,
+        {
+            getViewType: (item: Descendant, parent: Ancestor) => {
+                if (Element.isElement(item)) {
+                    return (viewContext.renderElement && viewContext.renderElement(item)) || viewContext.defaultElement;
+                } else {
+                    const isVoid = viewContext.editor.isVoid(parent as Element);
+                    return isVoid
+                        ? viewContext.defaultVoidText
+                        : (viewContext.renderText && viewContext.renderText(item)) || viewContext.defaultText;
+                }
+            },
+            viewContext,
+            viewContainerRef,
+            getContext: (index: number, item: Descendant, parentContext: ParentContext, parent: Ancestor) =>
+                getContext(index, item, parent, viewContext, parentContext as SlateChildrenContext),
+            itemCallback: (index: number, item: Descendant, parent: Ancestor) => {
+                NODE_TO_INDEX.set(item, index);
+                NODE_TO_PARENT.set(item, parent);
+            },
+            trackBy: (index, node) => {
+                return viewContext.trackBy(node) || AngularEditor.findKey(viewContext.editor, node);
             }
         },
-        viewContext,
-        viewContainerRef,
-        getContext: (index: number, item: Descendant, parentContext: ParentContext, parent: Ancestor) =>
-            getContext(index, item, parent, viewContext, parentContext as SlateChildrenContext),
-        itemCallback: (index: number, item: Descendant, parent: Ancestor) => {
-            NODE_TO_INDEX.set(item, index);
-            NODE_TO_PARENT.set(item, parent);
-        }
-    });
+        differs
+    );
 }
 
-export function createLeafLoopManager(viewContext: SlateViewContext, viewContainerRef: ViewContainerRef) {
-    return new ViewLoopManager({
-        getViewType: (item: Descendant) => {
-            return (this.viewContext.renderLeaf && this.viewContext.renderLeaf(item)) || viewContext.defaultLeaf;
+export function createLeafLoopManager(
+    viewLevel: ViewLevel,
+    viewContext: SlateViewContext,
+    differs: IterableDiffers,
+    viewContainerRef: ViewContainerRef
+) {
+    return new ViewLoopManager(
+        viewLevel,
+        {
+            getViewType: (item: Descendant) => {
+                return (viewContext.renderLeaf && viewContext.renderLeaf(item as Text)) || viewContext.defaultLeaf;
+            },
+            viewContext,
+            viewContainerRef,
+            getContext: (index: number, item: Descendant, parentContext: ParentContext) => {
+                const context = parentContext as SlateTextContext;
+                return {
+                    leaf: item,
+                    text: context.text,
+                    parent: context.parent,
+                    index,
+                    isLast: context.isLast && index === this.leaves.length - 1
+                };
+            },
+            itemCallback: (index: number, item: Descendant) => {},
+            trackBy: (index, node) => {
+                return index;
+            }
         },
-        viewContext,
-        viewContainerRef,
-        getContext: (index: number, item: Descendant, parentContext: ParentContext) => {
-            const context = parentContext as SlateTextContext;
-            return {
-                leaf: item,
-                text: context.text,
-                parent: context.parent,
-                index,
-                isLast: context.isLast && index === this.leaves.length - 1
-            };
-        },
-        itemCallback: (index: number, item: Descendant) => {}
-    });
+        differs
+    );
 }
 
 /**

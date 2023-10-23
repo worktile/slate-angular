@@ -17,7 +17,8 @@ import {
     AfterViewChecked,
     DoCheck,
     Inject,
-    ViewContainerRef
+    ViewContainerRef,
+    IterableDiffers
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -63,7 +64,7 @@ import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_T
 import { SlateVoidText } from '../text/void-text.component';
 import { SlateDefaultText } from '../text/default-text.component';
 import { SlateDefaultElement } from '../element/default-element.component';
-import { ViewLoopManager, createLoopManager } from '../../view/loop-manager';
+import { ViewLevel, ViewLoopManager, createLoopManager } from '../../view/loop-manager';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { take } from 'rxjs/operators';
 import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
@@ -203,7 +204,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
         public defaultVoidText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
-        public defaultLeaf: ComponentType<BaseLeafComponent>
+        public defaultLeaf: ComponentType<BaseLeafComponent>,
+        public differs: IterableDiffers
     ) {}
 
     ngOnInit() {
@@ -232,7 +234,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.viewLoopManager = createLoopManager(this.viewContext, this.viewContainerRef);
+        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -428,6 +430,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceFlush() {
         this.detectContext();
+
+        this.ngZone.run(() => {
+            this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
+        });
+
         this.cdr.detectChanges();
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
