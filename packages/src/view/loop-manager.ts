@@ -82,38 +82,37 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         }
         const res = this.differ.diff(children);
         if (res) {
-            res.forEachIdentityChange(record => {
-                if (this.viewLevel === ViewLevel.node) {
+            if (this.viewLevel === ViewLevel.node) {
+                res.forEachItem(record => {
                     this.options.itemCallback(record.currentIndex, record.item, parent);
-                }
+                });
+            }
+            res.forEachIdentityChange(record => {
                 this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
-                console.log('forEachIdentityChange', record);
+                console.log('update view', record.item);
             });
             res.forEachRemovedItem(record => {
-                // console.log('forEachRemovedItem', record);
                 const view = this.childrenViews[record.previousIndex];
                 view.destroy();
+                console.log('remove view', record.item);
             });
             res.forEachRemovedItem(record => {
-                // console.log('forEachRemovedItem', record);
                 this.removeView(record.previousIndex);
             });
             const addIndex: number[] = [];
             res.forEachAddedItem(record => {
-                const view = this.createView(record.currentIndex, record.item, parent, parentContext);
+                console.log('add view', record.item);
+                this.createView(record.currentIndex, record.item, parent, parentContext);
                 addIndex.push(record.currentIndex);
             });
             const nativeElement = this.options.getHost();
-            // Promise.resolve().then(() => {
             addIndex.forEach(index => {
                 this.handleContainerItemChange(index, nativeElement);
             });
-            // });
         }
     }
 
     createView(index: number, item: Descendant, parent: Ancestor, parentContext?: K) {
-        this.options.itemCallback(index, item, parent);
         const context = this.options.getContext(index, item, parentContext, parent);
         const viewType = this.options.getViewType(item, parent);
         const view = this.createEmbeddedViewOrComponent(viewType, item, parent, context);
@@ -138,7 +137,6 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         }
         if (previousViewType === viewType) {
             if (previousView instanceof ComponentRef) {
-                console.log('set_context', context);
                 previousView.instance.context = context;
             } else {
                 const embeddedViewContext = {
