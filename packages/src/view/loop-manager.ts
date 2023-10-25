@@ -88,17 +88,19 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 });
             }
             res.forEachIdentityChange(record => {
-                this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
                 console.log('update view', record.item);
+                this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
             });
+            const removeIndexes = [];
             res.forEachRemovedItem(record => {
+                console.log('remove view', record.item);
                 const view = this.childrenViews[record.previousIndex];
                 view.destroy();
-                console.log('remove view', record.item);
+                removeIndexes.push(record.previousIndex);
             });
-            res.forEachRemovedItem(record => {
-                this.removeView(record.previousIndex);
-            });
+            removeIndexes.reverse().forEach((index) => {
+                this.removeView(index);
+            })
             const addIndex: number[] = [];
             res.forEachAddedItem(record => {
                 console.log('add view', record.item);
@@ -175,7 +177,6 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
 
     removeView(previousIndex: number) {
         const previousView = this.childrenViews.splice(previousIndex, 1)[0];
-        // previousView.destroy();
         const previousViewType = this.viewTypes.splice(previousIndex, 1)[0];
         const previousContext = this.childrenContexts.splice(previousIndex, 1)[0];
     }
