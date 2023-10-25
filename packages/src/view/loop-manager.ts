@@ -1,16 +1,8 @@
-import { Ancestor, Descendant, Range, Editor, Element, Text } from 'slate';
+import { Ancestor, Descendant, Range, Editor, Element } from 'slate';
 import { ViewType } from '../types/view';
 import { isComponentType, isTemplateRef } from '../utils/view';
 import { SlateChildrenContext, SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from './context';
-import {
-    ApplicationRef,
-    ComponentRef,
-    EmbeddedViewRef,
-    IterableDiffer,
-    IterableDiffers,
-    TemplateRef,
-    ViewContainerRef
-} from '@angular/core';
+import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
 import { SlateErrorCode } from '../types/error';
 import { BaseEmbeddedView } from './types';
@@ -98,9 +90,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 view.destroy();
                 removeIndexes.push(record.previousIndex);
             });
-            removeIndexes.reverse().forEach((index) => {
+            removeIndexes.reverse().forEach(index => {
                 this.removeView(index);
-            })
+            });
             const addIndex: number[] = [];
             res.forEachAddedItem(record => {
                 console.log('add view', record.item);
@@ -126,52 +118,35 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         this.childrenViews.splice(index, 0, view);
         this.childrenContexts.splice(index, 0, context);
         this.viewTypes.splice(index, 0, viewType);
+        return view;
     }
 
     updateView(previousIndex: number, currentIndex: number, item: Descendant, parent: Ancestor, parentContext?: K) {
         const viewType = this.options.getViewType(item, parent);
-        const context = this.options.getContext(currentIndex, item, parentContext, parent);
-        const previousView = this.childrenViews[previousIndex];
         const previousViewType = this.viewTypes[previousIndex];
+        const previousView = this.childrenViews[previousIndex];
+        if (viewType !== previousViewType) {
+            const firstRootNode = this.getRootNodes(previousView)[0];
+            const view = this.createView(previousIndex, item, parent, parentContext);
+            const newRootNodes = this.getRootNodes(view);
+            firstRootNode.replaceWith(...newRootNodes);
+            return;
+        }
+        const context = this.options.getContext(currentIndex, item, parentContext, parent);
         const previousContext = this.childrenContexts[previousIndex];
         if (this.viewLevel === ViewLevel.node && memoizedContext(this.options.viewContext, item, previousContext as any, context as any)) {
             return;
         }
-        if (previousViewType === viewType) {
-            if (previousView instanceof ComponentRef) {
-                previousView.instance.context = context;
-            } else {
-                const embeddedViewContext = {
-                    context,
-                    viewContext: this.options.viewContext
-                };
-                previousView.context = embeddedViewContext;
-                previousView.detectChanges();
-            }
+
+        if (previousView instanceof ComponentRef) {
+            previousView.instance.context = context;
         } else {
-            // this.viewType = viewType;
-            // const firstRootNode = this.rootNodes[0];
-            // if (isTemplateRef(this.viewType)) {
-            //     this.embeddedViewContext = {
-            //         context,
-            //         viewContext: this.viewContext
-            //     };
-            //     const embeddedViewRef = this.viewContainerRef.createEmbeddedView<BaseEmbeddedView<T>>(
-            //         this.viewType as TemplateRef<BaseEmbeddedView<T, AngularEditor>>,
-            //         this.embeddedViewContext
-            //     );
-            //     firstRootNode.replaceWith(...embeddedViewRef.rootNodes.filter(rootNode => isDOMElement(rootNode)));
-            //     this.destroyView();
-            //     this.embeddedViewRef = embeddedViewRef;
-            // }
-            // if (isComponentType(this.viewType)) {
-            //     const componentRef = this.viewContainerRef.createComponent(this.viewType) as ComponentRef<any>;
-            //     componentRef.instance.viewContext = this.viewContext;
-            //     componentRef.instance.context = context;
-            //     firstRootNode.replaceWith(componentRef.instance.nativeElement);
-            //     this.destroyView();
-            //     this.componentRef = componentRef;
-            // }
+            const embeddedViewContext = {
+                context,
+                viewContext: this.options.viewContext
+            };
+            previousView.context = embeddedViewContext;
+            previousView.detectChanges();
         }
     }
 
