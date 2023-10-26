@@ -34,7 +34,7 @@ export interface ViewLoopOptions<T = Context, K = ParentContext> {
 export class ViewLoopManager<T = Context, K = ParentContext> {
     private children: Descendant[];
     private childrenViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
-    private childrenContexts: T[] = [];
+    private contexts: T[] = [];
     private viewTypes: ViewType[] = [];
     public mounted = false;
     public initialized = false;
@@ -51,7 +51,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             const viewType = this.options.getViewType(descendant, parent);
             const view = this.createEmbeddedViewOrComponent(viewType, descendant, parent, context);
             this.childrenViews.push(view);
-            this.childrenContexts.push(context);
+            this.contexts.push(context);
             this.viewTypes.push(viewType);
         });
         this.differ = this.differs.find(children).create(this.options.trackBy);
@@ -69,40 +69,145 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     }
 
     doCheck(children: Descendant[], parent?: Ancestor, parentContext?: K) {
-        if (children === this.children) {
-            return;
-        }
+        const parentElement = this.options.getHost();
         const res = this.differ.diff(children);
         if (res) {
-            if (this.viewLevel === ViewLevel.node) {
-                res.forEachItem(record => {
-                    this.options.itemCallback(record.currentIndex, record.item, parent);
-                });
-            }
-            res.forEachIdentityChange(record => {
-                console.log('update view', record.item);
-                this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
+            const newContexts = [];
+            const newViewTypes = [];
+            const newViews = [];
+            res.forEachItem(record => {
+                this.options.itemCallback(record.currentIndex, record.item, parent);
+                let context = this.options.getContext(record.currentIndex, record.item, parentContext, parent);
+                newContexts.push(context);
+                console.log(context);
+                const viewType = this.options.getViewType(record.item, parent);
+                newViewTypes.push(viewType);
+                let view: EmbeddedViewRef<any> | ComponentRef<any>;
+                if (record.previousIndex === null) {
+                    // add
+                    const viewType = this.options.getViewType(record.item, parent);
+                    view = this.createEmbeddedViewOrComponent(viewType, record.item, parent, context);
+                    if (view instanceof ComponentRef) {
+                        view.changeDetectorRef.detectChanges();
+                    } else {
+                        view.detectChanges();
+                    }
+                    const rootNodes = this.getRootNodes(view);
+                    if (record.currentIndex === 0) {
+                        parentElement.prepend(...rootNodes);
+                    } else {
+                        const previousView = newViews[record.currentIndex - 1];
+                        const previousRootNodes = this.getRootNodes(previousView);
+                        let previousRootNode = previousRootNodes[previousRootNodes.length - 1];
+                        rootNodes.forEach(rootNode => {
+                            previousRootNode.insertAdjacentElement('afterend', rootNode);
+                            previousRootNode = rootNode;
+                        });
+                    }
+                } else {
+                    // maybe update
+                    const previousView = this.childrenViews[record.previousIndex];
+                    const previousViewType = this.viewTypes[record.previousIndex];
+                    const previousContext = this.contexts[record.previousIndex];
+                    if (previousViewType !== viewType) {
+                        view = this.createEmbeddedViewOrComponent(viewType, record.item, parent, context);
+                        if (view instanceof ComponentRef) {
+                            view.changeDetectorRef.detectChanges();
+                        } else {
+                            view.detectChanges();
+                        }
+                        const firstRootNode = this.getRootNodes(previousView)[0];
+                        const newRootNodes = this.getRootNodes(view);
+                        firstRootNode.replaceWith(...newRootNodes);
+                        previousView.destroy();
+                    } else {
+                        view = previousView;
+                        if (
+                            this.viewLevel === ViewLevel.node &&
+                            memoizedContext(this.options.viewContext, record.item, previousContext as any, context as any)
+                        ) {
+                            context = previousContext;
+                        } else {
+                            if (previousView instanceof ComponentRef) {
+                                previousView.instance.context = context;
+                            } else {
+                                const embeddedViewContext = {
+                                    context,
+                                    viewContext: this.options.viewContext
+                                };
+                                previousView.context = embeddedViewContext;
+                                previousView.detectChanges();
+                            }
+                        }
+                    }
+                    // this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
+                }
+                newContexts.push(context);
+                newViews.push(view);
+
+                // console.log('may be updated');
+                // if (record.previousIndex) {
+                //     const previousView = this.childrenViews[record.previousIndex];
+                //     const previousViewType = this.viewTypes[record.previousIndex];
+                //     const previousContext = this.contexts[record.previousIndex];
+                //     this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
+                // } else  {
+                //     // 新增
+                // }
             });
-            const removeIndexes = [];
+            // res.forEachIdentityChange(record => {
+            //     console.log('update view', record.item);
+            //     this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
+            // });
+            // const removeIndexes = [];
             res.forEachRemovedItem(record => {
                 console.log('remove view', record.item);
                 const view = this.childrenViews[record.previousIndex];
                 view.destroy();
-                removeIndexes.push(record.previousIndex);
+                // removeIndexes.push(record.previousIndex);
             });
-            removeIndexes.reverse().forEach(index => {
-                this.removeView(index);
+            this.viewTypes = newViewTypes;
+            this.childrenViews = newViews;
+            this.contexts = newContexts;
+            // removeIndexes.reverse().forEach(index => {
+            //     this.removeView(index);
+            // });
+            // const addIndex: number[] = [];
+            // res.forEachAddedItem(record => {
+            //     console.log('add view', record.item);
+            //     this.createView(record.currentIndex, record.item, parent, parentContext);
+            //     addIndex.push(record.currentIndex);
+            // });
+            // const nativeElement = this.options.getHost();
+            // addIndex.forEach(index => {
+            //     // this.handleContainerItemChange(index, nativeElement);
+            // });
+        } else {
+            const newContexts = [];
+            this.children.forEach((child, index) => {
+                let context = this.options.getContext(index, child, parentContext, parent);
+                const previousContext = this.contexts[index];
+                const previousView = this.childrenViews[index];
+                if (
+                    this.viewLevel === ViewLevel.node &&
+                    memoizedContext(this.options.viewContext, child, previousContext as any, context as any)
+                ) {
+                    context = previousContext;
+                } else {
+                    if (previousView instanceof ComponentRef) {
+                        previousView.instance.context = context;
+                    } else {
+                        const embeddedViewContext = {
+                            context,
+                            viewContext: this.options.viewContext
+                        };
+                        previousView.context = embeddedViewContext;
+                        previousView.detectChanges();
+                    }
+                }
+                newContexts.push(context);
             });
-            const addIndex: number[] = [];
-            res.forEachAddedItem(record => {
-                console.log('add view', record.item);
-                this.createView(record.currentIndex, record.item, parent, parentContext);
-                addIndex.push(record.currentIndex);
-            });
-            const nativeElement = this.options.getHost();
-            addIndex.forEach(index => {
-                this.handleContainerItemChange(index, nativeElement);
-            });
+            this.contexts = newContexts;
         }
     }
 
@@ -116,7 +221,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             view.detectChanges();
         }
         this.childrenViews.splice(index, 0, view);
-        this.childrenContexts.splice(index, 0, context);
+        this.contexts.splice(index, 0, context);
         this.viewTypes.splice(index, 0, viewType);
         return view;
     }
@@ -133,7 +238,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             return;
         }
         const context = this.options.getContext(currentIndex, item, parentContext, parent);
-        const previousContext = this.childrenContexts[previousIndex];
+        const previousContext = this.contexts[previousIndex];
         if (this.viewLevel === ViewLevel.node && memoizedContext(this.options.viewContext, item, previousContext as any, context as any)) {
             return;
         }
@@ -153,7 +258,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     removeView(previousIndex: number) {
         const previousView = this.childrenViews.splice(previousIndex, 1)[0];
         const previousViewType = this.viewTypes.splice(previousIndex, 1)[0];
-        const previousContext = this.childrenContexts.splice(previousIndex, 1)[0];
+        const previousContext = this.contexts.splice(previousIndex, 1)[0];
     }
 
     handleContainerItemChange(index: number, parentElement: HTMLElement) {
