@@ -434,12 +434,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceFlush() {
         this.detectContext();
-
         this.ngZone.run(() => {
+            console.time('check');
             this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
+            console.timeEnd('check');
         });
-
+        console.time('detectChanges');
         this.cdr.detectChanges();
+        console.timeEnd('detectChanges');
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired

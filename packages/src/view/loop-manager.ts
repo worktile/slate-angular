@@ -89,7 +89,6 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             res.forEachItem(record => {
                 this.options.itemCallback(record.currentIndex, record.item, parent);
                 let context = this.options.getContext(record.currentIndex, record.item, parentContext, parent);
-                newContexts.push(context);
                 const viewType = this.options.getViewType(record.item, parent);
                 newViewTypes.push(viewType);
                 let view: EmbeddedViewRef<any> | ComponentRef<any>;
@@ -139,6 +138,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                         ) {
                             context = previousContext;
                         } else {
+                            // if (record.item.type === 'paragraph') {
+                            //     console.time('set context');
+                            // }
                             if (previousView instanceof ComponentRef) {
                                 previousView.instance.context = context;
                             } else {
@@ -149,6 +151,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                                 previousView.context = embeddedViewContext;
                                 previousView.detectChanges();
                             }
+                            // if (record.item.type === 'paragraph') {
+                            //     console.timeEnd('set context');
+                            // }
                         }
                     }
                     // this.updateView(record.previousIndex, record.currentIndex, record.item, parent, parentContext);
