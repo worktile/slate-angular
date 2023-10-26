@@ -8,6 +8,7 @@ import { SlateErrorCode } from '../types/error';
 import { BaseEmbeddedView } from './types';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
 import { isDecoratorRangeListEqual } from '../utils/range-list';
+import { SlateBlockCard } from '../components/block-card/block-card.component';
 
 type Context = SlateLeafContext | SlateTextContext | SlateElementContext;
 
@@ -34,6 +35,7 @@ export interface ViewLoopOptions<T = Context, K = ParentContext> {
 export class ViewLoopManager<T = Context, K = ParentContext> {
     private children: Descendant[];
     private childrenViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
+    private blockCards: (ComponentRef<SlateBlockCard> | null)[] = [];
     private contexts: T[] = [];
     private viewTypes: ViewType[] = [];
     public mounted = false;
@@ -53,6 +55,15 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             this.childrenViews.push(view);
             this.contexts.push(context);
             this.viewTypes.push(viewType);
+            const isBlockCard = this.options.viewContext.editor.isBlockCard(descendant);
+            if (isBlockCard) {
+                const rootNodes = this.getRootNodes(view);
+                const blockCardComponentRef = this.options.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard);
+                blockCardComponentRef.instance.initializeCenter(rootNodes);
+                this.blockCards.push(blockCardComponentRef);
+            } else {
+                this.blockCards.push(null);
+            }
         });
         this.differ = this.differs.find(children).create(this.options.trackBy);
         this.differ.diff(children);
@@ -79,7 +90,6 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 this.options.itemCallback(record.currentIndex, record.item, parent);
                 let context = this.options.getContext(record.currentIndex, record.item, parentContext, parent);
                 newContexts.push(context);
-                console.log(context);
                 const viewType = this.options.getViewType(record.item, parent);
                 newViewTypes.push(viewType);
                 let view: EmbeddedViewRef<any> | ComponentRef<any>;
@@ -104,6 +114,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                             previousRootNode = rootNode;
                         });
                     }
+
                 } else {
                     // maybe update
                     const previousView = this.childrenViews[record.previousIndex];
@@ -169,6 +180,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             this.viewTypes = newViewTypes;
             this.childrenViews = newViews;
             this.contexts = newContexts;
+            this.children = children;
             // removeIndexes.reverse().forEach(index => {
             //     this.removeView(index);
             // });
@@ -318,7 +330,13 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     private createFragment() {
         const result = [];
         this.childrenViews.forEach((component, index) => {
-            result.push(...this.getRootNodes(component));
+            if (this.blockCards[index]) {
+                const blockCard = this.blockCards[index];
+                result.push(blockCard.instance.nativeElement);
+                return;
+            } else {
+                result.push(...this.getRootNodes(component));
+            }
         });
         return result;
     }
