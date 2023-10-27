@@ -316,6 +316,11 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
 
     private getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any>): HTMLElement[] {
         if (ref instanceof ComponentRef) {
+            ((ref.hostView as any).rootNodes as (HTMLElement | any)[]).forEach((ele) => {
+                if (!(ele instanceof HTMLElement)) {
+                    ele.remove();
+                }
+            });
             return [ref.instance.nativeElement];
         } else {
             const result: HTMLElement[] = [];
