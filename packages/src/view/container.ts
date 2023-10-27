@@ -17,29 +17,6 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
     constructor(protected elementRef: ElementRef<any>, protected differs: IterableDiffers) {}
 
     ngAfterViewInit() {
-        const differ = this.differs.find(this.childrenComponent).create((index, item) => {
-            return item;
-        });
-        // first diff
-        differ.diff(this.childrenComponent);
-        const parentElement: HTMLElement = this.elementRef.nativeElement.parentElement;
-        if (this.childrenComponent.length > 0) {
-            parentElement.insertBefore(this.createFragment(), this.elementRef.nativeElement);
-            this.elementRef.nativeElement.remove();
-        }
-        this.childrenComponent.changes.subscribe(value => {
-            const iterableChanges = differ.diff(this.childrenComponent);
-            if (iterableChanges) {
-                iterableChanges.forEachOperation((record: IterableChangeRecord<T>, previousIndex: Number, currentIndex: number) => {
-                    // removed
-                    if (currentIndex === null) {
-                        return;
-                    }
-                    // added or moved
-                    this.handleContainerItemChange(record, parentElement);
-                });
-            }
-        });
     }
 
     getPreviousRootNode(currentIndex) {

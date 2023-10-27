@@ -8,14 +8,7 @@ import { NgFor } from '@angular/common';
 
 @Component({
     selector: 'slate-children',
-    template: `<slate-descendant
-        [descendant]="descendant"
-        [context]="context"
-        [viewContext]="viewContext"
-        [viewContext]="viewContext"
-        [index]="index"
-        *ngFor="let descendant of children; let index = index; trackBy: trackBy"
-    ></slate-descendant>`,
+    template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [NgFor, SlateDescendant]

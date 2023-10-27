@@ -1,8 +1,8 @@
 import { Ancestor, Descendant, Range, Editor, Element } from 'slate';
+import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, TemplateRef, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../types/view';
 import { isComponentType, isTemplateRef } from '../utils/view';
 import { SlateChildrenContext, SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from './context';
-import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
 import { SlateErrorCode } from '../types/error';
 import { BaseEmbeddedView } from './types';
