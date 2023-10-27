@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, IterableDiffers, QueryList } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Input, IterableChangeRecord, QueryList } from '@angular/core';
 import { SlateViewContext } from './context';
 import { ViewContainerItem } from './container-item';
 import { SlateErrorCode } from '../types/error';
@@ -14,7 +14,7 @@ export abstract class ViewContainer<T extends ViewContainerItem> implements Afte
 
     @Input() viewContext: SlateViewContext;
 
-    constructor(protected elementRef: ElementRef<any>, protected differs: IterableDiffers) {}
+    constructor(protected elementRef: ElementRef<any>) {}
 
     ngAfterViewInit() {
     }

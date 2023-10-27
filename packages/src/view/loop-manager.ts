@@ -42,7 +42,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     public initialized = false;
     public differ: IterableDiffer<any>;
 
-    constructor(private viewLevel: ViewLevel, private options: ViewLoopOptions<T, K>, private differs: IterableDiffers) {}
+    constructor(private viewLevel: ViewLevel, private options: ViewLoopOptions<T, K>) {}
 
     initialize(children: Descendant[], parent?: Ancestor, parentContext?: K) {
         this.children = children;
@@ -65,7 +65,8 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 this.blockCards.push(null);
             }
         });
-        this.differ = this.differs.find(children).create(this.options.trackBy);
+        const newDiffers = this.options.viewContainerRef.injector.get(IterableDiffers);
+        this.differ = newDiffers.find(children).create(this.options.trackBy);
         this.differ.diff(children);
     }
 
@@ -459,7 +460,6 @@ export function getCommonContext(
 export function createLoopManager(
     viewLevel: ViewLevel,
     viewContext: SlateViewContext,
-    differs: IterableDiffers,
     viewContainerRef: ViewContainerRef,
     getHost: () => HTMLElement
 ) {
@@ -488,8 +488,7 @@ export function createLoopManager(
                 return viewContext.trackBy(node) || AngularEditor.findKey(viewContext.editor, node);
             },
             getHost
-        },
-        differs
+        }
     );
 }
 

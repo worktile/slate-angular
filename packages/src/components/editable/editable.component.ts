@@ -17,8 +17,7 @@ import {
     AfterViewChecked,
     DoCheck,
     Inject,
-    ViewContainerRef,
-    IterableDiffers
+    ViewContainerRef
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -66,7 +65,6 @@ import { SlateDefaultText } from '../text/default-text.component';
 import { SlateDefaultElement } from '../element/default-element.component';
 import { ViewLevel, ViewLoopManager, createLoopManager } from '../../view/loop-manager';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
-import { take } from 'rxjs/operators';
 import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 
@@ -208,8 +206,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
         public defaultVoidText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
-        public defaultLeaf: ComponentType<BaseLeafComponent>,
-        public differs: IterableDiffers
+        public defaultLeaf: ComponentType<BaseLeafComponent>
     ) {}
 
     ngOnInit() {
@@ -238,7 +235,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.differs, this.viewContainerRef, this.getHost);
+        this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.viewContainerRef, this.getHost);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {

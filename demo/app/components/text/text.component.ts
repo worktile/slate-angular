@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, IterableDiffers, Renderer2, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewContainerRef } from '@angular/core';
 import { BaseTextComponent } from 'slate-angular';
 import { SlateLeaves } from '../../../../packages/src/components/leaves/leaves.component';
 
@@ -25,11 +25,10 @@ export class DemoTextMarkComponent extends BaseTextComponent {
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
-        public differs: IterableDiffers,
         public viewContainerRef: ViewContainerRef,
         cdr: ChangeDetectorRef
     ) {
-        super(elementRef, cdr, differs, viewContainerRef);
+        super(elementRef, cdr, viewContainerRef);
     }
 
     applyTextMark() {
