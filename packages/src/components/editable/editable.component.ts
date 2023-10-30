@@ -278,8 +278,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.editor.children = normalize(value);
             }
             this.initializeContext();
-            this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
-            this.cdr.markForCheck();
+            if (!this.viewLoopManager.initialized) {
+                this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
+                this.cdr.markForCheck();
+            } else {
+                this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
+            }
         }
     }
 
