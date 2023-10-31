@@ -220,7 +220,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         IS_READONLY.set(this.editor, this.readonly);
         EDITOR_TO_ON_CHANGE.set(this.editor, () => {
             this.ngZone.run(() => {
+                console.time('onChange');
                 this.onChange();
+                console.timeEnd('onChange');
             });
         });
         this.ngZone.runOutsideAngular(() => {
@@ -277,6 +279,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 });
                 this.editor.children = normalize(value);
             }
+            console.time('initialize');
             this.initializeContext();
             if (!this.viewLoopManager.initialized) {
                 this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
@@ -284,6 +287,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             } else {
                 this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
             }
+            console.timeEnd('initialize');
         }
     }
 
@@ -436,13 +440,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     forceFlush() {
         this.detectContext();
         this.ngZone.run(() => {
-            console.time('check');
             this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
-            console.timeEnd('check');
         });
-        console.time('detectChanges');
         this.cdr.detectChanges();
-        console.timeEnd('detectChanges');
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
