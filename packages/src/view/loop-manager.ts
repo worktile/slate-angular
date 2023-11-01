@@ -1,4 +1,4 @@
-import { Ancestor, Descendant, Range, Editor, Element } from 'slate';
+import { Ancestor, Descendant, Range, Editor, Element, Path } from 'slate';
 import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, TemplateRef, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../types/view';
 import { isComponentType, isTemplateRef } from '../utils/view';
@@ -23,7 +23,7 @@ export interface ViewLoopOptions<T = Context, K = ParentContext> {
     getViewType: (item: Descendant, parent: Ancestor) => ViewType;
     viewContext: SlateViewContext;
     viewContainerRef: ViewContainerRef;
-    getContext: (index: number, item: Descendant, childrenContext?: K, parent?: Ancestor) => T;
+    getContext: (index: number, item: Descendant, parent?: Ancestor, parentPath?: Path, childrenContext?: K) => T;
     itemCallback: (index: number, item: Descendant, parent?: Ancestor) => void;
     trackBy: (index, node) => any;
     getHost: () => HTMLElement;
@@ -44,12 +44,12 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
 
     constructor(private viewLevel: ViewLevel, private options: ViewLoopOptions<T, K>) {}
 
-    initialize(children: Descendant[], parent?: Ancestor, parentContext?: K) {
+    initialize(children: Descendant[], parent?: Ancestor, parentPath?: Path, parentContext?: K) {
         this.children = children;
         this.initialized = true;
         children.forEach((descendant, index) => {
             this.options.itemCallback(index, descendant, parent);
-            const context = this.options.getContext(index, descendant, parentContext, parent);
+            const context = this.options.getContext(index, descendant, parent, parentPath, parentContext);
             const viewType = this.options.getViewType(descendant, parent);
             const view = this.createEmbeddedViewOrComponent(viewType, descendant, parent, context);
             this.childrenViews.push(view);
@@ -81,7 +81,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         }
     }
 
-    doCheck(children: Descendant[], parent?: Ancestor, parentContext?: K) {
+    doCheck(children: Descendant[], parent?: Ancestor, parentPath?: Path, parentContext?: K) {
         const parentElement = this.options.getHost();
         const res = this.differ.diff(children);
         if (res) {
@@ -91,7 +91,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             const newBlockCards = [];
             res.forEachItem(record => {
                 this.options.itemCallback(record.currentIndex, record.item, parent);
-                let context = this.options.getContext(record.currentIndex, record.item, parentContext, parent);
+                let context = this.options.getContext(record.currentIndex, record.item, parent, parentPath, parentContext);
                 const viewType = this.options.getViewType(record.item, parent);
                 newViewTypes.push(viewType);
                 let view: EmbeddedViewRef<any> | ComponentRef<any>;
@@ -223,7 +223,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         } else {
             const newContexts = [];
             this.children.forEach((child, index) => {
-                let context = this.options.getContext(index, child, parentContext, parent);
+                let context = this.options.getContext(index, child, parent, parentPath, parentContext);
                 const previousContext = this.contexts[index];
                 const previousView = this.childrenViews[index];
                 if (
@@ -249,8 +249,8 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         }
     }
 
-    createView(index: number, item: Descendant, parent: Ancestor, parentContext?: K) {
-        const context = this.options.getContext(index, item, parentContext, parent);
+    createView(index: number, item: Descendant, parent: Ancestor, parentPath: Path, parentContext?: K) {
+        const context = this.options.getContext(index, item, parent, parentPath, parentContext);
         const viewType = this.options.getViewType(item, parent);
         const view = this.createEmbeddedViewOrComponent(viewType, item, parent, context);
         if (view instanceof ComponentRef) {
@@ -264,18 +264,18 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
         return view;
     }
 
-    updateView(previousIndex: number, currentIndex: number, item: Descendant, parent: Ancestor, parentContext?: K) {
+    updateView(previousIndex: number, currentIndex: number, item: Descendant, parent: Ancestor, parentPath: Path, parentContext?: K) {
         const viewType = this.options.getViewType(item, parent);
         const previousViewType = this.viewTypes[previousIndex];
         const previousView = this.childrenViews[previousIndex];
         if (viewType !== previousViewType) {
             const firstRootNode = this.getRootNodes(previousView)[0];
-            const view = this.createView(previousIndex, item, parent, parentContext);
+            const view = this.createView(previousIndex, item, parent, parentPath, parentContext);
             const newRootNodes = this.getRootNodes(view);
             firstRootNode.replaceWith(...newRootNodes);
             return;
         }
-        const context = this.options.getContext(currentIndex, item, parentContext, parent);
+        const context = this.options.getContext(currentIndex, item, parent, parentPath, parentContext);
         const previousContext = this.contexts[previousIndex];
         if (this.viewLevel === ViewLevel.node && memoizedContext(this.options.viewContext, item, previousContext as any, context as any)) {
             return;
@@ -409,16 +409,18 @@ export function getContext(
     index: number,
     item: Descendant,
     parent: Ancestor,
+    parentPath: Path,
     viewContext: SlateViewContext,
     childrenContext: SlateChildrenContext
 ): SlateElementContext | SlateTextContext {
     if (Element.isElement(item)) {
-        const computedContext = getCommonContext(index, item, parent, viewContext, childrenContext);
+        const computedContext = getCommonContext(index, item, parentPath, viewContext, childrenContext);
         const key = AngularEditor.findKey(viewContext.editor, item);
         const isInline = viewContext.editor.isInline(item);
         const isVoid = viewContext.editor.isVoid(item);
         const elementContext: SlateElementContext = {
             element: item,
+            path: parentPath.concat(index),
             ...computedContext,
             attributes: {
                 'data-slate-node': 'element',
@@ -436,7 +438,7 @@ export function getContext(
         }
         return elementContext;
     } else {
-        const computedContext = getCommonContext(index, item, parent, viewContext, childrenContext);
+        const computedContext = getCommonContext(index, item, parentPath, viewContext, childrenContext);
         const isLeafBlock = AngularEditor.isLeafBlock(viewContext.editor, childrenContext.parent);
         const textContext: SlateTextContext = {
             decorations: computedContext.decorations,
@@ -451,23 +453,26 @@ export function getContext(
 export function getCommonContext(
     index: number,
     item: Descendant,
-    parent: Ancestor,
+    parentPath: Path,
     viewContext: SlateViewContext,
     childrenContext: SlateChildrenContext
 ): { selection: Range; decorations: Range[] } {
-    const path = AngularEditor.findPath(viewContext.editor, parent);
-    const p = path.concat(index);
+    const p = parentPath.concat(index);
     try {
-        const range = Editor.range(viewContext.editor, p);
-        const sel = childrenContext.selection && Range.intersection(range, childrenContext.selection);
         const ds = childrenContext.decorate([item, p]);
-        for (const dec of childrenContext.decorations) {
-            const d = Range.intersection(dec, range);
-            if (d) {
-                ds.push(d);
+        if (childrenContext.selection || childrenContext.decorations.length > 0) {
+            const range = Editor.range(viewContext.editor, p);// performance
+            const sel = childrenContext.selection && Range.intersection(range, childrenContext.selection);
+            for (const dec of childrenContext.decorations) {
+                const d = Range.intersection(dec, range);
+                if (d) {
+                    ds.push(d);
+                }
             }
+            return { selection: sel, decorations: ds };
+        } else {
+            return { selection: null,  decorations: ds };
         }
-        return { selection: sel, decorations: ds };
     } catch (error) {
         this.options.viewContext.editor.onError({
             code: SlateErrorCode.GetStartPointError,
@@ -496,8 +501,8 @@ export function createLoopManager(
         },
         viewContext,
         viewContainerRef,
-        getContext: (index: number, item: Descendant, parentContext: ParentContext, parent: Ancestor) =>
-            getContext(index, item, parent, viewContext, parentContext as SlateChildrenContext),
+        getContext: (index: number, item: Descendant, parent: Ancestor, parentPath: Path, parentContext: ParentContext) =>
+            getContext(index, item, parent, parentPath, viewContext, parentContext as SlateChildrenContext),
         itemCallback: (index: number, item: Descendant, parent: Ancestor) => {
             NODE_TO_INDEX.set(item, index);
             NODE_TO_PARENT.set(item, parent);

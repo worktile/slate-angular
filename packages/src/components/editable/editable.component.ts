@@ -282,10 +282,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             console.time('initialize');
             this.initializeContext();
             if (!this.viewLoopManager.initialized) {
-                this.viewLoopManager.initialize(this.editor.children, this.editor, this.context);
+                this.viewLoopManager.initialize(this.editor.children, this.editor, [], this.context);
                 this.cdr.markForCheck();
             } else {
-                this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
+                this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
             }
             console.timeEnd('initialize');
         }
@@ -440,7 +440,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     forceFlush() {
         this.detectContext();
         this.ngZone.run(() => {
-            this.viewLoopManager.doCheck(this.editor.children, this.editor, this.context);
+            this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
         });
         this.cdr.detectChanges();
         // repair collaborative editing when Chinese input is interrupted by other users' cursors

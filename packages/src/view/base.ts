@@ -12,7 +12,7 @@ import {
 import { AngularEditor } from '../plugins/angular-editor';
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
-import { Descendant, Element, Range, Text } from 'slate';
+import { Ancestor, Descendant, Element, Path, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasBeforeContextChange } from './before-context-change';
 import { ViewLevel, ViewLoopManager, createLoopManager } from './loop-manager';
@@ -146,6 +146,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.selection;
     }
 
+    get path(): Path {
+        return this._context && this._context.path;
+    }
+
     get decorations(): Range[] {
         return this._context && this._context.decorations;
     }
@@ -181,7 +185,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         }
         this.initialized = true;
         this.viewLoopManager = createLoopManager(ViewLevel.node, this.viewContext, this.viewContainerRef, this.getHost);
-        this.viewLoopManager.initialize(this.children, this.element, this.childrenContext);
+        this.viewLoopManager.initialize(this.children, this.element, this.path, this.childrenContext);
     }
 
     ngAfterViewInit(): void {
@@ -209,7 +213,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             return;
         }
         this.updateWeakMap();
-        this.viewLoopManager.doCheck(this.children, this.element, this.childrenContext);
+        this.viewLoopManager.doCheck(this.children, this.element, this.path, this.childrenContext);
         this.cdr.detectChanges();
     }
 
@@ -260,7 +264,7 @@ export class BaseTextComponent<T extends Text = Text>
             },
             viewContext: this.viewContext,
             viewContainerRef: this.viewContainerRef,
-            getContext: (index: number, item: Descendant, parentContext: SlateTextContext) => {
+            getContext: (index: number, item: Descendant, parent: Ancestor, parentPath: Path, parentContext: SlateTextContext) => {
                 return this.leafContexts[index];
             },
             itemCallback: (index: number, item: Descendant) => {},
@@ -270,7 +274,7 @@ export class BaseTextComponent<T extends Text = Text>
             getHost: this.getHost
         });
         this.buildLeaves();
-        this.viewLoopManager.initialize(this.leaves, null, this.context);
+        this.viewLoopManager.initialize(this.leaves, null, null, this.context);
     }
 
     ngAfterViewInit(): void {
@@ -307,7 +311,7 @@ export class BaseTextComponent<T extends Text = Text>
         }
         this.updateWeakMap();
         this.buildLeaves();
-        this.viewLoopManager.doCheck(this.leaves, null, this.context);
+        this.viewLoopManager.doCheck(this.leaves, null, null, this.context);
         this.cdr.detectChanges();
     }
 }

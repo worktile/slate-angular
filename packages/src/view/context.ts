@@ -1,4 +1,4 @@
-import { NodeEntry, Range, Element, Ancestor, Text } from 'slate';
+import { NodeEntry, Range, Element, Ancestor, Text, Path } from 'slate';
 import { SlateStringTemplate } from '../components/string/template.component';
 import { AngularEditor } from '../plugins/angular-editor';
 import { ComponentType, ViewType } from '../types/view';
@@ -28,6 +28,7 @@ export interface SlateChildrenContext {
 
 export interface SlateElementContext<T extends Element = Element> {
     element: T;
+    path: Path;
     selection: Range | null;
     decorations: Range[];
     attributes: SlateElementAttributes;

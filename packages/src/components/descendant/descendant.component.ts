@@ -136,7 +136,8 @@ export class SlateDescendant
                     'data-slate-key': key.id
                 },
                 decorate: this.context.decorate,
-                readonly: this.context.readonly
+                readonly: this.context.readonly,
+                path: []
             };
             if (isInline) {
                 elementContext.attributes['data-slate-inline'] = true;
