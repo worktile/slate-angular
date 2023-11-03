@@ -257,7 +257,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.ngZone.run(() => {
                 this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
             });
-
         }
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
@@ -890,6 +889,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.isComposing = true;
         }
         this.detectContext();
+        this.ngZone.run(() => {
+            this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
+        });
         this.cdr.detectChanges();
     }
 
