@@ -393,12 +393,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     );
                 } else {
                     // eslint-disable-next-line max-len
-                    domSelection.setBaseAndExtent(
-                        newDomRange.startContainer,
-                        newDomRange.startOffset,
-                        newDomRange.endContainer,
-                        newDomRange.endOffset
-                    );
+                    throttleRAF(() => {
+                        domSelection.setBaseAndExtent(
+                            newDomRange.startContainer,
+                            newDomRange.startOffset,
+                            newDomRange.endContainer,
+                            newDomRange.endOffset
+                        );
+                    });
                 }
             } else {
                 domSelection.removeAllRanges();
@@ -1430,4 +1432,20 @@ const preventInsertFromComposition = (event: Event, editor: AngularEditor) => {
         const textNode = domSelection.anchorNode;
         textNode.splitText(textNode.length - insertText.length).remove();
     }
+};
+
+let timerId: number | null = null;
+
+export const throttleRAF = (fn: () => void) => {
+    const scheduleFunc = () => {
+        timerId = requestAnimationFrame(() => {
+            timerId = null;
+            fn();
+        });
+    };
+    if (timerId !== null) {
+        cancelAnimationFrame(timerId);
+        timerId = null;
+    }
+    scheduleFunc();
 };

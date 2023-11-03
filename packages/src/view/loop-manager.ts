@@ -82,6 +82,7 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
     }
 
     doCheck(children: Descendant[], parent?: Ancestor, parentPath?: Path, parentContext?: K) {
+        console.log('check, parent: ', parent);
         const parentElement = this.options.getHost();
         const res = this.differ.diff(children);
         if (res) {
