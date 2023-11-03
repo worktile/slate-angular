@@ -247,16 +247,26 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const decorateChange = simpleChanges['decorate'];
         if (decorateChange) {
             this.forceFlush();
+            this.ngZone.run(() => {
+                this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
+            });
         }
         const placeholderChange = simpleChanges['placeholder'];
         if (placeholderChange) {
             this.detectContext();
+            this.ngZone.run(() => {
+                this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
+            });
+
         }
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
             IS_READONLY.set(this.editor, this.readonly);
             this.detectContext();
             this.toSlateSelection();
+            this.ngZone.run(() => {
+                this.viewLoopManager.doCheck(this.editor.children, this.editor, [], this.context);
+            });
         }
     }
 
