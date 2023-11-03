@@ -58,7 +58,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             const isBlockCard = this.options.viewContext.editor.isBlockCard(descendant);
             if (isBlockCard) {
                 const rootNodes = this.getRootNodes(view);
-                const blockCardComponentRef = this.options.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard, { injector: this.options.viewContainerRef.injector });
+                const blockCardComponentRef = this.options.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard, {
+                    injector: this.options.viewContainerRef.injector
+                });
                 blockCardComponentRef.instance.initializeCenter(rootNodes);
                 this.blockCards.push(blockCardComponentRef);
             } else {
@@ -110,7 +112,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
 
                     const isBlockCard = this.options.viewContext.editor.isBlockCard(record.item);
                     if (isBlockCard) {
-                        blockCardView = this.options.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard, { injector: this.options.viewContainerRef.injector });
+                        blockCardView = this.options.viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard, {
+                            injector: this.options.viewContainerRef.injector
+                        });
                         blockCardView.instance.initializeCenter(rootNodes);
                         rootNodes = [blockCardView.instance.nativeElement];
                     } else {
@@ -202,6 +206,33 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
                 const view = this.childrenViews[record.previousIndex];
                 view.destroy();
                 // removeIndexes.push(record.previousIndex);
+            });
+
+            res.forEachMovedItem(record => {
+                const view = newViews[record.currentIndex];
+                let rootNodes = this.getRootNodes(view);
+
+                const isBlockCard = this.options.viewContext.editor.isBlockCard(record.item);
+                if (isBlockCard) {
+                    const blockCard = newBlockCards[record.currentIndex] as SlateBlockCard;
+                    rootNodes = [blockCard.nativeElement];
+                }
+                if (record.currentIndex === 0) {
+                    parentElement.prepend(...rootNodes);
+                } else {
+                    const previousView = newViews[record.currentIndex - 1];
+                    const previousRootNodes = this.getRootNodes(previousView);
+                    let previousRootNode = previousRootNodes[previousRootNodes.length - 1];
+                    if (newBlockCards[record.currentIndex - 1]) {
+                        previousRootNode = newBlockCards[record.currentIndex - 1].instance.nativeElement;
+                    }
+                    // const previousView = newViews[record.currentIndex - 1];
+                    // const previousRootNodes = this.getRootNodes(previousView);
+                    rootNodes.forEach(rootNode => {
+                        previousRootNode.insertAdjacentElement('afterend', rootNode);
+                        previousRootNode = rootNode;
+                    });
+                }
             });
             this.viewTypes = newViewTypes;
             this.childrenViews = newViews;
@@ -329,7 +360,9 @@ export class ViewLoopManager<T = Context, K = ParentContext> {
             return embeddedViewRef;
         }
         if (isComponentType(viewType)) {
-            const componentRef = this.options.viewContainerRef.createComponent(viewType, { injector: this.options.viewContainerRef.injector }) as ComponentRef<any>;
+            const componentRef = this.options.viewContainerRef.createComponent(viewType, {
+                injector: this.options.viewContainerRef.injector
+            }) as ComponentRef<any>;
             componentRef.instance.viewContext = this.options.viewContext;
             componentRef.instance.context = context;
             return componentRef;
@@ -462,7 +495,7 @@ export function getCommonContext(
     try {
         const ds = childrenContext.decorate([item, p]);
         if (childrenContext.selection || childrenContext.decorations.length > 0) {
-            const range = Editor.range(viewContext.editor, p);// performance
+            const range = Editor.range(viewContext.editor, p); // performance
             const sel = childrenContext.selection && Range.intersection(range, childrenContext.selection);
             for (const dec of childrenContext.decorations) {
                 const d = Range.intersection(dec, range);
@@ -472,7 +505,7 @@ export function getCommonContext(
             }
             return { selection: sel, decorations: ds };
         } else {
-            return { selection: null,  decorations: ds };
+            return { selection: null, decorations: ds };
         }
     } catch (error) {
         this.options.viewContext.editor.onError({
