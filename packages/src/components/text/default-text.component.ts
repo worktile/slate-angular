@@ -4,7 +4,7 @@ import { SlateLeaves } from '../leaves/leaves.component';
 
 @Component({
     selector: 'span[slateDefaultText]',
-    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
+    template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         'data-slate-node': 'text'

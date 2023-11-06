@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit, ViewContainerRef, inject } from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
-import { Descendant, Element, Range, Text } from 'slate';
+import { Descendant, Element, Path, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasBeforeContextChange } from './before-context-change';
+import { ListRender } from './render/list-render';
+import { LeavesRender } from './render/leaves-render';
 
 /**
  * base class for template
@@ -79,7 +81,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         if (!this.initialized) {
             return;
         }
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     renderPlaceholder() {
@@ -129,6 +131,8 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     extends BaseComponent<SlateElementContext<T>, K>
     implements OnInit, OnDestroy
 {
+    viewContainerRef = inject(ViewContainerRef);
+
     initialized = false;
 
     childrenContext: SlateChildrenContext;
@@ -139,6 +143,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     get selection(): Range {
         return this._context && this._context.selection;
+    }
+
+    get path(): Path {
+        return this._context && this._context.path;
     }
 
     get decorations(): Range[] {
@@ -161,12 +169,19 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.readonly;
     }
 
+    getOutletElement = () => {
+        return this.elementRef.nativeElement;
+    };
+
+    listRender: ListRender;
+
     ngOnInit() {
-        this.updateWeakMap();
         for (const key in this._context.attributes) {
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.listRender.initialize(this.children, this.element, this.path, this.childrenContext);
     }
 
     updateWeakMap() {
@@ -186,11 +201,12 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     onContextChange() {
         this.childrenContext = this.getChildrenContext();
+        this.updateWeakMap();
         if (!this.initialized) {
             return;
         }
-        this.cdr.markForCheck();
-        this.updateWeakMap();
+        this.listRender.update(this.children, this.element, this.path, this.childrenContext);
+        this.cdr.detectChanges();
     }
 
     getChildrenContext(): SlateChildrenContext {
@@ -211,13 +227,22 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 export class BaseTextComponent<T extends Text = Text> extends BaseComponent<SlateTextContext<T>> implements OnInit, OnDestroy {
     initialized = false;
 
+    viewContainerRef = inject(ViewContainerRef);
+
     get text(): T {
         return this._context && this._context.text;
     }
 
+    leavesRender: LeavesRender;
+
+    getOutletElement = () => {
+        return this.elementRef.nativeElement;
+    };
+
     ngOnInit() {
-        this.updateWeakMap();
         this.initialized = true;
+        this.leavesRender = new LeavesRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.leavesRender.initialize(this.context);
     }
 
     updateWeakMap() {
@@ -232,11 +257,11 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
     }
 
     onContextChange() {
+        this.updateWeakMap();
         if (!this.initialized) {
             return;
         }
-
-        this.cdr.markForCheck();
-        this.updateWeakMap();
+        this.leavesRender.update(this.context);
+        this.cdr.detectChanges();
     }
 }

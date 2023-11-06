@@ -1,38 +1,20 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { SlateDescendant } from '../descendant/descendant.component';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Descendant } from 'slate';
-import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewContainer } from '../../view/container';
 import { NgFor } from '@angular/common';
 
 @Component({
     selector: 'slate-children',
-    template: `<slate-descendant
-        [descendant]="descendant"
-        [context]="context"
-        [viewContext]="viewContext"
-        [viewContext]="viewContext"
-        [index]="index"
-        *ngFor="let descendant of children; let index = index; trackBy: trackBy"
-    ></slate-descendant>`,
+    template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [NgFor, SlateDescendant]
+    imports: [NgFor]
 })
-export class SlateChildren extends ViewContainer<SlateDescendant> implements OnInit {
+export class SlateChildren extends ViewContainer<any> {
     @Input() children: Descendant[];
 
     @Input() context: SlateChildrenContext;
 
     @Input() viewContext: SlateViewContext;
-
-    @ViewChildren(SlateDescendant, { read: SlateDescendant })
-    childrenComponent: QueryList<SlateDescendant>;
-
-    ngOnInit() {}
-
-    trackBy = (index, node) => {
-        return this.viewContext.trackBy(node) || AngularEditor.findKey(this.viewContext.editor, node);
-    };
 }
