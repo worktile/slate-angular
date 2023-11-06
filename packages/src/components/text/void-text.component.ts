@@ -5,7 +5,7 @@ import { SlateLeaves } from '../leaves/leaves.component';
 
 @Component({
     selector: 'span[slateVoidText]',
-    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
+    template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[attr.contenteditable]': 'isLeafBlock',

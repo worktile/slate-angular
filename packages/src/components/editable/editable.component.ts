@@ -15,7 +15,10 @@ import {
     OnChanges,
     SimpleChanges,
     AfterViewChecked,
-    DoCheck
+    DoCheck,
+    Inject,
+    inject,
+    ViewContainerRef
 } from '@angular/core';
 import {
     NODE_TO_ELEMENT,
@@ -50,12 +53,21 @@ import { SlateErrorCode } from '../../types/error';
 import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
-import { ViewType } from '../../types/view';
+import { ComponentType, ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { SlateChildren } from '../children/children.component';
+import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
+import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from '../text/token';
+import { SlateVoidText } from '../text/void-text.component';
+import { SlateDefaultText } from '../text/default-text.component';
+import { SlateDefaultElement } from '../element/default-element.component';
+import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
+import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
+import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
+import { ListRender } from '../../view/render/list-render';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -77,6 +89,22 @@ const forceOnDOMPaste = IS_SAFARI;
             provide: NG_VALUE_ACCESSOR,
             useExisting: forwardRef(() => SlateEditable),
             multi: true
+        },
+        {
+            provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
+            useValue: SlateDefaultElement
+        },
+        {
+            provide: SLATE_DEFAULT_TEXT_COMPONENT_TOKEN,
+            useValue: SlateDefaultText
+        },
+        {
+            provide: SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN,
+            useValue: SlateVoidText
+        },
+        {
+            provide: SLATE_DEFAULT_LEAF_COMPONENT_TOKEN,
+            useValue: SlateDefaultLeaf
         }
     ],
     standalone: true,
@@ -161,12 +189,28 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @ViewChild('templateComponent', { static: true, read: ElementRef })
     templateElementRef: ElementRef<any>;
 
+    viewContainerRef = inject(ViewContainerRef);
+
+    getOutletElement = () => {
+        return this.elementRef.nativeElement;
+    };
+
+    listRender: ListRender;
+
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
-        private injector: Injector
+        private injector: Injector,
+        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
+        public defaultElement: ComponentType<BaseElementComponent>,
+        @Inject(SLATE_DEFAULT_TEXT_COMPONENT_TOKEN)
+        public defaultText: ComponentType<BaseTextComponent>,
+        @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
+        public defaultVoidText: ComponentType<BaseTextComponent>,
+        @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
+        public defaultLeaf: ComponentType<BaseLeafComponent>
     ) {}
 
     ngOnInit() {
@@ -195,6 +239,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -203,16 +248,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const decorateChange = simpleChanges['decorate'];
         if (decorateChange) {
-            this.forceFlush();
+            this.forceRender();
         }
         const placeholderChange = simpleChanges['placeholder'];
         if (placeholderChange) {
-            this.detectContext();
+            this.render();
         }
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
             IS_READONLY.set(this.editor, this.readonly);
-            this.detectContext();
+            this.render();
             this.toSlateSelection();
         }
     }
@@ -237,6 +282,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.editor.children = normalize(value);
             }
             this.initializeContext();
+            if (!this.listRender.initialized) {
+                this.listRender.initialize(this.editor.children, this.editor, [], this.context);
+            } else {
+                this.listRender.update(this.editor.children, this.editor, [], this.context);
+            }
             this.cdr.markForCheck();
         }
     }
@@ -375,7 +425,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     onChange() {
-        this.forceFlush();
+        this.forceRender();
         this.onChangeCallback(this.editor.children);
     }
 
@@ -383,9 +433,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     ngDoCheck() {}
 
-    forceFlush() {
-        this.detectContext();
-        this.cdr.detectChanges();
+    forceRender() {
+        this.updateContext();
+        this.listRender.update(this.editor.children, this.editor, [], this.context);
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -422,6 +472,33 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.toNativeSelection();
     }
 
+    render() {
+        const changed = this.updateContext();
+        if (changed) {
+            this.listRender.update(this.editor.children, this.editor, [], this.context);
+        }
+    }
+
+    updateContext() {
+        const decorations = this.generateDecorations();
+        if (
+            this.context.selection !== this.editor.selection ||
+            this.context.decorate !== this.decorate ||
+            this.context.readonly !== this.readonly ||
+            !isDecoratorRangeListEqual(this.context.decorations, decorations)
+        ) {
+            this.context = {
+                parent: this.editor,
+                selection: this.editor.selection,
+                decorations: decorations,
+                decorate: this.decorate,
+                readonly: this.readonly
+            };
+            return true;
+        }
+        return false;
+    }
+
     initializeContext() {
         this.context = {
             parent: this.editor,
@@ -440,26 +517,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             renderText: this.renderText,
             trackBy: this.trackBy,
             isStrictDecorate: this.isStrictDecorate,
-            templateComponent: this.templateComponent
+            templateComponent: this.templateComponent,
+            defaultElement: this.defaultElement,
+            defaultText: this.defaultText,
+            defaultVoidText: this.defaultVoidText,
+            defaultLeaf: this.defaultLeaf
         };
-    }
-
-    detectContext() {
-        const decorations = this.generateDecorations();
-        if (
-            this.context.selection !== this.editor.selection ||
-            this.context.decorate !== this.decorate ||
-            this.context.readonly !== this.readonly ||
-            !isDecoratorRangeListEqual(this.context.decorations, decorations)
-        ) {
-            this.context = {
-                parent: this.editor,
-                selection: this.editor.selection,
-                decorations: decorations,
-                decorate: this.decorate,
-                readonly: this.readonly
-            };
-        }
     }
 
     composePlaceholderDecorate(editor: Editor) {
@@ -805,19 +868,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private onDOMCompositionStart(event: CompositionEvent) {
         const { selection } = this.editor;
-
         if (selection) {
             // solve the problem of cross node Chinese input
             if (Range.isExpanded(selection)) {
                 Editor.deleteFragment(this.editor);
-                this.forceFlush();
+                this.forceRender();
             }
         }
         if (hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
             this.isComposing = true;
         }
-        this.detectContext();
-        this.cdr.detectChanges();
+        this.render();
     }
 
     private onDOMCompositionUpdate(event: CompositionEvent) {
@@ -842,8 +903,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             // so we need avoid repeat isnertText by isComposing === true,
             this.isComposing = false;
         }
-        this.detectContext();
-        this.cdr.detectChanges();
+        this.render();
     }
 
     private onDOMCopy(event: ClipboardEvent) {

@@ -4,7 +4,7 @@ import { SlateChildren } from '../children/children.component';
 
 @Component({
     selector: 'div[slateDefaultElement]',
-    template: `<slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>`,
+    template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [SlateChildren]
