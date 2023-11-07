@@ -68,6 +68,7 @@ import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
+import { ThrottleRAF, createThrottleRAF } from '../../utils/throttle';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -197,6 +198,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     listRender: ListRender;
 
+    private throttleRAF: ThrottleRAF;
+
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
@@ -211,7 +214,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         public defaultVoidText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
         public defaultLeaf: ComponentType<BaseLeafComponent>
-    ) {}
+    ) {
+        this.throttleRAF = createThrottleRAF();
+    }
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -385,20 +390,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 // we need to check and do the right thing here.
                 if (Range.isBackward(selection)) {
                     // eslint-disable-next-line max-len
-                    domSelection.setBaseAndExtent(
-                        newDomRange.endContainer,
-                        newDomRange.endOffset,
-                        newDomRange.startContainer,
-                        newDomRange.startOffset
-                    );
+                    this.throttleRAF(() => {
+                        domSelection.setBaseAndExtent(
+                            newDomRange.endContainer,
+                            newDomRange.endOffset,
+                            newDomRange.startContainer,
+                            newDomRange.startOffset
+                        );
+                    });
+                    
                 } else {
                     // eslint-disable-next-line max-len
-                    domSelection.setBaseAndExtent(
-                        newDomRange.startContainer,
-                        newDomRange.startOffset,
-                        newDomRange.endContainer,
-                        newDomRange.endOffset
-                    );
+                    this.throttleRAF(() => {
+                        domSelection.setBaseAndExtent(
+                            newDomRange.startContainer,
+                            newDomRange.startOffset,
+                            newDomRange.endContainer,
+                            newDomRange.endOffset
+                        );
+                    });
                 }
             } else {
                 domSelection.removeAllRanges();

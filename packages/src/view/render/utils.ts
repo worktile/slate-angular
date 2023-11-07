@@ -17,6 +17,7 @@ export function createEmbeddedViewOrComponent(
             viewContext
         };
         const embeddedViewRef = viewContainerRef.createEmbeddedView<any>(viewType, embeddedViewContext);
+        embeddedViewRef.detectChanges();
         return embeddedViewRef;
     }
     if (isComponentType(viewType)) {
@@ -25,6 +26,7 @@ export function createEmbeddedViewOrComponent(
         }) as ComponentRef<any>;
         componentRef.instance.viewContext = viewContext;
         componentRef.instance.context = context;
+        componentRef.changeDetectorRef.detectChanges();
         return componentRef;
     }
 }
