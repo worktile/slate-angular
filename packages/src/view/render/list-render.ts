@@ -63,7 +63,6 @@ export class ListRender {
                 let blockCard: ComponentRef<SlateBlockCard> | null;
                 if (record.previousIndex === null) {
                     view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
-                    renderView(view);
                     blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                     newContexts.push(context);
                     newViews.push(view);
@@ -76,7 +75,6 @@ export class ListRender {
                     const previousBlockCard = this.blockCards[record.previousIndex];
                     if (previousViewType !== viewType) {
                         view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
-                        renderView(view);
                         blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                         const firstRootNode = getRootNodes(previousView, previousBlockCard)[0];
                         const newRootNodes = getRootNodes(view, blockCard);
@@ -97,16 +95,20 @@ export class ListRender {
                     newBlockCards.push(blockCard);
                 }
             });
-            diffResult.forEachRemovedItem(record => {
-                const view = this.views[record.previousIndex];
-                const blockCard = this.blockCards[record.previousIndex];
-                view.destroy();
-                blockCard?.destroy();
-            });
-            diffResult.forEachMovedItem(record => {
-                mountOnItemChange(record.currentIndex, record.item, newViews, newBlockCards, outletElement, this.viewContext);
-                // Solve the block-card DOMElement loss when moving nodes
-                newBlockCards[record.currentIndex]?.instance.append();
+            diffResult.forEachOperation((record) => {
+                // removed
+                if (record.currentIndex === null) {
+                    const view = this.views[record.previousIndex];
+                    const blockCard = this.blockCards[record.previousIndex];
+                    view.destroy();
+                    blockCard?.destroy();
+                }
+                // moved
+                if (record.previousIndex !== null && record.currentIndex !== null) {
+                    mountOnItemChange(record.currentIndex, record.item, newViews, newBlockCards, outletElement, this.viewContext);
+                    // Solve the block-card DOMElement loss when moving nodes
+                    newBlockCards[record.currentIndex]?.instance.append();
+                }
             });
             this.viewTypes = newViewTypes;
             this.views = newViews;
@@ -184,8 +186,9 @@ export function getCommonContext(
     const p = parentPath.concat(index);
     try {
         const ds = childrenContext.decorate([item, p]);
+        // [list-render] performance optimization: reduce the number of calls to the `Editor.range(viewContext.editor, p)` method
         if (childrenContext.selection || childrenContext.decorations.length > 0) {
-            const range = Editor.range(viewContext.editor, p); // performance
+            const range = Editor.range(viewContext.editor, p);
             const sel = childrenContext.selection && Range.intersection(range, childrenContext.selection);
             for (const dec of childrenContext.decorations) {
                 const d = Range.intersection(dec, range);

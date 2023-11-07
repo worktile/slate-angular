@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, ElementRef, ViewContainerRef, AfterViewInit } from '@angular/core';
-import { Editor, Path, Node } from 'slate';
+import { Node, Text } from 'slate';
 import { ViewContainerItem } from '../../view/container-item';
 import { SlateLeafContext, SlateStringContext } from '../../view/context';
-import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateDefaultString } from './default-string.component';
 
 @Component({
@@ -37,13 +36,12 @@ export class SlateString extends ViewContainerItem<SlateStringContext> implement
     // width space that will convert into a line break when copying and pasting
     // to support expected plain text.
     isLineBreakEmptyString() {
-        const path = AngularEditor.findPath(this.viewContext.editor, this.context.text);
-        const parentPath = Path.parent(path);
         return (
             this.context.leaf.text === '' &&
             this.context.parent.children[this.context.parent.children.length - 1] === this.context.text &&
             !this.viewContext.editor.isInline(this.context.parent) &&
-            Editor.string(this.viewContext.editor, parentPath) === ''
+            // [list-render] performance optimization: reduce the number of calls to the `Editor.string(editor, path)` method
+            isEmpty(this.viewContext.editor, this.context.parent)
         );
     }
 
@@ -106,3 +104,16 @@ export class SlateString extends ViewContainerItem<SlateStringContext> implement
         return false;
     }
 }
+
+/**
+ * TODO: remove when bump slate
+ * copy from slate
+ * @param editor
+ * @param element
+ * @returns
+ */
+export const isEmpty = (editor, element) => {
+    const { children } = element;
+    const [first] = children;
+    return children.length === 0 || (children.length === 1 && Text.isText(first) && first.text === '' && !editor.isVoid(element));
+};
