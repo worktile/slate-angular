@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.1
+
+### Patch Changes
+
+- [`0c59f49`](https://github.com/worktile/slate-angular/commit/0c59f492371b901c3bb7791b9a2bf2cc166e42af) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cancel throttleRAF for setBaseAndExtent
+
 ## 16.1.0-next.0
 
 ### Minor Changes
