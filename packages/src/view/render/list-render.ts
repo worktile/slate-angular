@@ -46,6 +46,10 @@ export class ListRender {
     }
 
     public update(children: Descendant[], parent: Ancestor, parentPath: Path, childrenContext: SlateChildrenContext) {
+        if (!this.initialized) {
+            this.initialize(children, parent, parentPath, childrenContext);
+            return;
+        }
         const outletElement = this.getOutletElement();
         const diffResult = this.differ.diff(children);
         if (diffResult) {
