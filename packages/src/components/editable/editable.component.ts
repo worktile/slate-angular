@@ -198,8 +198,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     listRender: ListRender;
 
-    private throttleRAF: ThrottleRAF;
-
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
@@ -215,7 +213,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
         public defaultLeaf: ComponentType<BaseLeafComponent>
     ) {
-        this.throttleRAF = createThrottleRAF();
     }
 
     ngOnInit() {
@@ -390,25 +387,20 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 // we need to check and do the right thing here.
                 if (Range.isBackward(selection)) {
                     // eslint-disable-next-line max-len
-                    this.throttleRAF(() => {
-                        domSelection.setBaseAndExtent(
-                            newDomRange.endContainer,
-                            newDomRange.endOffset,
-                            newDomRange.startContainer,
-                            newDomRange.startOffset
-                        );
-                    });
-                    
+                    domSelection.setBaseAndExtent(
+                        newDomRange.endContainer,
+                        newDomRange.endOffset,
+                        newDomRange.startContainer,
+                        newDomRange.startOffset
+                    );
                 } else {
                     // eslint-disable-next-line max-len
-                    this.throttleRAF(() => {
-                        domSelection.setBaseAndExtent(
-                            newDomRange.startContainer,
-                            newDomRange.startOffset,
-                            newDomRange.endContainer,
-                            newDomRange.endOffset
-                        );
-                    });
+                    domSelection.setBaseAndExtent(
+                        newDomRange.startContainer,
+                        newDomRange.startOffset,
+                        newDomRange.endContainer,
+                        newDomRange.endOffset
+                    );
                 }
             } else {
                 domSelection.removeAllRanges();
