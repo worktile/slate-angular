@@ -1,10 +1,19 @@
 # Changelog
 
+## 16.1.0-next.0
+
+### Minor Changes
+
+- [#242](https://github.com/worktile/slate-angular/pull/242) [`bcfe6ab`](https://github.com/worktile/slate-angular/commit/bcfe6abfde24189db8040459f0bfbaa47dce911a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - initialize list render and leaves render to optimized rendering performance
+  deprecated container
+
+- [#242](https://github.com/worktile/slate-angular/pull/242) [`fface3b`](https://github.com/worktile/slate-angular/commit/fface3b4fc907b7f569a06d23a2ebf22bf2803ba) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - improve isLineBreakEmptyString、forEachMovedItem、setBaseAndExtent performance issues
+
 ## 16.1.0-next
 
 ### Minor Changes
 
-- [`406acf4`](https://github.com/worktile/slate-angular/commit/406acf4abf8a7dde716a11246ead9fd9db36f380) Thanks [@why520crazy](https://github.com/why520crazy)! - feat: bump is-hotkey and direction to 0.2.0 and 2.0.1, add dependence of package.json 
+- [`406acf4`](https://github.com/worktile/slate-angular/commit/406acf4abf8a7dde716a11246ead9fd9db36f380) Thanks [@why520crazy](https://github.com/why520crazy)! - feat: bump is-hotkey and direction to 0.2.0 and 2.0.1, add dependence of package.json
 
 - [`d2045d7`](https://github.com/worktile/slate-angular/commit/d2045d79cbd8db0af6238fe92de51cf3dc21cb14) Thanks [@why520crazy](https://github.com/why520crazy)! - feat: remove all Component suffix to simplify usage of standalone components
 

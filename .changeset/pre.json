@@ -4,5 +4,8 @@
   "initialVersions": {
     "slate-angular": "16.1.0-next"
   },
-  "changesets": []
+  "changesets": [
+    "chatty-worms-melt",
+    "rare-snails-join"
+  ]
 }
