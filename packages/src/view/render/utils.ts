@@ -67,7 +67,7 @@ export function mount(
             const blockCard = blockCards ? blockCards[index] : undefined;
             result.push(...getRootNodes(view, blockCard));
         });
-        outletElement.append(...result);
+        outletElement.prepend(...result);
     }
 }
 

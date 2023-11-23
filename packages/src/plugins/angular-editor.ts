@@ -600,10 +600,10 @@ export const AngularEditor = {
             } else if (voidNode) {
                 // For void nodes, the element with the offset key will be a cousin, not an
                 // ancestor, so find it by going down from the nearest void parent.
-
-                leafNode = voidNode.querySelector('[data-slate-leaf]')!;
-                parentNode = voidNode.querySelector('[data-slate-length="0"]');
-                textNode = leafNode.closest('[data-slate-node="text"]')!;
+                const spacer = voidNode.querySelector('[data-slate-spacer="true"]')!;
+                leafNode = spacer.firstElementChild;
+                parentNode = leafNode.firstElementChild;
+                textNode = spacer;
                 domNode = leafNode;
                 offset = domNode.textContent!.length;
             }
