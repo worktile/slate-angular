@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.2
+
+### Patch Changes
+
+- [`fa62932`](https://github.com/worktile/slate-angular/commit/fa629326a82c4245f5d2c3d1ce99ed734c5f418b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix query void text error
+
 ## 16.1.0-next.1
 
 ### Patch Changes
