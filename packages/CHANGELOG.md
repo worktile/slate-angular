@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.3
+
+### Patch Changes
+
+- [`f122a37`](https://github.com/worktile/slate-angular/commit/f122a3770ea0851688ba4b7292e7c05b496b36c8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update block card append timing
+
 ## 16.1.0-next.2
 
 ### Patch Changes
