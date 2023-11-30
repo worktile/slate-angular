@@ -22,7 +22,6 @@ export class SlateBlockCard implements OnInit {
     constructor(private elementRef: ElementRef) {}
 
     ngOnInit() {
-        this.append();
         this.nativeElement.classList.add(`slate-block-card`);
     }
 
@@ -34,5 +33,6 @@ export class SlateBlockCard implements OnInit {
 
     initializeCenter(rootNodes: HTMLElement[]) {
         this.centerRootNodes = rootNodes;
+        this.append();
     }
 }
