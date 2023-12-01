@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.4
+
+### Patch Changes
+
+- [`b4f5020`](https://github.com/worktile/slate-angular/commit/b4f5020e1406cf147f5cc7c9b35ac11d5486dcde) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - export throttle utils
+
 ## 16.1.0-next.3
 
 ### Patch Changes
