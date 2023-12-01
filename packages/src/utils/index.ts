@@ -7,3 +7,4 @@ export * from './key';
 export * from './range-list';
 export * from './block-card';
 export * from './global-normalize';
+export * from './throttle';

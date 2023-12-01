@@ -68,7 +68,6 @@ import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
-import { ThrottleRAF, createThrottleRAF } from '../../utils/throttle';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
