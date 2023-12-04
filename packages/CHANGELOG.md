@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.5
+
+### Patch Changes
+
+- [`6eee752`](https://github.com/worktile/slate-angular/commit/6eee752297d0e447e9849e29a8c64b3691929bcc) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove path from SlateElementContext
+
 ## 16.1.0-next.4
 
 ### Patch Changes
