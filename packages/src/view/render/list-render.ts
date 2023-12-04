@@ -24,9 +24,10 @@ export class ListRender {
         private getOutletElement: () => HTMLElement
     ) {}
 
-    public initialize(children: Descendant[], parent: Ancestor, parentPath: Path, childrenContext: SlateChildrenContext) {
+    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
         this.initialized = true;
         this.children = children;
+        const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         children.forEach((descendant, index) => {
             NODE_TO_INDEX.set(descendant, index);
             NODE_TO_PARENT.set(descendant, parent);
@@ -45,13 +46,14 @@ export class ListRender {
         this.differ.diff(children);
     }
 
-    public update(children: Descendant[], parent: Ancestor, parentPath: Path, childrenContext: SlateChildrenContext) {
+    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
         if (!this.initialized) {
-            this.initialize(children, parent, parentPath, childrenContext);
+            this.initialize(children, parent, childrenContext);
             return;
         }
         const outletElement = this.getOutletElement();
         const diffResult = this.differ.diff(children);
+        const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         if (diffResult) {
             const newContexts = [];
             const newViewTypes = [];
@@ -150,7 +152,6 @@ export function getContext(
         const isVoid = viewContext.editor.isVoid(item);
         const elementContext: SlateElementContext = {
             element: item,
-            path: parentPath.concat(index),
             ...computedContext,
             attributes: {
                 'data-slate-node': 'element',

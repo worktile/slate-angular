@@ -29,7 +29,6 @@ export interface SlateChildrenContext {
 export interface SlateElementContext<T extends Element = Element> {
     element: T;
     selection: Range | null;
-    path: Path;
     decorations: Range[];
     attributes: SlateElementAttributes;
     decorate: (entry: NodeEntry) => Range[];

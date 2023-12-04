@@ -145,10 +145,6 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.selection;
     }
 
-    get path(): Path {
-        return this._context && this._context.path;
-    }
-
     get decorations(): Range[] {
         return this._context && this._context.decorations;
     }
@@ -181,7 +177,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         }
         this.initialized = true;
         this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
-        this.listRender.initialize(this.children, this.element, this.path, this.childrenContext);
+        this.listRender.initialize(this.children, this.element, this.childrenContext);
     }
 
     updateWeakMap() {
@@ -205,7 +201,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         if (!this.initialized) {
             return;
         }
-        this.listRender.update(this.children, this.element, this.path, this.childrenContext);
+        this.listRender.update(this.children, this.element, this.childrenContext);
         this.cdr.detectChanges();
     }
 

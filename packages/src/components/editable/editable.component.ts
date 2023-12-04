@@ -284,9 +284,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             this.initializeContext();
             if (!this.listRender.initialized) {
-                this.listRender.initialize(this.editor.children, this.editor, [], this.context);
+                this.listRender.initialize(this.editor.children, this.editor, this.context);
             } else {
-                this.listRender.update(this.editor.children, this.editor, [], this.context);
+                this.listRender.update(this.editor.children, this.editor, this.context);
             }
             this.cdr.markForCheck();
         }
@@ -436,7 +436,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        this.listRender.update(this.editor.children, this.editor, [], this.context);
+        this.listRender.update(this.editor.children, this.editor, this.context);
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -476,7 +476,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     render() {
         const changed = this.updateContext();
         if (changed) {
-            this.listRender.update(this.editor.children, this.editor, [], this.context);
+            this.listRender.update(this.editor.children, this.editor, this.context);
         }
     }
 
