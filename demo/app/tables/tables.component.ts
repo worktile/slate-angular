@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, NgZone } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, DOMElement, withAngular } from 'slate-angular';
 import { MarkTypes, DemoTextMarkComponent } from '../components/text/text.component';
@@ -6,6 +6,9 @@ import { withBlockCard } from '../plugins/block-cards.plugin';
 import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { ActivatedRoute, Params } from '@angular/router';
+import { TableElement, TableRowElement } from 'custom-types';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'demo-tables',
@@ -14,7 +17,7 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
     imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoTablesComponent implements OnInit {
-    value = initialValue;
+    value = [];
 
     editor = withBlockCard(withTable(withAngular(createEditor())));
 
@@ -27,7 +30,30 @@ export class DemoTablesComponent implements OnInit {
     @ViewChild('tdTemplate', { read: TemplateRef, static: true })
     tdTemplate: TemplateRef<any>;
 
-    ngOnInit() {}
+    constructor(private activeRoute: ActivatedRoute, private ngZone: NgZone) {}
+
+    ngOnInit() {
+        this.activeRoute.queryParams.subscribe((params: Params) => {
+            const init = params['init'];
+            const isHugeTable = init === 'huge-table';
+            switch (init) {
+                case 'huge-table':
+                    this.value = [...buildOneHugeTable()];
+                    break;
+                default:
+                    this.value = [...initialValue];
+                    break;
+            }
+            if (isHugeTable) {
+                console.time(init);
+                this.ngZone.onStable.pipe(take(1)).subscribe(() => {
+                    console.timeEnd(init);
+                });
+            }
+        });
+    }
+
+
 
     renderElement() {
         return (element: any) => {
@@ -75,6 +101,258 @@ export class DemoTablesComponent implements OnInit {
         }
     }
 }
+
+export const buildOneHugeTable = () => {
+    const rowCount = 4000;
+    const getRow = (index: number) => {
+        const row = {
+            type: 'table-row',
+            children: [
+                {
+                    type: 'table-cell',
+                    children: [
+                        {
+                            type: 'paragraph',
+                            children: [
+                                {
+                                    text: `${index}`
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: 'table-cell',
+                    children: [
+                        {
+                            type: 'paragraph',
+                            children: [
+                                {
+                                    text: '',
+                                    bold: true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: 'table-cell',
+                    children: [
+                        {
+                            type: 'paragraph',
+                            children: [
+                                {
+                                    text: '',
+                                    bold: true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: 'table-cell',
+                    children: [
+                        {
+                            type: 'paragraph',
+                            children: [
+                                {
+                                    text: '',
+                                    bold: true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        return row as TableRowElement;
+    };
+    const table: TableElement = {
+        type: 'table',
+        children: [
+            {
+                type: 'table-row',
+                children: [
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: ''
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: 'Human',
+                                        bold: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: 'Dog',
+                                        bold: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: 'Cat',
+                                        bold: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                type: 'table-row',
+                children: [
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '# of feet',
+                                        bold: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '2'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '4'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '4'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                type: 'table-row',
+                children: [
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '# of lives',
+                                        bold: true
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '1'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '1'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        type: 'table-cell',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                children: [
+                                    {
+                                        text: '9'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    };
+    for (let index = 0; index < rowCount; index++) {
+        table.children.push(getRow(index));
+    }
+    return [table];
+};
 
 const initialValue = [
     {
