@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.6
+
+### Patch Changes
+
+- [`ae78be8`](https://github.com/worktile/slate-angular/commit/ae78be824c2a6fb03ea88c3c9920ff122da1451d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update detect changes timing when set context
+
 ## 16.1.0-next.5
 
 ### Patch Changes
