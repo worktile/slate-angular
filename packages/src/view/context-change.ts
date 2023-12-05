@@ -2,7 +2,7 @@ export interface BeforeContextChange<T> {
     beforeContextChange: (value: T) => void;
 }
 
-export interface AfterContextChange<T> {
+export interface AfterContextChange<> {
     afterContextChange: () => void;
 }
 
@@ -13,7 +13,7 @@ export function hasBeforeContextChange<T>(value): value is BeforeContextChange<T
     return false;
 }
 
-export function hasAfterContextChange<T>(value): value is AfterContextChange<T> {
+export function hasAfterContextChange<T>(value): value is AfterContextChange {
     if (value.afterContextChange) {
         return true;
     }
