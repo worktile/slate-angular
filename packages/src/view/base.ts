@@ -24,6 +24,8 @@ export abstract class BaseComponent<
     T = SlateTextContext | SlateLeafContext | SlateElementContext,
     K extends AngularEditor = AngularEditor
 > {
+    initialized = false;
+
     protected _context: T;
 
     @Input()
@@ -33,6 +35,9 @@ export abstract class BaseComponent<
         }
         this._context = value;
         this.onContextChange();
+        if (this.initialized) {
+            this.cdr.detectChanges();
+        }
     }
 
     get context() {
@@ -59,8 +64,6 @@ export abstract class BaseComponent<
  */
 @Directive()
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
-    initialized = false;
-
     placeholderElement: HTMLSpanElement;
 
     @HostBinding('attr.data-slate-leaf') isSlateLeaf = true;
@@ -81,7 +84,6 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         if (!this.initialized) {
             return;
         }
-        this.cdr.detectChanges();
     }
 
     renderPlaceholder() {
@@ -132,8 +134,6 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     implements OnInit, OnDestroy
 {
     viewContainerRef = inject(ViewContainerRef);
-
-    initialized = false;
 
     childrenContext: SlateChildrenContext;
 
@@ -202,7 +202,6 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             return;
         }
         this.listRender.update(this.children, this.element, this.childrenContext);
-        this.cdr.detectChanges();
     }
 
     getChildrenContext(): SlateChildrenContext {
@@ -221,8 +220,6 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
  */
 @Directive()
 export class BaseTextComponent<T extends Text = Text> extends BaseComponent<SlateTextContext<T>> implements OnInit, OnDestroy {
-    initialized = false;
-
     viewContainerRef = inject(ViewContainerRef);
 
     get text(): T {
@@ -258,6 +255,5 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
             return;
         }
         this.leavesRender.update(this.context);
-        this.cdr.detectChanges();
     }
 }
