@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.7
+
+### Patch Changes
+
+- [`5d7d22d`](https://github.com/worktile/slate-angular/commit/5d7d22d5fe11cf2a666b4b5dc3d5613b83035f09) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add hasAfterContextChange that the timing is after detectChanges
+
 ## 16.1.0-next.6
 
 ### Patch Changes
