@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { SlateStringContext } from '../../view/context';
 import { BaseComponent } from '../../view/base';
-import { BeforeContextChange } from '../../view/before-context-change';
+import { BeforeContextChange } from '../../view/context-change';
 import { DOMElement } from '../../utils/dom';
 
 @Component({

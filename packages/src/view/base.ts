@@ -4,7 +4,7 @@ import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
 import { Descendant, Element, Path, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
-import { hasBeforeContextChange } from './before-context-change';
+import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
 import { ListRender } from './render/list-render';
 import { LeavesRender } from './render/leaves-render';
 
@@ -37,6 +37,9 @@ export abstract class BaseComponent<
         this.onContextChange();
         if (this.initialized) {
             this.cdr.detectChanges();
+        }
+        if (hasAfterContextChange<T>(this)) {
+            this.afterContextChange();
         }
     }
 
