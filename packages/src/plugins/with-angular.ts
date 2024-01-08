@@ -1,4 +1,4 @@
-import { Editor, Node, Transforms, Range, Path, Operation, PathRef } from 'slate';
+import { Editor, Node, Transforms, Range, Path, Operation, PathRef, Element } from 'slate';
 import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlateFragmentAttribute } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
@@ -15,7 +15,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
         if (editor.selection && Range.isCollapsed(editor.selection)) {
             const parentBlockEntry = Editor.above(editor, {
-                match: n => Editor.isBlock(editor, n),
+                match: n => Element.isElement(n) &&  Editor.isBlock(editor, n),
                 at: editor.selection
             });
 
@@ -191,7 +191,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
                 Editor.deleteFragment(editor);
             } else {
                 const node = Node.parent(editor, selection.anchor.path);
-                if (Editor.isVoid(editor, node)) {
+                if (Element.isElement(node) && Editor.isVoid(editor, node)) {
                     Transforms.delete(editor);
                 }
             }

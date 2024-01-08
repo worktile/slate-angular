@@ -47,8 +47,8 @@
     "is-hotkey": "^0.2.0",
     "rxjs": "~7.8.1",
     "scroll-into-view-if-needed": "^3.1.0",
-    "slate": "^0.88.1",
-    "slate-history": "^0.86.0",
+    "slate": "~0.101.5",
+    "slate-history": "~0.100.0",
     "tslib": "^2.6.2",
     "zone.js": "~0.13.3"
   },

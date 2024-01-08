@@ -131,7 +131,7 @@ const withShortcuts = editor => {
         if (text === ' ' && selection && Range.isCollapsed(selection)) {
             const { anchor } = selection;
             const block = Editor.above<Element>(editor, {
-                match: n => Editor.isBlock(editor, n)
+                match: n => Element.isElement(n) && Editor.isBlock(editor, n)
             });
             const path = block ? block[1] : [];
             const start = Editor.start(editor, path);
@@ -142,7 +142,7 @@ const withShortcuts = editor => {
             if (type) {
                 Transforms.select(editor, range);
                 Transforms.delete(editor);
-                Transforms.setNodes(editor, { type }, { match: n => Editor.isBlock(editor, n) });
+                Transforms.setNodes(editor, { type }, { match: n => Element.isElement(n) && Editor.isBlock(editor, n) });
 
                 if (type === 'list-item') {
                     const list: BulletedListElement = {
@@ -166,7 +166,7 @@ const withShortcuts = editor => {
 
         if (selection && Range.isCollapsed(selection)) {
             const match = Editor.above<Element>(editor, {
-                match: n => Editor.isBlock(editor, n)
+                match: n => Element.isElement(n) && Editor.isBlock(editor, n)
             });
 
             if (match) {

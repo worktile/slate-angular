@@ -102,7 +102,7 @@ export class DemoInlinesComponent implements OnInit {
     valueChange(value: Element[]) {}
 }
 
-const withInlines = editor => {
+const withInlines = (editor: Editor) => {
     const { insertData, insertText, isInline } = editor;
 
     editor.isInline = element => ['link', 'button'].includes(element.type) || isInline(element);
@@ -134,33 +134,33 @@ const insertLink = (editor, url) => {
     }
 };
 
-const insertButton = editor => {
+const insertButton = (editor: Editor) => {
     if (editor.selection) {
         wrapButton(editor);
     }
 };
 
-const isLinkActive = editor => {
+const isLinkActive = (editor: Editor) => {
     const [link] = Editor.nodes(editor, {
         match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link'
     });
     return !!link;
 };
 
-const isButtonActive = editor => {
+const isButtonActive = (editor: Editor) => {
     const [button] = Editor.nodes(editor, {
         match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'button'
     });
     return !!button;
 };
 
-const unwrapLink = editor => {
+const unwrapLink = (editor: Editor) => {
     Transforms.unwrapNodes(editor, {
         match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link'
     });
 };
 
-const unwrapButton = editor => {
+const unwrapButton = (editor: Editor) => {
     Transforms.unwrapNodes(editor, {
         match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'button'
     });
@@ -187,7 +187,7 @@ const wrapLink = (editor, url: string) => {
     }
 };
 
-const wrapButton = editor => {
+const wrapButton = (editor: Editor) => {
     if (isButtonActive(editor)) {
         unwrapButton(editor);
     }
