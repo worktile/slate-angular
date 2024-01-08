@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Editor, Transforms, createEditor, Element as SlateElement, Range, Descendant } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -12,23 +12,27 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
 import { DemoButtonComponent } from '../components/button/button.component';
 import { NgFor } from '@angular/common';
 
+interface ToolbarItem {
+    icon: string;
+    active: () => boolean;
+    action: (event: Event) => void;
+}
+
 @Component({
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
     standalone: true,
     imports: [NgFor, DemoButtonComponent, SlateEditable, FormsModule]
 })
-export class DemoInlinesComponent implements OnInit {
+export class DemoInlinesComponent {
     value = initialValue;
 
     editor = withInlines(withHistory(withAngular(createEditor())));
 
-    toolbarItems = [
+    toolbarItems: Array<ToolbarItem> = [
         {
             icon: 'link',
-            active: () => {
-                return isLinkActive(this.editor);
-            },
+            active: () => isLinkActive(this.editor),
             action: event => {
                 event.preventDefault();
                 const url = window.prompt('Enter the URL of the link:');
@@ -38,9 +42,7 @@ export class DemoInlinesComponent implements OnInit {
         },
         {
             icon: 'link_off',
-            active: event => {
-                return isLinkActive(this.editor);
-            },
+            active: () => isLinkActive(this.editor),
             action: () => {
                 if (isLinkActive(this.editor)) {
                     unwrapLink(this.editor);
@@ -49,9 +51,7 @@ export class DemoInlinesComponent implements OnInit {
         },
         {
             icon: 'smart_button',
-            active: () => {
-                return true;
-            },
+            active: () => true,
             action: event => {
                 event.preventDefault();
                 if (isButtonActive(this.editor)) {
@@ -62,10 +62,6 @@ export class DemoInlinesComponent implements OnInit {
             }
         }
     ];
-
-    constructor() {}
-
-    ngOnInit(): void {}
 
     renderElement = (element: SlateElement) => {
         if (element.type === 'button') {

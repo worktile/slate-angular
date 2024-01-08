@@ -1,0 +1,24 @@
+:host {
+    .box {
+        box-shadow: 0 0 0 3px;
+        padding: 8px;
+    }
+
+    .input {
+        margin: 8px 0;
+
+        color: #ccc;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+
+        input {
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+    }
+
+    .unsetWidth {
+        width: unset;
+    }
+}
