@@ -49,6 +49,10 @@ export class AppComponent implements OnInit {
         {
             url: '/editable-voids',
             name: 'Editable voids'
+        },
+        {
+            url: '/embeds',
+            name: 'Embeds'
         }
     ];
 

@@ -49,8 +49,6 @@ export class DemoEditableVoidsComponent {
         }
         return null
     }
-
-    valueChange(value: Element[]) {}
 }
 
 const withEditableVoids = (editor: Editor) => {

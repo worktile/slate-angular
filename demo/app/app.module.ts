@@ -22,6 +22,7 @@ import { DemoElementEditableButtonComponent } from './components/editable-button
 import { DemoInlinesComponent } from './inlines/inlines.component';
 import { DemoElementLinkComponent } from './components/link/link.component';
 import { DemoEditableVoidsComponent } from './editable-voids/editable-voids.component';
+import { DemoEmbedsComponent } from './embeds/embeds.component';
 
 @NgModule({
     declarations: [AppComponent],
@@ -48,7 +49,8 @@ import { DemoEditableVoidsComponent } from './editable-voids/editable-voids.comp
         DemoElementEditableButtonComponent,
         DemoInlinesComponent,
         DemoElementLinkComponent,
-        DemoEditableVoidsComponent
+        DemoEditableVoidsComponent,
+        DemoEmbedsComponent
     ],
     providers: [],
     bootstrap: [AppComponent]

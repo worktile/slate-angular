@@ -11,6 +11,7 @@ import { DemoReadonlyComponent } from './readonly/readonly.component';
 import { DemoPlaceholderComponent } from './placeholder/placeholder.component';
 import { DemoInlinesComponent } from './inlines/inlines.component';
 import { DemoEditableVoidsComponent } from './editable-voids/editable-voids.component';
+import { DemoEmbedsComponent } from './embeds/embeds.component';
 
 const routes: Routes = [
     {
@@ -56,6 +57,10 @@ const routes: Routes = [
     {
         path: 'editable-voids',
         component: DemoEditableVoidsComponent
+    },
+    {
+        path: 'embeds',
+        component: DemoEmbedsComponent
     }
 ];
 @NgModule({
