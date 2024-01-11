@@ -211,8 +211,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         public defaultVoidText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
         public defaultLeaf: ComponentType<BaseLeafComponent>
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -945,7 +944,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.readonly && hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.dragStart)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
-            const voidMatch = Element.isElement(node) && Editor.isVoid(this.editor, node) || Editor.void(this.editor, { at: path, voids: true });
+            const voidMatch =
+                Element.isElement(node) && (Editor.isVoid(this.editor, node) || Editor.void(this.editor, { at: path, voids: true }));
 
             // If starting a drag on a void node, make sure it is selected
             // so that it shows up in the selection's fragment.
