@@ -10,8 +10,6 @@
 [coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/worktile/slate-angular
 
-[t-me]: 
-
 
 
 Angular view layer for Slate
