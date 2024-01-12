@@ -5,4 +5,5 @@ export * from './module';
 export * from './basic-editable.component';
 export * from './advanced-editable.component';
 export * from './image-editable.component';
+export * from './editable-with-outlet.component';
 export * from './leaf.component';

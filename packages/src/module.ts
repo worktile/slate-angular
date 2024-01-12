@@ -8,6 +8,7 @@ import { SlateDefaultElement } from './components/element/default-element.compon
 import { SlateString } from './components/string/string.component';
 import { SlateStringTemplate } from './components/string/template.component';
 import { SlateChildren } from './components/children/children.component';
+import { SlateChildrenOutlet } from './components/children/children-outlet.component';
 import { SlateBlockCard } from './components/block-card/block-card.component';
 import { SlateDefaultLeaf } from './components/leaf/default-leaf.component';
 import { SlateLeaves } from './components/leaves/leaves.component';
@@ -28,11 +29,13 @@ import { SlateDefaultString } from './components/string/default-string.component
         SlateBlockCard,
         SlateLeaves,
         SlateDefaultLeaf,
-        SlateDefaultString
+        SlateDefaultString,
+        SlateChildrenOutlet
     ],
     exports: [
         SlateEditable,
         SlateChildren,
+        SlateChildrenOutlet,
         SlateElement,
         SlateLeaves,
         SlateString,

@@ -8,8 +8,7 @@ import { NgFor } from '@angular/common';
     selector: 'slate-children',
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgFor]
+    standalone: true
 })
 export class SlateChildren extends ViewContainer<any> {
     @Input() children: Descendant[];

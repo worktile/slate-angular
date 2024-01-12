@@ -68,6 +68,7 @@ import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
+import { SlateChildrenOutlet } from '../children/children-outlet.component';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -108,7 +109,7 @@ const forceOnDOMPaste = IS_SAFARI;
         }
     ],
     standalone: true,
-    imports: [SlateChildren, SlateStringTemplate]
+    imports: [SlateChildren, SlateStringTemplate, SlateChildrenOutlet]
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
@@ -191,7 +192,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     viewContainerRef = inject(ViewContainerRef);
 
-    getOutletElement = () => {
+    getOutletParent = () => {
         return this.elementRef.nativeElement;
     };
 
@@ -211,8 +212,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         public defaultVoidText: ComponentType<BaseTextComponent>,
         @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
         public defaultLeaf: ComponentType<BaseLeafComponent>
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.editor.injector = this.injector;
@@ -240,7 +240,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, () => null);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {

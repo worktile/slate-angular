@@ -59,15 +59,21 @@ export function updateContext(
 export function mount(
     views: (EmbeddedViewRef<any> | ComponentRef<any>)[],
     blockCards: (ComponentRef<SlateBlockCard> | null)[] | null,
-    outletElement: HTMLElement
+    outletParent: HTMLElement,
+    outletElement: HTMLElement | null
 ) {
     if (views.length > 0) {
-        const result = [];
+        const fragment = document.createDocumentFragment();
         views.forEach((view, index) => {
             const blockCard = blockCards ? blockCards[index] : undefined;
-            result.push(...getRootNodes(view, blockCard));
+            fragment.append(...getRootNodes(view, blockCard));
         });
-        outletElement.prepend(...result);
+        if (outletElement) {
+            outletParent.insertBefore(fragment, outletElement);
+            outletElement.remove();
+        } else {
+            outletParent.prepend(fragment);
+        }
     }
 }
 
@@ -102,7 +108,8 @@ export function mountOnItemChange(
     item: Descendant,
     views: (EmbeddedViewRef<any> | ComponentRef<any>)[],
     blockCards: (ComponentRef<SlateBlockCard> | null)[] | null,
-    outletElement: HTMLElement,
+    outletParent: HTMLElement,
+    firstRootNode: HTMLElement | null,
     viewContext: SlateViewContext
 ) {
     const view = views[index];
@@ -115,7 +122,13 @@ export function mountOnItemChange(
         }
     }
     if (index === 0) {
-        outletElement.prepend(...rootNodes);
+        if (firstRootNode) {
+            rootNodes.forEach(rootNode => {
+                firstRootNode.insertAdjacentElement('beforebegin', rootNode);
+            });
+        } else {
+            outletParent.prepend(...rootNodes);
+        }
     } else {
         const previousView = views[index - 1];
         const blockCard = blockCards ? blockCards[index - 1] : null;
