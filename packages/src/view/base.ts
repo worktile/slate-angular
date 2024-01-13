@@ -1,4 +1,15 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit, ViewContainerRef, inject } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Directive,
+    ElementRef,
+    HostBinding,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    ViewContainerRef,
+    inject
+} from '@angular/core';
 import { AngularEditor } from '../plugins/angular-editor';
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
 import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
@@ -7,6 +18,7 @@ import { SlateChildrenContext } from './context';
 import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
 import { ListRender } from './render/list-render';
 import { LeavesRender } from './render/leaves-render';
+import { SlateChildrenOutlet } from 'slate-angular/components/children/children-outlet.component';
 
 /**
  * base class for template
@@ -140,6 +152,9 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 
     childrenContext: SlateChildrenContext;
 
+    @ViewChild(SlateChildrenOutlet, { static: true })
+    childrenOutletInstance?: SlateChildrenOutlet;
+
     get element(): T {
         return this._context && this._context.element;
     }
@@ -168,8 +183,15 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.readonly;
     }
 
-    getOutletElement = () => {
+    getOutletParent = () => {
         return this.elementRef.nativeElement;
+    };
+
+    getOutletElement = () => {
+        if (this.childrenOutletInstance) {
+            return this.childrenOutletInstance.getNativeElement();
+        }
+        return null;
     };
 
     listRender: ListRender;
@@ -179,7 +201,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.initialized = true;
-        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
         this.listRender.initialize(this.children, this.element, this.childrenContext);
     }
 
@@ -231,13 +253,23 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
 
     leavesRender: LeavesRender;
 
-    getOutletElement = () => {
+    @ViewChild(SlateChildrenOutlet, { static: true })
+    childrenOutletInstance?: SlateChildrenOutlet;
+
+    getOutletParent = () => {
         return this.elementRef.nativeElement;
+    };
+
+    getOutletElement = () => {
+        if (this.childrenOutletInstance) {
+            return this.childrenOutletInstance.getNativeElement();
+        }
+        return null;
     };
 
     ngOnInit() {
         this.initialized = true;
-        this.leavesRender = new LeavesRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.leavesRender = new LeavesRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
         this.leavesRender.initialize(this.context);
     }
 

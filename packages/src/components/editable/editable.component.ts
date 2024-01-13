@@ -191,7 +191,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     viewContainerRef = inject(ViewContainerRef);
 
-    getOutletElement = () => {
+    getOutletParent = () => {
         return this.elementRef.nativeElement;
     };
 
@@ -239,7 +239,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletElement);
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, () => null);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
