@@ -18,7 +18,6 @@ export class DemoElementVideoComponent extends BaseElementComponent<VideoElement
     }
 
     get url(): SafeUrl {
-        console.log(this.element.url)
         return this.element.url ? this.sanitizer.bypassSecurityTrustResourceUrl(this.element.url + '?title=0&byline=0&portrait=0') : ''
     }
 
