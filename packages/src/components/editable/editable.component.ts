@@ -68,7 +68,6 @@ import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
-import { SlateChildrenOutlet } from '../children/children-outlet.component';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -109,7 +108,7 @@ const forceOnDOMPaste = IS_SAFARI;
         }
     ],
     standalone: true,
-    imports: [SlateChildren, SlateStringTemplate, SlateChildrenOutlet]
+    imports: [SlateChildren, SlateStringTemplate]
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
