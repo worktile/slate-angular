@@ -1,10 +1,5 @@
 # Changelog
 
-## 16.1.0-next.8
-
-### Minor Changes
-
-- Update dependencies (like slate) to latest versions
 
 ## 16.1.0-next.7
 
