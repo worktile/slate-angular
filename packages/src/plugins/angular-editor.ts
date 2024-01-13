@@ -193,7 +193,7 @@ export const AngularEditor = {
         const [start, end] = Range.edges(selection);
         const endBlock = Editor.above(editor, {
             at: end,
-            match: node => Editor.isBlock(editor, node)
+            match: node => Element.isElement(node) && Editor.isBlock(editor, node)
         });
         return Editor.isStart(editor, end, endBlock[1]);
     },
@@ -474,7 +474,7 @@ export const AngularEditor = {
         // If the drop target is inside a void node, move it into either the
         // next or previous node, depending on which side the `x` and `y`
         // coordinates are closest to.
-        if (Editor.isVoid(editor, node)) {
+        if (Element.isElement(node) && Editor.isVoid(editor, node)) {
             const rect = target.getBoundingClientRect();
             const isPrev = editor.isInline(node) ? x - rect.left < rect.left + rect.width - x : y - rect.top < rect.top + rect.height - y;
 

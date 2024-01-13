@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, NgZone } from '@angular/core';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { createEditor } from 'slate';
 import { withAngular } from 'slate-angular';
 import { take } from 'rxjs/operators';
