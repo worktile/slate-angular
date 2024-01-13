@@ -21,7 +21,8 @@ export class ListRender {
     constructor(
         private viewContext: SlateViewContext,
         private viewContainerRef: ViewContainerRef,
-        private getOutletElement: () => HTMLElement
+        private getOutletParent: () => HTMLElement,
+        private getOutletElement: () => HTMLElement | null
     ) {}
 
     public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
@@ -40,7 +41,7 @@ export class ListRender {
             this.viewTypes.push(viewType);
             this.blockCards.push(blockCard);
         });
-        mount(this.views, this.blockCards, this.getOutletElement());
+        mount(this.views, this.blockCards, this.getOutletParent(), this.getOutletElement());
         const newDiffers = this.viewContainerRef.injector.get(IterableDiffers);
         this.differ = newDiffers.find(children).create(trackBy(this.viewContext));
         this.differ.diff(children);
@@ -51,10 +52,11 @@ export class ListRender {
             this.initialize(children, parent, childrenContext);
             return;
         }
-        const outletElement = this.getOutletElement();
+        const outletParent = this.getOutletParent();
         const diffResult = this.differ.diff(children);
         const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         if (diffResult) {
+            let firstRootNode = getRootNodes(this.views[0], this.blockCards[0])[0];
             const newContexts = [];
             const newViewTypes = [];
             const newViews = [];
@@ -73,7 +75,15 @@ export class ListRender {
                     newContexts.push(context);
                     newViews.push(view);
                     newBlockCards.push(blockCard);
-                    mountOnItemChange(record.currentIndex, record.item, newViews, newBlockCards, outletElement, this.viewContext);
+                    mountOnItemChange(
+                        record.currentIndex,
+                        record.item,
+                        newViews,
+                        newBlockCards,
+                        outletParent,
+                        firstRootNode,
+                        this.viewContext
+                    );
                 } else {
                     const previousView = this.views[record.previousIndex];
                     const previousViewType = this.viewTypes[record.previousIndex];
@@ -101,7 +111,7 @@ export class ListRender {
                     newBlockCards.push(blockCard);
                 }
             });
-            diffResult.forEachOperation((record) => {
+            diffResult.forEachOperation(record => {
                 // removed
                 if (record.currentIndex === null) {
                     const view = this.views[record.previousIndex];
@@ -111,7 +121,15 @@ export class ListRender {
                 }
                 // moved
                 if (record.previousIndex !== null && record.currentIndex !== null) {
-                    mountOnItemChange(record.currentIndex, record.item, newViews, newBlockCards, outletElement, this.viewContext);
+                    mountOnItemChange(
+                        record.currentIndex,
+                        record.item,
+                        newViews,
+                        newBlockCards,
+                        outletParent,
+                        firstRootNode,
+                        this.viewContext
+                    );
                     // Solve the block-card DOMElement loss when moving nodes
                     newBlockCards[record.currentIndex]?.instance.append();
                 }
@@ -223,7 +241,12 @@ export function getViewType(item: Descendant, parent: Ancestor, viewContext: Sla
     }
 }
 
-export function createBlockCard(item: Descendant, view: EmbeddedViewRef<any> | ComponentRef<any>, viewContainerRef: ViewContainerRef, viewContext: SlateViewContext) {
+export function createBlockCard(
+    item: Descendant,
+    view: EmbeddedViewRef<any> | ComponentRef<any>,
+    viewContainerRef: ViewContainerRef,
+    viewContext: SlateViewContext
+) {
     const isBlockCard = viewContext.editor.isBlockCard(item);
     if (isBlockCard) {
         const rootNodes = getRootNodes(view);

@@ -5,9 +5,12 @@
 [![npm (scoped)](https://img.shields.io/npm/v/slate-angular?style=flat)](https://www.npmjs.com/package/slate-angular)
 [![npm](https://img.shields.io/npm/dm/slate-angular)](https://www.npmjs.com/package/slate-angular)
 ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/slate-angular)
+[![Telegram](https://img.shields.io/badge/-Telegram-red?style=social&logo=telegram)](https://t.me/slateangular)
 
 [coveralls-image]: https://coveralls.io/repos/github/worktile/slate-angular/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/worktile/slate-angular
+
+
 
 Angular view layer for Slate
 

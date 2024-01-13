@@ -15,7 +15,7 @@ export function createDefaultDocument() {
     ];
 }
 
-export function createMutipleParagraph() {
+export function createMultipleParagraph() {
     return [
         {
             type: 'paragraph',

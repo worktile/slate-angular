@@ -14,6 +14,7 @@ export class LeavesRender {
     constructor(
         private viewContext: SlateViewContext,
         private viewContainerRef: ViewContainerRef,
+        private getOutletParent: () => HTMLElement,
         private getOutletElement: () => HTMLElement
     ) {}
 
@@ -29,7 +30,7 @@ export class LeavesRender {
             this.contexts.push(context);
             this.viewTypes.push(viewType);
         });
-        mount(this.views, null, this.getOutletElement());
+        mount(this.views, null, this.getOutletParent(), this.getOutletElement());
         const newDiffers = this.viewContainerRef.injector.get(IterableDiffers);
         this.differ = newDiffers.find(this.leaves).create(trackBy(this.viewContext));
         this.differ.diff(this.leaves);
@@ -37,9 +38,10 @@ export class LeavesRender {
 
     public update(context: SlateTextContext) {
         const { leaves, contexts } = this.getLeaves(context);
-        const outletElement = this.getOutletElement();
+        const outletParent = this.getOutletParent();
         const diffResult = this.differ.diff(leaves);
         if (diffResult) {
+            let firstRootNode = getRootNodes(this.views[0])[0];
             const newContexts = [];
             const newViewTypes = [];
             const newViews = [];
@@ -52,7 +54,7 @@ export class LeavesRender {
                     view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
                     newContexts.push(context);
                     newViews.push(view);
-                    mountOnItemChange(record.currentIndex, record.item, newViews, null, outletElement, this.viewContext);
+                    mountOnItemChange(record.currentIndex, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
                 } else {
                     const previousView = this.views[record.previousIndex];
                     const previousViewType = this.viewTypes[record.previousIndex];
@@ -75,7 +77,7 @@ export class LeavesRender {
                 view.destroy();
             });
             diffResult.forEachMovedItem(record => {
-                mountOnItemChange(record.currentIndex, record.item, newViews, null, outletElement, this.viewContext);
+                mountOnItemChange(record.currentIndex, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
             });
             this.viewTypes = newViewTypes;
             this.views = newViews;
