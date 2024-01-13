@@ -69,7 +69,10 @@ export abstract class BaseComponent<
         return this.elementRef.nativeElement;
     }
 
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef) {}
+    constructor(
+        public elementRef: ElementRef,
+        public cdr: ChangeDetectorRef
+    ) {}
 
     abstract onContextChange();
 }

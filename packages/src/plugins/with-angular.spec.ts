@@ -26,7 +26,7 @@ describe('with-angular', () => {
             }
         ];
     }
-    
+
     beforeEach(() => {
         configEditor();
     });

@@ -22,7 +22,11 @@ export enum MarkTypes {
 export class DemoTextMarkComponent extends BaseTextComponent {
     attributes = [];
 
-    constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
+    constructor(
+        public elementRef: ElementRef,
+        public renderer2: Renderer2,
+        cdr: ChangeDetectorRef
+    ) {
         super(elementRef, cdr);
     }
 

@@ -15,14 +15,14 @@ interface ToolbarItem {
 }
 
 @Component({
-  selector: 'demo-editable-voids',
-  templateUrl: './editable-voids.component.html',
-  styleUrls: ['./editable-voids.component.scss'],
-  standalone: true,
-  imports: [NgFor, SlateEditable, FormsModule, DemoButtonComponent]
+    selector: 'demo-editable-voids',
+    templateUrl: './editable-voids.component.html',
+    styleUrls: ['./editable-voids.component.scss'],
+    standalone: true,
+    imports: [NgFor, SlateEditable, FormsModule, DemoButtonComponent]
 })
 export class DemoEditableVoidsComponent {
-    value = initialValue
+    value = initialValue;
 
     editor = withEditableVoids(withHistory(withAngular(createEditor())));
 
@@ -31,55 +31,54 @@ export class DemoEditableVoidsComponent {
             icon: 'add',
             active: () => true,
             action: event => {
-                event.preventDefault()
-                const text: Text = { text: '' }
+                event.preventDefault();
+                const text: Text = { text: '' };
                 const voidNode: EditableVoidElement = {
                     type: 'editable-void',
                     children: [text]
-                }
+                };
                 Transforms.insertNodes(this.editor, voidNode);
             }
-
         }
-    ]
+    ];
 
     renderElement = (element: SlateElement) => {
         if (element.type === 'editable-void') {
             return DemoElementEditableVoid;
         }
-        return null
-    }
+        return null;
+    };
 }
 
 const withEditableVoids = (editor: Editor) => {
-    const { isVoid } = editor
+    const { isVoid } = editor;
 
     editor.isVoid = element => {
-        return element.type === 'editable-void' || isVoid(element)
-    }
+        return element.type === 'editable-void' || isVoid(element);
+    };
 
-    return editor
-}
+    return editor;
+};
 
 const initialValue: Descendant[] = [
     {
-      type: 'paragraph',
-      children: [
-        {
-          text: 'In addition to nodes that contain editable text, you can insert void nodes, which can also contain editable elements, inputs, or an entire other Slate editor.',
-        },
-      ],
+        type: 'paragraph',
+        children: [
+            {
+                text: 'In addition to nodes that contain editable text, you can insert void nodes, which can also contain editable elements, inputs, or an entire other Slate editor.'
+            }
+        ]
     },
     {
-      type: 'editable-void',
-      children: [{ text: '' }],
+        type: 'editable-void',
+        children: [{ text: '' }]
     },
     {
-      type: 'paragraph',
-      children: [
-        {
-          text: '',
-        },
-      ],
-    },
-  ]
+        type: 'paragraph',
+        children: [
+            {
+                text: ''
+            }
+        ]
+    }
+];

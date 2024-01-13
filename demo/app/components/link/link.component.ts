@@ -12,7 +12,7 @@ import { SlateChildrenOutlet } from '../../../../packages/src/components/childre
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports:[SlateChildrenOutlet]
+    imports: [SlateChildrenOutlet]
 })
 export class DemoElementLinkComponent extends BaseElementComponent<LinkElement> {
     // Put this at the start and end of an inline component to work around this Chromium bug:

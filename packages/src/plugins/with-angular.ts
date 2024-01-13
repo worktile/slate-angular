@@ -15,7 +15,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
         if (editor.selection && Range.isCollapsed(editor.selection)) {
             const parentBlockEntry = Editor.above(editor, {
-                match: n => Element.isElement(n) &&  Editor.isBlock(editor, n),
+                match: n => Element.isElement(n) && Editor.isBlock(editor, n),
                 at: editor.selection
             });
 

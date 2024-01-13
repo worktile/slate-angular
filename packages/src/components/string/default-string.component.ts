@@ -10,14 +10,14 @@ import { DOMElement } from '../../utils/dom';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class SlateDefaultString
-    extends BaseComponent<SlateStringContext>
-    implements OnInit, BeforeContextChange<SlateStringContext>
-{
+export class SlateDefaultString extends BaseComponent<SlateStringContext> implements OnInit, BeforeContextChange<SlateStringContext> {
     textNode?: Text;
     brNode?: DOMElement;
 
-    constructor(public elementRef: ElementRef<any>, public cdr: ChangeDetectorRef) {
+    constructor(
+        public elementRef: ElementRef<any>,
+        public cdr: ChangeDetectorRef
+    ) {
         super(elementRef, cdr);
     }
 

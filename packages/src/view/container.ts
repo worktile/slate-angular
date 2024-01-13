@@ -12,5 +12,8 @@ import { ViewContainerItem } from './container-item';
 export abstract class ViewContainer<T extends ViewContainerItem> {
     @Input() viewContext: SlateViewContext;
 
-    constructor(protected elementRef: ElementRef<any>, protected differs: IterableDiffers) {}
+    constructor(
+        protected elementRef: ElementRef<any>,
+        protected differs: IterableDiffers
+    ) {}
 }

@@ -31,7 +31,10 @@ export class DemoMentionsComponent implements OnInit {
     @ViewChild('suggestionList', { static: true })
     suggestionList: ElementRef;
 
-    constructor(private renderer2: Renderer2, private cdr: ChangeDetectorRef) {}
+    constructor(
+        private renderer2: Renderer2,
+        private cdr: ChangeDetectorRef
+    ) {}
 
     ngOnInit() {}
 

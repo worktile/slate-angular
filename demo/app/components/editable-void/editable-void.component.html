@@ -3,30 +3,16 @@
   <div class="box">
     <h4>Name:</h4>
     <div class="input">
-      <input
-        type="text"
-        [value]="inputValue"
-        (change)="setInputValue($event)"
-      />
+      <input type="text" [value]="inputValue" (change)="setInputValue($event)" />
     </div>
     <h4>Left or right handed</h4>
     <label>
-      <input
-      class="unsetWith"
-      type="radio"
-      name="handedness"
-      value="left"
-      />
+      <input class="unsetWith" type="radio" name="handedness" value="left" />
       Left
     </label>
-    <br>
+    <br />
     <label>
-      <input
-        class="unsetWith"
-        type="radio"
-        name="handedness"
-        value="right"
-      />
+      <input class="unsetWith" type="radio" name="handedness" value="right" />
       Right
     </label>
     <h4>Tell us about yourself:</h4>

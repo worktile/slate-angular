@@ -9,7 +9,11 @@ import { SlateString } from '../../../packages/src/components/string/string.comp
     imports: [SlateString]
 })
 export class DemoLeafComponent extends BaseLeafComponent {
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, private renderer: Renderer2) {
+    constructor(
+        public elementRef: ElementRef,
+        public cdr: ChangeDetectorRef,
+        private renderer: Renderer2
+    ) {
         super(elementRef, cdr);
     }
 
