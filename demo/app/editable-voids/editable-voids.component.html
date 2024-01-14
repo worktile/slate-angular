@@ -1,0 +1,15 @@
+<div class="demo-rich-editor-wrapper">
+  <div class="demo-global-toolbar">
+    <demo-button *ngFor="let toolbarItem of toolbarItems" [active]="toolbarItem.active()" (onMouseDown)="toolbarItem.action($event)"
+      ><span class="material-icons">{{ toolbarItem.icon }}</span></demo-button
+    >
+  </div>
+  <slate-editable
+    class="demo-slate-angular-editor"
+    [editor]="editor"
+    [(ngModel)]="value"
+    [renderElement]="renderElement"
+    placeholder="Enter some text..."
+  >
+  </slate-editable>
+</div>

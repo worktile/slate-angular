@@ -1,0 +1,5 @@
+:host {
+    [data-slate-editor] > * + * {
+        margin-top: 1em;
+    }
+}

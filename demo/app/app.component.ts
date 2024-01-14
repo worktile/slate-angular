@@ -5,7 +5,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
     providers: []
 })
 export class AppComponent implements OnInit {
-    menus = [
+    menus: Array<{ url: string; name: string }> = [
         {
             url: '/readonly',
             name: 'Readonly'
@@ -45,6 +45,14 @@ export class AppComponent implements OnInit {
         {
             url: '/placeholder',
             name: 'Placeholder'
+        },
+        {
+            url: '/editable-voids',
+            name: 'Editable voids'
+        },
+        {
+            url: '/embeds',
+            name: 'Embeds'
         }
     ];
 

@@ -89,7 +89,7 @@ describe('Default String Render', () => {
         expect(editableText.childNodes.length).toEqual(2);
         expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
         expect(editableText.lastElementChild.tagName).toEqual(`BR`);
-        
+
         Transforms.select(component.editor, Editor.end(component.editor, [0]));
 
         const newText = 'Kevin Durant';
@@ -118,7 +118,7 @@ describe('Default String Render', () => {
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(1);
         expect(editableText.firstChild.textContent).toEqual(text);
-        
+
         Transforms.select(component.editor, [0]);
 
         Transforms.delete(component.editor);

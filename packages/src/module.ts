@@ -32,15 +32,7 @@ import { SlateDefaultString } from './components/string/default-string.component
         SlateDefaultString,
         SlateChildrenOutlet
     ],
-    exports: [
-        SlateEditable,
-        SlateChildren,
-        SlateChildrenOutlet,
-        SlateElement,
-        SlateLeaves,
-        SlateString,
-        SlateDefaultString
-    ],
+    exports: [SlateEditable, SlateChildren, SlateChildrenOutlet, SlateElement, SlateLeaves, SlateString, SlateDefaultString],
     providers: [
         {
             provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,

@@ -9,7 +9,11 @@ import { BaseLeafComponent } from 'slate-angular';
     }
 })
 export class TestingLeafComponent extends BaseLeafComponent {
-    constructor(public elementRef: ElementRef, public cdr: ChangeDetectorRef, private renderer: Renderer2) {
+    constructor(
+        public elementRef: ElementRef,
+        public cdr: ChangeDetectorRef,
+        private renderer: Renderer2
+    ) {
         super(elementRef, cdr);
     }
 

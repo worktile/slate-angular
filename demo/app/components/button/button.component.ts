@@ -24,7 +24,10 @@ export class DemoButtonComponent implements OnChanges {
 
     @Output() onMouseDown: EventEmitter<MouseEvent> = new EventEmitter();
 
-    constructor(private elementRef: ElementRef, private renderer2: Renderer2) {}
+    constructor(
+        private elementRef: ElementRef,
+        private renderer2: Renderer2
+    ) {}
 
     @HostListener('mousedown', ['$event'])
     mousedown(event: MouseEvent) {

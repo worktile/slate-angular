@@ -1,6 +1,4 @@
 {
-    "eslintIntegration": true,
-    "stylelintIntegration": true,
     "singleQuote": true,
     "semi": true,
     "arrowParens": "avoid",

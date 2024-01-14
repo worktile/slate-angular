@@ -16,4 +16,4 @@ export const createThrottleRAF = () => {
     return throttleRAF;
 };
 
-export type ThrottleRAF = (fn: () => void) => void
+export type ThrottleRAF = (fn: () => void) => void;

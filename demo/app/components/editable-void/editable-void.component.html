@@ -1,0 +1,21 @@
+<slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>
+<div contenteditable="false">
+  <div class="box">
+    <h4>Name:</h4>
+    <div class="input">
+      <input type="text" [value]="inputValue" (change)="setInputValue($event)" />
+    </div>
+    <h4>Left or right handed</h4>
+    <label>
+      <input class="unsetWith" type="radio" name="handedness" value="left" />
+      Left
+    </label>
+    <br />
+    <label>
+      <input class="unsetWith" type="radio" name="handedness" value="right" />
+      Right
+    </label>
+    <h4>Tell us about yourself:</h4>
+    <demo-richtext />
+  </div>
+</div>

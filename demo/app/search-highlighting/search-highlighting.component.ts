@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { createEditor, NodeEntry, Text } from 'slate';
+import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
 import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
 import { DemoLeafComponent } from './leaf.component';

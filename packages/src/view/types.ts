@@ -1,5 +1,5 @@
-import { AngularEditor } from "../plugins/angular-editor";
-import { SlateViewContext } from "./context";
+import { AngularEditor } from '../plugins/angular-editor';
+import { SlateViewContext } from './context';
 
 /**
  * base class for template

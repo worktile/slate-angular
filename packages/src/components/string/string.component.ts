@@ -13,7 +13,10 @@ import { SlateDefaultString } from './default-string.component';
 export class SlateString extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
     @Input() context: SlateLeafContext;
 
-    constructor(private elementRef: ElementRef<any>, protected viewContainerRef: ViewContainerRef) {
+    constructor(
+        private elementRef: ElementRef<any>,
+        protected viewContainerRef: ViewContainerRef
+    ) {
         super(viewContainerRef);
     }
 
