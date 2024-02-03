@@ -18,7 +18,7 @@ import { SlateChildrenContext } from './context';
 import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
 import { ListRender } from './render/list-render';
 import { LeavesRender } from './render/leaves-render';
-import { SlateChildrenOutlet } from 'slate-angular/components/children/children-outlet.component';
+import { SlateChildrenOutlet } from '../components/children/children-outlet.component';
 
 /**
  * base class for template
