@@ -54,7 +54,6 @@ export interface SlateElementAttributes {
     'data-slate-node': 'element';
     'data-slate-void'?: boolean;
     'data-slate-inline'?: boolean;
-    contenteditable?: boolean;
     'data-slate-key'?: string;
     dir?: 'rtl';
 }

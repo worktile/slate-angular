@@ -5,8 +5,7 @@ import { SlateChildren } from '../../../../packages/src/components/children/chil
 
 @Component({
     selector: 'demo-element-image',
-    template: `<slate-children [children]="children" [context]="childrenContext" [viewContext]="viewContext"></slate-children>
-        <img [src]="element.url" alt="" [class.outline]="selection" /> `,
+    template: `<img [src]="element.url" alt="" [class.outline]="selection" /> `,
     host: {
         class: 'demo-element-image'
     },

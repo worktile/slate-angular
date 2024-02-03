@@ -685,7 +685,21 @@ export const AngularEditor = {
         const anchor = AngularEditor.toSlatePoint(editor, [anchorNode, anchorOffset]);
         const focus = isCollapsed ? anchor : AngularEditor.toSlatePoint(editor, [focusNode, focusOffset]);
 
-        return { anchor, focus };
+        let range: Range = { anchor: anchor as Point, focus: focus as Point };
+        // if the selection is a hanging range that ends in a void
+        // and the DOM focus is an Element
+        // (meaning that the selection ends before the element)
+        // unhang the range to avoid mistakenly including the void
+        if (
+            Range.isExpanded(range) &&
+            Range.isForward(range) &&
+            isDOMElement(focusNode) &&
+            Editor.void(editor, { at: range.focus, mode: 'highest' })
+        ) {
+            range = Editor.unhangRange(editor, range, { voids: true });
+        }
+
+        return range;
     },
 
     isLeafBlock(editor: AngularEditor, node: Node): boolean {
