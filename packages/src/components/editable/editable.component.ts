@@ -68,6 +68,7 @@ import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
+import { TRIPLE_CLICK } from '../../utils/constants';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -858,6 +859,22 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
             const startVoid = Editor.void(this.editor, { at: start });
             const endVoid = Editor.void(this.editor, { at: end });
+
+            if (event.detail === TRIPLE_CLICK && path.length >= 1) {
+                let blockPath = path;
+                if (!(Element.isElement(node) && Editor.isBlock(this.editor, node))) {
+                    const block = Editor.above(this.editor, {
+                        match: n => Element.isElement(n) && Editor.isBlock(this.editor, n),
+                        at: path
+                    });
+
+                    blockPath = block?.[1] ?? path.slice(0, 1);
+                }
+
+                const range = Editor.range(this.editor, blockPath);
+                Transforms.select(this.editor, range);
+                return;
+            }
 
             if (startVoid && endVoid && Path.equals(startVoid[1], endVoid[1])) {
                 const range = Editor.range(this.editor, start);

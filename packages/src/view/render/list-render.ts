@@ -183,7 +183,6 @@ export function getContext(
         }
         if (isVoid) {
             elementContext.attributes['data-slate-void'] = true;
-            elementContext.attributes.contenteditable = false;
         }
         return elementContext;
     } else {
