@@ -845,20 +845,45 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private onDOMClick(event: MouseEvent) {
-        if (
-            !this.readonly &&
-            hasTarget(this.editor, event.target) &&
-            !this.isDOMEventHandled(event, this.click) &&
-            isDOMNode(event.target)
-        ) {
+        if (hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.click) && isDOMNode(event.target)) {
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
+
+            // At this time, the Slate document may be arbitrarily different,
+            // because onClick handlers can change the document before we get here.
+            // Therefore we must check that this path actually exists,
+            // and that it still refers to the same node.
+            if (!Editor.hasPath(this.editor, path) || Node.get(this.editor, path) !== node) {
+                return;
+            }
+
+            
+
+            if (event.detail === 3 && path.length >= 1) {
+                let blockPath = path;
+                if (!(Element.isElement(node) && Editor.isBlock(this.editor, node))) {
+                    const block = Editor.above(this.editor, {
+                        match: n => Element.isElement(n) && Editor.isBlock(this.editor, n),
+                        at: path
+                    });
+
+                    blockPath = block?.[1] ?? path.slice(0, 1);
+                }
+
+                const range = Editor.range(this.editor, blockPath);
+                Transforms.select(this.editor, range);
+                return;
+            }
+
+            if (this.readonly) {
+                return;
+            }
+            
             const start = Editor.start(this.editor, path);
             const end = Editor.end(this.editor, path);
 
             const startVoid = Editor.void(this.editor, { at: start });
             const endVoid = Editor.void(this.editor, { at: end });
-
             if (startVoid && endVoid && Path.equals(startVoid[1], endVoid[1])) {
                 const range = Editor.range(this.editor, start);
                 Transforms.select(this.editor, range);
