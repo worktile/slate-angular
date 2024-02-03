@@ -5,9 +5,11 @@
     "slate-angular": "16.1.0-next"
   },
   "changesets": [
+    "calm-jokes-shout",
     "chatty-worms-melt",
     "famous-feet-bow",
     "hip-planes-grin",
+    "honest-wolves-mate",
     "modern-moose-pull",
     "rare-snails-join",
     "red-poets-grin",
