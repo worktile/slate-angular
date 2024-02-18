@@ -1,5 +1,23 @@
 # Changelog
 
+## 16.1.0-next.9
+
+### Patch Changes
+
+- [`b494e6d`](https://github.com/worktile/slate-angular/commit/b494e6d8587562b0dae5d356c9acbabb8f714fa9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Update README:
+
+  1. depend on slate@0.101.5
+  2. remove <slate-leaves></slate-leaves> from template of custom text component
+
+- [`4ef6370`](https://github.com/worktile/slate-angular/commit/4ef6370b65494715e2190afab64d46ecf11bfd14) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Fix error when triple-clicking a word preceding a `contenteditable="false"` DOM node in Chrome
+  refer to: https://github.com/ianstormtaylor/slate/pull/5343
+
+- [#253](https://github.com/worktile/slate-angular/pull/253) [`fa01d81`](https://github.com/worktile/slate-angular/commit/fa01d81fbfd3c932cb4147d8175da46ff42cca29) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - handle triple-click
+  remove the attribute of editable='false' in void element to void strange behavior when click before image element
+  refer to:
+  https://github.com/ianstormtaylor/slate/pull/4588
+  https://github.com/ianstormtaylor/slate/pull/4965
+
 ## 16.1.0-next.8
 
 ### Minor Changes
