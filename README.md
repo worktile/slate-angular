@@ -45,11 +45,11 @@ Chrome、Edge、Safari、Firefox、QQ Browser
 
 ```
 "dependencies": {
-    "direction": "^1.0.3",
-    "is-hotkey": "^0.1.6",
-    "slate": "0.67.1",
-    "slate-history": "0.66.0",
-    "slate-angular": "1.6.5"
+    "direction": "^2.0.1",
+    "is-hotkey": "^0.2.0",
+    "slate": "~0.101.5",
+    "slate-history": "~0.100.0",
+    "slate-angular": "~16.1.0-next.8"
 }
 ```
 
@@ -145,7 +145,7 @@ export enum MarkTypes {
 
 @Component({
     selector: 'span[textMark]',
-    template: `<slate-leaves [context]="context" [viewContext]="viewContext" [viewContext]="viewContext"></slate-leaves>`,
+    template: ``,
     host: {
         'data-slate-node': 'text'
     }
