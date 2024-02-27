@@ -69,7 +69,7 @@ export function mount(
             fragment.append(...getRootNodes(view, blockCard));
         });
         if (outletElement) {
-            outletParent.insertBefore(fragment, outletElement);
+            outletElement.parentElement.insertBefore(fragment, outletElement);
             outletElement.remove();
         } else {
             outletParent.prepend(fragment);
