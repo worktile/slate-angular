@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.10
+
+### Patch Changes
+
+- [`0657338`](https://github.com/worktile/slate-angular/commit/065733809960ec3c50c1c24f5bb92f1944760bfc) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use parent element of outlet to insert fragment
+
 ## 16.1.0-next.9
 
 ### Patch Changes
