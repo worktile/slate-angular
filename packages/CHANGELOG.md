@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.12
+
+### Patch Changes
+
+- [`f1e3831`](https://github.com/worktile/slate-angular/commit/f1e3831d107defbc0e1c4ca9a2e9fb035fa08ea3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add contenteditable = 'false' when element is void（Revert recent logic changes）
+
 ## 16.1.0-next.11
 
 ### Patch Changes
