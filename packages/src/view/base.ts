@@ -205,7 +205,9 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         }
         this.initialized = true;
         this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
-        this.listRender.initialize(this.children, this.element, this.childrenContext);
+        if (this.editor.isExpanded(this.element)) {
+            this.listRender.initialize(this.children, this.element, this.childrenContext);
+        }
     }
 
     updateWeakMap() {
@@ -229,7 +231,17 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         if (!this.initialized) {
             return;
         }
-        this.listRender.update(this.children, this.element, this.childrenContext);
+        this.updateChildrenView();
+    }
+
+    updateChildrenView() {
+        if (this.editor.isExpanded(this.element)) {
+            this.listRender.update(this.children, this.element, this.childrenContext);
+        } else {
+            if (this.listRender.initialized) {
+                this.listRender.destroy();
+            }
+        }
     }
 
     getChildrenContext(): SlateChildrenContext {

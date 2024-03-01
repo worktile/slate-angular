@@ -245,6 +245,8 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
     e.isBlockCard = element => false;
 
+    e.isExpanded = element => true;
+
     e.onError = (errorData: SlateError) => {
         if (errorData.nativeError) {
             console.error(errorData.nativeError);

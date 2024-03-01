@@ -51,6 +51,7 @@ export interface AngularEditor extends BaseEditor {
     onClick: (event: MouseEvent) => void;
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
+    isExpanded: (node: Element) => boolean;
     onError: (errorData: SlateError) => void;
     hasRange: (editor: AngularEditor, range: Range) => boolean;
 }

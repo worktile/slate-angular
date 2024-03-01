@@ -15,7 +15,7 @@ export class ListRender {
     private blockCards: (ComponentRef<SlateBlockCard> | null)[] = [];
     private contexts: (SlateTextContext | SlateElementContext)[] = [];
     private viewTypes: ViewType[] = [];
-    private differ: IterableDiffer<any>;
+    private differ: IterableDiffer<any> | null = null;
     public initialized = false;
 
     constructor(
@@ -51,6 +51,9 @@ export class ListRender {
         if (!this.initialized) {
             this.initialize(children, parent, childrenContext);
             return;
+        }
+        if (!this.differ) {
+            throw new Error('Exception: Can not find differ ');
         }
         const outletParent = this.getOutletParent();
         const diffResult = this.differ.diff(children);
@@ -153,6 +156,23 @@ export class ListRender {
             });
             this.contexts = newContexts;
         }
+    }
+
+    public destroy() {
+        this.children.forEach((element: Element, index: number) => {
+            if (this.views[index]) {
+                this.views[index].destroy();
+            }
+            if (this.blockCards[index]) {
+                this.blockCards[index].destroy();
+            }
+        });
+        this.views = [];
+        this.blockCards = [];
+        this.contexts = [];
+        this.viewTypes = [];
+        this.initialized = false;
+        this.differ = null;
     }
 }
 
