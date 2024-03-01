@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.11
+
+### Patch Changes
+
+- [`db55c5c`](https://github.com/worktile/slate-angular/commit/db55c5c958de8d473504cc5a391d9098f1d178d7) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support overridable methods expanded to control the expanded or collapsed state of children view, such as toggle-list plugin
+
 ## 16.1.0-next.10
 
 ### Patch Changes
