@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.13
+
+### Patch Changes
+
+- [`34a268a`](https://github.com/worktile/slate-angular/commit/34a268a4ce2291432c4951b86d2c0ff1d6748fe3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - get template's root nodes by data-slate-node and data-slate-leaf attribute to avoid operating other HTMLElement
+
 ## 16.1.0-next.12
 
 ### Patch Changes
