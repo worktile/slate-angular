@@ -92,7 +92,9 @@ export function getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any>, bloc
         const result: HTMLElement[] = [];
         ref.rootNodes.forEach(rootNode => {
             const isHTMLElement = rootNode instanceof HTMLElement;
-            if (isHTMLElement && result.every(item => !item.contains(rootNode))) {
+            const isSlateNodeOfLeaf =
+                isHTMLElement && (rootNode.hasAttribute('data-slate-node') || rootNode.hasAttribute('data-slate-leaf'));
+            if (isSlateNodeOfLeaf && result.every(item => !item.contains(rootNode))) {
                 result.push(rootNode);
             }
             if (!isHTMLElement) {
