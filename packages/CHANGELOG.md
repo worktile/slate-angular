@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.14
+
+### Patch Changes
+
+- [`e59cc1d`](https://github.com/worktile/slate-angular/commit/e59cc1db93672b9379b0937f72e21b86a2d28ead) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should invoke initialize when previous children is empty
+
 ## 16.1.0-next.13
 
 ### Patch Changes
