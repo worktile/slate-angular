@@ -48,7 +48,7 @@ export class ListRender {
     }
 
     public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
-        if (!this.initialized) {
+        if (!this.initialized || this.children.length === 0) {
             this.initialize(children, parent, childrenContext);
             return;
         }
