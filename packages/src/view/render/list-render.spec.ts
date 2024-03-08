@@ -66,7 +66,7 @@ describe('list-render', () => {
             expect(newP2.textContent).toEqual('5');
             expect(newP5.textContent).toEqual('4');
         }));
-        fit('move node from [5] to [0]', fakeAsync(() => {
+        it('move node from [5] to [0]', fakeAsync(() => {
             fixture.detectChanges();
             flush();
             fixture.detectChanges();
@@ -93,7 +93,7 @@ describe('list-render', () => {
             editor = component.editor;
         }));
 
-        fit('should render at correct position', fakeAsync(() => {
+        it('should render at correct position', fakeAsync(() => {
             fixture.detectChanges();
             flush();
             fixture.detectChanges();
@@ -105,7 +105,7 @@ describe('list-render', () => {
             expect(firstRoot.children.length).toEqual(3);
         }));
 
-        fit('should render at correct position when insert at [0, 0]', fakeAsync(() => {
+        it('should render at correct position when insert at [0, 0]', fakeAsync(() => {
             fixture.detectChanges();
             flush();
             fixture.detectChanges();

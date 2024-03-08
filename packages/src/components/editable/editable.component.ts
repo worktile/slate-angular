@@ -351,14 +351,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             // If the DOM selection is in the editor and the editor selection is already correct, we're done.
-            if (
-                hasDomSelection &&
-                hasDomSelectionInEditor &&
-                selection &&
-                hasStringTarget(domSelection) &&
-                Range.equals(AngularEditor.toSlateRange(this.editor, domSelection), selection)
-            ) {
-                return;
+            if (hasDomSelection && hasDomSelectionInEditor && selection && hasStringTarget(domSelection)) {
+                const rangeFromDOMSelection = AngularEditor.toSlateRange(this.editor, domSelection, { suppressThrow: true });
+                if (rangeFromDOMSelection && Range.equals(rangeFromDOMSelection, selection)) {
+                    return;
+                }
             }
 
             // prevent updating native selection when active element is void element
@@ -371,7 +368,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             // but Slate's value is not being updated through any operation
             // and thus it doesn't transform selection on its own
             if (selection && !AngularEditor.hasRange(this.editor, selection)) {
-                this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection);
+                this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection, { suppressThrow: false });
                 return;
             }
 

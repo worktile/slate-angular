@@ -438,7 +438,14 @@ export const AngularEditor = {
      * Find a Slate node from a native DOM `element`.
      */
 
-    toSlateNode(editor: AngularEditor, domNode: DOMNode): Node {
+    toSlateNode<T extends boolean>(
+        editor: AngularEditor,
+        domNode: DOMNode,
+        options?: {
+            suppressThrow: T;
+        }
+    ): T extends true ? Node | null : Node {
+        const { suppressThrow } = options || { suppressThrow: false };
         let domEl = isDOMElement(domNode) ? domNode : domNode.parentElement;
 
         if (domEl && !domEl.hasAttribute('data-slate-node')) {
@@ -448,6 +455,9 @@ export const AngularEditor = {
         const node = domEl ? ELEMENT_TO_NODE.get(domEl as HTMLElement) : null;
 
         if (!node) {
+            if (suppressThrow) {
+                return null as T extends true ? Node | null : Node;
+            }
             throw new Error(`Cannot resolve a Slate node from DOM node: ${domEl}`);
         }
 
@@ -469,7 +479,7 @@ export const AngularEditor = {
             throw new Error(`Cannot resolve a Slate range from a DOM event: ${event}`);
         }
 
-        const node = AngularEditor.toSlateNode(editor, event.target);
+        const node = AngularEditor.toSlateNode(editor, event.target, { suppressThrow: false });
         const path = AngularEditor.findPath(editor, node);
 
         // If the drop target is inside a void node, move it into either the
@@ -512,21 +522,40 @@ export const AngularEditor = {
         }
 
         // Resolve a Slate range from the DOM range.
-        const range = AngularEditor.toSlateRange(editor, domRange);
+        const range = AngularEditor.toSlateRange(editor, domRange, { suppressThrow: false });
         return range;
     },
 
-    isLeafInEditor(editor: AngularEditor, leafNode: DOMElement): boolean {
+    isLeafInEditor(
+        editor: AngularEditor,
+        leafNode: DOMElement,
+        options: {
+            suppressThrow: boolean;
+        }
+    ): boolean {
+        const { suppressThrow } = options;
         const textNode = leafNode.closest('[data-slate-node="text"]')!;
-        const node = AngularEditor.toSlateNode(editor, textNode);
-        return AngularEditor.isNodeInEditor(editor, node);
+        const node = AngularEditor.toSlateNode(editor, textNode, { suppressThrow });
+        if (node && AngularEditor.isNodeInEditor(editor, node)) {
+            return true;
+        } else {
+            return false;
+        }
     },
 
     /**
      * Find a Slate point from a DOM selection's `domNode` and `domOffset`.
      */
 
-    toSlatePoint(editor: AngularEditor, domPoint: DOMPoint): Point {
+    toSlatePoint<T extends boolean>(
+        editor: AngularEditor,
+        domPoint: DOMPoint,
+        options: {
+            exactMatch?: boolean;
+            suppressThrow: T;
+        }
+    ): T extends true ? Point | null : Point {
+        const { exactMatch, suppressThrow } = options;
         const [domNode] = domPoint;
         const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint);
         let parentNode = nearestNode.parentNode as DOMElement;
@@ -575,7 +604,7 @@ export const AngularEditor = {
 
             // Calculate how far into the text node the `nearestNode` is, so that we
             // can determine what the offset relative to the text node is.
-            if (leafNode && AngularEditor.isLeafInEditor(editor, leafNode)) {
+            if (leafNode && AngularEditor.isLeafInEditor(editor, leafNode, { suppressThrow: true })) {
                 textNode = leafNode.closest('[data-slate-node="text"]')!;
                 const window = AngularEditor.getWindow(editor);
                 const range = window.document.createRange();
@@ -620,13 +649,19 @@ export const AngularEditor = {
         }
 
         if (!textNode) {
+            if (suppressThrow) {
+                return null as T extends true ? Point | null : Point;
+            }
             throw new Error(`Cannot resolve a Slate point from DOM point: ${domPoint}`);
         }
 
         // COMPAT: If someone is clicking from one Slate editor into another,
         // the select event fires twice, once for the old editor's `element`
         // first, and then afterwards for the correct `element`. (2017/03/03)
-        const slateNode = AngularEditor.toSlateNode(editor, textNode!);
+        const slateNode = AngularEditor.toSlateNode(editor, textNode, { suppressThrow });
+        if (!slateNode && suppressThrow) {
+            return null as T extends true ? Point | null : Point;
+        }
         const path = AngularEditor.findPath(editor, slateNode);
         return { path, offset };
     },
@@ -635,7 +670,15 @@ export const AngularEditor = {
      * Find a Slate range from a DOM range or selection.
      */
 
-    toSlateRange(editor: AngularEditor, domRange: DOMRange | DOMStaticRange | DOMSelection): Range {
+    toSlateRange<T extends boolean>(
+        editor: AngularEditor,
+        domRange: DOMRange | DOMStaticRange | DOMSelection,
+        options?: {
+            exactMatch?: boolean;
+            suppressThrow: T;
+        }
+    ): T extends true ? Range | null : Range {
+        const { exactMatch, suppressThrow } = options || {};
         const el = isDOMSelection(domRange) ? domRange.anchorNode : domRange.startContainer;
         let anchorNode;
         let anchorOffset;
@@ -683,8 +726,15 @@ export const AngularEditor = {
             focusOffset = anchorNode.textContent?.length || 0;
         }
 
-        const anchor = AngularEditor.toSlatePoint(editor, [anchorNode, anchorOffset]);
-        const focus = isCollapsed ? anchor : AngularEditor.toSlatePoint(editor, [focusNode, focusOffset]);
+        const anchor = AngularEditor.toSlatePoint(editor, [anchorNode, anchorOffset], { suppressThrow, exactMatch });
+        if (!anchor) {
+            return null as T extends true ? Range | null : Range;
+        }
+
+        const focus = isCollapsed ? anchor : AngularEditor.toSlatePoint(editor, [focusNode, focusOffset], { suppressThrow, exactMatch });
+        if (!focus) {
+            return null as T extends true ? Range | null : Range;
+        }
 
         let range: Range = { anchor: anchor as Point, focus: focus as Point };
         // if the selection is a hanging range that ends in a void
@@ -734,7 +784,7 @@ export const AngularEditor = {
 
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
         const element = node.parentElement.closest('.slate-block-card')?.querySelector('[card-target="card-center"]').firstElementChild;
-        const slateNode = AngularEditor.toSlateNode(editor, element);
+        const slateNode = AngularEditor.toSlateNode(editor, element, { suppressThrow: false });
         const path = AngularEditor.findPath(editor, slateNode);
         return [slateNode, path];
     },
