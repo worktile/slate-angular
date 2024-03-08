@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.15
+
+### Minor Changes
+
+- [`4b7cbb6`](https://github.com/worktile/slate-angular/commit/4b7cbb6bcaed1ef1aaa9f51efc24fbb264bc9e4e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support suppressThrow in toSlateRange/toSlatePoint/isLeafInEditor to check domSelection is valid
+
 ## 16.1.0-next.14
 
 ### Patch Changes
