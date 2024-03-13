@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.17
+
+### Patch Changes
+
+- [`a43d313`](https://github.com/worktile/slate-angular/commit/a43d313d7bcfdfa277a2093d2687d32685561264) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - execute detectChanges after create black card component to avoid incorrect render timing of left and right caret
+
 ## 16.1.0-next.16
 
 ### Patch Changes
