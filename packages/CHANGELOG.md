@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.16
+
+### Patch Changes
+
+- [`78bcc2b`](https://github.com/worktile/slate-angular/commit/78bcc2b539debcb69c55f917ddd7f4a526614452) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - isTargetInsideVoid add suppressThrow config
+
 ## 16.1.0-next.15
 
 ### Minor Changes
