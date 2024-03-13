@@ -1414,8 +1414,8 @@ const hasTarget = (editor: AngularEditor, target: EventTarget | null): target is
  */
 
 const isTargetInsideVoid = (editor: AngularEditor, target: EventTarget | null): boolean => {
-    const slateNode = hasTarget(editor, target) && AngularEditor.toSlateNode(editor, target);
-    return Element.isElement(slateNode) && Editor.isVoid(editor, slateNode);
+    const slateNode = hasTarget(editor, target) && AngularEditor.toSlateNode(editor, target, { suppressThrow: true });
+    return slateNode && Element.isElement(slateNode) && Editor.isVoid(editor, slateNode);
 };
 
 const hasStringTarget = (domSelection: DOMSelection) => {
