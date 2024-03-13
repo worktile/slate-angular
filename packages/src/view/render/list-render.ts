@@ -276,6 +276,7 @@ export function createBlockCard(
             injector: viewContainerRef.injector
         });
         blockCardComponentRef.instance.initializeCenter(rootNodes);
+        blockCardComponentRef.changeDetectorRef.detectChanges();
         return blockCardComponentRef;
     } else {
         return null;
