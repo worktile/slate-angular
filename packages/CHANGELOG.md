@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.0.0
+
+### Major Changes
+
+- [#258](https://github.com/worktile/slate-angular/pull/258) [`ec6262d`](https://github.com/worktile/slate-angular/commit/ec6262dcfb302a5ab11882178feaeb2bbbc55e43) Thanks [@cmm-va](https://github.com/cmm-va)! - build: bump angular to 17
+
 ## 17.0.0-next.0
 
 ### Major Changes
