@@ -1,5 +1,12 @@
 # Changelog
 
+## 16.1.0-next.18
+
+### Patch Changes
+
+- [`46d0659`](https://github.com/worktile/slate-angular/commit/46d0659f932923224af411798b57255f7003327e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add afterViewInit method to handle performance issue
+  set contenteditable will cause performance issue during dynamic created component execute detectChanges
+
 ## 16.1.0-next.17
 
 ### Patch Changes
