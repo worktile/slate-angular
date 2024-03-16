@@ -8,7 +8,6 @@ import { SlateLeaves } from '../leaves/leaves.component';
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-        '[attr.contenteditable]': 'isLeafBlock',
         'data-slate-spacer': 'true',
         class: 'slate-spacer',
         'data-slate-node': 'text'
@@ -17,10 +16,7 @@ import { SlateLeaves } from '../leaves/leaves.component';
     imports: [SlateLeaves]
 })
 export class SlateVoidText extends BaseTextComponent implements OnInit, OnChanges {
-    isLeafBlock: boolean;
-
     ngOnInit() {
-        this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
         super.ngOnInit();
     }
 
@@ -28,6 +24,5 @@ export class SlateVoidText extends BaseTextComponent implements OnInit, OnChange
         if (!this.initialized) {
             return;
         }
-        this.isLeafBlock = AngularEditor.isLeafBlock(this.viewContext.editor, this.context.parent);
     }
 }
