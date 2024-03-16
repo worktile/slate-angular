@@ -7,11 +7,12 @@ import { SlateErrorCode } from '../../types/error';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
 import { isDecoratorRangeListEqual } from '../../utils/range-list';
 import { SlateBlockCard } from '../../components/block-card/block-card.component';
-import { createEmbeddedViewOrComponent, getRootNodes, mount, mountOnItemChange, renderView, updateContext } from './utils';
+import { createEmbeddedViewOrComponent, executeAfterViewInit, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
 
 export class ListRender {
     private children: Descendant[];
     private views: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
+    private addedViews: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
     private blockCards: (ComponentRef<SlateBlockCard> | null)[] = [];
     private contexts: (SlateTextContext | SlateElementContext)[] = [];
     private viewTypes: ViewType[] = [];
@@ -37,6 +38,7 @@ export class ListRender {
             const view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
             const blockCard = createBlockCard(descendant, view, this.viewContainerRef, this.viewContext);
             this.views.push(view);
+            this.addedViews.push(view);
             this.contexts.push(context);
             this.viewTypes.push(viewType);
             this.blockCards.push(blockCard);
@@ -45,6 +47,9 @@ export class ListRender {
         const newDiffers = this.viewContainerRef.injector.get(IterableDiffers);
         this.differ = newDiffers.find(children).create(trackBy(this.viewContext));
         this.differ.diff(children);
+        if (parent === this.viewContext.editor) {
+            this.afterViewInit();
+        }
     }
 
     public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
@@ -77,6 +82,7 @@ export class ListRender {
                     blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                     newContexts.push(context);
                     newViews.push(view);
+                    this.addedViews.push(view);
                     newBlockCards.push(blockCard);
                     mountOnItemChange(
                         record.currentIndex,
@@ -94,6 +100,7 @@ export class ListRender {
                     const previousBlockCard = this.blockCards[record.previousIndex];
                     if (previousViewType !== viewType) {
                         view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
+                        this.addedViews.push(view);
                         blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                         const firstRootNode = getRootNodes(previousView, previousBlockCard)[0];
                         const newRootNodes = getRootNodes(view, blockCard);
@@ -142,6 +149,9 @@ export class ListRender {
             this.contexts = newContexts;
             this.children = children;
             this.blockCards = newBlockCards;
+            if (parent === this.viewContext.editor) {
+                this.afterViewInit();
+            }
         } else {
             const newContexts = [];
             this.children.forEach((child, index) => {
@@ -156,6 +166,13 @@ export class ListRender {
             });
             this.contexts = newContexts;
         }
+    }
+
+    public afterViewInit() {
+        this.addedViews.forEach(view => {
+            executeAfterViewInit(view);
+        });
+        this.addedViews = [];
     }
 
     public destroy() {
@@ -203,7 +220,7 @@ export function getContext(
         }
         if (isVoid) {
             elementContext.attributes['data-slate-void'] = true;
-            elementContext.attributes.contenteditable = false;
+            elementContext.contentEditable = false;
         }
         return elementContext;
     } else {

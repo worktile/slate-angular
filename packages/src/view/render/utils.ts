@@ -31,11 +31,9 @@ export function createEmbeddedViewOrComponent(
     }
 }
 
-export function renderView(view: EmbeddedViewRef<any> | ComponentRef<any>) {
-    if (view instanceof ComponentRef) {
-        view.changeDetectorRef.detectChanges();
-    } else {
-        view.detectChanges();
+export function executeAfterViewInit(view: EmbeddedViewRef<any> | ComponentRef<any>) {
+    if (view instanceof ComponentRef && view.instance.afterViewInit) {
+        view.instance.afterViewInit();
     }
 }
 
