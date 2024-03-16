@@ -210,6 +210,13 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         }
     }
 
+    afterViewInit() {
+        if (this._context.contentEditable !== undefined) {
+            this.nativeElement.setAttribute('contenteditable', this._context.contentEditable + '');
+        }
+        this.listRender.afterViewInit();
+    }
+
     updateWeakMap() {
         NODE_TO_ELEMENT.set(this.element, this.nativeElement);
         ELEMENT_TO_NODE.set(this.nativeElement, this.element);

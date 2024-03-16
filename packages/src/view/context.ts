@@ -31,6 +31,7 @@ export interface SlateElementContext<T extends Element = Element> {
     selection: Range | null;
     decorations: Range[];
     attributes: SlateElementAttributes;
+    contentEditable?: boolean;
     decorate: (entry: NodeEntry) => Range[];
     readonly: boolean;
 }
@@ -55,7 +56,6 @@ export interface SlateElementAttributes {
     'data-slate-void'?: boolean;
     'data-slate-inline'?: boolean;
     'data-slate-key'?: string;
-    'contenteditable'?: boolean;
     dir?: 'rtl';
 }
 
