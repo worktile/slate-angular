@@ -1,5 +1,13 @@
 # Changelog
 
+## 16.1.0-next.19
+
+### Patch Changes
+
+- [`52fcaa1`](https://github.com/worktile/slate-angular/commit/52fcaa1f7cb6a680c02cdbc1a96059e30e8f1b53) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - prevent move selection when selection is in left or right cursor when click up
+
+- [`edd539d`](https://github.com/worktile/slate-angular/commit/edd539d6abd59787c2c9c65ca5fe0effddfd31e1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update NODE_TO_INDEX and NODE_TO_PARENT when diffResult is undefined
+
 ## 16.1.0-next.18
 
 ### Patch Changes
