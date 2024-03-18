@@ -145,6 +145,8 @@ export class ListRender {
         } else {
             const newContexts = [];
             this.children.forEach((child, index) => {
+                NODE_TO_INDEX.set(child, index);
+                NODE_TO_PARENT.set(child, parent);
                 let context = getContext(index, child, parentPath, childrenContext, this.viewContext);
                 const previousContext = this.contexts[index];
                 if (memoizedContext(this.viewContext, child, previousContext as any, context as any)) {
@@ -244,7 +246,7 @@ export function getCommonContext(
             return { selection: null, decorations: ds };
         }
     } catch (error) {
-        this.options.viewContext.editor.onError({
+        viewContext.editor.onError({
             code: SlateErrorCode.GetStartPointError,
             nativeError: error
         });
