@@ -873,7 +873,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
 
-            if (startVoid && endVoid && Path.equals(startVoid[1], endVoid[1])) {
+            if (
+                startVoid &&
+                endVoid &&
+                Path.equals(startVoid[1], endVoid[1]) &&
+                !(AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor))
+            ) {
                 const range = Editor.range(this.editor, start);
                 Transforms.select(this.editor, range);
             }
