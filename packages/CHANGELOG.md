@@ -1,5 +1,11 @@
 # Changelog
 
+## 16.1.0-next.20
+
+### Patch Changes
+
+- [`f3395b1`](https://github.com/worktile/slate-angular/commit/f3395b1937979236cade5d510c4ed62f1bfaa06a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - the beforeinput event will not fire while use press `deleteBackward` on void block element since remove contentEditable form void text element, so invoke deleteBackward manually as inline void element
+
 ## 16.1.0-next.19
 
 ### Patch Changes
