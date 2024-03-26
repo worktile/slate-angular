@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.1.0
+
+### Minor Changes
+
+- [`2b04410`](https://github.com/worktile/slate-angular/commit/2b04410d357b78b2942331c9472b40884ac84377) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - merge list-render pre release
+
 ## 16.1.0
 
 ### Minor Changes
