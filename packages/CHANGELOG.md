@@ -1,5 +1,73 @@
 # Changelog
 
+## 16.1.0
+
+### Minor Changes
+
+- [#242](https://github.com/worktile/slate-angular/pull/242) [`bcfe6ab`](https://github.com/worktile/slate-angular/commit/bcfe6abfde24189db8040459f0bfbaa47dce911a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - initialize list render and leaves render to optimized rendering performance
+  deprecated container
+
+- [`4b7cbb6`](https://github.com/worktile/slate-angular/commit/4b7cbb6bcaed1ef1aaa9f51efc24fbb264bc9e4e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support suppressThrow in toSlateRange/toSlatePoint/isLeafInEditor to check domSelection is valid
+
+- [#246](https://github.com/worktile/slate-angular/pull/246) [`2fa7dd7`](https://github.com/worktile/slate-angular/commit/2fa7dd72d29c18fbbae0998ca94c3800c75839fd) Thanks [@Bricklou](https://github.com/Bricklou)! - Update dependencies (like slate) to latest versions
+
+- [#242](https://github.com/worktile/slate-angular/pull/242) [`fface3b`](https://github.com/worktile/slate-angular/commit/fface3b4fc907b7f569a06d23a2ebf22bf2803ba) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - improve isLineBreakEmptyString、forEachMovedItem、setBaseAndExtent performance issues
+
+### Patch Changes
+
+- [#250](https://github.com/worktile/slate-angular/pull/250) [`40f4214`](https://github.com/worktile/slate-angular/commit/40f4214e86ad60b30ce7cf9a1c4cf6287e88823d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support custom elements to set the position of children elements
+
+- [`f3395b1`](https://github.com/worktile/slate-angular/commit/f3395b1937979236cade5d510c4ed62f1bfaa06a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - the beforeinput event will not fire while use press `deleteBackward` on void block element since remove contentEditable form void text element, so invoke deleteBackward manually as inline void element
+
+- [`5d7d22d`](https://github.com/worktile/slate-angular/commit/5d7d22d5fe11cf2a666b4b5dc3d5613b83035f09) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add hasAfterContextChange that the timing is after detectChanges
+
+- [`b494e6d`](https://github.com/worktile/slate-angular/commit/b494e6d8587562b0dae5d356c9acbabb8f714fa9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Update README:
+
+  1. depend on slate@0.101.5
+  2. remove <slate-leaves></slate-leaves> from template of custom text component
+
+- [`4ef6370`](https://github.com/worktile/slate-angular/commit/4ef6370b65494715e2190afab64d46ecf11bfd14) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Fix error when triple-clicking a word preceding a `contenteditable="false"` DOM node in Chrome
+  refer to: https://github.com/ianstormtaylor/slate/pull/5343
+
+- [`6eee752`](https://github.com/worktile/slate-angular/commit/6eee752297d0e447e9849e29a8c64b3691929bcc) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove path from SlateElementContext
+
+- [`db55c5c`](https://github.com/worktile/slate-angular/commit/db55c5c958de8d473504cc5a391d9098f1d178d7) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support overridable methods expanded to control the expanded or collapsed state of children view, such as toggle-list plugin
+
+- [`78bcc2b`](https://github.com/worktile/slate-angular/commit/78bcc2b539debcb69c55f917ddd7f4a526614452) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - isTargetInsideVoid add suppressThrow config
+
+- [`f122a37`](https://github.com/worktile/slate-angular/commit/f122a3770ea0851688ba4b7292e7c05b496b36c8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update block card append timing
+
+- [`f1e3831`](https://github.com/worktile/slate-angular/commit/f1e3831d107defbc0e1c4ca9a2e9fb035fa08ea3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add contenteditable = 'false' when element is void（Revert recent logic changes）
+
+- [`0657338`](https://github.com/worktile/slate-angular/commit/065733809960ec3c50c1c24f5bb92f1944760bfc) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use parent element of outlet to insert fragment
+
+- [`34a268a`](https://github.com/worktile/slate-angular/commit/34a268a4ce2291432c4951b86d2c0ff1d6748fe3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - get template's root nodes by data-slate-node and data-slate-leaf attribute to avoid operating other HTMLElement
+
+- [`fa62932`](https://github.com/worktile/slate-angular/commit/fa629326a82c4245f5d2c3d1ce99ed734c5f418b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix query void text error
+
+- [`52fcaa1`](https://github.com/worktile/slate-angular/commit/52fcaa1f7cb6a680c02cdbc1a96059e30e8f1b53) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - prevent move selection when selection is in left or right cursor when click up
+
+- [`b4f5020`](https://github.com/worktile/slate-angular/commit/b4f5020e1406cf147f5cc7c9b35ac11d5486dcde) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - export throttle utils
+
+- [`e59cc1d`](https://github.com/worktile/slate-angular/commit/e59cc1db93672b9379b0937f72e21b86a2d28ead) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should invoke initialize when previous children is empty
+
+- [`0c59f49`](https://github.com/worktile/slate-angular/commit/0c59f492371b901c3bb7791b9a2bf2cc166e42af) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cancel throttleRAF for setBaseAndExtent
+
+- [`ae78be8`](https://github.com/worktile/slate-angular/commit/ae78be824c2a6fb03ea88c3c9920ff122da1451d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update detect changes timing when set context
+
+- [`a43d313`](https://github.com/worktile/slate-angular/commit/a43d313d7bcfdfa277a2093d2687d32685561264) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - execute detectChanges after create black card component to avoid incorrect render timing of left and right caret
+
+- [`edd539d`](https://github.com/worktile/slate-angular/commit/edd539d6abd59787c2c9c65ca5fe0effddfd31e1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update NODE_TO_INDEX and NODE_TO_PARENT when diffResult is undefined
+
+- [#253](https://github.com/worktile/slate-angular/pull/253) [`fa01d81`](https://github.com/worktile/slate-angular/commit/fa01d81fbfd3c932cb4147d8175da46ff42cca29) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - handle triple-click
+  remove the attribute of editable='false' in void element to void strange behavior when click before image element
+  refer to:
+  https://github.com/ianstormtaylor/slate/pull/4588
+  https://github.com/ianstormtaylor/slate/pull/4965
+
+- [`46d0659`](https://github.com/worktile/slate-angular/commit/46d0659f932923224af411798b57255f7003327e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add afterViewInit method to handle performance issue
+  set contenteditable will cause performance issue during dynamic created component execute detectChanges
+
 ## 16.1.0-next.20
 
 ### Patch Changes
