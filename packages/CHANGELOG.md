@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.1.1
+
+### Patch Changes
+
+- [`cf192c3`](https://github.com/worktile/slate-angular/commit/cf192c3aa91eeb2f4556d74081b07dfa8f125ec1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - don't invoke normalize method default
+
 ## 17.1.0
 
 ### Minor Changes
