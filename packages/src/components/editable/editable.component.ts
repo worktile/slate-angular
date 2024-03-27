@@ -272,16 +272,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     writeValue(value: Element[]) {
         if (value && value.length) {
-            if (check(value)) {
-                this.editor.children = value;
-            } else {
-                this.editor.onError({
-                    code: SlateErrorCode.InvalidValueError,
-                    name: 'initialize invalid data',
-                    data: value
-                });
-                this.editor.children = normalize(value);
-            }
+            this.editor.children = value;
             this.initializeContext();
             if (!this.listRender.initialized) {
                 this.listRender.initialize(this.editor.children, this.editor, this.context);
