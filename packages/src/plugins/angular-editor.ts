@@ -759,14 +759,15 @@ export const AngularEditor = {
 
     isBlockCardLeftCursor(editor: AngularEditor) {
         return (
-            editor.selection.anchor.offset === FAKE_LEFT_BLOCK_CARD_OFFSET && editor.selection.focus.offset === FAKE_LEFT_BLOCK_CARD_OFFSET
+            editor.selection?.anchor?.offset === FAKE_LEFT_BLOCK_CARD_OFFSET &&
+            editor.selection?.focus?.offset === FAKE_LEFT_BLOCK_CARD_OFFSET
         );
     },
 
     isBlockCardRightCursor(editor: AngularEditor) {
         return (
-            editor.selection.anchor.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET &&
-            editor.selection.focus.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET
+            editor.selection?.anchor?.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET &&
+            editor.selection?.focus?.offset === FAKE_RIGHT_BLOCK_CARD_OFFSET
         );
     },
 
