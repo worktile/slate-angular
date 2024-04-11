@@ -1,5 +1,13 @@
 # Changelog
 
+## 17.1.3
+
+### Patch Changes
+
+- [`13ef6ac`](https://github.com/worktile/slate-angular/commit/13ef6acd7555f8e6bfb02df00cad7aa289f2cba2) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use map queue to store afterViewInit callback
+
+  fix the issue that inline void element can not bind contentEditable attribute correctly
+
 ## 17.1.2
 
 ### Patch Changes
