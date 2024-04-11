@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.1.2
+
+### Patch Changes
+
+- [#265](https://github.com/worktile/slate-angular/pull/265) [`d9a14cc`](https://github.com/worktile/slate-angular/commit/d9a14cc885506357434492098e44105f5049efc6) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - fix isBlockCardLeftCursor and isBlockCardRightCursor error
+
 ## 17.1.1
 
 ### Patch Changes
