@@ -31,12 +31,6 @@ export function createEmbeddedViewOrComponent(
     }
 }
 
-export function executeAfterViewInit(view: EmbeddedViewRef<any> | ComponentRef<any>) {
-    if (view instanceof ComponentRef && view.instance.afterViewInit) {
-        view.instance.afterViewInit();
-    }
-}
-
 export function updateContext(
     view: EmbeddedViewRef<any> | ComponentRef<any>,
     newContext: SlateElementContext | SlateTextContext | SlateLeafContext,

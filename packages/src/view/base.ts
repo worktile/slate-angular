@@ -16,7 +16,7 @@ import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafConte
 import { Descendant, Element, Path, Range, Text } from 'slate';
 import { SlateChildrenContext } from './context';
 import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
-import { ListRender } from './render/list-render';
+import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { LeavesRender } from './render/leaves-render';
 import { SlateChildrenOutlet } from '../components/children/children-outlet.component';
 
@@ -208,13 +208,15 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         if (this.editor.isExpanded(this.element)) {
             this.listRender.initialize(this.children, this.element, this.childrenContext);
         }
+        addAfterViewInitQueue(this.editor, () => {
+            this.afterViewInit();
+        });
     }
 
     afterViewInit() {
         if (this._context.contentEditable !== undefined) {
             this.nativeElement.setAttribute('contenteditable', this._context.contentEditable + '');
         }
-        this.listRender.afterViewInit();
     }
 
     updateWeakMap() {
