@@ -36,6 +36,7 @@ import {
     isCardRightByTargetAttr
 } from '../utils/block-card';
 import { SafeAny } from '../types';
+import { ClipboardData, OriginEvent } from '../types/clipboard';
 
 /**
  * An Angular and DOM-specific version of the `Editor` interface.
@@ -43,9 +44,9 @@ import { SafeAny } from '../types';
 
 export interface AngularEditor extends BaseEditor {
     insertData: (data: DataTransfer) => void;
-    insertFragmentData: (data: DataTransfer) => boolean;
-    insertTextData: (data: DataTransfer) => boolean;
-    setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
+    insertFragmentData: (data: DataTransfer) => Promise<boolean>;
+    insertTextData: (data: DataTransfer) => Promise<boolean>;
+    setFragmentData: (data: DataTransfer, originEvent?: OriginEvent) => void;
     deleteCutData: () => void;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
@@ -288,7 +289,7 @@ export const AngularEditor = {
      * Insert fragment data from a `DataTransfer` into the editor.
      */
 
-    insertFragmentData(editor: AngularEditor, data: DataTransfer): boolean {
+    insertFragmentData(editor: AngularEditor, data: DataTransfer): Promise<boolean> {
         return editor.insertFragmentData(data);
     },
 
@@ -296,7 +297,7 @@ export const AngularEditor = {
      * Insert text data from a `DataTransfer` into the editor.
      */
 
-    insertTextData(editor: AngularEditor, data: DataTransfer): boolean {
+    insertTextData(editor: AngularEditor, data: DataTransfer): Promise<boolean> {
         return editor.insertTextData(data);
     },
 
@@ -318,7 +319,7 @@ export const AngularEditor = {
      * Sets data from the currently selected fragment on a `DataTransfer`.
      */
 
-    setFragmentData(editor: AngularEditor, data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut'): void {
+    setFragmentData(editor: AngularEditor, data: DataTransfer, originEvent?: OriginEvent): void {
         editor.setFragmentData(data, originEvent);
     },
 

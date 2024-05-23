@@ -3,6 +3,8 @@ import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlat
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
+import { ClipboardData, OriginEvent } from '../types/clipboard';
+import { createClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
     const e = editor as T & AngularEditor;
@@ -99,7 +101,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         onChange();
     };
 
-    e.setFragmentData = (data: Pick<DataTransfer, 'getData' | 'setData'>) => {
+    e.setFragmentData = (dataTransfer?: Pick<DataTransfer, 'getData' | 'setData'>, originEvent?: OriginEvent) => {
         const { selection } = e;
 
         if (!selection) {
@@ -168,20 +170,14 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
 
         const fragment = e.getFragment();
-        const stringObj = JSON.stringify(fragment);
-        const encoded = window.btoa(encodeURIComponent(stringObj));
-        attach.setAttribute('data-slate-fragment', encoded);
-        data.setData(`application/${clipboardFormatKey}`, encoded);
 
         // Add the content to a <div> so that we can get its inner HTML.
         const div = contents.ownerDocument.createElement('div');
         div.appendChild(contents);
         div.setAttribute('hidden', 'true');
         contents.ownerDocument.body.appendChild(div);
-        data.setData('text/html', div.innerHTML);
-        data.setData('text/plain', getPlainText(div));
+        setClipboardData(div, attach, { text: getPlainText(div), elements: fragment as Element[] }, dataTransfer);
         contents.ownerDocument.body.removeChild(div);
-        return data;
     };
 
     e.deleteCutData = () => {
@@ -204,7 +200,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
     };
 
-    e.insertFragmentData = (data: DataTransfer): boolean => {
+    e.insertFragmentData = async (data: DataTransfer): Promise<boolean> => {
         /**
          * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
          */
@@ -219,7 +215,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         return false;
     };
 
-    e.insertTextData = (data: DataTransfer): boolean => {
+    e.insertTextData = async (data: DataTransfer): Promise<boolean> => {
         const text = data.getData('text/plain');
 
         if (text) {
