@@ -60,7 +60,9 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
 };
 
 /**
- *
+ * @param contentContainer 通过 contentContainer.innerHTML 获取字符串，将字符串写入粘贴板
+ * @param attach attach 必须是 contentContainer 的子元素，用于附加编辑器 json 数据
+ * @returns void
  */
 export const setClipboardData = async (
     clipboardData: ClipboardData,
