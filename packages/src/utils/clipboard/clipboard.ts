@@ -59,17 +59,19 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
     return clipboardData;
 };
 
+/**
+ *
+ */
 export const setClipboardData = async (
+    clipboardData: ClipboardData,
     contentContainer: HTMLElement,
     attach: HTMLElement,
-    clipboardData: ClipboardData,
     dataTransfer?: Pick<DataTransfer, 'getData' | 'setData'>
 ) => {
     if (!clipboardData) {
         return;
     }
     const { elements, text } = clipboardData;
-
     if (isClipboardWriteSupported()) {
         const htmlText = buildHTMLText(contentContainer, attach, elements);
         return await setNavigatorClipboard(htmlText, elements, text);

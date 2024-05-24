@@ -176,7 +176,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         div.appendChild(contents);
         div.setAttribute('hidden', 'true');
         contents.ownerDocument.body.appendChild(div);
-        setClipboardData(div, attach, { text: getPlainText(div), elements: fragment as Element[] }, dataTransfer);
+        setClipboardData({ text: getPlainText(div), elements: fragment as Element[] }, div, attach, dataTransfer);
         contents.ownerDocument.body.removeChild(div);
     };
 
