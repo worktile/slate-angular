@@ -18,7 +18,7 @@ export const getDataTransferClipboard = (data: Pick<DataTransfer, 'getData' | 's
             return htmlClipboardData;
         }
         return {
-            text: html
+            html
         };
     }
     return null;

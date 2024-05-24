@@ -1,10 +1,10 @@
 import { Editor, Node, Transforms, Range, Path, Operation, PathRef, Element } from 'slate';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key, getSlateFragmentAttribute } from '../utils';
+import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
 import { AngularEditor } from './angular-editor';
 import { SlateError } from '../types/error';
 import { findCurrentLineRange } from '../utils/lines';
-import { ClipboardData, OriginEvent } from '../types/clipboard';
-import { createClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
+import { OriginEvent } from '../types/clipboard';
+import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
     const e = editor as T & AngularEditor;
@@ -194,8 +194,8 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
     };
 
-    e.insertData = (data: DataTransfer) => {
-        if (!e.insertFragmentData(data)) {
+    e.insertData = async (data: DataTransfer) => {
+        if (!(await e.insertFragmentData(data))) {
             e.insertTextData(data);
         }
     };
@@ -204,22 +204,19 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         /**
          * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
          */
-        const fragment = data.getData(`application/${clipboardFormatKey}`) || getSlateFragmentAttribute(data);
-
-        if (fragment) {
-            const decoded = decodeURIComponent(window.atob(fragment));
-            const parsed = JSON.parse(decoded) as Node[];
-            e.insertFragment(parsed);
+        const clipboardData = await getClipboardData(data);
+        if (clipboardData && clipboardData.elements) {
+            e.insertFragment(clipboardData.elements);
             return true;
         }
         return false;
     };
 
     e.insertTextData = async (data: DataTransfer): Promise<boolean> => {
-        const text = data.getData('text/plain');
+        const clipboardData = await getClipboardData(data);
 
-        if (text) {
-            const lines = text.split(/\r\n|\r|\n/);
+        if (clipboardData && clipboardData.text) {
+            const lines = clipboardData.text.split(/\r\n|\r|\n/);
             let split = false;
 
             for (const line of lines) {

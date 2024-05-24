@@ -197,31 +197,13 @@ export const getPlainText = (domNode: DOMNode) => {
     return text;
 };
 
-/**
- * Get x-slate-fragment attribute from data-slate-fragment
- */
-const catchSlateFragment = /data-slate-fragment="(.+?)"/m;
-export const getSlateFragmentAttribute = (dataTransfer: DataTransfer): string | void => {
-    const htmlData = dataTransfer.getData('text/html');
-    const [, fragment] = htmlData.match(catchSlateFragment) || [];
-    return fragment;
-};
+export const SlateFragmentAttributeKey = 'data-slate-angular-fragment';
 
 /**
- * Get the x-slate-fragment attribute that exist in text/html data
- * and append it to the DataTransfer object
+ * Get x-slate-fragment attribute from data-slate-angular-fragment
  */
-export const getClipboardData = (dataTransfer: DataTransfer, clipboardFormatKey = 'x-slate-fragment'): DataTransfer => {
-    if (!dataTransfer.getData(`application/${clipboardFormatKey}`)) {
-        const fragment = getSlateFragmentAttribute(dataTransfer);
-        if (fragment) {
-            const clipboardData = new DataTransfer();
-            dataTransfer.types.forEach(type => {
-                clipboardData.setData(type, dataTransfer.getData(type));
-            });
-            clipboardData.setData(`application/${clipboardFormatKey}`, fragment);
-            return clipboardData;
-        }
-    }
-    return dataTransfer;
+const catchSlateFragment = /data-slate-angular-fragment="(.+?)"/m;
+export const getSlateFragmentAttribute = (htmlData: string): string | void => {
+    const [, fragment] = htmlData.match(catchSlateFragment) || [];
+    return fragment;
 };

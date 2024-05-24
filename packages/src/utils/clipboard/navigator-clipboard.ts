@@ -33,7 +33,7 @@ export const getNavigatorClipboard = async () => {
                 const files = await Promise.all(
                     urls.map(async url => {
                         const blob = await (await fetch(url)).blob();
-                        return new File([blob], 'the-file', { type: blob.type });
+                        return new File([blob], 'file', { type: blob.type });
                     })
                 );
                 return {
@@ -47,7 +47,7 @@ export const getNavigatorClipboard = async () => {
                     return htmlClipboardData;
                 }
                 if (htmlContent && htmlContent.trim()) {
-                    clipboardData = { text: htmlContent };
+                    clipboardData = { html: htmlContent };
                 }
             }
             if (item.types.includes('text/plain')) {

@@ -8,25 +8,24 @@ import {
 import { getNavigatorClipboard, setNavigatorClipboard } from './navigator-clipboard';
 import { isClipboardReadSupported, isClipboardWriteSupported, isClipboardWriteTextSupported } from './common';
 import { ClipboardData } from '../../types/clipboard';
-
-const DATA_KEY = 'data-slate-fragment';
+import { SlateFragmentAttributeKey, getSlateFragmentAttribute } from '../dom';
 
 export const buildHTMLText = (contentContainer: HTMLElement, attach: HTMLElement, data: Element[]) => {
     const stringObj = JSON.stringify(data);
     const encoded = window.btoa(encodeURIComponent(stringObj));
-    attach.setAttribute(DATA_KEY, encoded);
+    attach.setAttribute(SlateFragmentAttributeKey, encoded);
     return contentContainer.innerHTML;
 };
 
 export const getClipboardFromHTMLText = (html: string): ClipboardData => {
-    const regex = `/${DATA_KEY}="([^"]*)"/`;
-    const match = html.match(regex);
-    if (match) {
+    const fragmentAttribute = getSlateFragmentAttribute(html);
+    if (fragmentAttribute) {
         try {
-            const result = JSON.parse(match[1]);
-            if (result) {
+            const decoded = decodeURIComponent(window.atob(fragmentAttribute));
+            const result = JSON.parse(decoded);
+            if (result && Array.isArray(result) && result.length > 0) {
                 return {
-                    elements: result?.elements ?? []
+                    elements: result
                 };
             }
         } catch (error) {
@@ -48,7 +47,6 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
         if (dataTransfer.files.length) {
             return { files: Array.from(dataTransfer.files) };
         }
-
         clipboardData = getDataTransferClipboard(dataTransfer);
         if (!clipboardData || (clipboardData && Object.keys(clipboardData).length === 0)) {
             clipboardData = getDataTransferClipboardText(dataTransfer);
@@ -74,7 +72,6 @@ export const setClipboardData = async (
 
     if (isClipboardWriteSupported()) {
         const htmlText = buildHTMLText(contentContainer, attach, elements);
-        console.log(htmlText, 'htmlText');
         return await setNavigatorClipboard(htmlText, elements, text);
     }
 
