@@ -1,20 +1,15 @@
 import { Element } from 'slate';
-import {
-    getDataTransferClipboard,
-    getDataTransferClipboardText,
-    setDataTransferClipboard,
-    setDataTransferClipboardText
-} from './data-transfer';
+import { getDataTransferClipboard, setDataTransferClipboard, setDataTransferClipboardText } from './data-transfer';
 import { getNavigatorClipboard, setNavigatorClipboard } from './navigator-clipboard';
 import { isClipboardReadSupported, isClipboardWriteSupported, isClipboardWriteTextSupported } from './common';
 import { ClipboardData } from '../../types/clipboard';
 import { SlateFragmentAttributeKey, getSlateFragmentAttribute } from '../dom';
 
-export const buildHTMLText = (contentContainer: HTMLElement, attach: HTMLElement, data: Element[]) => {
+export const buildHTMLText = (wrapper: HTMLElement, attach: HTMLElement, data: Element[]) => {
     const stringObj = JSON.stringify(data);
     const encoded = window.btoa(encodeURIComponent(stringObj));
     attach.setAttribute(SlateFragmentAttributeKey, encoded);
-    return contentContainer.innerHTML;
+    return wrapper.innerHTML;
 };
 
 export const getClipboardFromHTMLText = (html: string): ClipboardData => {
@@ -48,9 +43,6 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
             return { files: Array.from(dataTransfer.files) };
         }
         clipboardData = getDataTransferClipboard(dataTransfer);
-        if (!clipboardData || (clipboardData && Object.keys(clipboardData).length === 0)) {
-            clipboardData = getDataTransferClipboardText(dataTransfer);
-        }
         return clipboardData;
     }
     if (isClipboardReadSupported()) {
@@ -60,13 +52,13 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
 };
 
 /**
- * @param contentContainer 通过 contentContainer.innerHTML 获取字符串，将字符串写入粘贴板
- * @param attach attach 必须是 contentContainer 的子元素，用于附加编辑器 json 数据
+ * @param wrapper 通过 wrapper.innerHTML 获取字符串，将字符串写入粘贴板
+ * @param attach attach 必须是 wrapper 的子元素，用于附加编辑器 json 数据
  * @returns void
  */
 export const setClipboardData = async (
     clipboardData: ClipboardData,
-    contentContainer: HTMLElement,
+    wrapper: HTMLElement,
     attach: HTMLElement,
     dataTransfer?: Pick<DataTransfer, 'getData' | 'setData'>
 ) => {
@@ -75,12 +67,12 @@ export const setClipboardData = async (
     }
     const { elements, text } = clipboardData;
     if (isClipboardWriteSupported()) {
-        const htmlText = buildHTMLText(contentContainer, attach, elements);
+        const htmlText = buildHTMLText(wrapper, attach, elements);
         return await setNavigatorClipboard(htmlText, elements, text);
     }
 
     if (dataTransfer) {
-        const htmlText = buildHTMLText(contentContainer, attach, elements);
+        const htmlText = buildHTMLText(wrapper, attach, elements);
         setDataTransferClipboard(dataTransfer, htmlText);
         setDataTransferClipboardText(dataTransfer, text);
         return;
@@ -89,7 +81,7 @@ export const setClipboardData = async (
     // Compatible with situations where navigator.clipboard.write is not supported and dataTransfer is empty
     // Such as contextmenu copy in Firefox.
     if (isClipboardWriteTextSupported()) {
-        const htmlText = buildHTMLText(contentContainer, attach, elements);
+        const htmlText = buildHTMLText(wrapper, attach, elements);
         return await navigator.clipboard.writeText(htmlText);
     }
 };

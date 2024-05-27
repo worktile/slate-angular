@@ -1,4 +1,3 @@
-import { Element } from 'slate';
 import { getClipboardFromHTMLText } from './clipboard';
 import { ClipboardData } from '../../types/clipboard';
 
@@ -17,11 +16,19 @@ export const getDataTransferClipboard = (data: Pick<DataTransfer, 'getData' | 's
         if (htmlClipboardData) {
             return htmlClipboardData;
         }
-        return {
-            html
-        };
+        const textData = getDataTransferClipboardText(data);
+        if (textData) {
+            return {
+                html,
+                ...textData
+            };
+        } else {
+            return { html };
+        }
+    } else {
+        const textData = getDataTransferClipboardText(data);
+        return textData;
     }
-    return null;
 };
 
 export const getDataTransferClipboardText = (data: Pick<DataTransfer, 'getData' | 'setData'> | null): ClipboardData => {
