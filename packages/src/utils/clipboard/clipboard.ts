@@ -52,8 +52,8 @@ export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<Cli
 };
 
 /**
- * @param wrapper 通过 wrapper.innerHTML 获取字符串，将字符串写入粘贴板
- * @param attach attach 必须是 wrapper 的子元素，用于附加编辑器 json 数据
+ * @param wrapper get wrapper.innerHTML string which will be written in clipboard
+ * @param attach attach must be child element of wrapper which will be attached json data
  * @returns void
  */
 export const setClipboardData = async (
@@ -68,6 +68,8 @@ export const setClipboardData = async (
     const { elements, text } = clipboardData;
     if (isClipboardWriteSupported()) {
         const htmlText = buildHTMLText(wrapper, attach, elements);
+        // TODO
+        // maybe fail to write when copy some cell in table 
         return await setNavigatorClipboard(htmlText, elements, text);
     }
 
