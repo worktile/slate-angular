@@ -1,7 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, OnChanges } from '@angular/core';
 import { BaseTextComponent } from '../../view/base';
-import { AngularEditor } from '../../plugins/angular-editor';
-import { SlateLeaves } from '../leaves/leaves.component';
 
 @Component({
     selector: 'span[slateVoidText]',
@@ -12,8 +10,7 @@ import { SlateLeaves } from '../leaves/leaves.component';
         class: 'slate-spacer',
         'data-slate-node': 'text'
     },
-    standalone: true,
-    imports: [SlateLeaves]
+    standalone: true
 })
 export class SlateVoidText extends BaseTextComponent implements OnInit, OnChanges {
     ngOnInit() {
