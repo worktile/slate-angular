@@ -1,5 +1,15 @@
 # Changelog
 
+## 17.2.0
+
+### Minor Changes
+
+- [`b45c27f`](https://github.com/worktile/slate-angular/commit/b45c27f1b99f38b5958425fcd057a25684c5a5ac) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slate-children/slate-leaves/SlateChildren/SlateLeaves
+
+  BREAKING CHANGE: the code segment using slate-children/slate-leaves/SlateChildren/SlateLeaves need been removed
+
+- [#267](https://github.com/worktile/slate-angular/pull/267) [`146b69e`](https://github.com/worktile/slate-angular/commit/146b69e3e9d2c770a8236683a602d1ceb5bafb9f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - apply navigator api and provider setClipboardData and getClipboardData methods
+
 ## 17.1.3
 
 ### Patch Changes
