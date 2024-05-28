@@ -8,4 +8,4 @@ export * from './range-list';
 export * from './block-card';
 export * from './global-normalize';
 export * from './throttle';
-export * from './clipboard/clipboard';
+export * from './clipboard';
