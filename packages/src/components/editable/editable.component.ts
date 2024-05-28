@@ -55,10 +55,9 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ComponentType, ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { isDecoratorRangeListEqual, check, normalize } from '../../utils';
+import { isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
-import { SlateChildren } from '../children/children.component';
 import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
 import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from '../text/token';
 import { SlateVoidText } from '../text/void-text.component';
@@ -109,7 +108,7 @@ const forceOnDOMPaste = IS_SAFARI;
         }
     ],
     standalone: true,
-    imports: [SlateChildren, SlateStringTemplate]
+    imports: [SlateStringTemplate]
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
