@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.2.1
+
+### Patch Changes
+
+- [`e2cb948`](https://github.com/worktile/slate-angular/commit/e2cb94819f97e3f29111b8af79ef8c6353a54a34) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Revert "feat(core): remove slate-children/slate-leaves/SlateChildren/SlateLeaves"
+
 ## 17.2.0
 
 ### Minor Changes
