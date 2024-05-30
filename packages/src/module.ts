@@ -7,9 +7,11 @@ import { SlateElement } from './components/element/element.component';
 import { SlateDefaultElement } from './components/element/default-element.component';
 import { SlateString } from './components/string/string.component';
 import { SlateStringTemplate } from './components/string/template.component';
+import { SlateChildren } from './components/children/children.component';
 import { SlateChildrenOutlet } from './components/children/children-outlet.component';
 import { SlateBlockCard } from './components/block-card/block-card.component';
 import { SlateDefaultLeaf } from './components/leaf/default-leaf.component';
+import { SlateLeaves } from './components/leaves/leaves.component';
 import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from './components/element/default-element.component.token';
 import { SlateDefaultString } from './components/string/default-string.component';
 
@@ -23,12 +25,14 @@ import { SlateDefaultString } from './components/string/default-string.component
         SlateDefaultText,
         SlateString,
         SlateStringTemplate,
+        SlateChildren,
         SlateBlockCard,
+        SlateLeaves,
         SlateDefaultLeaf,
         SlateDefaultString,
         SlateChildrenOutlet
     ],
-    exports: [SlateEditable, SlateChildrenOutlet, SlateElement, SlateString, SlateDefaultString],
+    exports: [SlateEditable, SlateChildren, SlateChildrenOutlet, SlateElement, SlateLeaves, SlateString, SlateDefaultString],
     providers: [
         {
             provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
