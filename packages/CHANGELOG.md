@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.2.2
+
+### Patch Changes
+
+- [#271](https://github.com/worktile/slate-angular/pull/271) [`39ac800`](https://github.com/worktile/slate-angular/commit/39ac800ae1c5dfb23f53d3ef0d430d8c594058df) Thanks [@huanhuanwa](https://github.com/huanhuanwa)! - only exec JSON.stringify for element
+
 ## 17.2.1
 
 ### Patch Changes
