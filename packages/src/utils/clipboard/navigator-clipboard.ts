@@ -11,7 +11,7 @@ export const setNavigatorClipboard = async (htmlText: string, data: Element[], t
                 'text/html': new Blob([htmlText], {
                     type: 'text/html'
                 }),
-                'text/plain': new Blob([JSON.stringify(textClipboard ?? data)], { type: 'text/plain' })
+                'text/plain': new Blob([textClipboard ?? JSON.stringify(data)], { type: 'text/plain' })
             })
         ]);
     }
