@@ -344,21 +344,31 @@ export const AngularEditor = {
     /**
      * Find a native DOM selection point from a Slate point.
      */
-
-    toDOMPoint(editor: AngularEditor, point: Point): DOMPoint {
+    toDOMPoint(editor: AngularEditor, point: Point, options: { range: Range }): DOMPoint {
         const [node] = Editor.node(editor, point.path);
         const el = AngularEditor.toDOMNode(editor, node);
         let domPoint: DOMPoint | undefined;
-
         // block card
-        const cardTargetAttr = getCardTargetAttribute(el);
-        if (cardTargetAttr) {
-            if (point.offset === FAKE_LEFT_BLOCK_CARD_OFFSET) {
-                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
-                return [cursorNode, 1];
-            } else {
-                const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'right' });
-                return [cursorNode, 1];
+        const [parentNode] = Editor.parent(editor, point.path);
+        if (editor.isBlockCard(parentNode) || editor.isBlockCard(node)) {
+            if (point.offset < 0) {
+                if (point.offset === FAKE_LEFT_BLOCK_CARD_OFFSET) {
+                    const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'left' });
+                    return [cursorNode, 1];
+                } else {
+                    const cursorNode = AngularEditor.getCardCursorNode(editor, node, { direction: 'right' });
+                    return [cursorNode, 1];
+                }
+            }
+            if (Range.isExpanded(options.range)) {
+                const [start, end] = Range.edges(options.range);
+                if (start === point) {
+                    const cursorNode = AngularEditor.getCardCursorNode(editor, parentNode, { direction: 'left' });
+                    return [cursorNode, 1];
+                } else {
+                    const cursorNode = AngularEditor.getCardCursorNode(editor, parentNode, { direction: 'right' });
+                    return [cursorNode, 1];
+                }
             }
         }
 
@@ -414,8 +424,8 @@ export const AngularEditor = {
     toDOMRange(editor: AngularEditor, range: Range): DOMRange {
         const { anchor, focus } = range;
         const isBackward = Range.isBackward(range);
-        const domAnchor = AngularEditor.toDOMPoint(editor, anchor);
-        const domFocus = Range.isCollapsed(range) ? domAnchor : AngularEditor.toDOMPoint(editor, focus);
+        const domAnchor = AngularEditor.toDOMPoint(editor, anchor, { range });
+        const domFocus = Range.isCollapsed(range) ? domAnchor : AngularEditor.toDOMPoint(editor, focus, { range });
 
         const window = AngularEditor.getWindow(editor);
         const domRange = window.document.createRange();
@@ -577,24 +587,10 @@ export const AngularEditor = {
                     return { path: blockPath, offset: -2 };
                 }
             }
-            // forward
-            // and to the end of previous node
-            if (isCardLeftByTargetAttr(cardTargetAttr) && !isBackward) {
-                const endPath = blockPath[blockPath.length - 1] <= 0 ? blockPath : Path.previous(blockPath);
-                return Editor.end(editor, endPath);
-            }
-            // to the of current node
-            if ((isCardCenterByTargetAttr(cardTargetAttr) || isCardRightByTargetAttr(cardTargetAttr)) && !isBackward) {
-                return Editor.end(editor, blockPath);
-            }
-            // backward
-            // and to the start of next node
-            if (isCardRightByTargetAttr(cardTargetAttr) && isBackward) {
-                return Editor.start(editor, Path.next(blockPath));
-            }
-            // and to the start of current node
-            if ((isCardCenterByTargetAttr(cardTargetAttr) || isCardLeftByTargetAttr(cardTargetAttr)) && isBackward) {
+            if (isCardLeftByTargetAttr(cardTargetAttr)) {
                 return Editor.start(editor, blockPath);
+            } else {
+                return Editor.end(editor, blockPath);
             }
         }
 
