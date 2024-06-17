@@ -84,7 +84,7 @@ const initialValue = [
     },
     {
         type: 'image',
-        url: 'https://source.unsplash.com/kFrdX5IeQzI',
+        url: 'https://github.com/images/modules/search/light2x.png',
         children: [
             {
                 text: ''
@@ -117,6 +117,10 @@ const withImage = (editor: Editor) => {
     const { isVoid } = editor;
 
     editor.isVoid = element => {
+        return element.type === 'image' || isVoid(element);
+    };
+
+    editor.isBlockCard = (element: Element) => {
         return element.type === 'image' || isVoid(element);
     };
 
