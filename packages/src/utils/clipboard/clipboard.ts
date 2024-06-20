@@ -39,11 +39,12 @@ export const createClipboardData = (html: string, elements: Element[], text: str
 export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<ClipboardData> => {
     let clipboardData = null;
     if (dataTransfer) {
+        let filesData = {};
         if (dataTransfer.files.length) {
-            return { files: Array.from(dataTransfer.files) };
+            filesData = { ...filesData, files: Array.from(dataTransfer.files) };
         }
         clipboardData = getDataTransferClipboard(dataTransfer);
-        return clipboardData;
+        return { ...clipboardData, ...filesData };
     }
     if (isClipboardReadSupported()) {
         return await getNavigatorClipboard();
@@ -69,7 +70,7 @@ export const setClipboardData = async (
     if (isClipboardWriteSupported()) {
         const htmlText = buildHTMLText(wrapper, attach, elements);
         // TODO
-        // maybe fail to write when copy some cell in table 
+        // maybe fail to write when copy some cell in table
         return await setNavigatorClipboard(htmlText, elements, text);
     }
 
