@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.4.0
+
+### Minor Changes
+
+- [#275](https://github.com/worktile/slate-angular/pull/275) [`9da5fae`](https://github.com/worktile/slate-angular/commit/9da5faec83090b03615728decc560b865e195424) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should return both text/html and files when clipboard has files
+
 ## 17.3.0
 
 ### Minor Changes
