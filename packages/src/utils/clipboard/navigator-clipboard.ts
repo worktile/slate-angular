@@ -36,7 +36,8 @@ export const getNavigatorClipboard = async () => {
                         return new File([blob], 'file', { type: blob.type });
                     })
                 );
-                return {
+                clipboardData = {
+                    ...clipboardData,
                     files
                 };
             }
@@ -44,15 +45,17 @@ export const getNavigatorClipboard = async () => {
                 const htmlContent = await blobAsString(await item.getType('text/html'));
                 const htmlClipboardData = getClipboardFromHTMLText(htmlContent);
                 if (htmlClipboardData) {
-                    return htmlClipboardData;
+                    clipboardData = { ...clipboardData, ...htmlClipboardData };
+                    return clipboardData;
                 }
                 if (htmlContent && htmlContent.trim()) {
-                    clipboardData = { html: htmlContent };
+                    clipboardData = { ...clipboardData, html: htmlContent };
                 }
             }
             if (item.types.includes('text/plain')) {
                 const textContent = await blobAsString(await item.getType('text/plain'));
                 clipboardData = {
+                    ...clipboardData,
                     text: stripHtml(textContent)
                 };
             }
