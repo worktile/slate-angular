@@ -10,7 +10,8 @@
   </slate-editable>
   <ng-template #mention let-context="context" let-viewContext="viewContext">
     <span slateElement [context]="context" [viewContext]="viewContext" class="demo-mention-view" [ngClass]="{ focus: context.selection }">
-      <div style="display: inline-flex;">&#64;{{ context.element.character }}</div>
+      <wiki-common-editor-attachment></wiki-common-editor-attachment>
+      <!-- <div style="display: inline-flex;">&#64;{{ context.element.character }}</div> -->
     </span>
   </ng-template>
   <div #suggestionList class="demo-mention-suggestion-list">

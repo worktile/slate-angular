@@ -1,18 +1,74 @@
-import { Component, OnInit, ViewChild, TemplateRef, Renderer2, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { Editor, Transforms, createEditor, Element, Range } from 'slate';
-import { withHistory } from 'slate-history';
-import { AngularEditor, withAngular } from 'slate-angular';
-import { MentionElement } from 'custom-types';
 import { NgClass, NgFor } from '@angular/common';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MentionElement } from 'custom-types';
+import { Editor, Element, Range, Transforms, createEditor } from 'slate';
+import { AngularEditor, BaseElementComponent, withAngular } from 'slate-angular';
+import { withHistory } from 'slate-history';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { SlateElement } from '../../../packages/src/components/element/element.component';
+
+@Component({
+    selector: 'styx-file-thumbnail',
+    template: `<a
+        target="_blank"
+        class="thumbnail-wrap"
+        href="files/preview?from=attachment&amp;token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI0ZTBiYWVjNTg4YzA0MzZkOTRkYTdjYWRhZmYyNDRjNyIsInRlYW1faWQiOiI2MmFiZGZhMzIyNjJmNjdiOGFiNGFlYTUiLCJwZXJtaXNzaW9uIjoiMTExMTEiLCJmaWxlX2lkIjoiNjY4NTA4ZTBiYmQyYjI5M2NmOTBiYWNiIiwiaWF0IjoxNzE5OTk0NzI5LCJleHAiOjE3MjAwODExMjl9.upRg4sS9__NenAtUdZiFiXtw3s3yEL8LE-tAH1L2eR4"
+    >
+        <img alt="" class="image-icon" src="https://cdn.alpha.pingcode.live/static/portal/assets/images/icons/doc.svg?v=5.118.0" />
+    </a>`,
+    standalone: true,
+    host: {
+        class: 'file-thumbnail'
+    },
+    imports: [SlateEditable, FormsModule, SlateElement, NgClass, NgFor]
+})
+export class DemoAttachmentFileComponent {}
+
+@Component({
+    selector: '[wikiCommonAttachmentText]',
+    template: `
+        <styx-file-thumbnail></styx-file-thumbnail>
+        <span class="info-title"> maple13.doc </span>
+    `,
+    standalone: true,
+    host: {
+        class: 'attachment-text'
+    },
+    imports: [DemoAttachmentFileComponent]
+})
+export class DemoAttachmentTextComponent {}
+
+@Component({
+    selector: 'wiki-common-editor-attachment',
+    template: `<span wikiCommonAttachmentText></span>`,
+    standalone: true,
+    imports: [DemoAttachmentTextComponent]
+})
+export class DemoAttachmentComponent extends BaseElementComponent implements OnInit {
+    onContextChange() {
+        super.onContextChange();
+        if (this.selection && this.editor && this.editor.isVoid(this.element)) {
+            this.nativeElement.classList.add(`slate-selected-element`);
+        } else {
+            this.nativeElement.classList.remove(`slate-selected-element`);
+            this.nativeElement.classList.remove(`slate-focus-element`);
+        }
+    }
+
+    ngOnInit() {
+        this.context.attributes['data-slate-key'] = (this.context.element as any)?.key as string;
+        super.ngOnInit();
+        const blockClass = this.editor.isInline(this.element) ? 'slate-inline-block' : 'slate-block';
+        this.nativeElement.classList.add(`slate-element-${this.element.type}`, blockClass);
+    }
+}
 
 @Component({
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
     standalone: true,
-    imports: [SlateEditable, FormsModule, SlateElement, NgClass, NgFor]
+    imports: [SlateEditable, FormsModule, SlateElement, NgClass, NgFor, DemoAttachmentComponent]
 })
 export class DemoMentionsComponent implements OnInit {
     searchText = '';
@@ -40,7 +96,8 @@ export class DemoMentionsComponent implements OnInit {
 
     renderElement = (element: Element) => {
         if (element.type === 'mention') {
-            return this.mentionTemplate;
+            // return this.mentionTemplate;
+            return DemoAttachmentComponent;
         }
     };
 
