@@ -183,7 +183,55 @@ const initialValue = [
         type: 'paragraph',
         children: [
             {
-                text: 'Please press @ '
+                text: ''
+            },
+            {
+                type: 'mention',
+                children: [{ text: '' }],
+                character: 'admin'
+            },
+            {
+                text: ''
+            }
+        ]
+    },
+    {
+        type: 'paragraph',
+        children: [
+            {
+                text: ''
+            },
+            {
+                type: 'mention',
+                children: [{ text: '' }],
+                character: 'admin'
+            },
+            {
+                text: ''
+            }
+        ]
+    },
+    {
+        type: 'paragraph',
+        children: [
+            {
+                text: ''
+            },
+            {
+                type: 'mention',
+                children: [{ text: '' }],
+                character: 'admin'
+            },
+            {
+                text: ''
+            }
+        ]
+    },
+    {
+        type: 'paragraph',
+        children: [
+            {
+                text: ''
             },
             {
                 type: 'mention',
