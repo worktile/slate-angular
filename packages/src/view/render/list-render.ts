@@ -212,6 +212,9 @@ export function getContext(
         }
         if (isVoid) {
             elementContext.attributes['data-slate-void'] = true;
+        }
+        // add contentEditable for block element only to avoid chinese input be broken
+        if (isVoid && !isInline) {
             elementContext.contentEditable = false;
         }
         return elementContext;
