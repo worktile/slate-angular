@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.4.1
+
+### Patch Changes
+
+- [#276](https://github.com/worktile/slate-angular/pull/276) [`1c63833`](https://github.com/worktile/slate-angular/commit/1c6383306e8cc388b2bc92fc8952858f7f664d82) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - prevent set `contenteditable='false'` for inline void element
+
 ## 17.4.0
 
 ### Minor Changes
