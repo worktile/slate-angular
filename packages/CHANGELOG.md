@@ -1,5 +1,12 @@
 # Changelog
 
+## 17.4.2
+
+### Patch Changes
+
+- [`4b60ed3`](https://github.com/worktile/slate-angular/commit/4b60ed343fe0803bfbe451b2f5055f8c163fa99b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - exec scrollSelectionIntoView in setTimeout
+  to determine the dom should have been updated when exec scrollSelectionIntoView
+
 ## 17.4.1
 
 ### Patch Changes
