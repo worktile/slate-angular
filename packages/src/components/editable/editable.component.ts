@@ -393,9 +393,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 domSelection.removeAllRanges();
             }
 
-            newDomRange && this.scrollSelectionIntoView(this.editor, newDomRange);
-
             setTimeout(() => {
+                // handle scrolling in setTimeout because of
+                // dom should not have updated immediately after listRender's updating
+                newDomRange && this.scrollSelectionIntoView(this.editor, newDomRange);
                 // COMPAT: In Firefox, it's not enough to create a range, you also need
                 // to focus the contenteditable element too. (2016/11/16)
                 if (newDomRange && IS_FIREFOX) {
