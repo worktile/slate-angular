@@ -1,5 +1,12 @@
 # Changelog
 
+## 17.4.3
+
+### Patch Changes
+
+- [`ec1cb4b`](https://github.com/worktile/slate-angular/commit/ec1cb4b5dd5e50fbde51bc707b0c4bd6c47767a1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Should not replace focusNode by anchorNode that will cause selection waring when focusNode is in contenteditable
+  Should return null instead of returning an error range when domRange is invalid
+
 ## 17.4.2
 
 ### Patch Changes
