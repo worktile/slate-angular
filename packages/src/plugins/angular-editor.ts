@@ -711,18 +711,6 @@ export const AngularEditor = {
             throw new Error(`Cannot resolve a Slate range from DOM range: ${domRange}`);
         }
 
-        // COMPAT: Triple-clicking a word in chrome will sometimes place the focus
-        // inside a `contenteditable="false"` DOM node following the word, which
-        // will cause `toSlatePoint` to throw an error. (2023/03/07)
-        if (
-            'getAttribute' in focusNode &&
-            (focusNode as HTMLElement).getAttribute('contenteditable') === 'false' &&
-            (focusNode as HTMLElement).getAttribute('data-slate-void') !== 'true'
-        ) {
-            focusNode = anchorNode;
-            focusOffset = anchorNode.textContent?.length || 0;
-        }
-
         const anchor = AngularEditor.toSlatePoint(editor, [anchorNode, anchorOffset], { suppressThrow, exactMatch });
         if (!anchor) {
             return null as T extends true ? Range | null : Range;

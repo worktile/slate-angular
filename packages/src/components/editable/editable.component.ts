@@ -583,14 +583,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
                 // try to get the selection directly, because some terrible case can be normalize for normalizeDOMPoint
                 // for example, double-click the last cell of the table to select a non-editable DOM
-                const range = AngularEditor.toSlateRange(this.editor, domSelection);
-                if (this.editor.selection && Range.equals(range, this.editor.selection) && !hasStringTarget(domSelection)) {
-                    if (!isTargetInsideVoid(this.editor, activeElement)) {
-                        // force adjust DOMSelection
-                        this.toNativeSelection();
+                const range = AngularEditor.toSlateRange(this.editor, domSelection, { exactMatch: false, suppressThrow: true });
+                if (range) {
+                    if (this.editor.selection && Range.equals(range, this.editor.selection) && !hasStringTarget(domSelection)) {
+                        if (!isTargetInsideVoid(this.editor, activeElement)) {
+                            // force adjust DOMSelection
+                            this.toNativeSelection();
+                        }
+                    } else {
+                        Transforms.select(this.editor, range);
                     }
-                } else {
-                    Transforms.select(this.editor, range);
                 }
             } catch (error) {
                 this.editor.onError({
