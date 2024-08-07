@@ -1,5 +1,3 @@
-import { Element } from 'slate';
-
 export const isClipboardReadSupported = () => {
     return 'clipboard' in navigator && 'read' in navigator.clipboard;
 };
@@ -14,6 +12,10 @@ export const isClipboardWriteTextSupported = () => {
 
 export const isClipboardFile = (item: ClipboardItem) => {
     return item.types.find(i => i.match(/^image\//));
+};
+
+export const isInvalidTable = (nodes: Element[] = []) => {
+    return nodes.some(node => node.tagName.toLowerCase() === 'tr');
 };
 
 export const stripHtml = (html: string) => {
@@ -35,4 +37,12 @@ export const blobAsString = (blob: Blob) => {
         });
         reader.readAsText(blob);
     });
+};
+
+export const completeTable = (fragment: DocumentFragment) => {
+    const result = document.createDocumentFragment();
+    const table = document.createElement('table');
+    result.appendChild(table);
+    table.appendChild(fragment);
+    return result;
 };
