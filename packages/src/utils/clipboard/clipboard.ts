@@ -1,9 +1,9 @@
 import { Element } from 'slate';
-import { getDataTransferClipboard, setDataTransferClipboard, setDataTransferClipboardText } from './data-transfer';
-import { getNavigatorClipboard, setNavigatorClipboard } from './navigator-clipboard';
-import { isClipboardReadSupported, isClipboardWriteSupported, isClipboardWriteTextSupported } from './common';
 import { ClipboardData } from '../../types/clipboard';
 import { SlateFragmentAttributeKey, getSlateFragmentAttribute } from '../dom';
+import { isClipboardReadSupported, isClipboardWriteSupported, isClipboardWriteTextSupported } from './common';
+import { getDataTransferClipboard, setDataTransferClipboard, setDataTransferClipboardText } from './data-transfer';
+import { getNavigatorClipboard, setNavigatorClipboard } from './navigator-clipboard';
 
 export const buildHTMLText = (wrapper: HTMLElement, attach: HTMLElement, data: Element[]) => {
     const stringObj = JSON.stringify(data);

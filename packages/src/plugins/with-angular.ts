@@ -1,10 +1,10 @@
-import { Editor, Node, Transforms, Range, Path, Operation, PathRef, Element } from 'slate';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, isDOMText, getPlainText, Key } from '../utils';
-import { AngularEditor } from './angular-editor';
-import { SlateError } from '../types/error';
-import { findCurrentLineRange } from '../utils/lines';
+import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
 import { OriginEvent } from '../types/clipboard';
+import { SlateError } from '../types/error';
+import { completeTable, EDITOR_TO_ON_CHANGE, getPlainText, isDOMText, isInvalidTable, Key, NODE_TO_KEY } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
+import { findCurrentLineRange } from '../utils/lines';
+import { AngularEditor } from './angular-editor';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
     const e = editor as T & AngularEditor;
@@ -173,10 +173,17 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
         // Add the content to a <div> so that we can get its inner HTML.
         const div = contents.ownerDocument.createElement('div');
+        const attachWrapper = document.createElement('div');
+        const elements = Array.from(contents.children);
+        if (isInvalidTable(elements)) {
+            contents = completeTable(contents.cloneNode(true) as DocumentFragment);
+        }
+
+        attachWrapper.appendChild(attach);
         div.appendChild(contents);
         div.setAttribute('hidden', 'true');
         contents.ownerDocument.body.appendChild(div);
-        setClipboardData({ text: getPlainText(div), elements: fragment as Element[] }, div, attach, dataTransfer);
+        setClipboardData({ text: getPlainText(div), elements: fragment as Element[] }, div, attachWrapper, dataTransfer);
         contents.ownerDocument.body.removeChild(div);
     };
 
