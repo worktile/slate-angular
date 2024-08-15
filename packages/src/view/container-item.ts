@@ -1,6 +1,6 @@
 import { ComponentRef, Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AngularEditor } from '../plugins/angular-editor';
 import { SlateBlockCard } from '../components/block-card/block-card.component';
+import { AngularEditor } from '../plugins/angular-editor';
 
 import { ViewType } from '../types/view';
 import { isComponentType, isDOMElement, isTemplateRef } from '../utils';
@@ -32,7 +32,7 @@ export abstract class ViewContainerItem<
 
     getRootNodes(): HTMLElement[] {
         if (this.embeddedViewRef) {
-            return this.embeddedViewRef.rootNodes.filter(rootNode => isDOMElement(rootNode));
+            return this.embeddedViewRef.rootNodes.filter(rootNode => isDOMElement(rootNode)) as HTMLElement[];
         }
         if (this.componentRef) {
             return [this.componentRef.instance.nativeElement];
