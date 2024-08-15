@@ -6,6 +6,12 @@
 
 - [#279](https://github.com/worktile/slate-angular/pull/279) [`4bb97c8`](https://github.com/worktile/slate-angular/commit/4bb97c8b5fae45ae2bb03725b1f58362db7e2b4a) Thanks [@Maple13](https://github.com/Maple13)! - fix setFragmentData error
 
+## 18.0.0-next.0
+
+### Major Changes
+
+- [`9a4178b`](https://github.com/worktile/slate-angular/commit/9a4178be6b05590bb7229d3981a81981b6fdcae3) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - upgrade angular into 18
+
 ## 17.4.4
 
 ### Patch Changes
