@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.4.4
+
+### Patch Changes
+
+- [#277](https://github.com/worktile/slate-angular/pull/277) [`afd2ff3`](https://github.com/worktile/slate-angular/commit/afd2ff3941685114e34057e97f9790e4157da9d4) Thanks [@Maple13](https://github.com/Maple13)! - complete the table element structure obtained through the selection
+
 ## 17.4.3
 
 ### Patch Changes
