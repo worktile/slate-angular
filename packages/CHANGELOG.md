@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.4.5
+
+### Patch Changes
+
+- [#279](https://github.com/worktile/slate-angular/pull/279) [`4bb97c8`](https://github.com/worktile/slate-angular/commit/4bb97c8b5fae45ae2bb03725b1f58362db7e2b4a) Thanks [@Maple13](https://github.com/Maple13)! - fix setFragmentData error
+
 ## 17.4.4
 
 ### Patch Changes
