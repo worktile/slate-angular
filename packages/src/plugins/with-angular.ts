@@ -179,8 +179,8 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
             contents = completeTable(contents.cloneNode(true) as DocumentFragment);
         }
 
-        attachWrapper.appendChild(attach);
-        div.appendChild(contents);
+        attachWrapper.appendChild(contents);
+        div.appendChild(attachWrapper);
         div.setAttribute('hidden', 'true');
         contents.ownerDocument.body.appendChild(div);
         setClipboardData({ text: getPlainText(div), elements: fragment as Element[] }, div, attachWrapper, dataTransfer);
