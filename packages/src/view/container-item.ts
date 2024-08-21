@@ -1,4 +1,4 @@
-import { ComponentRef, Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { ComponentRef, Directive, EmbeddedViewRef, inject, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { SlateBlockCard } from '../components/block-card/block-card.component';
 import { AngularEditor } from '../plugins/angular-editor';
 
@@ -40,7 +40,7 @@ export abstract class ViewContainerItem<
         return [];
     }
 
-    constructor(protected viewContainerRef: ViewContainerRef) {}
+    protected viewContainerRef = inject(ViewContainerRef);
 
     destroyView() {
         if (this.embeddedViewRef) {

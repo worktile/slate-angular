@@ -10,15 +10,14 @@ import {
     ViewContainerRef,
     inject
 } from '@angular/core';
+import { Descendant, Element, Range, Text } from 'slate';
+import { SlateChildrenOutlet } from '../components/children/children-outlet.component';
 import { AngularEditor } from '../plugins/angular-editor';
 import { ELEMENT_TO_COMPONENT, ELEMENT_TO_NODE, NODE_TO_ELEMENT } from '../utils/weak-maps';
-import { SlateViewContext, SlateElementContext, SlateTextContext, SlateLeafContext } from './context';
-import { Descendant, Element, Path, Range, Text } from 'slate';
-import { SlateChildrenContext } from './context';
+import { SlateChildrenContext, SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from './context';
 import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
-import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { LeavesRender } from './render/leaves-render';
-import { SlateChildrenOutlet } from '../components/children/children-outlet.component';
+import { ListRender, addAfterViewInitQueue } from './render/list-render';
 
 /**
  * base class for template
@@ -69,10 +68,9 @@ export abstract class BaseComponent<
         return this.elementRef.nativeElement;
     }
 
-    constructor(
-        public elementRef: ElementRef,
-        public cdr: ChangeDetectorRef
-    ) {}
+    public elementRef = inject(ElementRef);
+
+    public cdr = inject(ChangeDetectorRef);
 
     abstract onContextChange();
 }
