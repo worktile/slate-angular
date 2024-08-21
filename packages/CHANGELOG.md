@@ -1,5 +1,11 @@
 # Changelog
 
+## 18.0.1
+
+### Patch Changes
+
+- [#282](https://github.com/worktile/slate-angular/pull/282) [`7cb4403`](https://github.com/worktile/slate-angular/commit/7cb44033baf235f18e100d41d923de6315fd806c) Thanks [@Maple13](https://github.com/Maple13)! - removed extra injection chain caused by
+
 ## 18.0.0
 
 ### Major Changes
