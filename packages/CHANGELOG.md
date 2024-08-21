@@ -1,5 +1,11 @@
 # Changelog
 
+## 18.0.0
+
+### Major Changes
+
+- [`bd823a1`](https://github.com/worktile/slate-angular/commit/bd823a16f2e76c31a9b068170758d8a077ab421c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - upgrade angular into 18
+
 ## 17.4.5
 
 ### Patch Changes
