@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Renderer2 } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { BaseTextComponent } from 'slate-angular';
 import { SlateLeaves } from '../../../../packages/src/components/leaves/leaves.component';
 
@@ -22,13 +22,7 @@ export enum MarkTypes {
 export class DemoTextMarkComponent extends BaseTextComponent {
     attributes = [];
 
-    constructor(
-        public elementRef: ElementRef,
-        public renderer2: Renderer2,
-        cdr: ChangeDetectorRef
-    ) {
-        super(elementRef, cdr);
-    }
+    public renderer2 = inject(Renderer2);
 
     applyTextMark() {
         this.attributes.forEach(attr => {

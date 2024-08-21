@@ -1,4 +1,14 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, ElementRef, ViewContainerRef, AfterViewInit } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    ViewContainerRef
+} from '@angular/core';
 import { Node, Text } from 'slate';
 import { ViewContainerItem } from '../../view/container-item';
 import { SlateLeafContext, SlateStringContext } from '../../view/context';
@@ -13,12 +23,9 @@ import { SlateDefaultString } from './default-string.component';
 export class SlateString extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
     @Input() context: SlateLeafContext;
 
-    constructor(
-        private elementRef: ElementRef<any>,
-        protected viewContainerRef: ViewContainerRef
-    ) {
-        super(viewContainerRef);
-    }
+    protected elementRef = inject<any>(ElementRef);
+
+    protected viewContainerRef = inject(ViewContainerRef);
 
     ngOnInit(): void {
         this.createView();

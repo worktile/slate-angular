@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { BaseLeafComponent } from 'slate-angular';
 import { SlateString } from '../../../packages/src/components/string/string.component';
 
@@ -9,13 +9,7 @@ import { SlateString } from '../../../packages/src/components/string/string.comp
     imports: [SlateString]
 })
 export class DemoLeafComponent extends BaseLeafComponent {
-    constructor(
-        public elementRef: ElementRef,
-        public cdr: ChangeDetectorRef,
-        private renderer: Renderer2
-    ) {
-        super(elementRef, cdr);
-    }
+    private renderer = inject(Renderer2);
 
     onContextChange() {
         super.onContextChange();

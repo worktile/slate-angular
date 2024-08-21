@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { VideoElement } from 'custom-types';
 import { Element as SlateElement, Transforms } from 'slate';
 import { AngularEditor, BaseElementComponent, SlateChildren } from 'slate-angular';
-import { VideoElement } from 'custom-types';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'demo-video',
@@ -13,13 +13,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
     styleUrls: ['./video.component.scss']
 })
 export class DemoElementVideoComponent extends BaseElementComponent<VideoElement> {
-    constructor(
-        private sanitizer: DomSanitizer,
-        elementRef: ElementRef,
-        cdr: ChangeDetectorRef
-    ) {
-        super(elementRef, cdr);
-    }
+    private sanitizer = inject(DomSanitizer);
 
     get url(): SafeUrl {
         return this.element.url ? this.sanitizer.bypassSecurityTrustResourceUrl(this.element.url + '?title=0&byline=0&portrait=0') : '';
