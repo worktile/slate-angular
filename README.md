@@ -153,8 +153,8 @@ export enum MarkTypes {
 export class DemoTextMarkComponent extends BaseTextComponent {
     attributes: string[] = [];
 
-    constructor(public elementRef: ElementRef, public renderer2: Renderer2, cdr: ChangeDetectorRef) {
-        super(elementRef, cdr);
+    constructor(public renderer2: Renderer2) {
+        super();
     }
 
     applyTextMark() {

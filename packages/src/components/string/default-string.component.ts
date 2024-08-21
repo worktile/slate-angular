@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { SlateStringContext } from '../../view/context';
-import { BaseComponent } from '../../view/base';
-import { BeforeContextChange } from '../../view/context-change';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { DOMElement } from '../../utils/dom';
+import { BaseComponent } from '../../view/base';
+import { SlateStringContext } from '../../view/context';
+import { BeforeContextChange } from '../../view/context-change';
 
 @Component({
     selector: 'span[slateDefaultString]',
@@ -13,13 +13,6 @@ import { DOMElement } from '../../utils/dom';
 export class SlateDefaultString extends BaseComponent<SlateStringContext> implements OnInit, BeforeContextChange<SlateStringContext> {
     textNode?: Text;
     brNode?: DOMElement;
-
-    constructor(
-        public elementRef: ElementRef<any>,
-        public cdr: ChangeDetectorRef
-    ) {
-        super(elementRef, cdr);
-    }
 
     beforeContextChange(value: SlateStringContext) {
         if (this.context) {
