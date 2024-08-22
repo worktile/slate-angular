@@ -15,7 +15,7 @@ jobs:
                   which google-chrome
             - restore_cache:
                   key: slate-angular-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - run: npm ci
+            - run: npm ci --force
             - save_cache:
                   key: slate-angular-{{ .Branch }}-{{ checksum "package-lock.json" }}
                   paths:
