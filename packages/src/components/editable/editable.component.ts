@@ -760,10 +760,28 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         this.isComposing = false;
                         preventInsertFromComposition(event, this.editor);
                     }
+                    // Based on https://www.w3.org/TR/input-events-2/, `insertReplacementText` will insert
+                    // or replace existing text by means of a spell checker, auto-correct, writing
+                    // suggestions or similar
+                    case 'insertReplacementText': {
+                        // Get the range that need to be replaced
+                        const targetRange = event.getTargetRanges();
+
+                        // Skip if the range is collapsed
+                        if (!targetRange[0]?.collapsed) {
+                            try {
+                                // Convert the DOMRange into a Slate Range to delete it
+                                const replaceRange = AngularEditor.toSlateRange(editor, targetRange[0]);
+                                editor.delete({ at: replaceRange });
+                            } catch {
+                                // Just ignore if the range can't be retrieved, this means it doesn't existing
+                            }
+                        }
+                        // Fall through the cases below since the code remain the same
+                    }
                     case 'insertFromDrop':
                     case 'insertFromPaste':
                     case 'insertFromYank':
-                    case 'insertReplacementText':
                     case 'insertText': {
                         // use a weak comparison instead of 'instanceof' to allow
                         // programmatic access of paste events coming from external windows
