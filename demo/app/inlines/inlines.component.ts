@@ -10,7 +10,6 @@ import { DemoElementLinkComponent } from '../components/link/link.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
-import { NgFor } from '@angular/common';
 
 interface ToolbarItem {
     icon: string;
@@ -22,7 +21,7 @@ interface ToolbarItem {
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
     standalone: true,
-    imports: [NgFor, DemoButtonComponent, SlateEditable, FormsModule]
+    imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoInlinesComponent {
     value = initialValue;

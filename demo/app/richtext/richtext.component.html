@@ -1,11 +1,10 @@
 <div class="demo-rich-editor-wrapper">
   <div class="demo-global-toolbar">
-    <demo-button
-      *ngFor="let toolbarItem of toolbarItems"
-      [active]="toolbarItem.active(toolbarItem.format)"
-      (onMouseDown)="toolbarItem.action(toolbarItem.format)"
-      ><span class="material-icons">{{ toolbarItem.icon }}</span></demo-button
-    >
+    @for (toolbarItem of toolbarItems; track $index) {
+      <demo-button [active]="toolbarItem.active(toolbarItem.format)" (onMouseDown)="toolbarItem.action(toolbarItem.format)"
+        ><span class="material-icons">{{ toolbarItem.icon }}</span></demo-button
+      >
+    }
   </div>
   <slate-editable
     class="demo-slate-angular-editor"

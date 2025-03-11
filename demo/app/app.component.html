@@ -16,16 +16,18 @@
 </div>
 <div class="sidenav" [ngClass]="{ 'animate-sidenav': showSideNav }" (click)="onBreadClick()">
   <div class="nav-menu">
-    <div class="menu-item" *ngFor="let item of menus">
-      <a
-        [routerLink]="item.url"
-        class="vertical-menu-item level-1"
-        [ngClass]="{ selected: isSelected(item) }"
-        style="position: relative"
-        target="_self"
-        ><span>{{ item.name }}</span>
-      </a>
-    </div>
+    @for (item of menus; track $index) {
+      <div class="menu-item">
+        <a
+          [routerLink]="item.url"
+          class="vertical-menu-item level-1"
+          [ngClass]="{ selected: isSelected(item) }"
+          style="position: relative"
+          target="_self"
+          ><span>{{ item.name }}</span>
+        </a>
+      </div>
+    }
   </div>
 </div>
 <div class="content" [ngClass]="{ 'sidenav-content': showSideNav }">

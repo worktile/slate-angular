@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoElement } from 'custom-types';
@@ -8,7 +7,7 @@ import { AngularEditor, BaseElementComponent, SlateChildren } from 'slate-angula
 @Component({
     selector: 'demo-video',
     standalone: true,
-    imports: [CommonModule, SlateChildren],
+    imports: [SlateChildren],
     templateUrl: './video.component.html',
     styleUrls: ['./video.component.scss']
 })

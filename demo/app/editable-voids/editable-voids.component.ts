@@ -4,7 +4,7 @@ import { Descendant, Editor, Element as SlateElement, Text, Transforms, createEd
 import { SlateEditable, withAngular } from 'slate-angular';
 import { withHistory } from 'slate-history';
 import { DemoButtonComponent } from '../components/button/button.component';
-import { NgFor } from '@angular/common';
+
 import { EditableVoidElement } from 'custom-types';
 import { DemoElementEditableVoid } from '../components/editable-void/editable-void.component';
 
@@ -19,7 +19,7 @@ interface ToolbarItem {
     templateUrl: './editable-voids.component.html',
     styleUrls: ['./editable-voids.component.scss'],
     standalone: true,
-    imports: [NgFor, SlateEditable, FormsModule, DemoButtonComponent]
+    imports: [SlateEditable, FormsModule, DemoButtonComponent]
 })
 export class DemoEditableVoidsComponent {
     value = initialValue;
