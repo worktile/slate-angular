@@ -7,7 +7,6 @@ import { SlateElement } from '../../../packages/src/components/element/element.c
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 
-
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html',
