@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Descendant } from 'slate';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewContainer } from '../../view/container';
-import { NgFor } from '@angular/common';
+
 
 @Component({
     selector: 'slate-children',

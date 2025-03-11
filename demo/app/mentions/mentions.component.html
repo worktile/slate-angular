@@ -6,7 +6,7 @@
     (ngModelChange)="valueChange($event)"
     [renderElement]="renderElement"
     [keydown]="onKeydown"
-  >
+    >
   </slate-editable>
   <ng-template #mention let-context="context" let-viewContext="viewContext">
     <span slateElement [context]="context" [viewContext]="viewContext" class="demo-mention-view" [ngClass]="{ focus: context.selection }">
@@ -14,8 +14,10 @@
     </span>
   </ng-template>
   <div #suggestionList class="demo-mention-suggestion-list">
-    <div (mousedown)="mousedown($event, item)" [ngClass]="{ active: i === activeIndex }" *ngFor="let item of suggestions; let i = index">
-      {{ item }}
-    </div>
+    @for (item of suggestions; track item; let i = $index) {
+      <div (mousedown)="mousedown($event, item)" [ngClass]="{ active: i === activeIndex }">
+        {{ item }}
+      </div>
+    }
   </div>
 </div>

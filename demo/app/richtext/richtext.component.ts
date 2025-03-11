@@ -8,7 +8,7 @@ import { SlateElement } from '../../../packages/src/components/element/element.c
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
-import { NgFor } from '@angular/common';
+
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
@@ -25,7 +25,7 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
     standalone: true,
-    imports: [NgFor, DemoButtonComponent, SlateEditable, FormsModule, SlateElement]
+    imports: [DemoButtonComponent, SlateEditable, FormsModule, SlateElement]
 })
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;
