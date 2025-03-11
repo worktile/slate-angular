@@ -3,7 +3,7 @@ import { Editor, Transforms, createEditor, Element, Range } from 'slate';
 import { withHistory } from 'slate-history';
 import { AngularEditor, withAngular } from 'slate-angular';
 import { MentionElement } from 'custom-types';
-import { NgClass, NgFor } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
@@ -12,7 +12,7 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
     standalone: true,
-    imports: [SlateEditable, FormsModule, SlateElement, NgClass, NgFor]
+    imports: [SlateEditable, FormsModule, SlateElement, NgClass]
 })
 export class DemoMentionsComponent implements OnInit {
     searchText = '';

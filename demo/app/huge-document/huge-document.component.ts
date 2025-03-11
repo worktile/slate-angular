@@ -6,13 +6,13 @@ import { take } from 'rxjs/operators';
 import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
-import { NgIf, NgFor } from '@angular/common';
+
 
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html',
     standalone: true,
-    imports: [NgIf, SlateEditable, FormsModule, NgFor, SlateElement]
+    imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     mode: 'default' | 'component' = 'default';
