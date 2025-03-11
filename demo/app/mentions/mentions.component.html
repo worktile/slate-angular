@@ -14,7 +14,7 @@
     </span>
   </ng-template>
   <div #suggestionList class="demo-mention-suggestion-list">
-    @for (item of suggestions; track item; let i = $index) {
+    @for (item of suggestions; track $index; let i = $index) {
       <div (mousedown)="mousedown($event, item)" [ngClass]="{ active: i === activeIndex }">
         {{ item }}
       </div>
