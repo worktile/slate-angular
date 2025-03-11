@@ -13,7 +13,6 @@ import { Text } from 'slate';
 import { SlateLeafContext, SlateTextContext } from '../../view/context';
 import { ViewContainer } from '../../view/container';
 
-
 @Component({
     selector: 'slate-leaves',
     template: ``,

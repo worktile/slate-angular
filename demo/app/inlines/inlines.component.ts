@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
 
-
 interface ToolbarItem {
     icon: string;
     active: () => boolean;

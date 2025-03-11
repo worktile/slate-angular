@@ -1,4 +1,3 @@
-
 import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoElement } from 'custom-types';

@@ -6,7 +6,7 @@
     (ngModelChange)="valueChange($event)"
     [renderElement]="renderElement"
     [keydown]="onKeydown"
-    >
+  >
   </slate-editable>
   <ng-template #mention let-context="context" let-viewContext="viewContext">
     <span slateElement [context]="context" [viewContext]="viewContext" class="demo-mention-view" [ngClass]="{ focus: context.selection }">

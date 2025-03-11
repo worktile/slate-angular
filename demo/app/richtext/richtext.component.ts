@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
 
-
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
 const HOTKEYS = {
