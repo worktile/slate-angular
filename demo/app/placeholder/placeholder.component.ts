@@ -24,7 +24,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
             ></slate-editable>
         </div>
     `,
-    standalone: true,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoPlaceholderComponent {

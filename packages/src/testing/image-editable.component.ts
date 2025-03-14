@@ -5,7 +5,8 @@ import { withAngular } from '../plugins/with-angular';
 
 @Component({
     selector: 'image-editable',
-    template: ` <slate-editable [editor]="editor" [ngModel]="value"></slate-editable> `
+    template: ` <slate-editable [editor]="editor" [ngModel]="value"></slate-editable> `,
+    standalone: false
 })
 export class ImageEditableComponent implements OnInit {
     editor = withImage(withAngular(createEditor()));

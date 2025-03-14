@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
     selector: 'demo-search-highlight',
     templateUrl: './search-highlighting.component.html',
     styleUrls: ['./search-highlighting.component.scss'],
-    standalone: true,
     imports: [FormsModule, SlateEditable]
 })
 export class DemoSearchHighlightingComponent implements OnInit {

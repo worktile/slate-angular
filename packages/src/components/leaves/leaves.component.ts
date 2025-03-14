@@ -17,7 +17,6 @@ import { ViewContainer } from '../../view/container';
     selector: 'slate-leaves',
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: []
 })
 export class SlateLeaves extends ViewContainer<any> {

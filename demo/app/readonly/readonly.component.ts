@@ -11,7 +11,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
             <slate-editable [readonly]="true" class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"></slate-editable>
         </div>
     `,
-    standalone: true,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoReadonlyComponent {

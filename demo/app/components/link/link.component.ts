@@ -11,7 +11,6 @@ import { SlateChildrenOutlet } from '../../../../packages/src/components/childre
         <span contenteditable="false" style="font-size: 0;">{{ inlineChromiumBugfix }}</span>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [SlateChildrenOutlet]
 })
 export class DemoElementLinkComponent extends BaseElementComponent<LinkElement> {

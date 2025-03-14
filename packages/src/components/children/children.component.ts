@@ -6,8 +6,7 @@ import { ViewContainer } from '../../view/container';
 @Component({
     selector: 'slate-children',
     template: ``,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateChildren extends ViewContainer<any> {
     @Input() children: Descendant[];

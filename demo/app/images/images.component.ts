@@ -10,7 +10,6 @@ import { DemoButtonComponent } from '../components/button/button.component';
 @Component({
     selector: 'demo-images',
     templateUrl: 'images.component.html',
-    standalone: true,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoImagesComponent implements OnInit {

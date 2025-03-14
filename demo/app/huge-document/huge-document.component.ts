@@ -10,7 +10,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html',
-    standalone: true,
     imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {

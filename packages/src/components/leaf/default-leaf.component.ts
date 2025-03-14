@@ -9,7 +9,6 @@ import { SlateString } from '../string/string.component';
     host: {
         'data-slate-leaf': 'true'
     },
-    standalone: true,
     imports: [SlateString]
 })
 export class SlateDefaultLeaf extends BaseLeafComponent implements OnDestroy {

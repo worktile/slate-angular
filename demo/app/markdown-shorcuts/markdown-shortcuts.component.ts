@@ -10,7 +10,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html',
-    standalone: true,
     imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {

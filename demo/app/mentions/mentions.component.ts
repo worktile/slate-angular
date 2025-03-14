@@ -11,7 +11,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
 @Component({
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
-    standalone: true,
     imports: [SlateEditable, FormsModule, SlateElement, NgClass]
 })
 export class DemoMentionsComponent implements OnInit {
