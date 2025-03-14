@@ -17,8 +17,7 @@ import { SlateDefaultString } from './default-string.component';
 @Component({
     selector: 'span[slateString]',
     template: '',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateString extends ViewContainerItem<SlateStringContext> implements OnInit, OnChanges, AfterViewInit {
     @Input() context: SlateLeafContext;

@@ -7,8 +7,7 @@ import { BeforeContextChange } from '../../view/context-change';
 @Component({
     selector: 'span[slateDefaultString]',
     template: '',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateDefaultString extends BaseComponent<SlateStringContext> implements OnInit, BeforeContextChange<SlateStringContext> {
     textNode?: Text;

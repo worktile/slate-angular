@@ -3,8 +3,7 @@ import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
 @Component({
     selector: 'slate-children-outlet',
     template: ``,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SlateChildrenOutlet {
     constructor(private elementRef: ElementRef<HTMLElement>) {}
