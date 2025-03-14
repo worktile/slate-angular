@@ -2,11 +2,10 @@ import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoElement } from 'custom-types';
 import { Element as SlateElement, Transforms } from 'slate';
-import { AngularEditor, BaseElementComponent, SlateChildren } from 'slate-angular';
+import { AngularEditor, BaseElementComponent } from 'slate-angular';
 
 @Component({
     selector: 'demo-video',
-    imports: [SlateChildren],
     templateUrl: './video.component.html',
     styleUrls: ['./video.component.scss']
 })
