@@ -6,7 +6,6 @@ import { AngularEditor, BaseElementComponent, SlateChildren } from 'slate-angula
 
 @Component({
     selector: 'demo-video',
-    standalone: true,
     imports: [SlateChildren],
     templateUrl: './video.component.html',
     styleUrls: ['./video.component.scss']

@@ -9,7 +9,6 @@ import { SlateLeaves } from '../leaves/leaves.component';
     host: {
         'data-slate-node': 'text'
     },
-    standalone: true,
     imports: [SlateLeaves]
 })
 export class SlateDefaultText extends BaseTextComponent {}
