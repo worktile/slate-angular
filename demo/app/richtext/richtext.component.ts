@@ -23,7 +23,6 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 @Component({
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
-    standalone: true,
     imports: [DemoButtonComponent, SlateEditable, FormsModule, SlateElement]
 })
 export class DemoRichtextComponent implements OnInit {

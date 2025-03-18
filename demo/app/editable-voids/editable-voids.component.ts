@@ -18,7 +18,6 @@ interface ToolbarItem {
     selector: 'demo-editable-voids',
     templateUrl: './editable-voids.component.html',
     styleUrls: ['./editable-voids.component.scss'],
-    standalone: true,
     imports: [SlateEditable, FormsModule, DemoButtonComponent]
 })
 export class DemoEditableVoidsComponent {
