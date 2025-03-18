@@ -4,5 +4,7 @@
   "initialVersions": {
     "slate-angular": "18.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "clean-rockets-sell"
+  ]
 }
