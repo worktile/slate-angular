@@ -108,7 +108,6 @@ const forceOnDOMPaste = IS_SAFARI;
             useValue: SlateDefaultLeaf
         }
     ],
-    standalone: true,
     imports: [SlateChildren, SlateStringTemplate]
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {

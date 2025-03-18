@@ -9,7 +9,6 @@ import { SlateChildren } from '../../../../packages/src/components/children/chil
     host: {
         class: 'demo-element-image'
     },
-    standalone: true,
     imports: [SlateChildren]
 })
 export class DemoElementImageComponent extends BaseElementComponent<ImageElement> {}

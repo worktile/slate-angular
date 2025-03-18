@@ -6,7 +6,6 @@ import { SlateChildren } from '../children/children.component';
     selector: 'div[slateDefaultElement]',
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [SlateChildren]
 })
 export class SlateDefaultElement extends BaseElementComponent {}

@@ -2,7 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 @Component({
     selector: 'demo-app-root',
     templateUrl: './app.component.html',
-    providers: []
+    providers: [],
+    standalone: false
 })
 export class AppComponent implements OnInit {
     menus: Array<{ url: string; name: string }> = [

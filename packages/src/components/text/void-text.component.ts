@@ -12,7 +12,6 @@ import { SlateLeaves } from '../leaves/leaves.component';
         class: 'slate-spacer',
         'data-slate-node': 'text'
     },
-    standalone: true,
     imports: [SlateLeaves]
 })
 export class SlateVoidText extends BaseTextComponent implements OnInit, OnChanges {

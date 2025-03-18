@@ -19,7 +19,8 @@ import { DOMRange } from '../utils/dom';
             [trackBy]="trackBy"
             [scrollSelectionIntoView]="scrollSelectionIntoView"
         ></slate-editable>
-    `
+    `,
+    standalone: false
 })
 export class AdvancedEditableComponent implements OnInit {
     editor = withAngular(createEditor());
