@@ -1,6 +1,5 @@
 import { Component, inject, Renderer2 } from '@angular/core';
 import { BaseTextComponent } from 'slate-angular';
-import { SlateLeaves } from '../../../../packages/src/components/leaves/leaves.component';
 
 export enum MarkTypes {
     bold = 'bold',
@@ -15,8 +14,7 @@ export enum MarkTypes {
     template: ``,
     host: {
         'data-slate-node': 'text'
-    },
-    imports: [SlateLeaves]
+    }
 })
 export class DemoTextMarkComponent extends BaseTextComponent {
     attributes = [];
