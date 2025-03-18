@@ -14,7 +14,6 @@ import { SlateChildrenOutlet } from '../../../../packages/src/components/childre
         class: 'demo-element-button'
     },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [SlateChildrenOutlet]
 })
 export class DemoElementEditableButtonComponent extends BaseElementComponent<ButtonElement> {

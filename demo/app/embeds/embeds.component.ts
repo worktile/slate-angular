@@ -8,7 +8,6 @@ import { DemoElementVideoComponent } from '../components/video/video.component';
     selector: 'demo-embeds',
     templateUrl: './embeds.component.html',
     styleUrls: ['./embeds.component.scss'],
-    standalone: true,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoEmbedsComponent {

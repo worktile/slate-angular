@@ -6,7 +6,6 @@ import { SlateChildren } from '../children/children.component';
     selector: '[slateElement]',
     template: '<ng-content></ng-content>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [SlateChildren]
 })
 export class SlateElement extends BaseElementComponent {}

@@ -6,7 +6,8 @@ import { BaseLeafComponent } from 'slate-angular';
     template: ` <span slateString [context]="context" [viewContext]="viewContext"><span></span></span> `,
     host: {
         class: 'testing-leaf'
-    }
+    },
+    standalone: false
 })
 export class TestingLeafComponent extends BaseLeafComponent {
     private renderer = inject(Renderer2);

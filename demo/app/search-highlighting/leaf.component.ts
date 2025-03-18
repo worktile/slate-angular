@@ -5,7 +5,6 @@ import { SlateString } from '../../../packages/src/components/string/string.comp
 @Component({
     selector: 'span[demoLeaf]',
     template: ` <span slateString [context]="context" [viewContext]="viewContext"><span></span></span> `,
-    standalone: true,
     imports: [SlateString]
 })
 export class DemoLeafComponent extends BaseLeafComponent {

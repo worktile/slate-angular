@@ -16,7 +16,6 @@ export enum MarkTypes {
     host: {
         'data-slate-node': 'text'
     },
-    standalone: true,
     imports: [SlateLeaves]
 })
 export class DemoTextMarkComponent extends BaseTextComponent {

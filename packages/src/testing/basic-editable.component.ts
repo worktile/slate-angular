@@ -5,7 +5,8 @@ import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
 @Component({
     selector: 'basic-editable',
-    template: ` <slate-editable [editor]="editor" [(ngModel)]="value" (ngModelChange)="ngModelChange()"></slate-editable> `
+    template: ` <slate-editable [editor]="editor" [(ngModel)]="value" (ngModelChange)="ngModelChange()"></slate-editable> `,
+    standalone: false
 })
 export class BasicEditableComponent {
     editor = withAngular(createEditor());

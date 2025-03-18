@@ -10,7 +10,6 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
 @Component({
     selector: 'demo-tables',
     templateUrl: 'tables.component.html',
-    standalone: true,
     imports: [SlateEditable, FormsModule, SlateElement]
 })
 export class DemoTablesComponent implements OnInit {

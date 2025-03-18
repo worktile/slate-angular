@@ -6,7 +6,6 @@ import { EditableVoidElement } from 'custom-types';
 
 @Component({
     selector: 'demo-editable-void',
-    standalone: true,
     imports: [DemoRichtextComponent, SlateChildren],
     templateUrl: './editable-void.component.html',
     styleUrls: ['./editable-void.component.scss'],

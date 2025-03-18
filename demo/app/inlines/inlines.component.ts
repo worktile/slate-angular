@@ -20,7 +20,6 @@ interface ToolbarItem {
 @Component({
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
-    standalone: true,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoInlinesComponent {

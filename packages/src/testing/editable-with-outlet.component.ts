@@ -14,7 +14,8 @@ const customType = 'custom-with-outlet';
         [(ngModel)]="value"
         (ngModelChange)="ngModelChange()"
         [renderElement]="renderElement()"
-    ></slate-editable> `
+    ></slate-editable> `,
+    standalone: false
 })
 export class EditableWithOutletComponent {
     editor = withAngular(createEditor());
@@ -62,7 +63,6 @@ export function createDefaultDocument() {
     host: {
         class: 'test-element-with-outlet'
     },
-    standalone: true,
     imports: [SlateChildrenOutlet]
 })
 export class TestElementWithOutletComponent extends BaseElementComponent<any> {}
