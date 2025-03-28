@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "slate-angular": "18.0.1"
+  },
+  "changesets": [
+    "clean-rockets-sell"
+  ]
+}
