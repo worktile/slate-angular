@@ -1,5 +1,13 @@
 # Changelog
 
+## 19.0.0
+
+### Major Changes
+
+- [#289](https://github.com/worktile/slate-angular/pull/289) [`5b50350cefb557e33be3b62e2e17ffd4d1a49bf0`](https://github.com/worktile/slate-angular/commit/5b50350cefb557e33be3b62e2e17ffd4d1a49bf0) Thanks [@minlovehua](https://github.com/minlovehua)! - bump angular into v19
+
+- [#289](https://github.com/worktile/slate-angular/pull/289) [`d547dedb59887d3a00e5091375994c448c81ce9d`](https://github.com/worktile/slate-angular/commit/d547dedb59887d3a00e5091375994c448c81ce9d) Thanks [@minlovehua](https://github.com/minlovehua)! - build: upgrade angular to v19
+
 ## 19.0.0-next.0
 
 ### Major Changes
