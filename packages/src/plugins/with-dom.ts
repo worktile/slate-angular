@@ -4,7 +4,7 @@ import {
     getCardTargetAttribute,
     isCardLeftByTargetAttr
 } from '../utils/block-card';
-import { BasePoint, BaseRange, Editor, Node, Point, Range, Element, NodeEntry } from 'slate';
+import { BasePoint, BaseRange, Editor, Node, Point, Range, Element, NodeEntry, point } from 'slate';
 import {
     DOMEditor,
     DOMElement,
@@ -47,11 +47,8 @@ const customToDOMNode = (editor: Editor, node: Node): HTMLElement => {
 };
 DOMEditor.toDOMNode = customToDOMNode as unknown as (editor: DOMEditor, node: Node) => HTMLElement;
 
-const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
+const toDOMPointForBlockCard = (editor: Editor, point: Point): DOMPoint | undefined => {
     const [node] = Editor.node(editor, point.path);
-    const el = customToDOMNode(editor, node);
-    let domPoint: DOMPoint | undefined;
-    // block card
     const [parentNode] = Editor.parent(editor, point.path);
     if (editor.isBlockCard(parentNode) || editor.isBlockCard(node)) {
         if (point.offset < 0) {
@@ -73,6 +70,17 @@ const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
                 return [cursorNode, 1];
             }
         }
+    }
+};
+
+const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
+    const [node] = Editor.node(editor, point.path);
+    const el = customToDOMNode(editor, node);
+    let domPoint: DOMPoint | undefined;
+
+    const domPointForBlackCard = toDOMPointForBlockCard(editor, point);
+    if (domPointForBlackCard) {
+        return domPointForBlackCard;
     }
 
     // If we're inside a void node, force the offset to 0, otherwise the zero
@@ -121,27 +129,11 @@ const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
 };
 DOMEditor.toDOMPoint = customToDOMPoint as unknown as (editor: DOMEditor, point: BasePoint) => DOMPoint;
 
-const customToSlatePoint = <T extends boolean>(
-    editor: Editor,
-    domPoint: DOMPoint,
-    options: {
-        exactMatch: boolean;
-        suppressThrow: T;
-        searchDirection?: 'forward' | 'backward';
-    }
-): T extends true ? Point | null : Point => {
-    const { exactMatch, suppressThrow } = options;
+const toSlatePointForBlockCard = (editor: Editor, domPoint: DOMPoint, nearestNode: DOMNode): Point | undefined => {
     const [domNode] = domPoint;
-    const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint);
-    let parentNode = nearestNode.parentNode as DOMElement;
-    let textNode: DOMElement | null = null;
-    let offset = 0;
-
-    // block card
     const cardTargetAttr = getCardTargetAttribute(domNode);
     if (cardTargetAttr) {
         const domSelection = window.getSelection();
-        const isBackward = editor.selection && Range.isBackward(editor.selection);
         const blockCardEntry = CustomDOMEditor.toSlateCardEntry(editor, domNode) || CustomDOMEditor.toSlateCardEntry(editor, nearestNode);
         const [, blockPath] = blockCardEntry;
         if (domSelection.isCollapsed) {
@@ -156,6 +148,27 @@ const customToSlatePoint = <T extends boolean>(
         } else {
             return Editor.end(editor, blockPath);
         }
+    }
+};
+
+const customToSlatePoint = <T extends boolean>(
+    editor: Editor,
+    domPoint: DOMPoint,
+    options: {
+        exactMatch: boolean;
+        suppressThrow: T;
+        searchDirection?: 'forward' | 'backward';
+    }
+): T extends true ? Point | null : Point => {
+    const { exactMatch, suppressThrow } = options;
+    const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint);
+    let parentNode = nearestNode.parentNode as DOMElement;
+    let textNode: DOMElement | null = null;
+    let offset = 0;
+
+    const slatePointForBlockCard = toSlatePointForBlockCard(editor, domPoint, nearestNode);
+    if (slatePointForBlockCard) {
+        return slatePointForBlockCard;
     }
 
     if (parentNode) {
