@@ -34,7 +34,6 @@ export interface CustomDOMEditor extends DOMEditor {
     insertTextData: (data: DataTransfer) => boolean;
     isTargetInsideNonReadonlyVoid: (editor: CustomDOMEditor, target: EventTarget | null) => boolean;
     setFragmentData: (data: DataTransfer, originEvent?: 'drag' | 'copy' | 'cut') => void;
-    customToSlateNode;
 }
 
 const customToDOMNode = (editor: Editor, node: Node): HTMLElement => {
