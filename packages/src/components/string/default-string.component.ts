@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { DOMElement } from '../../utils/dom';
 import { BaseComponent } from '../../view/base';
 import { SlateStringContext } from '../../view/context';
 import { BeforeContextChange } from '../../view/context-change';
+import { DOMElement } from 'slate-dom';
 
 @Component({
     selector: 'span[slateDefaultString]',

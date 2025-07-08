@@ -1,105 +1,17 @@
-import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
+import { Editor, Element, Node, Range, Transforms } from 'slate';
 import { OriginEvent } from '../types/clipboard';
 import { SlateError } from '../types/error';
-import { completeTable, EDITOR_TO_ON_CHANGE, getPlainText, isDOMText, isInvalidTable, Key, NODE_TO_KEY } from '../utils';
+import { completeTable, isInvalidTable } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
-import { findCurrentLineRange } from '../utils/lines';
 import { AngularEditor } from './angular-editor';
+import { withDOM } from 'slate-dom';
+import { getPlainText, isDOMText } from '../utils/dom';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
-    const e = editor as T & AngularEditor;
-    const { apply, onChange, deleteBackward } = e;
+    let e = editor as T & AngularEditor;
+    let {} = e;
 
-    e.deleteBackward = unit => {
-        if (unit !== 'line') {
-            return deleteBackward(unit);
-        }
-
-        if (editor.selection && Range.isCollapsed(editor.selection)) {
-            const parentBlockEntry = Editor.above(editor, {
-                match: n => Element.isElement(n) && Editor.isBlock(editor, n),
-                at: editor.selection
-            });
-
-            if (parentBlockEntry) {
-                const [, parentBlockPath] = parentBlockEntry;
-                const parentElementRange = Editor.range(editor, parentBlockPath, editor.selection.anchor);
-
-                const currentLineRange = findCurrentLineRange(e, parentElementRange);
-
-                if (!Range.isCollapsed(currentLineRange)) {
-                    Transforms.delete(editor, { at: currentLineRange });
-                }
-            }
-        }
-    };
-
-    e.apply = (op: Operation) => {
-        const matches: [Path | PathRef, Key][] = [];
-
-        switch (op.type) {
-            case 'insert_text':
-            case 'remove_text':
-            case 'set_node': {
-                for (const [node, path] of Editor.levels(e, { at: op.path })) {
-                    const key = AngularEditor.findKey(e, node);
-                    matches.push([path, key]);
-                }
-
-                break;
-            }
-
-            case 'insert_node':
-            case 'remove_node':
-            case 'merge_node':
-            case 'split_node': {
-                for (const [node, path] of Editor.levels(e, {
-                    at: Path.parent(op.path)
-                })) {
-                    const key = AngularEditor.findKey(e, node);
-                    matches.push([path, key]);
-                }
-
-                break;
-            }
-
-            case 'move_node': {
-                const commonPath = Path.common(Path.parent(op.path), Path.parent(op.newPath));
-                for (const [node, path] of Editor.levels(e, {
-                    at: Path.parent(op.path)
-                })) {
-                    const key = AngularEditor.findKey(e, node);
-                    matches.push([Editor.pathRef(editor, path), key]);
-                }
-                for (const [node, path] of Editor.levels(e, {
-                    at: Path.parent(op.newPath)
-                })) {
-                    if (path.length > commonPath.length) {
-                        const key = AngularEditor.findKey(e, node);
-                        matches.push([Editor.pathRef(editor, path), key]);
-                    }
-                }
-                break;
-            }
-        }
-
-        apply(op);
-
-        for (const [source, key] of matches) {
-            const [node] = Editor.node(e, Path.isPath(source) ? source : source.current);
-            NODE_TO_KEY.set(node, key);
-        }
-    };
-
-    e.onChange = () => {
-        const onContextChange = EDITOR_TO_ON_CHANGE.get(e);
-
-        if (onContextChange) {
-            onContextChange();
-        }
-
-        onChange();
-    };
+    e = withDOM(e, clipboardFormatKey);
 
     e.setFragmentData = (dataTransfer?: Pick<DataTransfer, 'getData' | 'setData'>, originEvent?: OriginEvent) => {
         const { selection } = e;
@@ -202,12 +114,12 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     };
 
     e.insertData = async (data: DataTransfer) => {
-        if (!(await e.insertFragmentData(data))) {
+        if (!(await e.customInsertFragmentData(data))) {
             e.insertTextData(data);
         }
     };
 
-    e.insertFragmentData = async (data: DataTransfer): Promise<boolean> => {
+    e.customInsertFragmentData = async (data: DataTransfer): Promise<boolean> => {
         /**
          * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
          */
@@ -219,7 +131,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         return false;
     };
 
-    e.insertTextData = async (data: DataTransfer): Promise<boolean> => {
+    e.customInsertTextData = async (data: DataTransfer): Promise<boolean> => {
         const clipboardData = await getClipboardData(data);
 
         if (clipboardData && clipboardData.text) {

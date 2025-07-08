@@ -1,4 +1,4 @@
-import { DOMNode, DOMSelection } from './dom';
+import { DOMNode, DOMSelection } from "slate-dom";
 
 export const FAKE_LEFT_BLOCK_CARD_OFFSET = -1;
 

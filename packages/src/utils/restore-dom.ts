@@ -1,5 +1,5 @@
 import { Editor } from 'slate';
-import { EDITOR_TO_ELEMENT } from './weak-maps';
+import { EDITOR_TO_ELEMENT } from 'slate-dom';
 
 export function restoreDom(editor: Editor, execute: () => void) {
     const editable = EDITOR_TO_ELEMENT.get(editor);

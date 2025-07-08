@@ -3,9 +3,10 @@ import { SlateBlockCard } from '../components/block-card/block-card.component';
 import { AngularEditor } from '../plugins/angular-editor';
 
 import { ViewType } from '../types/view';
-import { isComponentType, isDOMElement, isTemplateRef } from '../utils';
+import { isComponentType, isTemplateRef } from '../utils';
 import { BaseComponent, BaseEmbeddedView } from './base';
 import { SlateElementContext, SlateLeafContext, SlateStringContext, SlateTextContext, SlateViewContext } from './context';
+import { isDOMElement } from 'slate-dom';
 
 /**
  * Dynamically create/update components or templates

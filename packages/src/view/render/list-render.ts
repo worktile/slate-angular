@@ -4,10 +4,11 @@ import { ViewType } from '../../types/view';
 import { SlateChildrenContext, SlateElementContext, SlateTextContext, SlateViewContext } from '../context';
 import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateErrorCode } from '../../types/error';
-import { EDITOR_TO_AFTER_VIEW_INIT_QUEUE, NODE_TO_INDEX, NODE_TO_PARENT } from '../../utils/weak-maps';
+import { EDITOR_TO_AFTER_VIEW_INIT_QUEUE } from '../../utils/weak-maps';
 import { isDecoratorRangeListEqual } from '../../utils/range-list';
 import { SlateBlockCard } from '../../components/block-card/block-card.component';
 import { createEmbeddedViewOrComponent, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
+import { NODE_TO_INDEX, NODE_TO_PARENT } from 'slate-dom';
 
 export class ListRender {
     private children: Descendant[];

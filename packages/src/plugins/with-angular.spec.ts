@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { createEditor, Transforms, Node, Element, Editor } from 'slate';
 import { withAngular } from './with-angular';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from '../utils/weak-maps';
+import { NODE_TO_KEY } from '../utils/weak-maps';
 import { AngularEditor } from './angular-editor';
 import { BasicEditableComponent } from '../testing/basic-editable.component';
 import * as Types from 'custom-types';

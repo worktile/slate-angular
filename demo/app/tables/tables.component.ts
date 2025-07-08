@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
-import { AngularEditor, DOMElement, withAngular } from 'slate-angular';
+import { AngularEditor, withAngular } from 'slate-angular';
 import { MarkTypes, DemoTextMarkComponent } from '../components/text/text.component';
 import { withBlockCard } from '../plugins/block-cards.plugin';
 import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { DOMElement } from 'slate-dom';
 
 @Component({
     selector: 'demo-tables',

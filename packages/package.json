@@ -7,6 +7,7 @@
   "license": "MIT",
   "peerDependencies": {
     "slate": ">=0.110.0",
+    "slate-dom": "^0.111.0",
     "slate-history": "^0.110.3",
     "debug": "^4.1.1",
     "direction": "^2.0.1",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "slate": ">=0.110.0",
+    "slate-dom": ">=0.111.0",
     "slate-history": "^0.110.3",
     "direction": "^2.0.1",
     "is-hotkey": "^0.2.0",
