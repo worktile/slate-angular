@@ -1,15 +1,15 @@
-import { Editor, Element, Node, Range, Transforms } from 'slate';
+import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
 import { OriginEvent } from '../types/clipboard';
 import { SlateError } from '../types/error';
 import { completeTable, isInvalidTable } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
 import { AngularEditor } from './angular-editor';
-import { withDOM } from 'slate-dom';
+import { Key, NODE_TO_KEY, withDOM } from 'slate-dom';
 import { getPlainText, isDOMText } from '../utils/dom';
 
 export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x-slate-fragment') => {
     let e = editor as T & AngularEditor;
-    let {} = e;
+    let { apply } = e;
 
     e = withDOM(e, clipboardFormatKey);
 
@@ -164,6 +164,64 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
             console.error(errorData.nativeError);
         } else {
             console.error(errorData);
+        }
+    };
+
+    // exist issue for move operation in withDOM
+    e.apply = (op: Operation) => {
+        const matches: [Path | PathRef, Key][] = [];
+
+        switch (op.type) {
+            case 'insert_text':
+            case 'remove_text':
+            case 'set_node': {
+                for (const [node, path] of Editor.levels(e, { at: op.path })) {
+                    const key = AngularEditor.findKey(e, node);
+                    matches.push([path, key]);
+                }
+
+                break;
+            }
+
+            case 'insert_node':
+            case 'remove_node':
+            case 'merge_node':
+            case 'split_node': {
+                for (const [node, path] of Editor.levels(e, {
+                    at: Path.parent(op.path)
+                })) {
+                    const key = AngularEditor.findKey(e, node);
+                    matches.push([path, key]);
+                }
+
+                break;
+            }
+
+            case 'move_node': {
+                const commonPath = Path.common(Path.parent(op.path), Path.parent(op.newPath));
+                for (const [node, path] of Editor.levels(e, {
+                    at: Path.parent(op.path)
+                })) {
+                    const key = AngularEditor.findKey(e, node);
+                    matches.push([Editor.pathRef(editor, path), key]);
+                }
+                for (const [node, path] of Editor.levels(e, {
+                    at: Path.parent(op.newPath)
+                })) {
+                    if (path.length > commonPath.length) {
+                        const key = AngularEditor.findKey(e, node);
+                        matches.push([Editor.pathRef(editor, path), key]);
+                    }
+                }
+                break;
+            }
+        }
+
+        apply(op);
+
+        for (const [source, key] of matches) {
+            const [node] = Editor.node(e, Path.isPath(source) ? source : source.current);
+            NODE_TO_KEY.set(node, key);
         }
     };
 
