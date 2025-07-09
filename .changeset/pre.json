@@ -5,6 +5,7 @@
     "slate-angular": "19.0.0"
   },
   "changesets": [
-    "honest-horses-cheer"
+    "honest-horses-cheer",
+    "thick-poets-juggle"
   ]
 }

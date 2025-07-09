@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.0-next.1
+
+### Patch Changes
+
+- [`c680f61bd13bc58f7d6fc482ab107e261918b369`](https://github.com/worktile/slate-angular/commit/c680f61bd13bc58f7d6fc482ab107e261918b369) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fixed slate and slate-dom version
+
 ## 19.1.0-next.0
 
 ### Minor Changes
