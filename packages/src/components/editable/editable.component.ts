@@ -217,7 +217,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         ELEMENT_TO_NODE.set(this.elementRef.nativeElement, this.editor);
         IS_READ_ONLY.set(this.editor, this.readonly);
-        EDITOR_TO_ON_CHANGE.set(this.editor as any, () => {
+        EDITOR_TO_ON_CHANGE.set(this.editor, () => {
             this.ngZone.run(() => {
                 this.onChange();
             });
@@ -1356,7 +1356,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             manualListener();
         });
         this.destroy$.complete();
-        EDITOR_TO_ON_CHANGE.delete(this.editor as any);
+        EDITOR_TO_ON_CHANGE.delete(this.editor);
     }
 }
 
