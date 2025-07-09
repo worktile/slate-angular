@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.0-next.0
+
+### Minor Changes
+
+- [#290](https://github.com/worktile/slate-angular/pull/290) [`cd74f37c00e6782eb91a50c73901e6de73c055d0`](https://github.com/worktile/slate-angular/commit/cd74f37c00e6782eb91a50c73901e6de73c055d0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - bump slate into 0.112.0 and import slate-dom@0.111.0
+
 ## 19.0.0
 
 ### Major Changes

@@ -4,5 +4,7 @@
   "initialVersions": {
     "slate-angular": "19.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "honest-horses-cheer"
+  ]
 }
