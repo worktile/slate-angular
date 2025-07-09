@@ -17,5 +17,3 @@ export * from './view/context';
 export * from './view/context-change';
 export * from './utils';
 export * from './types';
-
-export { NODE_TO_INDEX, NODE_TO_PARENT } from 'slate-dom'

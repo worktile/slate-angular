@@ -7,3 +7,4 @@ export * from './block-card';
 export * from './global-normalize';
 export * from './throttle';
 export * from './clipboard';
+export * from './dom';
