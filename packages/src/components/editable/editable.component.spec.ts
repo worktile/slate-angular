@@ -172,8 +172,8 @@ describe('Editable Component', () => {
 
         expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(0);
 
-        Transforms.select(component.editor, Editor.end(component.editor, [value.length - 1]));
         AngularEditor.focus(component.editor);
+        Transforms.select(component.editor, Editor.end(component.editor, [value.length - 1]));
 
         fixture.detectChanges();
         flush();

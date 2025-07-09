@@ -5,7 +5,7 @@ import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
 import { TestingLeafComponent } from './leaf.component';
 import { AngularEditor } from '../plugins/angular-editor';
-import { DOMRange } from '../utils/dom';
+import { DOMRange } from 'slate-dom';
 
 @Component({
     selector: 'basic-editable',

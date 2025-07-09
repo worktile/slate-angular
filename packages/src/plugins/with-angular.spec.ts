@@ -1,11 +1,11 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { createEditor, Transforms, Node, Element, Editor } from 'slate';
 import { withAngular } from './with-angular';
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from '../utils/weak-maps';
 import { AngularEditor } from './angular-editor';
 import { BasicEditableComponent } from '../testing/basic-editable.component';
 import * as Types from 'custom-types';
 import { configureBasicEditableTestingModule } from '../testing/module';
+import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from 'slate-dom';
 
 describe('with-angular', () => {
     let angularEditor: AngularEditor;
@@ -282,7 +282,7 @@ describe('with-angular', () => {
             expect(tableCellNode).not.toEqual(newTableCellNode);
             validKey(tableCellNode, newTableCellNode);
 
-            // valid move targit
+            // valid move target
             const newTableNode2 = Node.get(component.editor, tablePath2);
             const newTableRowNode2 = Node.get(component.editor, tableRowPath2);
             const newTableCellNode2 = Node.get(component.editor, tableCellPath2);
