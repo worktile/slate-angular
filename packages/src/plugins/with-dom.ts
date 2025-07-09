@@ -23,6 +23,7 @@ import {
     NODE_TO_PARENT,
     normalizeDOMPoint
 } from 'slate-dom';
+import { AngularEditor } from './angular-editor';
 
 export interface CustomDOMEditor extends DOMEditor {
     hasEditableTarget: (editor: CustomDOMEditor, target: EventTarget | null) => target is DOMNode;
@@ -47,7 +48,7 @@ const customToDOMNode = (editor: Editor, node: Node): HTMLElement => {
 };
 DOMEditor.toDOMNode = customToDOMNode as unknown as (editor: DOMEditor, node: Node) => HTMLElement;
 
-const toDOMPointForBlockCard = (editor: Editor, point: Point): DOMPoint | undefined => {
+const toDOMPointForBlockCard = (editor: AngularEditor, point: Point): DOMPoint | undefined => {
     const [node] = Editor.node(editor, point.path);
     const [parentNode] = Editor.parent(editor, point.path);
     if (editor.isBlockCard(parentNode) || editor.isBlockCard(node)) {
@@ -73,7 +74,7 @@ const toDOMPointForBlockCard = (editor: Editor, point: Point): DOMPoint | undefi
     }
 };
 
-const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
+const customToDOMPoint = (editor: AngularEditor, point: Point): DOMPoint => {
     const [node] = Editor.node(editor, point.path);
     const el = customToDOMNode(editor, node);
     let domPoint: DOMPoint | undefined;
@@ -129,7 +130,7 @@ const customToDOMPoint = (editor: Editor, point: Point): DOMPoint => {
 };
 DOMEditor.toDOMPoint = customToDOMPoint as unknown as (editor: DOMEditor, point: BasePoint) => DOMPoint;
 
-const toSlatePointForBlockCard = (editor: Editor, domPoint: DOMPoint, nearestNode: DOMNode): Point | undefined => {
+const toSlatePointForBlockCard = (editor: AngularEditor, domPoint: DOMPoint, nearestNode: DOMNode): Point | undefined => {
     const [domNode] = domPoint;
     const cardTargetAttr = getCardTargetAttribute(domNode);
     if (cardTargetAttr) {
@@ -152,7 +153,7 @@ const toSlatePointForBlockCard = (editor: Editor, domPoint: DOMPoint, nearestNod
 };
 
 const customToSlatePoint = <T extends boolean>(
-    editor: Editor,
+    editor: AngularEditor,
     domPoint: DOMPoint,
     options: {
         exactMatch: boolean;
@@ -398,7 +399,7 @@ export const CustomDOMEditor = {
         );
     },
     getCardCursorNode(
-        editor: Editor,
+        editor: AngularEditor,
         blockCardNode: Node,
         options: {
             direction: 'left' | 'right' | 'center';
@@ -408,7 +409,7 @@ export const CustomDOMEditor = {
         const cardCenter = blockCardElement.parentElement;
         return options.direction === 'left' ? cardCenter.previousElementSibling.firstChild : cardCenter.nextElementSibling.firstChild;
     },
-    toSlateCardEntry(editor: Editor, node: DOMNode): NodeEntry {
+    toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
         const element = node.parentElement.closest('.slate-block-card')?.querySelector('[card-target="card-center"]').firstElementChild;
         const slateNode = DOMEditor.toSlateNode(editor, element);
         const path = DOMEditor.findPath(editor, slateNode);

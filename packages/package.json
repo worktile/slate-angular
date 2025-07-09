@@ -6,7 +6,7 @@
   "homepage": "https://github.com/worktile/slate-angular#readme",
   "license": "MIT",
   "peerDependencies": {
-    "slate": ">=0.110.0",
+    "slate": ">=0.112.0",
     "slate-dom": "^0.111.0",
     "slate-history": "^0.110.3",
     "debug": "^4.1.1",
@@ -15,7 +15,7 @@
     "scroll-into-view-if-needed": "^2.2.20"
   },
   "dependencies": {
-    "slate": ">=0.110.0",
+    "slate": ">=0.112.0",
     "slate-dom": ">=0.111.0",
     "slate-history": "^0.110.3",
     "direction": "^2.0.1",

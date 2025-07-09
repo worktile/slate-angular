@@ -37,7 +37,8 @@ import {
     EDITOR_TO_ELEMENT,
     NODE_TO_ELEMENT,
     ELEMENT_TO_NODE,
-    IS_FOCUSED
+    IS_FOCUSED,
+    IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
 import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
@@ -63,7 +64,6 @@ import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
-import { IS_READONLY } from 'dist';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -216,7 +216,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         EDITOR_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         ELEMENT_TO_NODE.set(this.elementRef.nativeElement, this.editor);
-        IS_READONLY.set(this.editor, this.readonly);
+        IS_READ_ONLY.set(this.editor, this.readonly);
         EDITOR_TO_ON_CHANGE.set(this.editor as any, () => {
             this.ngZone.run(() => {
                 this.onChange();
@@ -251,7 +251,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const readonlyChange = simpleChanges['readonly'];
         if (readonlyChange) {
-            IS_READONLY.set(this.editor, this.readonly);
+            IS_READ_ONLY.set(this.editor, this.readonly);
             this.render();
             this.toSlateSelection();
         }
