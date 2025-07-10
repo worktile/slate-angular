@@ -1,11 +1,11 @@
-import { Text } from 'slate';
+import { LeafPosition, Text } from 'slate';
 import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../../types/view';
 import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
 import { createEmbeddedViewOrComponent, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
 
 export class LeavesRender {
-    private leaves: Text[];
+    private decoratedLeaves: { leaf: Text; position?: LeafPosition }[];
     private views: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
     private contexts: SlateLeafContext[] = [];
     private viewTypes: ViewType[] = [];
@@ -19,10 +19,10 @@ export class LeavesRender {
     ) {}
 
     public initialize(context: SlateTextContext) {
-        const { leaves, contexts } = this.getLeaves(context);
-        this.leaves = leaves;
+        const { decoratedLeaves, contexts } = this.getLeaves(context);
+        this.decoratedLeaves = decoratedLeaves;
         this.contexts = contexts;
-        this.leaves.forEach((leaf, index) => {
+        this.decoratedLeaves.forEach((leaf, index) => {
             const context = getContext(index, this.contexts);
             const viewType = getViewType(context, this.viewContext);
             const view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
@@ -32,14 +32,14 @@ export class LeavesRender {
         });
         mount(this.views, null, this.getOutletParent(), this.getOutletElement());
         const newDiffers = this.viewContainerRef.injector.get(IterableDiffers);
-        this.differ = newDiffers.find(this.leaves).create(trackBy(this.viewContext));
-        this.differ.diff(this.leaves);
+        this.differ = newDiffers.find(this.decoratedLeaves).create(trackBy(this.viewContext));
+        this.differ.diff(this.decoratedLeaves);
     }
 
     public update(context: SlateTextContext) {
-        const { leaves, contexts } = this.getLeaves(context);
+        const { decoratedLeaves, contexts } = this.getLeaves(context);
         const outletParent = this.getOutletParent();
-        const diffResult = this.differ.diff(leaves);
+        const diffResult = this.differ.diff(decoratedLeaves);
         if (diffResult) {
             let firstRootNode = getRootNodes(this.views[0])[0];
             const newContexts = [];
@@ -82,22 +82,23 @@ export class LeavesRender {
             this.viewTypes = newViewTypes;
             this.views = newViews;
             this.contexts = newContexts;
-            this.leaves = leaves;
+            this.decoratedLeaves = decoratedLeaves;
         }
     }
 
     private getLeaves(context: SlateTextContext) {
-        const leaves = Text.decorations(context.text, context.decorations);
-        const contexts = leaves.map((leaf, index) => {
+        const decoratedLeaves = Text.decorations(context.text, context.decorations);
+        const contexts: SlateLeafContext[] = decoratedLeaves.map((decoratedLeaf, index) => {
             return {
-                leaf,
+                leaf: decoratedLeaf.leaf,
+                leafPosition: decoratedLeaf.position,
                 text: context.text,
                 parent: context.parent,
                 index,
-                isLast: context.isLast && index === leaves.length - 1
+                isLast: context.isLast && index === decoratedLeaves.length - 1
             };
         });
-        return { leaves, contexts };
+        return { decoratedLeaves, contexts };
     }
 }
 
