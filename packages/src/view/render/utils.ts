@@ -39,11 +39,8 @@ export function updateContext(
     if (view instanceof ComponentRef) {
         view.instance.context = newContext;
     } else {
-        const embeddedViewContext = {
-            context: newContext,
-            viewContext
-        };
-        view.context = embeddedViewContext;
+        view.context.context = newContext;
+        view.context.viewContext = viewContext;
         view.detectChanges();
     }
 }
