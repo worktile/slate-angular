@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.0-next.3
+
+### Patch Changes
+
+- [`a03a740ada7854ac82b23796931d9de73d918db4`](https://github.com/worktile/slate-angular/commit/a03a740ada7854ac82b23796931d9de73d918db4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix context can not be replaced warning
+
 ## 19.1.0-next.2
 
 ### Patch Changes
@@ -92,8 +98,7 @@
 
 ### Minor Changes
 
-- [#273](https://github.com/worktile/slate-angular/pull/273) [`c65fea2`](https://github.com/worktile/slate-angular/commit/c65fea27c15e83a78c76fc3d4bf3d45fa03b2845) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. In toDOMPoint, when the anchor or focus is on the block-card element and the selection is in the expanded state, the DOM selection is positioned on the cursor before and after, solving the problem that the beforeinput event cannot be triggered when the cursor is a block-card or void element (when the first element of the editor or table cell is a void element, Ctrl + A selects all) (contenteditable='false' is added to the void element)
-  2. Fix the problem of positioning the cursor before and after the block-card in toSlatePoint
+- [#273](https://github.com/worktile/slate-angular/pull/273) [`c65fea2`](https://github.com/worktile/slate-angular/commit/c65fea27c15e83a78c76fc3d4bf3d45fa03b2845) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. In toDOMPoint, when the anchor or focus is on the block-card element and the selection is in the expanded state, the DOM selection is positioned on the cursor before and after, solving the problem that the beforeinput event cannot be triggered when the cursor is a block-card or void element (when the first element of the editor or table cell is a void element, Ctrl + A selects all) (contenteditable='false' is added to the void element) 2. Fix the problem of positioning the cursor before and after the block-card in toSlatePoint
   1. toDOMPoint 中当 anchor 或者 focus 在 block-card 元素上并且选区是 expanded 状态时，将 DOM 的 selection 定位到前后光标的上，解决光标所在的元素是 block-card 和 void 元素（编辑器或者表格单元格的第一个元素是 void 元素时，Ctrl + A 全选）时无法触发 beforeinput 事件（void 元素上增加了 contenteditable='false'）
   1. 修复 toSlatePoint 中对 block-card 前后光标定位的问题
 
