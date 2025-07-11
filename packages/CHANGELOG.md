@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.0-next.2
+
+### Patch Changes
+
+- [#291](https://github.com/worktile/slate-angular/pull/291) [`8dc087be989512c5de08e180cc572b5c867c75d4`](https://github.com/worktile/slate-angular/commit/8dc087be989512c5de08e180cc572b5c867c75d4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - bump slate into 0.117.2, slate-dom into 0.114.0, slate-history into 0.113.1
+
 ## 19.1.0-next.1
 
 ### Patch Changes
@@ -87,7 +93,6 @@
 ### Minor Changes
 
 - [#273](https://github.com/worktile/slate-angular/pull/273) [`c65fea2`](https://github.com/worktile/slate-angular/commit/c65fea27c15e83a78c76fc3d4bf3d45fa03b2845) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. In toDOMPoint, when the anchor or focus is on the block-card element and the selection is in the expanded state, the DOM selection is positioned on the cursor before and after, solving the problem that the beforeinput event cannot be triggered when the cursor is a block-card or void element (when the first element of the editor or table cell is a void element, Ctrl + A selects all) (contenteditable='false' is added to the void element)
-
   2. Fix the problem of positioning the cursor before and after the block-card in toSlatePoint
   1. toDOMPoint 中当 anchor 或者 focus 在 block-card 元素上并且选区是 expanded 状态时，将 DOM 的 selection 定位到前后光标的上，解决光标所在的元素是 block-card 和 void 元素（编辑器或者表格单元格的第一个元素是 void 元素时，Ctrl + A 全选）时无法触发 beforeinput 事件（void 元素上增加了 contenteditable='false'）
   1. 修复 toSlatePoint 中对 block-card 前后光标定位的问题
@@ -164,7 +169,6 @@
 - [`5d7d22d`](https://github.com/worktile/slate-angular/commit/5d7d22d5fe11cf2a666b4b5dc3d5613b83035f09) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add hasAfterContextChange that the timing is after detectChanges
 
 - [`b494e6d`](https://github.com/worktile/slate-angular/commit/b494e6d8587562b0dae5d356c9acbabb8f714fa9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Update README:
-
   1. depend on slate@0.101.5
   2. remove <slate-leaves></slate-leaves> from template of custom text component
 
@@ -284,7 +288,6 @@
 ### Patch Changes
 
 - [`b494e6d`](https://github.com/worktile/slate-angular/commit/b494e6d8587562b0dae5d356c9acbabb8f714fa9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Update README:
-
   1. depend on slate@0.101.5
   2. remove <slate-leaves></slate-leaves> from template of custom text component
 
