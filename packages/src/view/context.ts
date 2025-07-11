@@ -1,4 +1,4 @@
-import { NodeEntry, Range, Element, Ancestor, Text, Path } from 'slate';
+import { NodeEntry, Range, Element, Ancestor, Text, Path, LeafPosition } from 'slate';
 import { SlateStringTemplate } from '../components/string/template.component';
 import { AngularEditor } from '../plugins/angular-editor';
 import { ComponentType, ViewType } from '../types/view';
@@ -45,6 +45,7 @@ export interface SlateTextContext<T extends Text = Text> {
 
 export interface SlateLeafContext {
     leaf: Text;
+    leafPosition?: LeafPosition;
     text: Text;
     parent: Element;
     isLast: boolean;
