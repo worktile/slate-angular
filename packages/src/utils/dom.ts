@@ -45,3 +45,13 @@ export const getPlainText = (domNode: DOMNode) => {
 
     return text;
 };
+
+/**
+ * Get the dom selection from Shadow Root if possible, otherwise from the document
+ */
+export const getSelection = (root: Document | ShadowRoot): Selection | null => {
+    if ((root as { getSelection: () => Selection }).getSelection != null) {
+        return (root as { getSelection: () => Selection }).getSelection();
+    }
+    return document.getSelection();
+};
