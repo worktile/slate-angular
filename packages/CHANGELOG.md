@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.0-next.4
+
+### Patch Changes
+
+- [#292](https://github.com/worktile/slate-angular/pull/292) [`ad27683513dd41fb685756feb71a13a2bde4a93f`](https://github.com/worktile/slate-angular/commit/ad27683513dd41fb685756feb71a13a2bde4a93f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert focus logic and remove retry and setTimeout
+
 ## 19.1.0-next.3
 
 ### Patch Changes
