@@ -1,5 +1,21 @@
 # Changelog
 
+## 19.1.0
+
+### Minor Changes
+
+- [#290](https://github.com/worktile/slate-angular/pull/290) [`cd74f37c00e6782eb91a50c73901e6de73c055d0`](https://github.com/worktile/slate-angular/commit/cd74f37c00e6782eb91a50c73901e6de73c055d0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - bump slate into 0.112.0 and import slate-dom@0.111.0
+
+### Patch Changes
+
+- [#291](https://github.com/worktile/slate-angular/pull/291) [`8dc087be989512c5de08e180cc572b5c867c75d4`](https://github.com/worktile/slate-angular/commit/8dc087be989512c5de08e180cc572b5c867c75d4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - bump slate into 0.117.2, slate-dom into 0.114.0, slate-history into 0.113.1
+
+- [`a03a740ada7854ac82b23796931d9de73d918db4`](https://github.com/worktile/slate-angular/commit/a03a740ada7854ac82b23796931d9de73d918db4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix context can not be replaced warning
+
+- [#292](https://github.com/worktile/slate-angular/pull/292) [`ad27683513dd41fb685756feb71a13a2bde4a93f`](https://github.com/worktile/slate-angular/commit/ad27683513dd41fb685756feb71a13a2bde4a93f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert focus logic and remove retry and setTimeout
+
+- [`c680f61bd13bc58f7d6fc482ab107e261918b369`](https://github.com/worktile/slate-angular/commit/c680f61bd13bc58f7d6fc482ab107e261918b369) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fixed slate and slate-dom version
+
 ## 19.1.0-next.4
 
 ### Patch Changes
