@@ -105,23 +105,12 @@ export const AngularEditor = {
             return;
         }
 
+        IS_FOCUSED.set(editor, true);
         const el = DOMEditor.toDOMNode(editor, editor);
         const root = DOMEditor.findDocumentOrShadowRoot(editor);
         if (root.activeElement !== el) {
-            // Ensure that the DOM selection state is set to the editor's selection
-            if (editor.selection && root instanceof Document) {
-                const domSelection = getSelection(root);
-                const domRange = DOMEditor.toDOMRange(editor, editor.selection);
-                domSelection?.removeAllRanges();
-                domSelection?.addRange(domRange);
-            }
-            // Create a new selection in the top of the document if missing
-            if (!editor.selection) {
-                Transforms.select(editor, Editor.start(editor, []));
-            }
             // IS_FOCUSED should be set before calling el.focus() to ensure that
             // FocusedContext is updated to the correct value
-            IS_FOCUSED.set(editor, true);
             el.focus({ preventScroll: true });
         }
     }
