@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.1
+
+### Patch Changes
+
+- [`0da9ea88ff654dada7f97d01a68fbf1f0118a030`](https://github.com/worktile/slate-angular/commit/0da9ea88ff654dada7f97d01a68fbf1f0118a030) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert focus method
+
 ## 19.1.0
 
 ### Minor Changes
