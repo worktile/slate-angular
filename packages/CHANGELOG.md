@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.1.2
+
+### Patch Changes
+
+- [#294](https://github.com/worktile/slate-angular/pull/294) [`e9bbf56c6af19588eb5f1a4a2ad74b7d2f49b89d`](https://github.com/worktile/slate-angular/commit/e9bbf56c6af19588eb5f1a4a2ad74b7d2f49b89d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix scrolling issue when cursor
+
 ## 19.1.1
 
 ### Patch Changes
