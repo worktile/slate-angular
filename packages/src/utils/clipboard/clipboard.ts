@@ -81,10 +81,41 @@ export const setClipboardData = async (
         return;
     }
 
+    const htmlText = buildHTMLText(wrapper, attach, elements);
     // Compatible with situations where navigator.clipboard.write is not supported and dataTransfer is empty
     // Such as contextmenu copy in Firefox.
     if (isClipboardWriteTextSupported()) {
-        const htmlText = buildHTMLText(wrapper, attach, elements);
         return await navigator.clipboard.writeText(htmlText);
+    } else {
+        return await fallbackCopyText(htmlText);
     }
+};
+
+export const fallbackCopyText = async (text: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        textArea.style.opacity = '0';
+        
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            if (successful) {
+                resolve();
+            } else {
+                reject(new Error('execCommand error'));
+            }
+        } catch (err) {
+            document.body.removeChild(textArea);
+            reject(err);
+        }
+    });
 };
