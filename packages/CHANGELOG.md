@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.2.0
+
+### Minor Changes
+
+- [#296](https://github.com/worktile/slate-angular/pull/296) [`d61f986117c2270ab54b6e1423d3b092b8ce6b65`](https://github.com/worktile/slate-angular/commit/d61f986117c2270ab54b6e1423d3b092b8ce6b65) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support fallback when copy from press button
+
 ## 19.1.2
 
 ### Patch Changes
