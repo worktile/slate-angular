@@ -55,3 +55,26 @@ export const getSelection = (root: Document | ShadowRoot): Selection | null => {
     }
     return document.getSelection();
 };
+
+export const getContentHeight = (element: Element) => {
+    if (!element) return 0;
+    const style = window.getComputedStyle(element);
+    const boxSizing = style.boxSizing;
+    const height = parseFloat(style.height) || 0;
+    const paddingTop = parseFloat(style.paddingTop) || 0;
+    const paddingBottom = parseFloat(style.paddingBottom) || 0;
+    const totalPadding = paddingTop + paddingBottom;
+
+    const borderTop = parseFloat(style.borderTopWidth) || 0;
+    const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+    const totalBorder = borderTop + borderBottom;
+
+    let contentHeight;
+    if (boxSizing === 'border-box') {
+        contentHeight = height - totalPadding - totalBorder;
+    } else {
+        contentHeight = height;
+    }
+
+    return Math.max(contentHeight, 0);
+};

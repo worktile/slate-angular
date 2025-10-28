@@ -19,6 +19,7 @@ import { hasAfterContextChange, hasBeforeContextChange } from './context-change'
 import { LeavesRender } from './render/leaves-render';
 import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
+import { getContentHeight } from 'slate-angular';
 
 /**
  * base class for template
@@ -125,6 +126,15 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         this.placeholderElement = placeholderElement;
         this.nativeElement.classList.add('leaf-with-placeholder');
         this.nativeElement.appendChild(placeholderElement);
+
+        const editorElement = this.nativeElement.parentElement.querySelector('.the-editor-typo');
+        const editorContentHeight = getContentHeight(editorElement);
+        // Not supported webkitLineClamp exceeds height hiding
+        placeholderElement.style.maxHeight = `${editorContentHeight}px`;
+        setTimeout(() => {
+            const lineClamp = Math.floor(editorContentHeight / this.nativeElement.offsetHeight);
+            placeholderElement.style.webkitLineClamp = `${lineClamp}`;
+        });
     }
 
     updatePlaceholder() {
