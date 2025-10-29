@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.3.1
+
+### Patch Changes
+
+- [`36917c9978fa1253f87e73d7e186f163060b48bd`](https://github.com/worktile/slate-angular/commit/36917c9978fa1253f87e73d7e186f163060b48bd) Thanks [@Xwatson](https://github.com/Xwatson)! - The processing does not obtain the height of the element, and it is omitted if it exceeds 1 line #WIK-19235
+
 ## 19.3.0
 
 ### Minor Changes
