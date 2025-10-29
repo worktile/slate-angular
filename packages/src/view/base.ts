@@ -19,7 +19,7 @@ import { hasAfterContextChange, hasBeforeContextChange } from './context-change'
 import { LeavesRender } from './render/leaves-render';
 import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
-import { getContentHeight } from 'slate-angular';
+import { getContentHeight } from '../utils/dom';
 
 /**
  * base class for template
