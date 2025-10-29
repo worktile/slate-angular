@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.3.0
+
+### Minor Changes
+
+- [#297](https://github.com/worktile/slate-angular/pull/297) [`e6e2c91f37d2cfd4fd43f52eb87b3c5a2f2de568`](https://github.com/worktile/slate-angular/commit/e6e2c91f37d2cfd4fd43f52eb87b3c5a2f2de568) Thanks [@Xwatson](https://github.com/Xwatson)! - support webkitLineClamp for placeholder
+
 ## 19.2.0
 
 ### Minor Changes
