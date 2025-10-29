@@ -130,10 +130,12 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         setTimeout(() => {
             const editorElement = this.nativeElement.closest('.the-editor-typo');
             const editorContentHeight = getContentHeight(editorElement);
-            // Not supported webkitLineClamp exceeds height hiding
-            placeholderElement.style.maxHeight = `${editorContentHeight}px`;
-            const lineClamp = Math.floor(editorContentHeight / this.nativeElement.offsetHeight);
-            placeholderElement.style.webkitLineClamp = `${lineClamp}`;
+            if (editorContentHeight > 0) {
+                // Not supported webkitLineClamp exceeds height hiding
+                placeholderElement.style.maxHeight = `${editorContentHeight}px`;
+            }
+            const lineClamp = Math.floor(editorContentHeight / this.nativeElement.offsetHeight) || 0;
+            placeholderElement.style.webkitLineClamp = `${Math.max(lineClamp, 1)}`;
         });
     }
 
