@@ -26,9 +26,6 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     editor = withAngular(createEditor());
 
-    @ViewChild('elementTemplate', { read: TemplateRef, static: true })
-    elementTemplate: TemplateRef<any>;
-
     constructor(private ngZone: NgZone) {}
 
     ngOnInit() {
@@ -43,9 +40,6 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     renderElement() {
         return (element: any) => {
-            if (element.type === 'heading-one') {
-                return this.elementTemplate;
-            }
             return null;
         };
     }

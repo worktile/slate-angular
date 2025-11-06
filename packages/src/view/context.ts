@@ -6,11 +6,6 @@ import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from './ba
 
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
-    templateComponent: SlateStringTemplate;
-    defaultElement: ComponentType<BaseElementComponent>;
-    defaultText: ComponentType<BaseTextComponent>;
-    defaultVoidText: ComponentType<BaseTextComponent>;
-    defaultLeaf: ComponentType<BaseLeafComponent>;
     trackBy: (element: Element) => any;
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;

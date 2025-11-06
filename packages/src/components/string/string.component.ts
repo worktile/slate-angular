@@ -76,7 +76,7 @@ export class SlateString extends ViewContainerItem<SlateStringContext> implement
 
     getViewType() {
         if (this.isVoid()) {
-            return this.viewContext.templateComponent.voidStringTemplate;
+            // return this.viewContext.templateComponent.voidStringTemplate;
         }
 
         if (this.isLineBreakEmptyString()) {
@@ -84,11 +84,11 @@ export class SlateString extends ViewContainerItem<SlateStringContext> implement
         }
 
         if (this.isEmptyText()) {
-            return this.viewContext.templateComponent.emptyTextTemplate;
+            // return this.viewContext.templateComponent.emptyTextTemplate;
         }
 
         if (this.isCompatibleString()) {
-            return this.viewContext.templateComponent.compatibleStringTemplate;
+            // return this.viewContext.templateComponent.compatibleStringTemplate;
         }
 
         return SlateDefaultString;

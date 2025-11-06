@@ -54,12 +54,7 @@ import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
-import { SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN } from '../element/default-element.component.token';
 import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from '../text/token';
-import { SlateVoidText } from '../text/void-text.component';
-import { SlateDefaultText } from '../text/default-text.component';
-import { SlateDefaultElement } from '../element/default-element.component';
-import { SlateDefaultLeaf } from '../leaf/default-leaf.component';
 import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
 import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
@@ -85,22 +80,6 @@ const forceOnDOMPaste = IS_SAFARI;
             provide: NG_VALUE_ACCESSOR,
             useExisting: forwardRef(() => SlateEditable),
             multi: true
-        },
-        {
-            provide: SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN,
-            useValue: SlateDefaultElement
-        },
-        {
-            provide: SLATE_DEFAULT_TEXT_COMPONENT_TOKEN,
-            useValue: SlateDefaultText
-        },
-        {
-            provide: SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN,
-            useValue: SlateVoidText
-        },
-        {
-            provide: SLATE_DEFAULT_LEAF_COMPONENT_TOKEN,
-            useValue: SlateDefaultLeaf
         }
     ],
     imports: [SlateStringTemplate]
@@ -178,9 +157,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
     //#endregion
 
-    @ViewChild('templateComponent', { static: true })
-    templateComponent: SlateStringTemplate;
-
     @ViewChild('templateComponent', { static: true, read: ElementRef })
     templateElementRef: ElementRef<any>;
 
@@ -197,15 +173,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         public renderer2: Renderer2,
         public cdr: ChangeDetectorRef,
         private ngZone: NgZone,
-        private injector: Injector,
-        @Inject(SLATE_DEFAULT_ELEMENT_COMPONENT_TOKEN)
-        public defaultElement: ComponentType<BaseElementComponent>,
-        @Inject(SLATE_DEFAULT_TEXT_COMPONENT_TOKEN)
-        public defaultText: ComponentType<BaseTextComponent>,
-        @Inject(SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN)
-        public defaultVoidText: ComponentType<BaseTextComponent>,
-        @Inject(SLATE_DEFAULT_LEAF_COMPONENT_TOKEN)
-        public defaultLeaf: ComponentType<BaseLeafComponent>
+        private injector: Injector
     ) {}
 
     ngOnInit() {
@@ -269,7 +237,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editor.children = value;
             this.initializeContext();
             if (!this.listRender.initialized) {
+                console.time('initialize list render');
                 this.listRender.initialize(this.editor.children, this.editor, this.context);
+                console.timeEnd('initialize list render');
             } else {
                 this.listRender.update(this.editor.children, this.editor, this.context);
             }
@@ -503,12 +473,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             renderLeaf: this.renderLeaf,
             renderText: this.renderText,
             trackBy: this.trackBy,
-            isStrictDecorate: this.isStrictDecorate,
-            templateComponent: this.templateComponent,
-            defaultElement: this.defaultElement,
-            defaultText: this.defaultText,
-            defaultVoidText: this.defaultVoidText,
-            defaultLeaf: this.defaultLeaf
+            isStrictDecorate: this.isStrictDecorate
         };
     }
 
@@ -1090,6 +1055,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
 
                 if (Hotkeys.isMoveLineForward(nativeEvent)) {
+                    console.log('move line forward');
                     event.preventDefault();
                     Transforms.move(editor, { unit: 'line' });
                     return;
@@ -1130,7 +1096,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
                 if (Hotkeys.isMoveForward(nativeEvent)) {
                     event.preventDefault();
-
                     if (selection && Range.isCollapsed(selection)) {
                         Transforms.move(editor, { reverse: isRTL });
                     } else {

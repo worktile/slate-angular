@@ -2,11 +2,12 @@ import { LeafPosition, Text } from 'slate';
 import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../../types/view';
 import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
-import { createEmbeddedViewOrComponent, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
+import { createEmbeddedViewOrComponentOrFlavour, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
+import { FlavourRef } from '../../utils/view';
 
 export class LeavesRender {
     private decoratedLeaves: { leaf: Text; position?: LeafPosition }[];
-    private views: (EmbeddedViewRef<any> | ComponentRef<any>)[] = [];
+    private views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
     private contexts: SlateLeafContext[] = [];
     private viewTypes: ViewType[] = [];
     private differ: IterableDiffer<any>;
@@ -25,10 +26,10 @@ export class LeavesRender {
         this.decoratedLeaves.forEach((leaf, index) => {
             const context = getContext(index, this.contexts);
             const viewType = getViewType(context, this.viewContext);
-            const view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
-            this.views.push(view);
+            // const view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
+            // this.views.push(view);
             this.contexts.push(context);
-            this.viewTypes.push(viewType);
+            // this.viewTypes.push(viewType);
         });
         mount(this.views, null, this.getOutletParent(), this.getOutletElement());
         const newDiffers = this.viewContainerRef.injector.get(IterableDiffers);
@@ -49,25 +50,25 @@ export class LeavesRender {
                 let context = getContext(record.currentIndex, contexts);
                 const viewType = getViewType(context, this.viewContext);
                 newViewTypes.push(viewType);
-                let view: EmbeddedViewRef<any> | ComponentRef<any>;
+                let view: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef;
                 if (record.previousIndex === null) {
-                    view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
+                    // view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
                     newContexts.push(context);
                     newViews.push(view);
                     mountOnItemChange(record.currentIndex, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
                 } else {
                     const previousView = this.views[record.previousIndex];
                     const previousViewType = this.viewTypes[record.previousIndex];
-                    if (previousViewType !== viewType) {
-                        view = createEmbeddedViewOrComponent(viewType, context, this.viewContext, this.viewContainerRef);
-                        const firstRootNode = getRootNodes(previousView, null)[0];
-                        const newRootNodes = getRootNodes(view, null);
-                        firstRootNode.replaceWith(...newRootNodes);
-                        previousView.destroy();
-                    } else {
-                        view = previousView;
-                        updateContext(previousView, context, this.viewContext);
-                    }
+                    // if (previousViewType !== viewType) {
+                    //     view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
+                    //     const firstRootNode = getRootNodes(previousView, null)[0];
+                    //     const newRootNodes = getRootNodes(view, null);
+                    //     firstRootNode.replaceWith(...newRootNodes);
+                    //     previousView.destroy();
+                    // } else {
+                    //     view = previousView;
+                    //     updateContext(previousView, context, this.viewContext);
+                    // }
                     newContexts.push(context);
                     newViews.push(view);
                 }
@@ -107,7 +108,7 @@ export function getContext(index: number, leafContexts: SlateLeafContext[]): Sla
 }
 
 export function getViewType(leafContext: SlateLeafContext, viewContext: SlateViewContext) {
-    return (viewContext.renderLeaf && viewContext.renderLeaf(leafContext.leaf)) || viewContext.defaultLeaf;
+    // return (viewContext.renderLeaf && viewContext.renderLeaf(leafContext.leaf)) || viewContext.defaultLeaf;
 }
 
 export function trackBy(viewContext: SlateViewContext) {
