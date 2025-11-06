@@ -29,49 +29,6 @@ export interface BaseEmbeddedView<T, K extends AngularEditor = AngularEditor> {
     viewContext: SlateViewContext<K>;
 }
 
-export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
-    static isFlavour = true;
-
-    initialized = false;
-
-    protected _context: T;
-
-    viewContainerRef: ViewContainerRef;
-
-    set context(value: T) {
-        if (hasBeforeContextChange<T>(this)) {
-            this.beforeContextChange(value);
-        }
-        this._context = value;
-        this.onContextChange();
-        if (hasAfterContextChange<T>(this)) {
-            this.afterContextChange();
-        }
-    }
-
-    get context() {
-        return this._context;
-    }
-
-    viewContext: SlateViewContext<K>;
-
-    get editor() {
-        return this.viewContext && this.viewContext.editor;
-    }
-
-    nativeElement: HTMLElement;
-
-    abstract onContextChange();
-
-    abstract onInit();
-
-    abstract onDestroy();
-
-    abstract render();
-
-    abstract rerender();
-}
-
 /**
  * base class for custom element component or text component
  */
@@ -373,6 +330,49 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     }
 }
 
+export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
+    static isFlavour = true;
+
+    initialized = false;
+
+    protected _context: T;
+
+    viewContainerRef: ViewContainerRef;
+
+    set context(value: T) {
+        if (hasBeforeContextChange<T>(this)) {
+            this.beforeContextChange(value);
+        }
+        this._context = value;
+        this.onContextChange();
+        if (hasAfterContextChange<T>(this)) {
+            this.afterContextChange();
+        }
+    }
+
+    get context() {
+        return this._context;
+    }
+
+    viewContext: SlateViewContext<K>;
+
+    get editor() {
+        return this.viewContext && this.viewContext.editor;
+    }
+
+    nativeElement: HTMLElement;
+
+    abstract onContextChange();
+
+    abstract onInit();
+
+    abstract onDestroy();
+
+    abstract render();
+
+    abstract rerender();
+}
+
 export abstract class BaseElementFlavour<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseFlavour<
     SlateElementContext<T>,
     K
@@ -456,6 +456,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         if (ELEMENT_TO_COMPONENT.get(this.element) === this) {
             ELEMENT_TO_COMPONENT.delete(this.element);
         }
+        this.nativeElement?.remove();
     }
 
     onContextChange() {
@@ -528,14 +529,15 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
             NODE_TO_ELEMENT.delete(this.text);
         }
         ELEMENT_TO_NODE.delete(this.nativeElement);
+        this.nativeElement?.remove();
     }
 
     onContextChange() {
         if (!this.initialized) {
             return;
         }
-        this.updateWeakMap();
         this.rerender();
+        this.updateWeakMap();
     }
 
     abstract render();
