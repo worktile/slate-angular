@@ -16,6 +16,7 @@ export function createEmbeddedViewOrComponentOrFlavour(
         flavourRef.instance = new (viewType as any)();
         flavourRef.instance.context = context;
         flavourRef.instance.viewContext = viewContext;
+        flavourRef.instance.viewContainerRef = viewContainerRef;
         flavourRef.instance.onInit();
         return flavourRef;
     }

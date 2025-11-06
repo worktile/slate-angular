@@ -36,6 +36,8 @@ export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | Slat
 
     protected _context: T;
 
+    viewContainerRef: ViewContainerRef;
+
     set context(value: T) {
         if (hasBeforeContextChange<T>(this)) {
             this.beforeContextChange(value);
@@ -425,7 +427,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
             this.nativeElement.setAttribute(key, this._context.attributes[key]);
         }
         this.updateWeakMap();
-        this.listRender = new ListRender(this.viewContext, null, this.getOutletParent, this.getOutletElement);
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
         if (this.editor.isExpanded(this.element)) {
             this.listRender.initialize(this.children, this.element, this.childrenContext);
         }
