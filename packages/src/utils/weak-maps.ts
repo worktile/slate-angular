@@ -1,5 +1,6 @@
 import { Node, Editor } from 'slate';
-import { BaseElementComponent, BaseFlavour } from '../view/base';
+import { BaseElementComponent } from '../view/base';
+import { BaseFlavour } from '../view/flavour-base';
 
 /**
  * Symbols.

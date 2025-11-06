@@ -1,6 +1,6 @@
 import { TemplateRef } from '@angular/core';
 import { ComponentType, ViewType } from '../types/view';
-import { BaseFlavour } from '../view/base';
+import { BaseFlavour } from '../view/flavour-base';
 
 export function isTemplateRef<C>(value: ViewType): value is TemplateRef<C> {
     return value && value instanceof TemplateRef;

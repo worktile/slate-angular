@@ -20,6 +20,7 @@ import { LeavesRender } from './render/leaves-render';
 import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { getContentHeight } from '../utils/dom';
+import { BaseFlavour } from './flavour-base';
 
 /**
  * base class for template
@@ -330,49 +331,6 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     }
 }
 
-export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
-    static isFlavour = true;
-
-    initialized = false;
-
-    protected _context: T;
-
-    viewContainerRef: ViewContainerRef;
-
-    set context(value: T) {
-        if (hasBeforeContextChange<T>(this)) {
-            this.beforeContextChange(value);
-        }
-        this._context = value;
-        this.onContextChange();
-        if (hasAfterContextChange<T>(this)) {
-            this.afterContextChange();
-        }
-    }
-
-    get context() {
-        return this._context;
-    }
-
-    viewContext: SlateViewContext<K>;
-
-    get editor() {
-        return this.viewContext && this.viewContext.editor;
-    }
-
-    nativeElement: HTMLElement;
-
-    abstract onContextChange();
-
-    abstract onInit();
-
-    abstract onDestroy();
-
-    abstract render();
-
-    abstract rerender();
-}
-
 export abstract class BaseElementFlavour<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseFlavour<
     SlateElementContext<T>,
     K
@@ -515,8 +473,8 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
         this.render();
         this.updateWeakMap();
         this.initialized = true;
-        // this.leavesRender = new LeavesRender(this.viewContext, null, this.getOutletParent, this.getOutletElement);
-        // this.leavesRender.initialize(this.context);
+        this.leavesRender = new LeavesRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
+        this.leavesRender.initialize(this.context);
     }
 
     updateWeakMap() {
@@ -538,6 +496,7 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
         }
         this.rerender();
         this.updateWeakMap();
+        this.leavesRender.update(this.context);
     }
 
     abstract render();

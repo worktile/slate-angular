@@ -1,4 +1,4 @@
-import { BaseTextFlavour, DefaultTextFlavour } from 'slate-angular';
+import { DefaultTextFlavour } from 'slate-angular';
 
 export class RichTextFlavour extends DefaultTextFlavour {
     attributes = [];
