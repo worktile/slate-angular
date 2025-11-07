@@ -1,4 +1,3 @@
-import { SlateLeafContext, SlateViewContext } from '../../view/context';
 import { BaseLeafFlavour } from '../../view/flavour/leaf';
 import { Text, Node } from 'slate';
 
@@ -90,7 +89,6 @@ export class DefaultLeafFlavour extends BaseLeafFlavour {
 
     rerender() {
         const type = this.getType();
-        console.log('type', type, 'current type', this.type);
         if (type !== this.type) {
             const newNativeElement = this.createLeafNode(type);
             this.nativeElement.replaceWith(newNativeElement);
@@ -98,8 +96,10 @@ export class DefaultLeafFlavour extends BaseLeafFlavour {
             this.type = type;
             return;
         }
-        const stringNode = this.nativeElement.querySelector('[data-slate-string="true"]')!;
-        stringNode.textContent = this.leaf.text;
+        if (this.type === LeafType.normalString) {
+            const stringNode = this.nativeElement.querySelector('[data-slate-string="true"]')!;
+            stringNode.textContent = this.leaf.text;
+        }
     }
 
     getElementStringLength() {
