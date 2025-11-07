@@ -9,9 +9,9 @@ import { isDecoratorRangeListEqual } from '../../utils/range-list';
 import { SlateBlockCard } from '../../components/block-card/block-card.component';
 import { createEmbeddedViewOrComponentOrFlavour, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from 'slate-dom';
-import { FlavourRef } from '../../utils/view';
 import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour } from '../../components/text/default-text.flavour';
+import { FlavourRef } from '../flavour/ref';
 
 export class ListRender {
     private children: Descendant[];
@@ -24,7 +24,7 @@ export class ListRender {
 
     constructor(
         private viewContext: SlateViewContext,
-        private viewContainerRef: ViewContainerRef | null,
+        private viewContainerRef: ViewContainerRef,
         private getOutletParent: () => HTMLElement,
         private getOutletElement: () => HTMLElement | null
     ) {}
@@ -46,7 +46,6 @@ export class ListRender {
             this.blockCards.push(blockCard);
         });
         mount(this.views, this.blockCards, this.getOutletParent(), this.getOutletElement());
-
         const newDiffers = this.viewContext.editor.injector.get(IterableDiffers);
         this.differ = newDiffers.find(children).create(trackBy(this.viewContext));
         this.differ.diff(children);

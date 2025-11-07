@@ -1,7 +1,7 @@
 import { Text } from 'slate';
-import { SlateLeafContext } from './context';
-import { getContentHeight } from '../utils/dom';
-import { BaseFlavour } from './flavour-base';
+import { SlateLeafContext } from '../context';
+import { getContentHeight } from '../../utils/dom';
+import { BaseFlavour } from './base';
 
 export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
     placeholderElement: HTMLSpanElement;

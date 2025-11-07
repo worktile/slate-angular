@@ -1,4 +1,4 @@
-import { BaseTextFlavour } from '../../view/base';
+import { BaseTextFlavour } from '../../view/flavour/text';
 
 export class DefaultTextFlavour extends BaseTextFlavour {
     render() {

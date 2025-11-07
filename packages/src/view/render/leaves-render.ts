@@ -3,7 +3,7 @@ import { ComponentRef, EmbeddedViewRef, IterableDiffer, IterableDiffers, ViewCon
 import { ViewType } from '../../types/view';
 import { SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
 import { createEmbeddedViewOrComponentOrFlavour, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
-import { FlavourRef } from '../../utils/view';
+import { FlavourRef } from '../flavour/ref';
 import { DefaultLeafFlavour } from '../../components/leaf/default-leaf.flavour';
 
 export class LeavesRender {

@@ -1,7 +1,7 @@
 import { ViewContainerRef } from '@angular/core';
-import { AngularEditor } from '../plugins/angular-editor';
-import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from './context';
-import { hasAfterContextChange, hasBeforeContextChange } from './context-change';
+import { AngularEditor } from '../../plugins/angular-editor';
+import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
+import { hasAfterContextChange, hasBeforeContextChange } from '../context-change';
 
 export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | SlateElementContext, K extends AngularEditor = AngularEditor> {
     static isFlavour = true;

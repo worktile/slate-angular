@@ -1,4 +1,4 @@
-import { BaseElementFlavour } from "../view/base";
+import { BaseElementFlavour } from "../view/flavour/element";
 import { AngularEditor } from "../plugins/angular-editor";
 import { Element } from "slate";
 

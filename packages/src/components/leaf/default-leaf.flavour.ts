@@ -1,4 +1,4 @@
-import { BaseLeafFlavour } from '../../view/base-leaf';
+import { BaseLeafFlavour } from '../../view/flavour/leaf';
 
 export class DefaultLeafFlavour extends BaseLeafFlavour {
     isEmpty = false;

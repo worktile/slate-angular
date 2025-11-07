@@ -1,5 +1,5 @@
 import { TemplateRef } from '@angular/core';
-import { BaseFlavour } from '../view/flavour-base';
+import { BaseFlavour } from '../view/flavour/base';
 
 export interface ComponentType<T> {
     new (...args: any[]): T;

@@ -1,9 +1,10 @@
 import { Descendant } from 'slate';
 import { ComponentRef, EmbeddedViewRef, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../../types/view';
-import { FlavourRef, isComponentType, isFlavourType, isTemplateRef } from '../../utils/view';
+import { isComponentType, isFlavourType, isTemplateRef } from '../../utils/view';
 import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
 import { SlateBlockCard } from '../../components/block-card/block-card.component';
+import { FlavourRef } from '../flavour/ref';
 
 export function createEmbeddedViewOrComponentOrFlavour(
     viewType: ViewType,
