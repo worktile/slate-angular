@@ -55,41 +55,22 @@ export class SlateString extends ViewContainerItem<SlateStringContext> implement
         );
     }
 
-    // COMPAT: If the text is empty, it's because it's on the edge of an inline
-    // node, so we render a zero-width space so that the selection can be
-    // inserted next to it still.
-    isEmptyText() {
-        return this.context.leaf.text === '';
-    }
-
-    // COMPAT: Browsers will collapse trailing new lines at the end of blocks,
-    // so we need to add an extra trailing new lines to prevent that.
-    isCompatibleString() {
-        return this.context.isLast && this.context.leaf.text.slice(-1) === '\n';
-    }
-
-    // COMPAT: Render text inside void nodes with a zero-width space.
-    // So the node can contain selection but the text is not visible.
-    isVoid() {
-        return this.viewContext.editor.isVoid(this.context.parent);
-    }
-
     getViewType() {
-        if (this.isVoid()) {
-            // return this.viewContext.templateComponent.voidStringTemplate;
-        }
+        // if (this.isVoid()) {
+        //     // return this.viewContext.templateComponent.voidStringTemplate;
+        // }
 
-        if (this.isLineBreakEmptyString()) {
-            return SlateDefaultString;
-        }
+        // if (this.isLineBreakEmptyString()) {
+        //     return SlateDefaultString;
+        // }
 
-        if (this.isEmptyText()) {
-            // return this.viewContext.templateComponent.emptyTextTemplate;
-        }
+        // if (this.isEmptyText()) {
+        //     // return this.viewContext.templateComponent.emptyTextTemplate;
+        // }
 
-        if (this.isCompatibleString()) {
-            // return this.viewContext.templateComponent.compatibleStringTemplate;
-        }
+        // if (this.isCompatibleString()) {
+        //     // return this.viewContext.templateComponent.compatibleStringTemplate;
+        // }
 
         return SlateDefaultString;
     }
