@@ -49,14 +49,11 @@ import { SlateErrorCode } from '../../types/error';
 import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
-import { ComponentType, ViewType } from '../../types/view';
+import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import { isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
-import { SLATE_DEFAULT_TEXT_COMPONENT_TOKEN, SLATE_DEFAULT_VOID_TEXT_COMPONENT_TOKEN } from '../text/token';
-import { SLATE_DEFAULT_LEAF_COMPONENT_TOKEN } from '../leaf/token';
-import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from '../../view/base';
 import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 
@@ -1055,7 +1052,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
 
                 if (Hotkeys.isMoveLineForward(nativeEvent)) {
-                    console.log('move line forward');
                     event.preventDefault();
                     Transforms.move(editor, { unit: 'line' });
                     return;
