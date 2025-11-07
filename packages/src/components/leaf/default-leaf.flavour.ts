@@ -8,19 +8,19 @@ export class DefaultLeafFlavour extends BaseLeafFlavour {
             this.isEmpty = true;
             this.nativeElement = createEmptyOrVoidLeafNode();
         } else {
-            this.nativeElement = createDefaultLeafNode(this.text.text);
+            this.nativeElement = createDefaultLeafNode(this.leaf.text);
         }
     }
 
     rerender() {
-        if (this.isEmpty && this.text.text !== '') {
-            const nativeElement = createDefaultLeafNode(this.text.text);
+        if (this.isEmpty && this.leaf.text !== '') {
+            const nativeElement = createDefaultLeafNode(this.leaf.text);
             this.nativeElement.replaceWith(nativeElement);
             this.nativeElement = nativeElement;
             this.isEmpty = false;
             return;
         }
-        if (!this.isEmpty && this.text.text === '') {
+        if (!this.isEmpty && this.leaf.text === '') {
             const nativeElement = createEmptyOrVoidLeafNode();
             this.nativeElement.replaceWith(nativeElement);
             this.nativeElement = nativeElement;
@@ -28,7 +28,7 @@ export class DefaultLeafFlavour extends BaseLeafFlavour {
             return;
         }
         const stringNode = this.nativeElement.querySelector('[data-slate-string="true"]')!;
-        stringNode.textContent = this.text.text;
+        stringNode.textContent = this.leaf.text;
     }
 }
 
