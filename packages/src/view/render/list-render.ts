@@ -82,7 +82,7 @@ export class ListRender {
                 let blockCard: ComponentRef<SlateBlockCard> | null;
                 if (record.previousIndex === null) {
                     view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
-                    // blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
+                    blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                     newContexts.push(context);
                     newViews.push(view);
                     newBlockCards.push(blockCard);
@@ -102,7 +102,7 @@ export class ListRender {
                     const previousBlockCard = this.blockCards[record.previousIndex];
                     if (previousViewType !== viewType) {
                         view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
-                        // blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
+                        blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
                         const firstRootNode = getRootNodes(previousView, previousBlockCard)[0];
                         const newRootNodes = getRootNodes(view, blockCard);
                         firstRootNode.replaceWith(...newRootNodes);
