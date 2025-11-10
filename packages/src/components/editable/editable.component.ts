@@ -399,7 +399,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (this.isComposing) {
             // Composition input text be not rendered when user composition input with selection is expanded
             // At this time, the following matching conditions are met, assign isComposing to false, and the status is wrong
-            // this time condition is true and isComposiing is assigned false
+            // this time condition is true and isComposing is assigned false
             // Therefore, need to wait for the composition input text to be rendered before performing condition matching
             setTimeout(() => {
                 const textNode = Node.get(this.editor, this.editor.selection.anchor.path);

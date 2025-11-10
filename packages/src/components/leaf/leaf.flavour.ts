@@ -131,6 +131,7 @@ export const createEmptyOrVoidLeafNode = () => {
     stringNode.setAttribute('data-slate-length', '0');
     const zeroWidthSpace = document.createTextNode('\uFEFF');
     stringNode.appendChild(zeroWidthSpace);
+    stringNode.setAttribute('editable-text', '');
     return leaf;
 };
 
@@ -140,11 +141,12 @@ export const createCompatibleLeafNode = (text: string) => {
     leaf.appendChild(stringNode);
     stringNode.setAttribute('data-slate-string', 'true');
     stringNode.textContent = text;
-    const span = document.createElement('span');
+    stringNode.setAttribute('editable-text', '');
+    const zeroWidthSpan = document.createElement('span');
     const zeroWidthSpace = document.createTextNode('\uFEFF');
-    span.setAttribute('data-slate-zero-width', '');
-    span.appendChild(zeroWidthSpace);
-    stringNode.appendChild(span);
+    zeroWidthSpan.setAttribute('data-slate-zero-width', '');
+    zeroWidthSpan.appendChild(zeroWidthSpace);
+    stringNode.appendChild(zeroWidthSpan);
     return leaf;
 };
 
