@@ -94,6 +94,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         if (!this.initialized) {
             return;
         }
+        this.rerender();
         this.updateWeakMap();
         this.updateChildrenView();
     }

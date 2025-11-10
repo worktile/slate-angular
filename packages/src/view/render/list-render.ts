@@ -10,7 +10,7 @@ import { SlateBlockCard } from '../../components/block-card/block-card.component
 import { createEmbeddedViewOrComponentOrFlavour, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from 'slate-dom';
 import { DefaultElementFlavour } from '../../components/element.flavour';
-import { DefaultTextFlavour } from '../../components/text/default-text.flavour';
+import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { FlavourRef } from '../flavour/ref';
 
 export class ListRender {
@@ -272,7 +272,7 @@ export function getViewType(item: Descendant, parent: Ancestor, viewContext: Sla
         return (viewContext.renderElement && viewContext.renderElement(item)) || DefaultElementFlavour;
     } else {
         const isVoid = viewContext.editor.isVoid(parent as Element);
-        return isVoid ? DefaultTextFlavour : (viewContext.renderText && viewContext.renderText(item)) || DefaultTextFlavour;
+        return isVoid ? VoidTextFlavour : (viewContext.renderText && viewContext.renderText(item)) || DefaultTextFlavour;
     }
 }
 
