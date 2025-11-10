@@ -2,7 +2,7 @@ import { SlateLeafContext } from '../../view/context';
 import { SlateViewContext } from '../../view/context';
 import { Text, Node } from 'slate';
 
-export enum LeafType {
+export enum StringType {
     'normalString' = 'normalString',
     'lineBreakEmptyString' = 'lineBreakEmptyString',
     'normalEmptyText' = 'normalEmptyText',
@@ -18,7 +18,7 @@ export class SlateStringRender {
         public viewContext: SlateViewContext
     ) {}
 
-    type: LeafType;
+    type: StringType;
 
     // COMPAT: If the text is empty, it's because it's on the edge of an inline
     // node, so we render a zero-width space so that the selection can be
@@ -56,20 +56,20 @@ export class SlateStringRender {
         );
     }
 
-    createStringNode(type: LeafType) {
+    createStringNode(type: StringType) {
         let newNativeElement: HTMLElement;
         switch (type) {
-            case LeafType.lineBreakEmptyString:
+            case StringType.lineBreakEmptyString:
                 newNativeElement = createLineBreakEmptyStringDOM(this.getElementStringLength());
                 break;
-            case LeafType.voidString:
-            case LeafType.normalEmptyText:
+            case StringType.voidString:
+            case StringType.normalEmptyText:
                 newNativeElement = createEmptyOrVoidStringNode();
                 break;
-            case LeafType.compatibleString:
+            case StringType.compatibleString:
                 newNativeElement = createCompatibleStringNode(this.leaf.text);
                 break;
-            case LeafType.normalString:
+            case StringType.normalString:
                 newNativeElement = createDefaultStringNode(this.leaf.text);
                 break;
             default:
@@ -86,18 +86,18 @@ export class SlateStringRender {
 
     getType() {
         if (this.isLineBreakEmptyString()) {
-            return LeafType.lineBreakEmptyString;
+            return StringType.lineBreakEmptyString;
         }
         if (this.isVoid()) {
-            return LeafType.voidString;
+            return StringType.voidString;
         }
         if (this.isEmptyText()) {
-            return LeafType.normalEmptyText;
+            return StringType.normalEmptyText;
         }
         if (this.isCompatibleString()) {
-            return LeafType.compatibleString;
+            return StringType.compatibleString;
         }
-        return LeafType.normalString;
+        return StringType.normalString;
     }
 
     update(context: SlateLeafContext, viewContext: SlateViewContext) {
@@ -111,7 +111,7 @@ export class SlateStringRender {
             this.type = type;
             return;
         }
-        if (this.type === LeafType.normalString) {
+        if (this.type === StringType.normalString) {
             this.nativeElement.textContent = this.leaf.text;
         }
     }
