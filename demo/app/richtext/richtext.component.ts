@@ -8,6 +8,7 @@ import { SlateElement } from '../../../packages/src/components/element/element.c
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
+import { RichTextFlavour } from './richtext.flavour';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
@@ -192,7 +193,7 @@ export class DemoRichtextComponent implements OnInit {
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoTextMarkComponent;
+            return RichTextFlavour;
         }
     };
 

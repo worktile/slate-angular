@@ -14,7 +14,7 @@ import { DemoButtonComponent } from './components/button/button.component';
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
 import { DemoSearchHighlightingComponent } from './search-highlighting/search-highlighting.component';
-import { DemoLeafComponent } from './search-highlighting/leaf.component';
+import { DemoLeafComponent } from './search-highlighting/hightlighting-leaf.flavour';
 import { DemoMentionsComponent } from './mentions/mentions.component';
 import { DemoReadonlyComponent } from './readonly/readonly.component';
 import { DemoPlaceholderComponent } from './placeholder/placeholder.component';

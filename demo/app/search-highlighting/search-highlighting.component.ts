@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
 import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
-import { DemoLeafComponent } from './leaf.component';
+import { DemoLeafComponent } from './hightlighting-leaf.flavour';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { FormsModule } from '@angular/forms';
 

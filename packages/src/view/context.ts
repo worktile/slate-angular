@@ -1,16 +1,9 @@
 import { NodeEntry, Range, Element, Ancestor, Text, Path, LeafPosition } from 'slate';
-import { SlateStringTemplate } from '../components/string/template.component';
 import { AngularEditor } from '../plugins/angular-editor';
-import { ComponentType, ViewType } from '../types/view';
-import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from './base';
+import { ViewType } from '../types/view';
 
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
-    templateComponent: SlateStringTemplate;
-    defaultElement: ComponentType<BaseElementComponent>;
-    defaultText: ComponentType<BaseTextComponent>;
-    defaultVoidText: ComponentType<BaseTextComponent>;
-    defaultLeaf: ComponentType<BaseLeafComponent>;
     trackBy: (element: Element) => any;
     renderElement?: (element: Element) => ViewType;
     renderLeaf?: (text: Text) => ViewType;

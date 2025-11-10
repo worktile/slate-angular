@@ -1,16 +1,26 @@
 import { Descendant } from 'slate';
 import { ComponentRef, EmbeddedViewRef, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../../types/view';
-import { isComponentType, isTemplateRef } from '../../utils/view';
+import { isComponentType, isFlavourType, isTemplateRef } from '../../utils/view';
 import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
 import { SlateBlockCard } from '../../components/block-card/block-card.component';
+import { FlavourRef } from '../flavour/ref';
 
-export function createEmbeddedViewOrComponent(
+export function createEmbeddedViewOrComponentOrFlavour(
     viewType: ViewType,
     context: any,
     viewContext: SlateViewContext,
     viewContainerRef: ViewContainerRef
 ) {
+    if (isFlavourType(viewType)) {
+        const flavourRef = new FlavourRef();
+        flavourRef.instance = new (viewType as any)();
+        flavourRef.instance.context = context;
+        flavourRef.instance.viewContext = viewContext;
+        flavourRef.instance.viewContainerRef = viewContainerRef;
+        flavourRef.instance.onInit();
+        return flavourRef;
+    }
     if (isTemplateRef(viewType)) {
         const embeddedViewContext = {
             context,
@@ -32,10 +42,14 @@ export function createEmbeddedViewOrComponent(
 }
 
 export function updateContext(
-    view: EmbeddedViewRef<any> | ComponentRef<any>,
+    view: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef,
     newContext: SlateElementContext | SlateTextContext | SlateLeafContext,
     viewContext: SlateViewContext
 ) {
+    if (view instanceof FlavourRef) {
+        view.instance.context = newContext;
+        return;
+    }
     if (view instanceof ComponentRef) {
         view.instance.context = newContext;
     } else {
@@ -46,7 +60,7 @@ export function updateContext(
 }
 
 export function mount(
-    views: (EmbeddedViewRef<any> | ComponentRef<any>)[],
+    views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[],
     blockCards: (ComponentRef<SlateBlockCard> | null)[] | null,
     outletParent: HTMLElement,
     outletElement: HTMLElement | null
@@ -66,9 +80,15 @@ export function mount(
     }
 }
 
-export function getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any>, blockCard?: ComponentRef<SlateBlockCard>): HTMLElement[] {
+export function getRootNodes(
+    ref: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef,
+    blockCard?: ComponentRef<SlateBlockCard>
+): HTMLElement[] {
     if (blockCard) {
         return [blockCard.instance.nativeElement];
+    }
+    if (ref instanceof FlavourRef) {
+        return [ref.instance.nativeElement];
     }
     if (ref instanceof ComponentRef) {
         ((ref.hostView as any).rootNodes as (HTMLElement | any)[]).forEach(ele => {
