@@ -20,6 +20,7 @@ import { LeavesRender } from './render/leaves-render';
 import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { getContentHeight } from '../utils/dom';
+import { SlateStringRender } from '../components/string/string-render';
 
 /**
  * base class for template
@@ -260,6 +261,8 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
     placeholderElement: HTMLSpanElement;
 
+    stringRender: SlateStringRender | null = null;
+
     @HostBinding('attr.data-slate-leaf') isSlateLeaf = true;
 
     get text(): Text {
@@ -275,6 +278,13 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     }
 
     onContextChange() {
+        if (!this.initialized) {
+            this.stringRender = new SlateStringRender(this.context, this.viewContext);
+            const stringNode = this.stringRender.render();
+            this.nativeElement.appendChild(stringNode);
+        } else {
+            this.stringRender?.update(this.context, this.viewContext);
+        }
         if (!this.initialized) {
             return;
         }

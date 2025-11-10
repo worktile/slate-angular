@@ -1,8 +1,6 @@
 import { NodeEntry, Range, Element, Ancestor, Text, Path, LeafPosition } from 'slate';
-import { SlateStringTemplate } from '../components/string/template.component';
 import { AngularEditor } from '../plugins/angular-editor';
-import { ComponentType, ViewType } from '../types/view';
-import { BaseElementComponent, BaseLeafComponent, BaseTextComponent } from './base';
+import { ViewType } from '../types/view';
 
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;

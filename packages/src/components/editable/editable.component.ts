@@ -46,7 +46,6 @@ import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
 import { SlateErrorCode } from '../../types/error';
-import { SlateStringTemplate } from '../string/template.component';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
@@ -79,7 +78,7 @@ const forceOnDOMPaste = IS_SAFARI;
             multi: true
         }
     ],
-    imports: [SlateStringTemplate]
+    imports: []
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
     viewContext: SlateViewContext;
@@ -154,9 +153,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
     //#endregion
 
-    @ViewChild('templateComponent', { static: true, read: ElementRef })
-    templateElementRef: ElementRef<any>;
-
     viewContainerRef = inject(ViewContainerRef);
 
     getOutletParent = () => {
@@ -192,9 +188,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
         this.initializeViewContext();
         this.initializeContext();
-
-        // remove unused DOM, just keep templateComponent instance
-        this.templateElementRef.nativeElement.remove();
 
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';

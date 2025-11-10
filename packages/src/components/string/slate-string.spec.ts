@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testi
 import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
 import { Editor, Transforms } from 'slate';
 
-describe('Default String Render', () => {
+describe('String Render', () => {
     let component: AdvancedEditableComponent;
     let fixture: ComponentFixture<AdvancedEditableComponent>;
 
