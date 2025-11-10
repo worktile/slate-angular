@@ -6,11 +6,12 @@ import { take } from 'rxjs/operators';
 import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { H1Flavour } from './heading.flavour';
 
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html',
-    imports: [SlateEditable, FormsModule, SlateElement]
+    imports: [SlateEditable, FormsModule]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     mode: 'default' | 'component' = 'default';
@@ -40,6 +41,9 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     renderElement() {
         return (element: any) => {
+            if (element.type === 'heading-one') {
+                return H1Flavour;
+            }
             return null;
         };
     }

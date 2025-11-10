@@ -14,6 +14,7 @@ export * from './module';
 export * from './types/error';
 export * from './view/base';
 export * from './view/context';
+export * from './view/flavour';
 export * from './view/context-change';
 export * from './utils';
 export * from './types';
