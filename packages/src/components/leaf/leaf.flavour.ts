@@ -142,8 +142,9 @@ export const createCompatibleLeafNode = (text: string) => {
     stringNode.textContent = text;
     const span = document.createElement('span');
     const zeroWidthSpace = document.createTextNode('\uFEFF');
+    span.setAttribute('data-slate-zero-width', '');
     span.appendChild(zeroWidthSpace);
-    stringNode.appendChild(zeroWidthSpace);
+    stringNode.appendChild(span);
     return leaf;
 };
 
