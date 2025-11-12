@@ -20,6 +20,7 @@ import { LeavesRender } from './render/leaves-render';
 import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { getContentHeight } from '../utils/dom';
+import { SlateStringRender } from '../components/string/string-render';
 
 /**
  * base class for template
@@ -75,83 +76,6 @@ export abstract class BaseComponent<
     public cdr = inject(ChangeDetectorRef);
 
     abstract onContextChange();
-}
-
-/**
- * base class for custom leaf component
- */
-@Directive()
-export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
-    placeholderElement: HTMLSpanElement;
-
-    @HostBinding('attr.data-slate-leaf') isSlateLeaf = true;
-
-    get text(): Text {
-        return this.context && this.context.text;
-    }
-
-    get leaf(): Text {
-        return this.context && this.context.leaf;
-    }
-
-    ngOnInit() {
-        this.initialized = true;
-    }
-
-    onContextChange() {
-        if (!this.initialized) {
-            return;
-        }
-    }
-
-    renderPlaceholder() {
-        // issue-1: IME input was interrupted
-        // issue-2: IME input focus jumping
-        // Issue occurs when the span node of the placeholder is before the slateString span node
-        if (this.context.leaf['placeholder']) {
-            if (!this.placeholderElement) {
-                this.createPlaceholder();
-            }
-            this.updatePlaceholder();
-        } else {
-            this.destroyPlaceholder();
-        }
-    }
-
-    createPlaceholder() {
-        const placeholderElement = document.createElement('span');
-        placeholderElement.innerText = this.context.leaf['placeholder'];
-        placeholderElement.contentEditable = 'false';
-        placeholderElement.setAttribute('data-slate-placeholder', 'true');
-        this.placeholderElement = placeholderElement;
-        this.nativeElement.classList.add('leaf-with-placeholder');
-        this.nativeElement.appendChild(placeholderElement);
-
-        setTimeout(() => {
-            const editorElement = this.nativeElement.closest('.the-editor-typo');
-            const editorContentHeight = getContentHeight(editorElement);
-            if (editorContentHeight > 0) {
-                // Not supported webkitLineClamp exceeds height hiding
-                placeholderElement.style.maxHeight = `${editorContentHeight}px`;
-            }
-            const lineClamp = Math.floor(editorContentHeight / this.nativeElement.offsetHeight) || 0;
-            placeholderElement.style.webkitLineClamp = `${Math.max(lineClamp, 1)}`;
-        });
-    }
-
-    updatePlaceholder() {
-        if (this.placeholderElement.innerText !== this.context.leaf['placeholder']) {
-            this.placeholderElement.innerText = this.context.leaf['placeholder'];
-        }
-    }
-
-    destroyPlaceholder() {
-        if (this.placeholderElement) {
-            this.placeholderElement.remove();
-            this.placeholderElement = null;
-            this.nativeElement.classList.remove('leaf-with-placeholder');
-        }
-    }
 }
 
 /**
@@ -327,5 +251,91 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
             return;
         }
         this.leavesRender.update(this.context);
+    }
+}
+
+/**
+ * base class for custom leaf component
+ */
+@Directive()
+export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
+    placeholderElement: HTMLSpanElement;
+
+    stringRender: SlateStringRender | null = null;
+
+    @HostBinding('attr.data-slate-leaf') isSlateLeaf = true;
+
+    get text(): Text {
+        return this.context && this.context.text;
+    }
+
+    get leaf(): Text {
+        return this.context && this.context.leaf;
+    }
+
+    ngOnInit() {
+        this.initialized = true;
+    }
+
+    onContextChange() {
+        if (!this.initialized) {
+            this.stringRender = new SlateStringRender(this.context, this.viewContext);
+            const stringNode = this.stringRender.render();
+            this.nativeElement.appendChild(stringNode);
+        } else {
+            this.stringRender?.update(this.context, this.viewContext);
+        }
+        if (!this.initialized) {
+            return;
+        }
+    }
+
+    renderPlaceholder() {
+        // issue-1: IME input was interrupted
+        // issue-2: IME input focus jumping
+        // Issue occurs when the span node of the placeholder is before the slateString span node
+        if (this.context.leaf['placeholder']) {
+            if (!this.placeholderElement) {
+                this.createPlaceholder();
+            }
+            this.updatePlaceholder();
+        } else {
+            this.destroyPlaceholder();
+        }
+    }
+
+    createPlaceholder() {
+        const placeholderElement = document.createElement('span');
+        placeholderElement.innerText = this.context.leaf['placeholder'];
+        placeholderElement.contentEditable = 'false';
+        placeholderElement.setAttribute('data-slate-placeholder', 'true');
+        this.placeholderElement = placeholderElement;
+        this.nativeElement.classList.add('leaf-with-placeholder');
+        this.nativeElement.appendChild(placeholderElement);
+
+        setTimeout(() => {
+            const editorElement = this.nativeElement.closest('.the-editor-typo');
+            const editorContentHeight = getContentHeight(editorElement);
+            if (editorContentHeight > 0) {
+                // Not supported webkitLineClamp exceeds height hiding
+                placeholderElement.style.maxHeight = `${editorContentHeight}px`;
+            }
+            const lineClamp = Math.floor(editorContentHeight / this.nativeElement.offsetHeight) || 0;
+            placeholderElement.style.webkitLineClamp = `${Math.max(lineClamp, 1)}`;
+        });
+    }
+
+    updatePlaceholder() {
+        if (this.placeholderElement.innerText !== this.context.leaf['placeholder']) {
+            this.placeholderElement.innerText = this.context.leaf['placeholder'];
+        }
+    }
+
+    destroyPlaceholder() {
+        if (this.placeholderElement) {
+            this.placeholderElement.remove();
+            this.placeholderElement = null;
+            this.nativeElement.classList.remove('leaf-with-placeholder');
+        }
     }
 }

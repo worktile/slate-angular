@@ -1,11 +1,10 @@
 import { Component, inject, Renderer2 } from '@angular/core';
 import { BaseLeafComponent } from 'slate-angular';
-import { SlateString } from '../../../packages/src/components/string/string.component';
 
 @Component({
     selector: 'span[demoLeaf]',
-    template: ` <span slateString [context]="context" [viewContext]="viewContext"><span></span></span> `,
-    imports: [SlateString]
+    template: ``,
+    imports: []
 })
 export class DemoLeafComponent extends BaseLeafComponent {
     private renderer = inject(Renderer2);

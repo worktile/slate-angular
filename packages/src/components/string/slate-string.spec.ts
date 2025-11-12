@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testi
 import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
 import { Editor, Transforms } from 'slate';
 
-describe('Default String Render', () => {
+describe('String Render', () => {
     let component: AdvancedEditableComponent;
     let fixture: ComponentFixture<AdvancedEditableComponent>;
 
@@ -84,7 +84,7 @@ describe('Default String Render', () => {
         flush();
         fixture.detectChanges();
         const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        let editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(2);
         expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
@@ -97,6 +97,7 @@ describe('Default String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
+        editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText.childNodes.length).toEqual(1);
         expect(editableText.firstChild.textContent).toEqual(newText);
     }));
@@ -114,7 +115,7 @@ describe('Default String Render', () => {
         flush();
         fixture.detectChanges();
         const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        let editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(1);
         expect(editableText.firstChild.textContent).toEqual(text);
@@ -125,6 +126,7 @@ describe('Default String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
+        editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText.childNodes.length).toEqual(2);
         expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
         expect(editableText.lastElementChild.tagName).toEqual(`BR`);
