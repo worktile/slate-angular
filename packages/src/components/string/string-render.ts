@@ -125,6 +125,7 @@ export const createDefaultStringNode = (text: string) => {
     const stringNode = document.createElement('span');
     stringNode.textContent = text;
     stringNode.setAttribute('data-slate-string', 'true');
+    stringNode.setAttribute('editable-text', '');
     return stringNode;
 };
 
@@ -160,6 +161,7 @@ export const createLineBreakEmptyStringDOM = (elementStringLength: number) => {
     stringNode.appendChild(zeroWidthSpace);
     const brNode = document.createElement('br');
     stringNode.appendChild(brNode);
+    stringNode.setAttribute('editable-text', '');
     return stringNode;
 };
 

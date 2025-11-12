@@ -84,7 +84,7 @@ describe('String Render', () => {
         flush();
         fixture.detectChanges();
         const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        let editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(2);
         expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
@@ -97,6 +97,7 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
+        editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText.childNodes.length).toEqual(1);
         expect(editableText.firstChild.textContent).toEqual(newText);
     }));
@@ -114,7 +115,7 @@ describe('String Render', () => {
         flush();
         fixture.detectChanges();
         const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        let editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(1);
         expect(editableText.firstChild.textContent).toEqual(text);
@@ -125,6 +126,7 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
+        editableText = paragraphElement.querySelector('[editable-text]');
         expect(editableText.childNodes.length).toEqual(2);
         expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
         expect(editableText.lastElementChild.tagName).toEqual(`BR`);
