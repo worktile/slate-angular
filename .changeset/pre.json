@@ -4,5 +4,7 @@
   "initialVersions": {
     "slate-angular": "19.3.1"
   },
-  "changesets": []
+  "changesets": [
+    "loud-symbols-worry"
+  ]
 }

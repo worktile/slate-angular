@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.4.0-next.0
+
+### Minor Changes
+
+- [#300](https://github.com/worktile/slate-angular/pull/300) [`7959412ee1b08bc75ffa45dedb9f19847080f174`](https://github.com/worktile/slate-angular/commit/7959412ee1b08bc75ffa45dedb9f19847080f174) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support flavour view(based native dom) to improve performance
+
 ## 19.3.1
 
 ### Patch Changes
