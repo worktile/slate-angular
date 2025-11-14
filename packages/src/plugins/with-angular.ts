@@ -1,5 +1,5 @@
 import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
-import { OriginEvent } from '../types/clipboard';
+import { ClipboardData, OriginEvent } from '../types/clipboard';
 import { SlateError } from '../types/error';
 import { completeTable, isInvalidTable } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
@@ -114,16 +114,16 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     };
 
     e.insertData = async (data: DataTransfer) => {
-        if (!(await e.customInsertFragmentData(data))) {
+        if (!(await e.customInsertFragmentData(data, null))) {
             e.insertTextData(data);
         }
     };
 
-    e.customInsertFragmentData = async (data: DataTransfer): Promise<boolean> => {
+    e.customInsertFragmentData = async (data: DataTransfer, contextClipboardData: ClipboardData): Promise<boolean> => {
         /**
          * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
          */
-        const clipboardData = await getClipboardData(data);
+        const clipboardData = contextClipboardData || (await getClipboardData(data));
         if (clipboardData && clipboardData.elements) {
             e.insertFragment(clipboardData.elements);
             return true;

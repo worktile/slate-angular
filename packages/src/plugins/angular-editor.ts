@@ -4,7 +4,7 @@ import { SlateError } from '../types/error';
 import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET } from '../utils/block-card';
 import { CustomDOMEditor } from './with-dom';
 import { DOMEditor, EDITOR_TO_ELEMENT, IS_FOCUSED } from 'slate-dom';
-import { getSelection } from '../utils/dom';
+import { ClipboardData } from '../types/clipboard';
 
 /**
  * An Angular and DOM-specific version of the `Editor` interface.
@@ -17,7 +17,7 @@ export interface AngularEditor extends CustomDOMEditor {
     isBlockCard: (node: Node) => boolean;
     isExpanded: (node: Element) => boolean;
     onError: (errorData: SlateError) => void;
-    customInsertFragmentData: (data: DataTransfer) => Promise<boolean>;
+    customInsertFragmentData: (data: DataTransfer, clipboardData: ClipboardData | null) => Promise<boolean>;
     customInsertTextData: (data: DataTransfer) => Promise<boolean>;
 }
 
