@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.4.0-next.1
+
+### Patch Changes
+
+- [#301](https://github.com/worktile/slate-angular/pull/301) [`a54438dec2351abcc87f60c4a0569338f77c56aa`](https://github.com/worktile/slate-angular/commit/a54438dec2351abcc87f60c4a0569338f77c56aa) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support contextClipboardData param on customInsertFragmentData
+
 ## 19.4.0-next.0
 
 ### Minor Changes
