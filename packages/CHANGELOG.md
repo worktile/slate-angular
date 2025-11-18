@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.0.0-next.2
+
+### Major Changes
+
+- [#302](https://github.com/worktile/slate-angular/pull/302) [`f9a8edde606de908c8edf72d3b842da8f8337ba5`](https://github.com/worktile/slate-angular/commit/f9a8edde606de908c8edf72d3b842da8f8337ba5) Thanks [@wangyuan-ky](https://github.com/wangyuan-ky)! - upgrade angular v20
+
 ## 19.4.0-next.1
 
 ### Patch Changes

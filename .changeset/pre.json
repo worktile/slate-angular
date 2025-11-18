@@ -5,6 +5,7 @@
     "slate-angular": "19.3.1"
   },
   "changesets": [
+    "breezy-humans-press",
     "happy-dots-burn",
     "loud-symbols-worry"
   ]
