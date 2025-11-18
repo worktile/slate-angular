@@ -8,15 +8,25 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2020", "dom.iterable", "dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2020",
+      "dom.iterable",
+      "dom"
+    ],
     "resolveJsonModule": true,
     "paths": {
-      "slate-angular": ["packages/src/public-api"],
-      "slate-angular/*": ["packages/src/*"]
+      "slate-angular": [
+        "packages/src/public-api"
+      ],
+      "slate-angular/*": [
+        "packages/src/*"
+      ]
     },
     "useDefineForClassFields": false
   },
