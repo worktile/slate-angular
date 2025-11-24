@@ -1,12 +1,11 @@
-import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { faker } from '@faker-js/faker';
 import { createEditor } from 'slate';
 import { withAngular } from 'slate-angular';
 import { take } from 'rxjs/operators';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
-import { H1Flavour } from './heading.flavour';
+import { H1Flavour } from '../flavours/heading.flavour';
 
 @Component({
     selector: 'demo-huge-document',

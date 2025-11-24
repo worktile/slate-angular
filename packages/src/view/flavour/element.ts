@@ -119,7 +119,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         };
     }
 
-    abstract render();
+    abstract render(): void;
 
-    abstract rerender();
+    abstract rerender(): void;
 }

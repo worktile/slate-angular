@@ -2,13 +2,15 @@ import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
 import { createEditor, Text, Editor, Element, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
-import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
+import { MarkTypes } from '../components/text/text.component';
 import isHotkey from 'is-hotkey';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DemoButtonComponent } from '../components/button/button.component';
 import { RichTextFlavour } from './richtext.flavour';
+import { H1Flavour, H2Flavour, H3Flavour, H4Flavour } from '../flavours/heading.flavour';
+import { OLFlavour, ULFlavour, LIFlavour } from '../flavours/list.flavour';
+import { BlockquoteFlavour } from '../flavours/quote.flavour';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
@@ -24,7 +26,7 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 @Component({
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
-    imports: [DemoButtonComponent, SlateEditable, FormsModule, SlateElement]
+    imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;
@@ -168,25 +170,28 @@ export class DemoRichtextComponent implements OnInit {
 
     renderElement = (element: Element & { type: string }) => {
         if (element.type === 'heading-one') {
-            return this.headingOneTemplate;
+            return H1Flavour;
         }
         if (element.type === 'heading-two') {
-            return this.headingTwoTemplate;
+            return H2Flavour;
         }
         if (element.type === 'heading-three') {
-            return this.headingThreeTemplate;
+            return H3Flavour;
+        }
+        if (element.type === 'heading-four') {
+            return H4Flavour;
         }
         if (element.type === 'block-quote') {
-            return this.blockquoteTemplate;
+            return BlockquoteFlavour;
         }
         if (element.type === 'numbered-list') {
-            return this.olTemplate;
+            return OLFlavour;
         }
         if (element.type === 'bulleted-list') {
-            return this.ulTemplate;
+            return ULFlavour;
         }
         if (element.type === 'list-item') {
-            return this.liTemplate;
+            return LIFlavour;
         }
         return null;
     };
