@@ -227,9 +227,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editor.children = value;
             this.initializeContext();
             if (!this.listRender.initialized) {
-                console.time('initialize list render');
                 this.listRender.initialize(this.editor.children, this.editor, this.context);
-                console.timeEnd('initialize list render');
             } else {
                 this.listRender.update(this.editor.children, this.editor, this.context);
             }

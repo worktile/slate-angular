@@ -6,8 +6,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
     standalone: true
 })
 export class SlateBlockCard implements OnInit {
-    @ViewChild('centerContianer', { static: true })
-    centerContianer: ElementRef;
+    @ViewChild('centerContainer', { static: true })
+    centerContainer: ElementRef;
 
     centerRootNodes: HTMLElement[];
 
@@ -16,7 +16,7 @@ export class SlateBlockCard implements OnInit {
     }
 
     get centerContainerElement() {
-        return this.centerContianer.nativeElement as HTMLElement;
+        return this.centerContainer.nativeElement as HTMLElement;
     }
 
     constructor(private elementRef: ElementRef) {}
