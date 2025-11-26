@@ -1,5 +1,19 @@
 # Changelog
 
+## 20.0.0
+
+### Major Changes
+
+- [#302](https://github.com/worktile/slate-angular/pull/302) [`f9a8edde606de908c8edf72d3b842da8f8337ba5`](https://github.com/worktile/slate-angular/commit/f9a8edde606de908c8edf72d3b842da8f8337ba5) Thanks [@wangyuan-ky](https://github.com/wangyuan-ky)! - upgrade angular v20
+
+### Minor Changes
+
+- [#300](https://github.com/worktile/slate-angular/pull/300) [`7959412ee1b08bc75ffa45dedb9f19847080f174`](https://github.com/worktile/slate-angular/commit/7959412ee1b08bc75ffa45dedb9f19847080f174) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support flavour view(based native dom) to improve performance
+
+### Patch Changes
+
+- [#301](https://github.com/worktile/slate-angular/pull/301) [`a54438dec2351abcc87f60c4a0569338f77c56aa`](https://github.com/worktile/slate-angular/commit/a54438dec2351abcc87f60c4a0569338f77c56aa) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support contextClipboardData param on customInsertFragmentData
+
 ## 20.0.0-next.2
 
 ### Major Changes
