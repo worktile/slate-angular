@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { AdvancedEditableComponent, TestingLeafComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
+import { AdvancedEditableComponent, configureBasicEditableTestingModule } from '../../testing';  
 import { Editor, Transforms } from 'slate';
 
 describe('String Render', () => {
@@ -7,7 +7,7 @@ describe('String Render', () => {
     let fixture: ComponentFixture<AdvancedEditableComponent>;
 
     beforeEach(fakeAsync(() => {
-        configureBasicEditableTestingModule([AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
+        configureBasicEditableTestingModule([AdvancedEditableComponent], []);
         fixture = TestBed.createComponent(AdvancedEditableComponent);
         component = fixture.componentInstance;
     }));

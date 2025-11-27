@@ -1,10 +1,9 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { createEmptyDocument, createMultipleParagraph } from '../../testing/create-document';
+import { createMultipleParagraph } from '../../testing/create-document';
 import {
     AdvancedEditableComponent,
     EditableWithOutletComponent,
     TestElementWithOutletComponent,
-    TestingLeafComponent,
     configureBasicEditableTestingModule
 } from '../../testing';
 import { Editor, Transforms, Node, Element } from 'slate';
@@ -17,7 +16,7 @@ describe('list-render', () => {
         let editor: Editor;
 
         beforeEach(fakeAsync(() => {
-            configureBasicEditableTestingModule([AdvancedEditableComponent, TestingLeafComponent], [TestingLeafComponent]);
+            configureBasicEditableTestingModule([AdvancedEditableComponent], []);
             fixture = TestBed.createComponent(AdvancedEditableComponent);
             component = fixture.componentInstance;
             component.value = createMultipleParagraph();

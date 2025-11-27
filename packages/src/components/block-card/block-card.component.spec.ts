@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { ImageEditableComponent, configureBasicEditableTestingModule } from '../../testing';
+import { SLATE_BLOCK_CARD_CLASS_NAME } from './block-card';
 
 describe('Block Card Component', () => {
     let component: ImageEditableComponent;
@@ -17,7 +17,7 @@ describe('Block Card Component', () => {
 
     it('The block-card component should be created', fakeAsync(() => {
         let blockCardElement: HTMLElement;
-        blockCardElement = fixture.debugElement.query(By.css('.slate-block-card')).nativeElement;
+        blockCardElement = (fixture.debugElement.nativeNode as HTMLElement).querySelector(`.${SLATE_BLOCK_CARD_CLASS_NAME}`);
         expect(blockCardElement).toBeTruthy();
     }));
 });

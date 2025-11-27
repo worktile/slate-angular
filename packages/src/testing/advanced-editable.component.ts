@@ -3,7 +3,6 @@ import { createEditor, Element, NodeEntry, Text } from 'slate';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
-import { TestingLeafComponent } from './leaf.component';
 import { AngularEditor } from '../plugins/angular-editor';
 import { DOMRange } from 'slate-dom';
 
@@ -63,9 +62,6 @@ export class AdvancedEditableComponent implements OnInit {
     }
 
     renderLeaf = (text: Text) => {
-        if (text['highlight']) {
-            return TestingLeafComponent;
-        }
         return null;
     };
 

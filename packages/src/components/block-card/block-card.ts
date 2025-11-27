@@ -1,6 +1,6 @@
 import { getZeroTextNode } from '../../utils/dom';
 
-export const SLATE_BLOCK_CARD = 'slate-block-card';
+export const SLATE_BLOCK_CARD_CLASS_NAME = 'slate-block-card';
 
 export class SlateBlockCard {
     centerRootNodes: HTMLElement[];
@@ -11,7 +11,7 @@ export class SlateBlockCard {
 
     onInit() {
         const nativeElement = document.createElement('div');
-        nativeElement.classList.add(SLATE_BLOCK_CARD);
+        nativeElement.classList.add(SLATE_BLOCK_CARD_CLASS_NAME);
         this.nativeElement = nativeElement;
         this.createContent();
     }
@@ -49,7 +49,7 @@ export class SlateBlockCard {
 
 export const getBlockCardByNativeElement = (nativeElement: HTMLElement) => {
     const blockCardElement = nativeElement?.parentElement?.parentElement;
-    if (blockCardElement && blockCardElement.classList.contains(SLATE_BLOCK_CARD)) {
+    if (blockCardElement && blockCardElement.classList.contains(SLATE_BLOCK_CARD_CLASS_NAME)) {
         return blockCardElement;
     }
     return null;
