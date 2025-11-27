@@ -1,16 +1,18 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
 import { BulletedListElement } from '../../../custom-types';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { H1Flavour, H2Flavour, H3Flavour, H4Flavour, H5Flavour, H6Flavour } from '../flavours/heading.flavour';
+import { LIFlavour, ULFlavour } from '../flavours/list.flavour';
+import { BlockquoteFlavour } from '../flavours/quote.flavour';
 
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html',
-    imports: [SlateEditable, FormsModule, SlateElement]
+    imports: [SlateEditable, FormsModule]
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {
     constructor() {}
@@ -19,55 +21,36 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
 
     editor = withShortcuts(withHistory(withAngular(createEditor())));
 
-    @ViewChild('blockquoteTemplate', { read: TemplateRef, static: true })
-    blockquoteTemplate: TemplateRef<any>;
-    @ViewChild('liTemplate', { read: TemplateRef, static: true })
-    liTemplate: TemplateRef<any>;
-    @ViewChild('ulTemplate', { read: TemplateRef, static: true })
-    ulTemplate: TemplateRef<any>;
-    @ViewChild('heading_1', { read: TemplateRef, static: true })
-    headingOneTemplate: TemplateRef<any>;
-    @ViewChild('heading_2', { read: TemplateRef, static: true })
-    headingTwoTemplate: TemplateRef<any>;
-    @ViewChild('heading_3', { read: TemplateRef, static: true })
-    headingThreeTemplate: TemplateRef<any>;
-    @ViewChild('heading_4', { read: TemplateRef, static: true })
-    headingFourTemplate: TemplateRef<any>;
-    @ViewChild('heading_5', { read: TemplateRef, static: true })
-    headingFiveTemplate: TemplateRef<any>;
-    @ViewChild('heading_6', { read: TemplateRef, static: true })
-    headingSixTemplate: TemplateRef<any>;
-
     ngOnInit() {}
 
     renderElement() {
         return (element: Element) => {
             if (element.type === 'heading-one') {
-                return this.headingOneTemplate;
+                return H1Flavour;
             }
             if (element.type === 'heading-two') {
-                return this.headingTwoTemplate;
+                return H2Flavour;
             }
             if (element.type === 'heading-three') {
-                return this.headingThreeTemplate;
+                return H3Flavour;
             }
             if (element.type === 'heading-four') {
-                return this.headingFourTemplate;
+                return H4Flavour;
             }
             if (element.type === 'heading-five') {
-                return this.headingFiveTemplate;
+                return H5Flavour;
             }
             if (element.type === 'heading-six') {
-                return this.headingSixTemplate;
+                return H6Flavour;
             }
             if (element.type === 'block-quote') {
-                return this.blockquoteTemplate;
+                return BlockquoteFlavour;
             }
             if (element.type === 'list-item') {
-                return this.liTemplate;
+                return LIFlavour;
             }
             if (element.type === 'bulleted-list') {
-                return this.ulTemplate;
+                return ULFlavour;
             }
         };
     }

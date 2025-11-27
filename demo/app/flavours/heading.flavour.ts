@@ -27,3 +27,17 @@ export class H4Flavour extends BaseFlavour {
         return element;
     }
 }
+
+export class H5Flavour extends BaseFlavour {
+    createNativeElement(): HTMLElement {
+        const element = document.createElement('h5');
+        return element;
+    }
+}
+
+export class H6Flavour extends BaseFlavour {
+    createNativeElement(): HTMLElement {
+        const element = document.createElement('h6');
+        return element;
+    }
+}

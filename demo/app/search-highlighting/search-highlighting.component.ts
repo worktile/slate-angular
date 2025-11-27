@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
-import { DemoTextMarkComponent, MarkTypes } from '../components/text/text.component';
+import { MarkTypes, RichTextFlavour } from '../flavours/richtext.flavour';
 import { DemoLeafComponent } from './hightlighting-leaf.flavour';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { FormsModule } from '@angular/forms';
@@ -63,7 +63,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoTextMarkComponent;
+            return RichTextFlavour;
         }
     };
 

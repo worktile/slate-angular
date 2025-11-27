@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { SlateModule } from 'slate-angular';
 import { DemoElementImageComponent } from './components/image/image-component';
-import { DemoTextMarkComponent } from './components/text/text.component';
 import { DemoButtonComponent } from './components/button/button.component';
 import { DemoTablesComponent } from './tables/tables.component';
 import { DemoImagesComponent } from './images/images.component';
@@ -37,7 +36,6 @@ import { DemoEmbedsComponent } from './embeds/embeds.component';
         DemoMarkdownShortcutsComponent,
         DemoHugeDocumentComponent,
         DemoElementImageComponent,
-        DemoTextMarkComponent,
         DemoTablesComponent,
         DemoTablesComponent,
         DemoImagesComponent,

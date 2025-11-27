@@ -4,14 +4,14 @@ import { withHistory } from 'slate-history';
 import { AngularEditor, withAngular } from 'slate-angular';
 import { MentionElement } from 'custom-types';
 import { NgClass } from '@angular/common';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
+import { MentionFlavour } from './mention.flavour';
 
 @Component({
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
-    imports: [SlateEditable, FormsModule, SlateElement, NgClass]
+    imports: [SlateEditable, FormsModule, NgClass]
 })
 export class DemoMentionsComponent implements OnInit {
     searchText = '';
@@ -23,9 +23,6 @@ export class DemoMentionsComponent implements OnInit {
     value = initialValue;
 
     editor = withMentions(withHistory(withAngular(createEditor())));
-
-    @ViewChild('mention', { read: TemplateRef, static: true })
-    mentionTemplate: TemplateRef<any>;
 
     @ViewChild('suggestionList', { static: true })
     suggestionList: ElementRef;
@@ -39,7 +36,7 @@ export class DemoMentionsComponent implements OnInit {
 
     renderElement = (element: Element) => {
         if (element.type === 'mention') {
-            return this.mentionTemplate;
+            return MentionFlavour;
         }
     };
 

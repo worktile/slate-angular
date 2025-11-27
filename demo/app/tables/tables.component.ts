@@ -1,44 +1,35 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, withAngular } from 'slate-angular';
-import { MarkTypes, DemoTextMarkComponent } from '../components/text/text.component';
+import { MarkTypes, RichTextFlavour } from '../flavours/richtext.flavour';
 import { withBlockCard } from '../plugins/block-cards.plugin';
-import { SlateElement } from '../../../packages/src/components/element/element.component';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { DOMElement } from 'slate-dom';
+import { TableFlavour } from './table.flavour';
 
 @Component({
     selector: 'demo-tables',
     templateUrl: 'tables.component.html',
-    imports: [SlateEditable, FormsModule, SlateElement]
+    imports: [SlateEditable, FormsModule]
 })
 export class DemoTablesComponent implements OnInit {
     value = initialValue;
 
     editor = withBlockCard(withTable(withAngular(createEditor())));
 
-    @ViewChild('tableTemplate', { read: TemplateRef, static: true })
-    tableTemplate: TemplateRef<any>;
-
-    @ViewChild('trTemplate', { read: TemplateRef, static: true })
-    trTemplate: TemplateRef<any>;
-
-    @ViewChild('tdTemplate', { read: TemplateRef, static: true })
-    tdTemplate: TemplateRef<any>;
-
     ngOnInit() {}
 
     renderElement() {
         return (element: any) => {
             if (element.type === 'table') {
-                return this.tableTemplate;
+                return TableFlavour;
             }
             if (element.type === 'table-row') {
-                return this.trTemplate;
+                return TableFlavour;
             }
             if (element.type === 'table-cell') {
-                return this.tdTemplate;
+                return TableFlavour;
             }
             return null;
         };
@@ -46,7 +37,7 @@ export class DemoTablesComponent implements OnInit {
 
     renderText = (text: Text) => {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
-            return DemoTextMarkComponent;
+            return RichTextFlavour;
         }
     };
 

@@ -2,7 +2,6 @@ import {
     Component,
     OnInit,
     Input,
-    ViewChild,
     HostBinding,
     Renderer2,
     ElementRef,
@@ -16,7 +15,6 @@ import {
     SimpleChanges,
     AfterViewChecked,
     DoCheck,
-    Inject,
     inject,
     ViewContainerRef
 } from '@angular/core';
@@ -69,7 +67,7 @@ const forceOnDOMPaste = IS_SAFARI;
         '[attr.autoCorrect]': `!hasBeforeInputSupport ? 'false' : autoCorrect`,
         '[attr.autoCapitalize]': `!hasBeforeInputSupport ? 'false' : autoCapitalize`
     },
-    templateUrl: 'editable.component.html',
+    template: '',
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {

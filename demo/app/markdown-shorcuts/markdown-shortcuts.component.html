@@ -6,32 +6,5 @@
     (ngModelChange)="valueChange($event)"
     [renderElement]="renderElement()"
   >
-    <ng-template #blockquoteTemplate let-context="context" let-viewContext="viewContext">
-      <blockquote slateElement [context]="context" [viewContext]="viewContext"></blockquote>
-    </ng-template>
-    <ng-template #liTemplate let-context="context" let-viewContext="viewContext">
-      <li slateElement [context]="context" [viewContext]="viewContext"></li>
-    </ng-template>
-    <ng-template #ulTemplate let-context="context" let-viewContext="viewContext">
-      <ul slateElement [context]="context" [viewContext]="viewContext"></ul>
-    </ng-template>
-    <ng-template #heading_1 let-context="context" let-viewContext="viewContext">
-      <h1 slateElement [context]="context" [viewContext]="viewContext"></h1>
-    </ng-template>
-    <ng-template #heading_2 let-context="context" let-viewContext="viewContext">
-      <h2 slateElement [context]="context" [viewContext]="viewContext"></h2>
-    </ng-template>
-    <ng-template #heading_3 let-context="context" let-viewContext="viewContext">
-      <h3 slateElement [context]="context" [viewContext]="viewContext"></h3>
-    </ng-template>
-    <ng-template #heading_4 let-context="context" let-viewContext="viewContext">
-      <h4 slateElement [context]="context" [viewContext]="viewContext"></h4>
-    </ng-template>
-    <ng-template #heading_5 let-context="context" let-viewContext="viewContext">
-      <h5 slateElement [context]="context" [viewContext]="viewContext"></h5>
-    </ng-template>
-    <ng-template #heading_6 let-context="context" let-viewContext="viewContext">
-      <h6 slateElement [context]="context" [viewContext]="viewContext"></h6>
-    </ng-template>
   </slate-editable>
 </div>

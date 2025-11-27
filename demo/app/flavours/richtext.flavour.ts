@@ -1,5 +1,13 @@
 import { DefaultTextFlavour } from 'slate-angular';
 
+export enum MarkTypes {
+    bold = 'bold',
+    italic = 'italic',
+    underline = 'underlined',
+    strike = 'strike',
+    code = 'code-line'
+}
+
 export class RichTextFlavour extends DefaultTextFlavour {
     attributes = [];
 

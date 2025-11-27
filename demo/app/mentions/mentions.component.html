@@ -8,11 +8,6 @@
     [keydown]="onKeydown"
   >
   </slate-editable>
-  <ng-template #mention let-context="context" let-viewContext="viewContext">
-    <span slateElement [context]="context" [viewContext]="viewContext" class="demo-mention-view" [ngClass]="{ focus: context.selection }">
-      &#64;{{ context.element.character }}
-    </span>
-  </ng-template>
   <div #suggestionList class="demo-mention-suggestion-list">
     @for (item of suggestions; track $index; let i = $index) {
       <div (mousedown)="mousedown($event, item)" [ngClass]="{ active: i === activeIndex }">
