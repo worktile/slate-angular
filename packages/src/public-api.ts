@@ -7,6 +7,7 @@ export * from './components/editable/editable.component';
 export * from './components/children/children-outlet.component';
 export * from './components/text/default-text.flavour';
 export * from './components/string/string.component';
+export * from './components/block-card/block-card';
 export * from './module';
 export * from './types/error';
 export * from './view/base';

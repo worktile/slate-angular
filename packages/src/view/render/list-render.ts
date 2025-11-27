@@ -6,17 +6,17 @@ import { AngularEditor } from '../../plugins/angular-editor';
 import { SlateErrorCode } from '../../types/error';
 import { EDITOR_TO_AFTER_VIEW_INIT_QUEUE } from '../../utils/weak-maps';
 import { isDecoratorRangeListEqual } from '../../utils/range-list';
-import { SlateBlockCard } from '../../components/block-card/block-card.component';
 import { createEmbeddedViewOrComponentOrFlavour, getRootNodes, mount, mountOnItemChange, updateContext } from './utils';
 import { NODE_TO_INDEX, NODE_TO_PARENT } from 'slate-dom';
 import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
-import { FlavourRef } from '../flavour/ref';
+import { BlockCardRef, FlavourRef } from '../flavour/ref';
+import { SlateBlockCard } from '../../components/block-card/block-card';
 
 export class ListRender {
     private children: Descendant[];
     private views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
-    private blockCards: (ComponentRef<SlateBlockCard> | null)[] = [];
+    private blockCards: (BlockCardRef | null)[] = [];
     private contexts: (SlateTextContext | SlateElementContext)[] = [];
     private viewTypes: ViewType[] = [];
     private differ: IterableDiffer<any> | null = null;
@@ -39,7 +39,7 @@ export class ListRender {
             const context = getContext(index, descendant, parentPath, childrenContext, this.viewContext);
             const viewType = getViewType(descendant, parent, this.viewContext);
             const view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
-            const blockCard = createBlockCard(descendant, view, this.viewContainerRef, this.viewContext);
+            const blockCard = createBlockCard(descendant, view, this.viewContext);
             this.views.push(view);
             this.contexts.push(context);
             this.viewTypes.push(viewType);
@@ -70,7 +70,7 @@ export class ListRender {
             const newContexts = [];
             const newViewTypes = [];
             const newViews = [];
-            const newBlockCards: (ComponentRef<SlateBlockCard> | null)[] = [];
+            const newBlockCards: (BlockCardRef | null)[] = [];
             diffResult.forEachItem(record => {
                 NODE_TO_INDEX.set(record.item, record.currentIndex);
                 NODE_TO_PARENT.set(record.item, parent);
@@ -78,10 +78,10 @@ export class ListRender {
                 const viewType = getViewType(record.item, parent, this.viewContext);
                 newViewTypes.push(viewType);
                 let view: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef;
-                let blockCard: ComponentRef<SlateBlockCard> | null;
+                let blockCard: BlockCardRef | null;
                 if (record.previousIndex === null) {
                     view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
-                    blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
+                    blockCard = createBlockCard(record.item, view, this.viewContext);
                     newContexts.push(context);
                     newViews.push(view);
                     newBlockCards.push(blockCard);
@@ -101,7 +101,7 @@ export class ListRender {
                     const previousBlockCard = this.blockCards[record.previousIndex];
                     if (previousViewType !== viewType) {
                         view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
-                        blockCard = createBlockCard(record.item, view, this.viewContainerRef, this.viewContext);
+                        blockCard = createBlockCard(record.item, view, this.viewContext);
                         const firstRootNode = getRootNodes(previousView, previousBlockCard)[0];
                         const newRootNodes = getRootNodes(view, blockCard);
                         firstRootNode.replaceWith(...newRootNodes);
@@ -279,18 +279,16 @@ export function getViewType(item: Descendant, parent: Ancestor, viewContext: Sla
 export function createBlockCard(
     item: Descendant,
     view: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef,
-    viewContainerRef: ViewContainerRef,
     viewContext: SlateViewContext
 ) {
     const isBlockCard = viewContext.editor.isBlockCard(item);
     if (isBlockCard) {
         const rootNodes = getRootNodes(view);
-        const blockCardComponentRef = viewContainerRef.createComponent<SlateBlockCard>(SlateBlockCard, {
-            injector: viewContainerRef.injector
-        });
-        blockCardComponentRef.instance.initializeCenter(rootNodes);
-        blockCardComponentRef.changeDetectorRef.detectChanges();
-        return blockCardComponentRef;
+        const blockCardRef = new BlockCardRef();
+        blockCardRef.instance = new SlateBlockCard();
+        blockCardRef.instance.onInit();
+        blockCardRef.instance.initializeCenter(rootNodes);
+        return blockCardRef;
     } else {
         return null;
     }

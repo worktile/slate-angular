@@ -78,3 +78,7 @@ export const getContentHeight = (element: Element) => {
 
     return Math.max(contentHeight, 0);
 };
+
+export const getZeroTextNode = (): DOMText => {
+    return document.createTextNode('\uFEFF');
+};

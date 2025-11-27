@@ -3,8 +3,7 @@ import { ComponentRef, EmbeddedViewRef, ViewContainerRef } from '@angular/core';
 import { ViewType } from '../../types/view';
 import { isComponentType, isFlavourType, isTemplateRef } from '../../utils/view';
 import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
-import { SlateBlockCard } from '../../components/block-card/block-card.component';
-import { FlavourRef } from '../flavour/ref';
+import { BlockCardRef, FlavourRef } from '../flavour/ref';
 
 export function createEmbeddedViewOrComponentOrFlavour(
     viewType: ViewType,
@@ -61,7 +60,7 @@ export function updateContext(
 
 export function mount(
     views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[],
-    blockCards: (ComponentRef<SlateBlockCard> | null)[] | null,
+    blockCards: (BlockCardRef | null)[] | null,
     outletParent: HTMLElement,
     outletElement: HTMLElement | null
 ) {
@@ -80,10 +79,7 @@ export function mount(
     }
 }
 
-export function getRootNodes(
-    ref: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef,
-    blockCard?: ComponentRef<SlateBlockCard>
-): HTMLElement[] {
+export function getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef, blockCard?: BlockCardRef): HTMLElement[] {
     if (blockCard) {
         return [blockCard.instance.nativeElement];
     }
@@ -118,7 +114,7 @@ export function mountOnItemChange(
     index: number,
     item: Descendant,
     views: (EmbeddedViewRef<any> | ComponentRef<any>)[],
-    blockCards: (ComponentRef<SlateBlockCard> | null)[] | null,
+    blockCards: (BlockCardRef | null)[] | null,
     outletParent: HTMLElement,
     firstRootNode: HTMLElement | null,
     viewContext: SlateViewContext

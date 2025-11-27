@@ -1,6 +1,7 @@
 import { SlateLeafContext } from '../../view/context';
 import { SlateViewContext } from '../../view/context';
 import { Text, Node } from 'slate';
+import { getZeroTextNode } from '../../utils/dom';
 
 export enum StringType {
     'normalString' = 'normalString',
@@ -134,7 +135,7 @@ export const createEmptyOrVoidStringNode = () => {
     stringNode.setAttribute('data-slate-string', 'true');
     stringNode.setAttribute('data-slate-zero-width', 'z');
     stringNode.setAttribute('data-slate-length', '0');
-    const zeroWidthSpace = document.createTextNode('\uFEFF');
+    const zeroWidthSpace = getZeroTextNode();
     stringNode.appendChild(zeroWidthSpace);
     stringNode.setAttribute('editable-text', '');
     return stringNode;
@@ -146,7 +147,7 @@ export const createCompatibleStringNode = (text: string) => {
     stringNode.textContent = text;
     stringNode.setAttribute('editable-text', '');
     const zeroWidthSpan = document.createElement('span');
-    const zeroWidthSpace = document.createTextNode('\uFEFF');
+    const zeroWidthSpace = getZeroTextNode();
     zeroWidthSpan.setAttribute('data-slate-zero-width', '');
     zeroWidthSpan.appendChild(zeroWidthSpace);
     stringNode.appendChild(zeroWidthSpan);
@@ -157,7 +158,7 @@ export const createLineBreakEmptyStringDOM = (elementStringLength: number) => {
     const stringNode = document.createElement('span');
     stringNode.setAttribute('data-slate-zero-width', 'n');
     stringNode.setAttribute('data-slate-length', `${elementStringLength}`);
-    const zeroWidthSpace = document.createTextNode(`\uFEFF`);
+    const zeroWidthSpace = getZeroTextNode();
     stringNode.appendChild(zeroWidthSpace);
     const brNode = document.createElement('br');
     stringNode.appendChild(brNode);
