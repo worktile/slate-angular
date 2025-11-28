@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.1.0
+
+### Minor Changes
+
+- [`f81b50b8d9a1749171c010b06c9945bd6a936b2e`](https://github.com/worktile/slate-angular/commit/f81b50b8d9a1749171c010b06c9945bd6a936b2e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - implement block card by dom
+
+- [`62c3e9d745326bc98c9c8fdade4d25d7afabd0b9`](https://github.com/worktile/slate-angular/commit/62c3e9d745326bc98c9c8fdade4d25d7afabd0b9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slateDefaultElement, slateElement, SlateElement
+
 ## 20.0.0
 
 ### Major Changes
