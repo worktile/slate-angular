@@ -57,6 +57,13 @@ import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
+export interface SlateVirtualScrollConfig {
+    enabled?: boolean;
+    scrollTop: number;
+    viewportHeight: number;
+    blockHeight?: number;
+}
+
 @Component({
     selector: 'slate-editable',
     host: {
@@ -119,6 +126,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     @Input() placeholder: string;
 
+    @Input() virtualScroll?: SlateVirtualScrollConfig;
+
+    @HostBinding('style.padding-top.px') virtualTopPadding = 0;
+    @HostBinding('style.padding-bottom.px') virtualBottomPadding = 0;
+
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
     @Input() blur: (event: Event) => void;
@@ -158,6 +170,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     };
 
     listRender: ListRender;
+
+    private renderedChildren: Element[] = [];
+    private defaultBlockHeight = 40;
 
     constructor(
         public elementRef: ElementRef,
@@ -211,6 +226,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.render();
             this.toSlateSelection();
         }
+        const virtualChange = simpleChanges['virtualScroll'];
+        if (virtualChange) {
+            this.refreshVirtualView();
+            if (this.listRender.initialized) {
+                this.listRender.update(this.renderedChildren, this.editor, this.context);
+            }
+        }
     }
 
     registerOnChange(fn: any) {
@@ -224,10 +246,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (value && value.length) {
             this.editor.children = value;
             this.initializeContext();
+            this.refreshVirtualView();
+            const childrenForRender = this.renderedChildren;
             if (!this.listRender.initialized) {
-                this.listRender.initialize(this.editor.children, this.editor, this.context);
+                this.listRender.initialize(childrenForRender, this.editor, this.context);
             } else {
-                this.listRender.update(this.editor.children, this.editor, this.context);
+                this.listRender.update(childrenForRender, this.editor, this.context);
             }
             this.cdr.markForCheck();
         }
@@ -378,7 +402,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        this.listRender.update(this.editor.children, this.editor, this.context);
+        this.refreshVirtualView();
+        this.listRender.update(this.renderedChildren, this.editor, this.context);
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -418,7 +443,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     render() {
         const changed = this.updateContext();
         if (changed) {
-            this.listRender.update(this.editor.children, this.editor, this.context);
+            this.refreshVirtualView();
+            this.listRender.update(this.renderedChildren, this.editor, this.context);
         }
     }
 
@@ -487,6 +513,49 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const placeholderDecorations = this.isComposing ? [] : this.composePlaceholderDecorate(this.editor);
         decorations.push(...placeholderDecorations);
         return decorations;
+    }
+
+    private shouldUseVirtual() {
+        return !!(this.virtualScroll && this.virtualScroll.enabled);
+    }
+
+    private refreshVirtualView() {
+        const children = (this.editor.children || []) as Element[];
+        if (!children.length || !this.shouldUseVirtual()) {
+            this.renderedChildren = children;
+            this.virtualTopPadding = 0;
+            this.virtualBottomPadding = 0;
+            return;
+        }
+        const scrollTop = this.virtualScroll.scrollTop ?? 0;
+        const viewportHeight = this.virtualScroll.viewportHeight ?? 0;
+        if (!viewportHeight) {
+            // 已经启用虚拟滚动，但是可视区域高度还未获取到，先置空不渲染
+            this.renderedChildren = [];
+            this.virtualTopPadding = 0;
+            this.virtualBottomPadding = 0;
+            return;
+        }
+        const blockHeight = this.virtualScroll.blockHeight ?? this.defaultBlockHeight;
+        const startIndex = Math.floor(scrollTop / blockHeight); // 固定块高估算起始块索引
+        const visible: Element[] = [];
+        const visibleIndexes: number[] = [];
+        let accumulated = 0;
+        let cursor = startIndex;
+        // 循环累计高度超出可视区域高度
+        while (cursor < children.length && accumulated < viewportHeight) {
+            visible.push(children[cursor]);
+            visibleIndexes.push(cursor);
+            accumulated += blockHeight;
+            cursor++;
+        }
+        const top = startIndex * blockHeight; // 上占位高度
+        const total = children.length * blockHeight; // 总高度估算
+        const bottom = Math.max(total - top - accumulated, 0); // 下占位高度
+        this.renderedChildren = visible.length ? visible : children;
+        // padding 占位
+        this.virtualTopPadding = this.renderedChildren === visible ? top : 0;
+        this.virtualBottomPadding = this.renderedChildren === visible ? bottom : 0;
     }
 
     //#region event proxy
