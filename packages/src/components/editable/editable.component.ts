@@ -39,7 +39,15 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
+import {
+    IS_FIREFOX,
+    IS_SAFARI,
+    IS_CHROME,
+    HAS_BEFORE_INPUT_SUPPORT,
+    IS_ANDROID,
+    VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT,
+    VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT
+} from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -127,7 +135,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     @Input() placeholder: string;
 
-    @Input() virtualScroll?: SlateVirtualScrollConfig;
+    @Input()
+    set virtualScroll(config: SlateVirtualScrollConfig) {
+        this.virtualConfig = config;
+        this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
+        this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
+            this.refreshVirtualView();
+            if (this.listRender.initialized) {
+                this.listRender.update(this.renderedChildren, this.editor, this.context);
+            }
+            this.scheduleMeasureVisibleHeights();
+        });
+    }
 
     @HostBinding('style.padding-top.px') virtualTopPadding = 0;
     @HostBinding('style.padding-bottom.px') virtualBottomPadding = 0;
@@ -172,10 +191,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     listRender: ListRender;
 
+    private virtualConfig: SlateVirtualScrollConfig = {
+        enabled: false,
+        scrollTop: 0,
+        viewportHeight: 0
+    };
     private renderedChildren: Element[] = [];
     private virtualVisibleIndexes = new Set<number>();
-    private defaultBlockHeight = 40;
-    private defaultBufferCount = 3;
     private measuredHeights = new Map<number, number>();
     private measurePending = false;
     private refreshVirtualViewAnimId: number;
@@ -232,17 +254,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             IS_READ_ONLY.set(this.editor, this.readonly);
             this.render();
             this.toSlateSelection();
-        }
-        const virtualChange = simpleChanges['virtualScroll'];
-        if (virtualChange) {
-            this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
-            this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
-                this.refreshVirtualView();
-                if (this.listRender.initialized) {
-                    this.listRender.update(this.renderedChildren, this.editor, this.context);
-                }
-                this.scheduleMeasureVisibleHeights();
-            });
         }
     }
 
@@ -531,7 +542,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private shouldUseVirtual() {
-        return !!(this.virtualScroll && this.virtualScroll.enabled);
+        return !!(this.virtualConfig && this.virtualConfig.enabled);
     }
 
     private refreshVirtualView() {
@@ -543,17 +554,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.virtualVisibleIndexes.clear();
             return;
         }
-        const scrollTop = this.virtualScroll.scrollTop ?? 0;
-        const viewportHeight = this.virtualScroll.viewportHeight ?? 0;
+        const scrollTop = this.virtualConfig.scrollTop ?? 0;
+        const viewportHeight = this.virtualConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
-            // 已经启用虚拟滚动，但是可视区域高度还未获取到，先置空不渲染
+            // 已经启用虚拟滚动，但可视区域高度还未获取到，先置空不渲染
             this.renderedChildren = [];
             this.virtualTopPadding = 0;
             this.virtualBottomPadding = 0;
             this.virtualVisibleIndexes.clear();
             return;
         }
-        const bufferCount = this.virtualScroll.bufferCount ?? this.defaultBufferCount;
+        const bufferCount = this.virtualConfig.bufferCount ?? VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT;
         const heights = children.map((_, idx) => this.getBlockHeight(idx));
         const accumulatedHeights = this.buildAccumulatedHeight(heights);
         const total = accumulatedHeights[accumulatedHeights.length - 1] || 0;
@@ -590,7 +601,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private getBlockHeight(index: number) {
-        const blockHeight = this.virtualScroll.blockHeight ?? this.defaultBlockHeight;
+        const blockHeight = this.virtualConfig.blockHeight ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
         return this.measuredHeights.get(index) ?? blockHeight;
     }
 
@@ -604,17 +615,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private getBufferBelowHeight(viewportHeight: number, visibleStart: number, bufferCount: number) {
-        let totalHeight = 0;
         let blockHeight = 0;
         let start = visibleStart;
+        // 循环累计高度超出视图高度代表找到向下缓冲区的起始位置
         while (blockHeight < viewportHeight) {
             blockHeight += this.getBlockHeight(start);
             start++;
         }
+        let bufferHeight = 0;
         for (let i = start; i < start + bufferCount; i++) {
-            totalHeight += this.getBlockHeight(i);
+            bufferHeight += this.getBlockHeight(i);
         }
-        return totalHeight;
+        return bufferHeight;
     }
 
     private scheduleMeasureVisibleHeights() {
