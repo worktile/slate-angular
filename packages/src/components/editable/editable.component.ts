@@ -198,7 +198,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     };
     private renderedChildren: Element[] = [];
     private virtualVisibleIndexes = new Set<number>();
-    private measuredHeights = new Map<number, number>();
+    private measuredHeights = new Map<string, number>();
     private measurePending = false;
     private refreshVirtualViewAnimId: number;
     private measureVisibleHeightsAnimId: number;
@@ -602,7 +602,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private getBlockHeight(index: number) {
         const blockHeight = this.virtualConfig.blockHeight ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
-        return this.measuredHeights.get(index) ?? blockHeight;
+        const node = this.editor.children[index];
+        if (!node) {
+            return blockHeight;
+        }
+        const key = AngularEditor.findKey(this.editor, node);
+        return this.measuredHeights.get(key.id) ?? blockHeight;
     }
 
     private buildAccumulatedHeight(heights: number[]) {
@@ -647,12 +652,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private measureVisibleHeights() {
         const children = (this.editor.children || []) as Element[];
         this.virtualVisibleIndexes.forEach(index => {
-            // 跳过已测过的块
-            if (this.measuredHeights.has(index)) {
-                return;
-            }
             const node = children[index];
             if (!node) {
+                return;
+            }
+            const key = AngularEditor.findKey(this.editor, node);
+            // 跳过已测过的块
+            if (this.measuredHeights.has(key.id)) {
                 return;
             }
             try {
@@ -662,7 +668,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 const marginTop = parseFloat(style.marginTop) || 0;
                 const marginBottom = parseFloat(style.marginBottom) || 0;
                 const marginHeight = rect.height + marginTop + marginBottom;
-                this.measuredHeights.set(index, marginHeight);
+                this.measuredHeights.set(key.id, marginHeight);
             } catch {
                 // dom可能没准备好
             }
