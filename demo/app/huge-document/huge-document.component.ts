@@ -13,7 +13,7 @@ import { H1Flavour } from '../flavours/heading.flavour';
     imports: [SlateEditable, FormsModule]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
-    mode: 'default' | 'component' | 'virtual' = 'virtual';
+    mode: 'default' | 'component' | 'virtual' = 'default';
 
     value = buildInitialValue();
 
@@ -46,6 +46,11 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
         this.ngZone.onStable.pipe(take(1)).subscribe(() => {
             console.timeEnd();
         });
+        this.syncVirtualConfig();
+    }
+
+    switchScrollMode(mode: 'default' | 'component' | 'virtual') {
+        this.mode = mode;
         this.syncVirtualConfig();
     }
 

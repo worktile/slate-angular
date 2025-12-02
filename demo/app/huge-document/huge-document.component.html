@@ -1,6 +1,6 @@
-<div style="display: flex; gap: 8px; margin-bottom: 12px;">
-  <button type="button" (click)="mode = 'virtual'">虚拟滚动</button>
-  <button type="button" (click)="mode = 'default'">默认</button>
+<div style="display: flex; gap: 8px; margin-bottom: 12px">
+  <button type="button" [disabled]="mode === 'default'" (click)="switchScrollMode('default')">默认</button>
+  <button type="button" [disabled]="mode === 'virtual'" (click)="switchScrollMode('virtual')">虚拟滚动</button>
 </div>
 @if (mode === 'virtual') {
   <div class="demo-rich-editor-wrapper single" #demoContainer>
