@@ -13,7 +13,7 @@ import { H1Flavour } from '../flavours/heading.flavour';
     imports: [SlateEditable, FormsModule]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
-    mode: 'default' | 'component' | 'virtual' = 'default';
+    mode: 'default' | 'component' | 'virtual' = 'virtual';
 
     value = buildInitialValue();
 
