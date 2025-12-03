@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.0
+
+### Minor Changes
+
+- [#305](https://github.com/worktile/slate-angular/pull/305) Thanks [@pubuzhixing8](https://github.com/Xwatson), [@Xwatson](https://github.com/Xwatson)! - set up virtual scrolling structure
+
 ## 20.1.0
 
 ### Minor Changes

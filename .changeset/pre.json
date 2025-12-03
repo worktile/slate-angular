@@ -4,5 +4,7 @@
   "initialVersions": {
     "slate-angular": "20.1.0"
   },
-  "changesets": []
+  "changesets": [
+    "funny-vans-exist"
+  ]
 }
