@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { faker } from '@faker-js/faker';
 import { createEditor } from 'slate';
 import { withAngular } from 'slate-angular';
@@ -13,7 +13,7 @@ import { H1Flavour } from '../flavours/heading.flavour';
     imports: [SlateEditable, FormsModule]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
-    mode: 'default' | 'component' = 'default';
+    mode: 'default' | 'component' | 'virtual' = 'virtual';
 
     value = buildInitialValue();
 
@@ -26,6 +26,15 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     editor = withAngular(createEditor());
 
+    virtualConfig = {
+        enabled: true,
+        scrollTop: 0,
+        viewportHeight: 0,
+        buffer: 3
+    };
+
+    @ViewChild('demoContainer') demoContainer?: ElementRef<HTMLDivElement>;
+
     constructor(private ngZone: NgZone) {}
 
     ngOnInit() {
@@ -36,6 +45,22 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
         this.ngZone.onStable.pipe(take(1)).subscribe(() => {
             console.timeEnd();
         });
+        this.syncVirtualConfig();
+    }
+
+    switchScrollMode(mode: 'default' | 'component' | 'virtual') {
+        this.mode = mode;
+        this.syncVirtualConfig();
+    }
+
+    @HostListener('window:scroll')
+    onWindowScroll() {
+        this.syncVirtualConfig();
+    }
+
+    @HostListener('window:resize')
+    onWindowResize() {
+        this.syncVirtualConfig();
     }
 
     renderElement() {
@@ -48,6 +73,17 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     }
 
     valueChange(event) {}
+
+    private syncVirtualConfig() {
+        if (this.mode !== 'virtual') {
+            return;
+        }
+        this.virtualConfig = {
+            ...this.virtualConfig,
+            scrollTop: window.scrollY || 0,
+            viewportHeight: window.innerHeight || 0
+        };
+    }
 }
 
 export const buildInitialValue = () => {
@@ -68,5 +104,9 @@ export const buildInitialValue = () => {
             });
         }
     }
+    initialValue.push({
+        type: 'paragraph',
+        children: [{ text: '==== END ====' }]
+    });
     return initialValue;
 };

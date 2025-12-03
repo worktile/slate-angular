@@ -1,3 +1,20 @@
+<div style="display: flex; gap: 8px; margin-bottom: 12px">
+  <button type="button" [disabled]="mode === 'default'" (click)="switchScrollMode('default')">默认</button>
+  <button type="button" [disabled]="mode === 'virtual'" (click)="switchScrollMode('virtual')">虚拟滚动</button>
+</div>
+@if (mode === 'virtual') {
+  <div class="demo-rich-editor-wrapper single" #demoContainer>
+    <slate-editable
+      class="demo-slate-angular-editor"
+      [editor]="editor"
+      [(ngModel)]="value"
+      (ngModelChange)="valueChange($event)"
+      [renderElement]="renderElement()"
+      [virtualScroll]="virtualConfig"
+    >
+    </slate-editable>
+  </div>
+}
 @if (mode === 'default') {
   <div class="demo-rich-editor-wrapper single">
     <slate-editable
