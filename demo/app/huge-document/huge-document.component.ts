@@ -30,7 +30,6 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
         enabled: true,
         scrollTop: 0,
         viewportHeight: 0,
-        blockHeight: 57,
         buffer: 3
     };
 

@@ -71,7 +71,6 @@ export interface SlateVirtualScrollConfig {
     enabled?: boolean;
     scrollTop: number;
     viewportHeight: number;
-    blockHeight?: number;
     bufferCount?: number;
 }
 
