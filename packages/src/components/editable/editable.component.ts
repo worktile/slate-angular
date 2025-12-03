@@ -150,8 +150,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
-    @HostBinding('style.padding-top.px') virtualTopPadding = 0;
-    @HostBinding('style.padding-bottom.px') virtualBottomPadding = 0;
+    @HostBinding('style.--virtual-top-padding.px') virtualTopPadding = 0;
+    @HostBinding('style.--virtual-bottom-padding.px') virtualBottomPadding = 0;
 
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
@@ -269,7 +269,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     writeValue(value: Element[]) {
         if (value && value.length) {
             this.editor.children = value;
-            this.measuredHeights.clear();
             this.initializeContext();
             this.refreshVirtualView();
             const childrenForRender = this.renderedChildren;
@@ -597,8 +596,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const bottom = Math.max(total - top - accumulated, 0); // 下占位高度
         this.renderedChildren = visible.length ? visible : children;
         // padding 占位
-        this.virtualTopPadding = this.renderedChildren === visible ? top : 0;
-        this.virtualBottomPadding = this.renderedChildren === visible ? bottom : 0;
+        this.virtualTopPadding = this.renderedChildren === visible ? Math.round(top) : 0;
+        this.virtualBottomPadding = this.renderedChildren === visible ? Math.round(bottom) : 0;
         this.virtualVisibleIndexes = new Set(visibleIndexes);
     }
 
