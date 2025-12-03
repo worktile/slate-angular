@@ -19,7 +19,7 @@ describe('Editable Component', () => {
         flush();
         fixture.detectChanges();
         let testingLeaf;
-        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf'));
+        testingLeaf = (fixture.debugElement.nativeNode as HTMLElement).querySelector('.testing-leaf');
         expect(testingLeaf).toBeFalsy();
 
         const keywords1 = 'text';
@@ -27,7 +27,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf')).nativeElement;
+        testingLeaf = (fixture.debugElement.nativeNode as HTMLElement).querySelector('.testing-leaf');
         expect(testingLeaf).toBeTruthy();
         expect(testingLeaf.textContent).toEqual(keywords1);
 
@@ -36,7 +36,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        testingLeaf = fixture.debugElement.query(By.css('.testing-leaf')).nativeElement;
+        testingLeaf = (fixture.debugElement.nativeNode as HTMLElement).querySelector('.testing-leaf');
         expect(testingLeaf).toBeTruthy();
         expect(testingLeaf.textContent).toEqual(keywords2);
     }));

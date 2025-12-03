@@ -5,6 +5,7 @@ import { withAngular } from '../plugins/with-angular';
 import { createDefaultDocument } from './create-document';
 import { AngularEditor } from '../plugins/angular-editor';
 import { DOMRange } from 'slate-dom';
+import { TestingLeafFlavour } from './leaf.flavour';
 
 @Component({
     selector: 'basic-editable',
@@ -62,6 +63,9 @@ export class AdvancedEditableComponent implements OnInit {
     }
 
     renderLeaf = (text: Text) => {
+        if (text['highlight']) {
+            return TestingLeafFlavour;
+        }
         return null;
     };
 
