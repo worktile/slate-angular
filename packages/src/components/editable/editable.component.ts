@@ -665,11 +665,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
             (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
-                const actualHeight =
-                    height +
-                    parseFloat(getComputedStyle(view.nativeElement).marginTop) +
-                    parseFloat(getComputedStyle(view.nativeElement).marginBottom);
-                this.measuredHeights.set(key.id, actualHeight);
+                this.measuredHeights.set(key.id, height);
             });
         });
     }
