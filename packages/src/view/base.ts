@@ -200,7 +200,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     }
 
     getRealHeight(): Promise<number> {
-        return Promise.resolve(this.nativeElement.offsetHeight);
+        const computedStyle = getComputedStyle(this.nativeElement);
+        return Promise.resolve(
+            this.nativeElement.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom)
+        );
     }
 }
 

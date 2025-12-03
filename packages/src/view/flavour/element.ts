@@ -122,7 +122,10 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
     }
 
     getRealHeight(): Promise<number> {
-        return Promise.resolve(this.nativeElement.offsetHeight);
+        const computedStyle = getComputedStyle(this.nativeElement);
+        return Promise.resolve(
+            this.nativeElement.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom)
+        );
     }
 
     abstract render(): void;
