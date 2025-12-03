@@ -141,7 +141,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.virtualConfig = config;
         this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
         this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
+            // TODO: 返回 renderedChildren 是否发生变化，变换后的索引范围，变化后的 top 和 bottom
+            // 计算出隐藏的节点的高度大小，看和 top 的变化值是否一样
+            // 如果发生变化，记录新的 top 和 bottom
             this.refreshVirtualView();
+            
             if (this.listRender.initialized) {
                 this.listRender.update(this.renderedChildren, this.editor, this.context);
             }
