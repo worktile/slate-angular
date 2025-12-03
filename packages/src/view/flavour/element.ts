@@ -6,6 +6,8 @@ import { addAfterViewInitQueue, ListRender } from '../render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { ELEMENT_TO_COMPONENT } from '../../utils/weak-maps';
 
+export const DEFAULT_ELEMENT_HEIGHT = 24;
+
 export abstract class BaseElementFlavour<T extends Element = Element, K extends AngularEditor = AngularEditor> extends BaseFlavour<
     SlateElementContext<T>,
     K
@@ -117,6 +119,10 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
             decorate: this._context.decorate,
             readonly: this._context.readonly
         };
+    }
+
+    getRealHeight(): Promise<number> {
+        return Promise.resolve(this.nativeElement.offsetHeight);
     }
 
     abstract render(): void;

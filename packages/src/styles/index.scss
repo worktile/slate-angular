@@ -2,8 +2,21 @@
 .slate-editable-container {
     display: block;
     outline: none;
-    padding: 32px;
+    padding: 0 32px;
     white-space: break-spaces;
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        pointer-events: none;
+        height: 0;
+    }
+    &::before {
+        height: var(--virtual-top-padding, 0px);
+    }
+    &::after {
+        height: var(--virtual-bottom-padding, 0px);
+    }
     & [contenteditable='true'] {
         outline: none;
     }

@@ -39,7 +39,15 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
+import {
+    IS_FIREFOX,
+    IS_SAFARI,
+    IS_CHROME,
+    HAS_BEFORE_INPUT_SUPPORT,
+    IS_ANDROID,
+    VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT,
+    VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT
+} from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -48,14 +56,23 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { isDecoratorRangeListEqual } from '../../utils';
+import { ELEMENT_TO_COMPONENT, isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
+import { BaseElementComponent } from '../../view/base';
+import { BaseElementFlavour } from '../../view/flavour/element';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
+
+export interface SlateVirtualScrollConfig {
+    enabled?: boolean;
+    scrollTop: number;
+    viewportHeight: number;
+    bufferCount?: number;
+}
 
 @Component({
     selector: 'slate-editable',
@@ -119,6 +136,22 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     @Input() placeholder: string;
 
+    @Input()
+    set virtualScroll(config: SlateVirtualScrollConfig) {
+        this.virtualConfig = config;
+        this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
+        this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
+            this.refreshVirtualView();
+            if (this.listRender.initialized) {
+                this.listRender.update(this.renderedChildren, this.editor, this.context);
+            }
+            this.scheduleMeasureVisibleHeights();
+        });
+    }
+
+    @HostBinding('style.--virtual-top-padding.px') virtualTopPadding = 0;
+    @HostBinding('style.--virtual-bottom-padding.px') virtualBottomPadding = 0;
+
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
     @Input() blur: (event: Event) => void;
@@ -158,6 +191,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     };
 
     listRender: ListRender;
+
+    private virtualConfig: SlateVirtualScrollConfig = {
+        enabled: false,
+        scrollTop: 0,
+        viewportHeight: 0
+    };
+    private renderedChildren: Element[] = [];
+    private virtualVisibleIndexes = new Set<number>();
+    private measuredHeights = new Map<string, number>();
+    private measurePending = false;
+    private refreshVirtualViewAnimId: number;
+    private measureVisibleHeightsAnimId: number;
 
     constructor(
         public elementRef: ElementRef,
@@ -224,11 +269,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (value && value.length) {
             this.editor.children = value;
             this.initializeContext();
+            this.refreshVirtualView();
+            const childrenForRender = this.renderedChildren;
             if (!this.listRender.initialized) {
-                this.listRender.initialize(this.editor.children, this.editor, this.context);
+                this.listRender.initialize(childrenForRender, this.editor, this.context);
             } else {
-                this.listRender.update(this.editor.children, this.editor, this.context);
+                this.listRender.update(childrenForRender, this.editor, this.context);
             }
+            this.scheduleMeasureVisibleHeights();
             this.cdr.markForCheck();
         }
     }
@@ -378,7 +426,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        this.listRender.update(this.editor.children, this.editor, this.context);
+        this.refreshVirtualView();
+        this.listRender.update(this.renderedChildren, this.editor, this.context);
+        this.scheduleMeasureVisibleHeights();
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -418,7 +468,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     render() {
         const changed = this.updateContext();
         if (changed) {
-            this.listRender.update(this.editor.children, this.editor, this.context);
+            this.refreshVirtualView();
+            this.listRender.update(this.renderedChildren, this.editor, this.context);
+            this.scheduleMeasureVisibleHeights();
         }
     }
 
@@ -487,6 +539,139 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const placeholderDecorations = this.isComposing ? [] : this.composePlaceholderDecorate(this.editor);
         decorations.push(...placeholderDecorations);
         return decorations;
+    }
+
+    private shouldUseVirtual() {
+        return !!(this.virtualConfig && this.virtualConfig.enabled);
+    }
+
+    private refreshVirtualView() {
+        const children = (this.editor.children || []) as Element[];
+        if (!children.length || !this.shouldUseVirtual()) {
+            this.renderedChildren = children;
+            this.virtualTopPadding = 0;
+            this.virtualBottomPadding = 0;
+            this.virtualVisibleIndexes.clear();
+            return;
+        }
+        const scrollTop = this.virtualConfig.scrollTop ?? 0;
+        const viewportHeight = this.virtualConfig.viewportHeight ?? 0;
+        if (!viewportHeight) {
+            // 已经启用虚拟滚动，但可视区域高度还未获取到，先置空不渲染
+            this.renderedChildren = [];
+            this.virtualTopPadding = 0;
+            this.virtualBottomPadding = 0;
+            this.virtualVisibleIndexes.clear();
+            return;
+        }
+        const bufferCount = this.virtualConfig.bufferCount ?? VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT;
+        const heights = children.map((_, idx) => this.getBlockHeight(idx));
+        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        const total = accumulatedHeights[accumulatedHeights.length - 1] || 0;
+
+        let visibleStart = 0;
+        // 按真实或估算高度往后累加，找到滚动起点所在块
+        while (visibleStart < heights.length && accumulatedHeights[visibleStart + 1] <= scrollTop) {
+            visibleStart++;
+        }
+
+        // 向上预留 bufferCount 块
+        const startIndex = Math.max(0, visibleStart - bufferCount);
+        const top = accumulatedHeights[startIndex];
+        const bufferBelowHeight = this.getBufferBelowHeight(viewportHeight, visibleStart, bufferCount);
+        const targetHeight = accumulatedHeights[visibleStart] - top + viewportHeight + bufferBelowHeight;
+
+        const visible: Element[] = [];
+        const visibleIndexes: number[] = [];
+        let accumulated = 0;
+        let cursor = startIndex;
+        // 循环累计高度超出目标高度（可视高度 + 上下 buffer）
+        while (cursor < children.length && accumulated < targetHeight) {
+            visible.push(children[cursor]);
+            visibleIndexes.push(cursor);
+            accumulated += this.getBlockHeight(cursor);
+            cursor++;
+        }
+        const bottom = Math.max(total - top - accumulated, 0); // 下占位高度
+        this.renderedChildren = visible.length ? visible : children;
+        // padding 占位
+        this.virtualTopPadding = this.renderedChildren === visible ? Math.round(top) : 0;
+        this.virtualBottomPadding = this.renderedChildren === visible ? Math.round(bottom) : 0;
+        this.virtualVisibleIndexes = new Set(visibleIndexes);
+    }
+
+    private getBlockHeight(index: number) {
+        const node = this.editor.children[index];
+        if (!node) {
+            return VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+        }
+        const key = AngularEditor.findKey(this.editor, node);
+        return this.measuredHeights.get(key.id) ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+    }
+
+    private buildAccumulatedHeight(heights: number[]) {
+        const accumulatedHeights = new Array(heights.length + 1).fill(0);
+        for (let i = 0; i < heights.length; i++) {
+            // 存储前 i 个的累计高度
+            accumulatedHeights[i + 1] = accumulatedHeights[i] + heights[i];
+        }
+        return accumulatedHeights;
+    }
+
+    private getBufferBelowHeight(viewportHeight: number, visibleStart: number, bufferCount: number) {
+        let blockHeight = 0;
+        let start = visibleStart;
+        // 循环累计高度超出视图高度代表找到向下缓冲区的起始位置
+        while (blockHeight < viewportHeight) {
+            blockHeight += this.getBlockHeight(start);
+            start++;
+        }
+        let bufferHeight = 0;
+        for (let i = start; i < start + bufferCount; i++) {
+            bufferHeight += this.getBlockHeight(i);
+        }
+        return bufferHeight;
+    }
+
+    private scheduleMeasureVisibleHeights() {
+        if (!this.shouldUseVirtual()) {
+            return;
+        }
+        if (this.measurePending) {
+            return;
+        }
+        this.measurePending = true;
+        this.measureVisibleHeightsAnimId && cancelAnimationFrame(this.measureVisibleHeightsAnimId);
+        this.measureVisibleHeightsAnimId = requestAnimationFrame(() => {
+            this.measureVisibleHeights();
+            this.measurePending = false;
+        });
+    }
+
+    private measureVisibleHeights() {
+        const children = (this.editor.children || []) as Element[];
+        this.virtualVisibleIndexes.forEach(index => {
+            const node = children[index];
+            if (!node) {
+                return;
+            }
+            const key = AngularEditor.findKey(this.editor, node);
+            // 跳过已测过的块
+            if (this.measuredHeights.has(key.id)) {
+                return;
+            }
+            const view = ELEMENT_TO_COMPONENT.get(node);
+            if (!view) {
+                return;
+            }
+            (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
+                const actualHeight =
+                    height +
+                    parseFloat(getComputedStyle(view.nativeElement).marginTop) +
+                    parseFloat(getComputedStyle(view.nativeElement).marginBottom);
+                this.measuredHeights.set(key.id, actualHeight);
+            });
+        });
     }
 
     //#region event proxy
