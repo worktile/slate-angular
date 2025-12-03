@@ -198,6 +198,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
             readonly: this._context.readonly
         };
     }
+
+    getRealHeight(): Promise<number> {
+        return Promise.resolve(this.nativeElement.offsetHeight);
+    }
 }
 
 /**

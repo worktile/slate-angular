@@ -56,11 +56,13 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { isDecoratorRangeListEqual } from '../../utils';
+import { ELEMENT_TO_COMPONENT, isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
+import { BaseElementComponent } from '../../view/base';
+import { BaseElementFlavour } from '../../view/flavour/element';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -661,17 +663,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (this.measuredHeights.has(key.id)) {
                 return;
             }
-            try {
-                const el = AngularEditor.toDOMNode(this.editor, node);
-                const rect = el.getBoundingClientRect();
-                const style = getComputedStyle(el);
-                const marginTop = parseFloat(style.marginTop) || 0;
-                const marginBottom = parseFloat(style.marginBottom) || 0;
-                const marginHeight = rect.height + marginTop + marginBottom;
-                this.measuredHeights.set(key.id, marginHeight);
-            } catch {
-                // dom可能没准备好
+            const view = ELEMENT_TO_COMPONENT.get(node);
+            if (!view) {
+                return;
             }
+            (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
+                const actualHeight =
+                    height +
+                    parseFloat(getComputedStyle(view.nativeElement).marginTop) +
+                    parseFloat(getComputedStyle(view.nativeElement).marginBottom);
+                this.measuredHeights.set(key.id, actualHeight);
+            });
         });
     }
 
