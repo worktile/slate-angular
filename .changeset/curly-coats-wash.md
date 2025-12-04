@@ -2,4 +2,4 @@
 'slate-angular': patch
 ---
 
-optmize virtual logs
+optmize virtual logs，diff needs to determine whether it is consistent before and after
