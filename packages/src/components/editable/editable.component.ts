@@ -726,8 +726,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 const needBottom = virtualView.heights
                     .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
                     .reduce((acc, height) => acc + height, 0);
-                console.log('newTopHeight:', needTop, 'prevTopHeight:', this.virtualTopPadding);
-                console.log('newBottomHeight:', needBottom, 'prevBottomHeight:', this.virtualBottomPadding);
+                console.log('newTopHeight:', needTop, 'prevTopHeight:', parseFloat(this.virtualTopHeightElement.style.height));
+                console.log('newBottomHeight:', needBottom, 'prevBottomHeight:', parseFloat(this.virtualBottomHeightElement.style.height));
                 console.warn('=========== Dividing line ===========');
             }
             return true;
