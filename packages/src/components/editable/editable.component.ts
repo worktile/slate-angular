@@ -681,13 +681,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private getBlockHeight(index: number) {
-        const blockHeight = this.virtualConfig.blockHeight ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
         const node = this.editor.children[index];
         if (!node) {
-            return blockHeight;
+            return VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
         }
         const key = AngularEditor.findKey(this.editor, node);
-        return this.measuredHeights.get(key.id) ?? blockHeight;
+        return this.measuredHeights.get(key.id) ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
     }
 
     private buildAccumulatedHeight(heights: number[]) {
