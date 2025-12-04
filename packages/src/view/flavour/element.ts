@@ -5,6 +5,7 @@ import { BaseFlavour } from './base';
 import { addAfterViewInitQueue, ListRender } from '../render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { ELEMENT_TO_COMPONENT } from '../../utils/weak-maps';
+import { getBlockCardByNativeElement } from '../../components/block-card/block-card';
 
 export const DEFAULT_ELEMENT_HEIGHT = 24;
 
@@ -122,10 +123,10 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
     }
 
     getRealHeight(): Promise<number> {
-        const computedStyle = getComputedStyle(this.nativeElement);
-        return Promise.resolve(
-            this.nativeElement.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom)
-        );
+        const blockCard = getBlockCardByNativeElement(this.nativeElement);
+        const target = blockCard || this.nativeElement;
+        const computedStyle = getComputedStyle(target);
+        return Promise.resolve(target.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom));
     }
 
     abstract render(): void;

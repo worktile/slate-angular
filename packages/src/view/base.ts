@@ -21,6 +21,7 @@ import { ListRender, addAfterViewInitQueue } from './render/list-render';
 import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { getContentHeight } from '../utils/dom';
 import { SlateStringRender } from '../components/string/string-render';
+import { getBlockCardByNativeElement } from '../components/block-card/block-card';
 
 /**
  * base class for template
@@ -200,10 +201,10 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
     }
 
     getRealHeight(): Promise<number> {
-        const computedStyle = getComputedStyle(this.nativeElement);
-        return Promise.resolve(
-            this.nativeElement.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom)
-        );
+        const blockCard = getBlockCardByNativeElement(this.nativeElement);
+        const target = blockCard || this.nativeElement;
+        const computedStyle = getComputedStyle(target);
+        return Promise.resolve(target.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom));
     }
 }
 
