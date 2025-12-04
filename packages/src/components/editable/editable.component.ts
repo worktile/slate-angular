@@ -46,7 +46,8 @@ import {
     HAS_BEFORE_INPUT_SUPPORT,
     IS_ANDROID,
     VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT,
-    VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT
+    VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT,
+    SLATE_DEBUG_KEY
 } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
@@ -63,16 +64,10 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
+import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
-
-export interface SlateVirtualScrollConfig {
-    enabled?: boolean;
-    scrollTop: number;
-    viewportHeight: number;
-    bufferCount?: number;
-}
 
 @Component({
     selector: 'slate-editable',
@@ -141,15 +136,15 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.virtualConfig = config;
         this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
         this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
-            // TODO: 返回 renderedChildren 是否发生变化，变换后的索引范围，变化后的 top 和 bottom
-            // 计算出隐藏的节点的高度大小，看和 top 的变化值是否一样
-            // 如果发生变化，记录新的 top 和 bottom
-            this.refreshVirtualView();
-            
-            if (this.listRender.initialized) {
-                this.listRender.update(this.renderedChildren, this.editor, this.context);
+            const virtualView = this.refreshVirtualView();
+            const diff = this.diffVirtualView(virtualView);
+            if (diff) {
+                this.applyVirtualView(virtualView);
+                if (this.listRender.initialized) {
+                    this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+                }
+                this.scheduleMeasureVisibleHeights();
             }
-            this.scheduleMeasureVisibleHeights();
         });
     }
 
@@ -273,8 +268,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (value && value.length) {
             this.editor.children = value;
             this.initializeContext();
-            this.refreshVirtualView();
-            const childrenForRender = this.renderedChildren;
+            const virtualView = this.refreshVirtualView();
+            this.applyVirtualView(virtualView);
+            const childrenForRender = virtualView.renderedChildren;
             if (!this.listRender.initialized) {
                 this.listRender.initialize(childrenForRender, this.editor, this.context);
             } else {
@@ -430,8 +426,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        this.refreshVirtualView();
-        this.listRender.update(this.renderedChildren, this.editor, this.context);
+        const virtualView = this.refreshVirtualView();
+        this.applyVirtualView(virtualView);
+        this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
         this.scheduleMeasureVisibleHeights();
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
@@ -472,8 +469,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     render() {
         const changed = this.updateContext();
         if (changed) {
-            this.refreshVirtualView();
-            this.listRender.update(this.renderedChildren, this.editor, this.context);
+            const virtualView = this.refreshVirtualView();
+            this.applyVirtualView(virtualView);
+            this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
             this.scheduleMeasureVisibleHeights();
         }
     }
@@ -549,29 +547,32 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !!(this.virtualConfig && this.virtualConfig.enabled);
     }
 
-    private refreshVirtualView() {
+    private refreshVirtualView(): VirtualViewResult {
         const children = (this.editor.children || []) as Element[];
         if (!children.length || !this.shouldUseVirtual()) {
-            this.renderedChildren = children;
-            this.virtualTopPadding = 0;
-            this.virtualBottomPadding = 0;
-            this.virtualVisibleIndexes.clear();
-            return;
+            return {
+                renderedChildren: children,
+                visibleIndexes: new Set<number>(),
+                top: 0,
+                bottom: 0,
+                heights: []
+            };
         }
         const scrollTop = this.virtualConfig.scrollTop ?? 0;
         const viewportHeight = this.virtualConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
             // 已经启用虚拟滚动，但可视区域高度还未获取到，先置空不渲染
-            this.renderedChildren = [];
-            this.virtualTopPadding = 0;
-            this.virtualBottomPadding = 0;
-            this.virtualVisibleIndexes.clear();
-            return;
+            return {
+                renderedChildren: [],
+                visibleIndexes: new Set<number>(),
+                top: 0,
+                bottom: 0,
+                heights: []
+            };
         }
         const bufferCount = this.virtualConfig.bufferCount ?? VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT;
         const heights = children.map((_, idx) => this.getBlockHeight(idx));
         const accumulatedHeights = this.buildAccumulatedHeight(heights);
-        const total = accumulatedHeights[accumulatedHeights.length - 1] || 0;
 
         let visibleStart = 0;
         // 按真实或估算高度往后累加，找到滚动起点所在块
@@ -596,21 +597,97 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             accumulated += this.getBlockHeight(cursor);
             cursor++;
         }
-        const bottom = Math.max(total - top - accumulated, 0); // 下占位高度
-        this.renderedChildren = visible.length ? visible : children;
-        // padding 占位
-        this.virtualTopPadding = this.renderedChildren === visible ? Math.round(top) : 0;
-        this.virtualBottomPadding = this.renderedChildren === visible ? Math.round(bottom) : 0;
-        this.virtualVisibleIndexes = new Set(visibleIndexes);
+        const bottom = heights.slice(cursor).reduce((acc, height) => acc + height, 0);
+        const renderedChildren = visible.length ? visible : children;
+        const visibleIndexesSet = new Set(visibleIndexes);
+        return {
+            renderedChildren,
+            visibleIndexes: visibleIndexesSet,
+            top,
+            bottom,
+            heights
+        };
+    }
+
+    private applyVirtualView(virtualView: VirtualViewResult) {
+        this.renderedChildren = virtualView.renderedChildren;
+        this.virtualTopPadding = virtualView.top;
+        this.virtualBottomPadding = virtualView.bottom;
+        this.virtualVisibleIndexes = virtualView.visibleIndexes;
+    }
+
+    private diffVirtualView(virtualView: VirtualViewResult) {
+        if (!this.renderedChildren.length) {
+            return true;
+        }
+        const oldVisibleIndexes = [...this.virtualVisibleIndexes];
+        const newVisibleIndexes = [...virtualView.visibleIndexes];
+        if (newVisibleIndexes[0] !== oldVisibleIndexes[0]) {
+            if (localStorage.getItem(SLATE_DEBUG_KEY) === 'true') {
+                const diffTopRenderedIndexes = [];
+                const diffBottomRenderedIndexes = [];
+                if (newVisibleIndexes[0] > oldVisibleIndexes[0]) {
+                    // 向下
+                    for (let index = 0; index < oldVisibleIndexes.length; index++) {
+                        const element = oldVisibleIndexes[index];
+                        if (!newVisibleIndexes.includes(element)) {
+                            diffTopRenderedIndexes.push(element);
+                        } else {
+                            break;
+                        }
+                    }
+                    for (let index = newVisibleIndexes.length - 1; index >= 0; index--) {
+                        const element = newVisibleIndexes[index];
+                        if (!oldVisibleIndexes.includes(element)) {
+                            diffBottomRenderedIndexes.push(element);
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    // 向上
+                    for (let index = 0; index < newVisibleIndexes.length; index++) {
+                        const element = newVisibleIndexes[index];
+                        if (!oldVisibleIndexes.includes(element)) {
+                            diffTopRenderedIndexes.push(element);
+                        } else {
+                            break;
+                        }
+                    }
+                    for (let index = oldVisibleIndexes.length - 1; index >= 0; index--) {
+                        const element = oldVisibleIndexes[index];
+                        if (!newVisibleIndexes.includes(element)) {
+                            diffBottomRenderedIndexes.push(element);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                console.log('oldVisibleIndexes:', oldVisibleIndexes);
+                console.log('newVisibleIndexes:', newVisibleIndexes);
+                console.log('diffTopRenderedChildren:', diffTopRenderedIndexes);
+                console.log('diffBottomRenderedChildren:', diffBottomRenderedIndexes);
+                const needTop = virtualView.heights.slice(0, newVisibleIndexes[0]).reduce((acc, height) => acc + height, 0);
+                const needBottom = virtualView.heights
+                    .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
+                    .reduce((acc, height) => acc + height, 0);
+                console.log('needTop:', needTop, 'calcTop:', virtualView.top);
+                console.log('needBottom:', needBottom, 'calcBottom:', virtualView.bottom);
+                console.warn('=========== Dividing line ===========');
+            }
+            return true;
+        }
+        return false;
     }
 
     private getBlockHeight(index: number) {
+        const blockHeight = this.virtualConfig.blockHeight ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
         const node = this.editor.children[index];
         if (!node) {
-            return VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+            return blockHeight;
         }
         const key = AngularEditor.findKey(this.editor, node);
-        return this.measuredHeights.get(key.id) ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+        return this.measuredHeights.get(key.id) ?? blockHeight;
     }
 
     private buildAccumulatedHeight(heights: number[]) {
