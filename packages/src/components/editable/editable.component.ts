@@ -667,8 +667,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (localStorage.getItem(SLATE_DEBUG_KEY) === 'true') {
                 const diffTopRenderedIndexes = [];
                 const diffBottomRenderedIndexes = [];
+                let direction = '';
                 if (newVisibleIndexes[0] > oldVisibleIndexes[0]) {
                     // 向下
+                    direction = 'down';
                     for (let index = 0; index < oldVisibleIndexes.length; index++) {
                         const element = oldVisibleIndexes[index];
                         if (!newVisibleIndexes.includes(element)) {
@@ -687,6 +689,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     }
                 } else {
                     // 向上
+                    direction = 'up';
                     for (let index = 0; index < newVisibleIndexes.length; index++) {
                         const element = newVisibleIndexes[index];
                         if (!oldVisibleIndexes.includes(element)) {
@@ -706,14 +709,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
                 console.log('oldVisibleIndexes:', oldVisibleIndexes);
                 console.log('newVisibleIndexes:', newVisibleIndexes);
-                console.log('diffTopRenderedChildren:', diffTopRenderedIndexes);
-                console.log('diffBottomRenderedChildren:', diffBottomRenderedIndexes);
+                const directionStr = direction === 'down' ? '+' : '-';
+                console.log(
+                    'diffTopRenderedIndexes:',
+                    directionStr,
+                    diffTopRenderedIndexes,
+                    diffTopRenderedIndexes.map(index => virtualView.heights[index])
+                );
+                console.log(
+                    'diffBottomRenderedIndexes:',
+                    directionStr,
+                    diffBottomRenderedIndexes,
+                    diffBottomRenderedIndexes.map(index => virtualView.heights[index])
+                );
                 const needTop = virtualView.heights.slice(0, newVisibleIndexes[0]).reduce((acc, height) => acc + height, 0);
                 const needBottom = virtualView.heights
                     .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
                     .reduce((acc, height) => acc + height, 0);
-                console.log('needTop:', needTop, 'calcTop:', virtualView.top);
-                console.log('needBottom:', needBottom, 'calcBottom:', virtualView.bottom);
+                console.log('newTopHeight:', needTop, 'prevTopHeight:', this.virtualTopPadding);
+                console.log('newBottomHeight:', needBottom, 'prevBottomHeight:', this.virtualBottomPadding);
                 console.warn('=========== Dividing line ===========');
             }
             return true;
