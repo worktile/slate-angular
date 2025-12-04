@@ -66,6 +66,8 @@ import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 
+export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
+
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
@@ -148,9 +150,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
-    @HostBinding('style.--virtual-top-padding.px') virtualTopPadding = 0;
-    @HostBinding('style.--virtual-bottom-padding.px') virtualBottomPadding = 0;
-
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
     @Input() blur: (event: Event) => void;
@@ -187,6 +186,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     getOutletParent = () => {
         return this.elementRef.nativeElement;
+    };
+
+    getOutletElement = () => {
+        if (this.virtualScrollInitialized) {
+            return this.virtualCenterOutlet;
+        } else {
+            return null;
+        }
     };
 
     listRender: ListRender;
@@ -234,7 +241,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
-        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, () => null);
+        this.initializeVirtualScrolling();
+        this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
@@ -547,7 +555,41 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !!(this.virtualConfig && this.virtualConfig.enabled);
     }
 
-    private refreshVirtualView(): VirtualViewResult {
+    virtualScrollInitialized = false;
+
+    virtualTopHeightElement: HTMLElement;
+
+    virtualBottomHeightElement: HTMLElement;
+
+    virtualCenterOutlet: HTMLElement;
+
+    initializeVirtualScrolling() {
+        if (this.virtualScrollInitialized) {
+            return;
+        }
+        if (this.virtualConfig && this.virtualConfig.enabled) {
+            this.virtualScrollInitialized = true;
+            this.virtualTopHeightElement = document.createElement('div');
+            this.virtualTopHeightElement.classList.add('virtual-top-height');
+            this.virtualBottomHeightElement = document.createElement('div');
+            this.virtualBottomHeightElement.classList.add('virtual-bottom-height');
+            this.virtualCenterOutlet = document.createElement('div');
+            this.virtualCenterOutlet.classList.add('virtual-center-outlet');
+            this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
+            this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
+            this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
+        }
+    }
+
+    changeVirtualHeight(topHeight: number, bottomHeight: number) {
+        if (!this.virtualScrollInitialized) {
+            return;
+        }
+        this.virtualTopHeightElement.style.height = `${topHeight}px`;
+        this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
+    }
+
+    private refreshVirtualView() {
         const children = (this.editor.children || []) as Element[];
         if (!children.length || !this.shouldUseVirtual()) {
             return {
@@ -611,8 +653,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private applyVirtualView(virtualView: VirtualViewResult) {
         this.renderedChildren = virtualView.renderedChildren;
-        this.virtualTopPadding = virtualView.top;
-        this.virtualBottomPadding = virtualView.bottom;
+        this.changeVirtualHeight(virtualView.top, virtualView.bottom);
         this.virtualVisibleIndexes = virtualView.visibleIndexes;
     }
 
