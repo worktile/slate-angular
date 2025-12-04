@@ -582,6 +582,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     changeVirtualHeight(topHeight: number, bottomHeight: number) {
+        if (!this.virtualScrollInitialized) {
+            return;
+        }
         this.virtualTopHeightElement.style.height = `${topHeight}px`;
         this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
     }
