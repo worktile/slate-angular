@@ -670,10 +670,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (localStorage.getItem(SLATE_DEBUG_KEY) === 'true') {
                 const diffTopRenderedIndexes = [];
                 const diffBottomRenderedIndexes = [];
-                let direction = '';
-                if (newVisibleIndexes[0] > oldVisibleIndexes[0]) {
+                const isMissingTop = newVisibleIndexes[0] > oldVisibleIndexes[0];
+                const isAddedTop = newVisibleIndexes[0] < oldVisibleIndexes[0];
+                const isMissingBottom = newVisibleIndexes[newVisibleIndexes.length - 1] > oldVisibleIndexes[oldVisibleIndexes.length - 1];
+                const isAddedBottom = newVisibleIndexes[newVisibleIndexes.length - 1] < oldVisibleIndexes[oldVisibleIndexes.length - 1];
+                if (isMissingTop || isMissingBottom) {
                     // 向下
-                    direction = 'down';
                     for (let index = 0; index < oldVisibleIndexes.length; index++) {
                         const element = oldVisibleIndexes[index];
                         if (!newVisibleIndexes.includes(element)) {
@@ -690,9 +692,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             break;
                         }
                     }
-                } else {
+                } else if (isAddedTop || isAddedBottom) {
                     // 向上
-                    direction = 'up';
                     for (let index = 0; index < newVisibleIndexes.length; index++) {
                         const element = newVisibleIndexes[index];
                         if (!oldVisibleIndexes.includes(element)) {
@@ -712,18 +713,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
                 console.log('oldVisibleIndexes:', oldVisibleIndexes);
                 console.log('newVisibleIndexes:', newVisibleIndexes);
-                const directionStr = direction === 'down' ? '+' : '-';
                 console.log(
                     'diffTopRenderedIndexes:',
-                    directionStr,
+                    isMissingTop ? '-' : isAddedTop ? '+' : '-',
                     diffTopRenderedIndexes,
-                    diffTopRenderedIndexes.map(index => virtualView.heights[index])
+                    diffTopRenderedIndexes.map(index => this.getBlockHeight(index, 0))
                 );
                 console.log(
                     'diffBottomRenderedIndexes:',
-                    directionStr,
+                    isMissingBottom ? '+' : isAddedBottom ? '-' : '+',
                     diffBottomRenderedIndexes,
-                    diffBottomRenderedIndexes.map(index => virtualView.heights[index])
+                    diffBottomRenderedIndexes.map(index => this.getBlockHeight(index, 0))
                 );
                 const needTop = virtualView.heights.slice(0, newVisibleIndexes[0]).reduce((acc, height) => acc + height, 0);
                 const needBottom = virtualView.heights
@@ -738,13 +738,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return false;
     }
 
-    private getBlockHeight(index: number) {
+    private getBlockHeight(index: number, defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT) {
         const node = this.editor.children[index];
         if (!node) {
-            return VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+            return defaultHeight;
         }
         const key = AngularEditor.findKey(this.editor, node);
-        return this.measuredHeights.get(key.id) ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
+        return this.measuredHeights.get(key.id) ?? defaultHeight;
     }
 
     private buildAccumulatedHeight(heights: number[]) {
