@@ -663,7 +663,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const oldVisibleIndexes = [...this.virtualVisibleIndexes];
         const newVisibleIndexes = [...virtualView.visibleIndexes];
-        if (newVisibleIndexes[0] !== oldVisibleIndexes[0]) {
+        if (
+            newVisibleIndexes[0] !== oldVisibleIndexes[0] ||
+            newVisibleIndexes[newVisibleIndexes.length - 1] !== oldVisibleIndexes[oldVisibleIndexes.length - 1]
+        ) {
             if (localStorage.getItem(SLATE_DEBUG_KEY) === 'true') {
                 const diffTopRenderedIndexes = [];
                 const diffBottomRenderedIndexes = [];
