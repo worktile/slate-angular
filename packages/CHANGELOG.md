@@ -1,5 +1,19 @@
 # Changelog
 
+## 20.2.0-next.1
+
+### Patch Changes
+
+- [#308](https://github.com/worktile/slate-angular/pull/308) [`9d24380d946194d26f4d243f4797cf25941d9fe6`](https://github.com/worktile/slate-angular/commit/9d24380d946194d26f4d243f4797cf25941d9fe6) Thanks [@Xwatson](https://github.com/Xwatson)! - optmize virtual logs，diff needs to determine whether it is consistent before and after
+
+- [`7a3cb26b48bd73efaa66734daa2cc4177b19321f`](https://github.com/worktile/slate-angular/commit/7a3cb26b48bd73efaa66734daa2cc4177b19321f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - calculate real height base on block card or native element
+
+- [`f8c24b2a5142688050ca67c943590629553dd41d`](https://github.com/worktile/slate-angular/commit/f8c24b2a5142688050ca67c943590629553dd41d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - move marginTop and marginBottom to getRealHeight
+
+- [#306](https://github.com/worktile/slate-angular/pull/306) [`6e1d3198902648336cb0a5c4299e887dec032b90`](https://github.com/worktile/slate-angular/commit/6e1d3198902648336cb0a5c4299e887dec032b90) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. Add top and bottom virtual height elements 2. Add JUST_NOW_UPDATED_VIRTUAL_VIEW to avoid circle trigger virtual scrolling
+
+- [#307](https://github.com/worktile/slate-angular/pull/307) [`41a85bfdd5efeed3670f6a81bc7d82511cce6afc`](https://github.com/worktile/slate-angular/commit/41a85bfdd5efeed3670f6a81bc7d82511cce6afc) Thanks [@Xwatson](https://github.com/Xwatson)! - diff scrolling optimization, adding logs
+
 ## 20.2.0-next.0
 
 ### Minor Changes
