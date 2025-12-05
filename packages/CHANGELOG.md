@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.3
+
+### Minor Changes
+
+- [`047f85cf63d0cd44801285fb8be33cc1c3856e3e`](https://github.com/worktile/slate-angular/commit/047f85cf63d0cd44801285fb8be33cc1c3856e3e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - getRealHeight support both number and promise return type
+
+  remeasureHeightByIndics changed to sync method and improve logs
+
 ## 20.2.0-next.2
 
 ### Patch Changes
