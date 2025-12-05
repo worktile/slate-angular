@@ -652,7 +652,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const heights = children.map((_, idx) => this.getBlockHeight(idx));
         const accumulatedHeights = this.buildAccumulatedHeight(heights);
         const top = visibleStartIndex === -1 ? 0 : accumulatedHeights[visibleStartIndex];
-        const bottom = accumulatedHeights[children.length] - accumulatedHeights[visibleEndIndex];
+        const bottom = accumulatedHeights[elementLength] - accumulatedHeights[visibleEndIndex];
 
         return {
             renderedChildren: visible.length ? visible : children,
