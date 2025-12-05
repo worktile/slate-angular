@@ -5,7 +5,9 @@
     "slate-angular": "20.1.0"
   },
   "changesets": [
+    "bright-buses-wish",
     "curly-coats-wash",
+    "cyan-walls-see",
     "fine-mails-write",
     "funny-vans-exist",
     "happy-jobs-return",
