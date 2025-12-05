@@ -140,28 +140,26 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.virtualConfig = config;
         this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
         this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
-            const virtualView = this.refreshVirtualView();
-            const diff = this.diffVirtualView(virtualView);
-            if (diff.isDiff) {
-                if (diff.isMissingTop || diff.isMissingBottom) {
-                    this.measureHeightByIndexes([...diff.diffTopRenderedIndexes, ...diff.diffBottomRenderedIndexes], true).then(result => {
-                        if (isDebug) {
-                            console.log('async measureHeightByIndexes:', result);
-                        }
-                        this.applyVirtualView(result || virtualView);
-                        if (this.listRender.initialized) {
-                            this.listRender.update(this.renderedChildren, this.editor, this.context);
-                        }
-                        this.scheduleMeasureVisibleHeights();
-                    });
-                } else {
-                    this.applyVirtualView(virtualView);
-                    if (this.listRender.initialized) {
-                        this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+            let virtualView = this.refreshVirtualView();
+            let diff = this.diffVirtualView(virtualView);
+            if (!diff.isDiff) {
+                return;
+            }
+            if (diff.isMissingTop) {
+                const result = this.remeasureHeightByIndics([...diff.diffTopRenderedIndexes]);
+                if (result) {
+                    virtualView = this.refreshVirtualView();
+                    diff = this.diffVirtualView(virtualView, 'second');
+                    if (!diff.isDiff) {
+                        return;
                     }
-                    this.scheduleMeasureVisibleHeights();
                 }
             }
+            this.applyVirtualView(virtualView);
+            if (this.listRender.initialized) {
+                this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+            }
+            this.scheduleMeasureVisibleHeights();
         });
     }
 
@@ -593,6 +591,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
+            // businessHeight
         }
     }
 
@@ -672,7 +671,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.virtualVisibleIndexes = virtualView.visibleIndexes;
     }
 
-    private diffVirtualView(virtualView: VirtualViewResult) {
+    private diffVirtualView(virtualView: VirtualViewResult, stage: 'first' | 'second' = 'first') {
         if (!this.renderedChildren.length) {
             return {
                 isDiff: true,
@@ -731,6 +730,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             }
             if (isDebug) {
+                console.log(`====== diffVirtualView stage: ${stage} ======`);
                 console.log('oldVisibleIndexes:', oldVisibleIndexes);
                 console.log('newVisibleIndexes:', newVisibleIndexes);
                 console.log(
@@ -807,14 +807,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.shouldUseVirtual()) {
             return;
         }
-        if (this.measurePending) {
-            return;
-        }
-        this.measurePending = true;
         this.measureVisibleHeightsAnimId && cancelAnimationFrame(this.measureVisibleHeightsAnimId);
         this.measureVisibleHeightsAnimId = requestAnimationFrame(() => {
             this.measureVisibleHeights();
-            this.measurePending = false;
         });
     }
 
@@ -834,17 +829,21 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!view) {
                 return;
             }
-            (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
-                this.measuredHeights.set(key.id, height);
-            });
+            const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
+            if (ret instanceof Promise) {
+                ret.then(height => {
+                    this.measuredHeights.set(key.id, height);
+                });
+            } else {
+                this.measuredHeights.set(key.id, ret);
+            }
         });
     }
 
-    private async measureHeightByIndexes(indexes: number[], isRefresh: boolean = false): Promise<VirtualViewResult | null> {
+    private remeasureHeightByIndics(indics: number[]): boolean {
         const children = (this.editor.children || []) as Element[];
         let isHeightChanged = false;
-        const promises: Promise<void>[] = [];
-        indexes.forEach(index => {
+        indics.forEach(index => {
             const node = children[index];
             if (!node) {
                 return;
@@ -854,27 +853,29 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!view) {
                 return;
             }
-            const promise = (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
-                const prevHeight = this.measuredHeights.get(key.id);
-                if (isDebug) {
-                    console.log('measureHeightByIndexes: get index:', index, 'prevHeight:', prevHeight, 'newHeight:', height);
-                }
-                if (prevHeight && height !== prevHeight) {
-                    this.measuredHeights.set(key.id, height);
+            const prevHeight = this.measuredHeights.get(key.id);
+            const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
+            if (ret instanceof Promise) {
+                ret.then(height => {
+                    if (height !== prevHeight) {
+                        this.measuredHeights.set(key.id, height);
+                        isHeightChanged = true;
+                        if (isDebug) {
+                            console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
+                        }
+                    }
+                });
+            } else {
+                if (ret !== prevHeight) {
+                    this.measuredHeights.set(key.id, ret);
                     isHeightChanged = true;
+                    if (isDebug) {
+                        console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
+                    }
                 }
-            });
-            if (promise) {
-                promises.push(promise);
             }
         });
-        if (promises.length > 0) {
-            await Promise.all(promises);
-            if (isHeightChanged && isRefresh) {
-                return this.refreshVirtualView();
-            }
-        }
-        return null;
+        return isHeightChanged;
     }
 
     //#region event proxy
