@@ -568,6 +568,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !!(this.virtualConfig && this.virtualConfig.enabled);
     }
 
+    private h1: number = 0;
+
     virtualScrollInitialized = false;
 
     virtualTopHeightElement: HTMLElement;
@@ -592,6 +594,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
             // businessHeight
+            this.h1 = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
         }
     }
 
@@ -614,10 +617,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 heights: []
             };
         }
-        const scrollTop = this.virtualConfig.scrollTop ?? 0;
+        const scrollTop = this.virtualConfig.scrollTop;
         const viewportHeight = this.virtualConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
-            // 已经启用虚拟滚动，但可视区域高度还未获取到，先置空不渲染
             return {
                 renderedChildren: [],
                 visibleIndexes: new Set<number>(),
@@ -626,39 +628,35 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 heights: []
             };
         }
-        const bufferCount = this.virtualConfig.bufferCount ?? VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT;
-        const heights = children.map((_, idx) => this.getBlockHeight(idx));
-        const accumulatedHeights = this.buildAccumulatedHeight(heights);
-
-        let visibleStart = 0;
-        // 按真实或估算高度往后累加，找到滚动起点所在块
-        while (visibleStart < heights.length && accumulatedHeights[visibleStart + 1] <= scrollTop) {
-            visibleStart++;
-        }
-
-        // 向上预留 bufferCount 块
-        const startIndex = Math.max(0, visibleStart - bufferCount);
-        const top = accumulatedHeights[startIndex];
-        const bufferBelowHeight = this.getBufferBelowHeight(viewportHeight, visibleStart, bufferCount);
-        const targetHeight = accumulatedHeights[visibleStart] - top + viewportHeight + bufferBelowHeight;
-
+        const elementLength = children.length;
+        const adjustedScrollTop = Math.max(0, scrollTop - this.h1);
+        const viewBottom = scrollTop + viewportHeight;
+        let accumulatedOffset = 0;
+        let visibleStartIndex = -1;
         const visible: Element[] = [];
         const visibleIndexes: number[] = [];
-        let accumulated = 0;
-        let cursor = startIndex;
-        // 循环累计高度超出目标高度（可视高度 + 上下 buffer）
-        while (cursor < children.length && accumulated < targetHeight) {
-            visible.push(children[cursor]);
-            visibleIndexes.push(cursor);
-            accumulated += this.getBlockHeight(cursor);
-            cursor++;
+
+        for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
+            const currentHeight = this.getBlockHeight(i);
+            const nextOffset = accumulatedOffset + currentHeight;
+            // 可视区域有交集，加入渲染
+            if (nextOffset > adjustedScrollTop && accumulatedOffset < viewBottom) {
+                if (visibleStartIndex === -1) visibleStartIndex = i; // 第一个相交起始位置
+                visible.push(children[i]);
+                visibleIndexes.push(i);
+            }
+            accumulatedOffset = nextOffset;
         }
-        const bottom = heights.slice(cursor).reduce((acc, height) => acc + height, 0);
-        const renderedChildren = visible.length ? visible : children;
-        const visibleIndexesSet = new Set(visibleIndexes);
+
+        const visibleEndIndex = visibleStartIndex === -1 ? elementLength - 1 : visibleIndexes.length - 1;
+        const heights = children.map((_, idx) => this.getBlockHeight(idx));
+        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        const top = visibleStartIndex === -1 ? 0 : accumulatedHeights[visibleStartIndex];
+        const bottom = accumulatedHeights[children.length] - accumulatedHeights[visibleEndIndex];
+
         return {
-            renderedChildren,
-            visibleIndexes: visibleIndexesSet,
+            renderedChildren: visible.length ? visible : children,
+            visibleIndexes: new Set(visibleIndexes),
             top,
             bottom,
             heights
