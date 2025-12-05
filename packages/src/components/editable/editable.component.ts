@@ -71,6 +71,8 @@ export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
+const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
+
 @Component({
     selector: 'slate-editable',
     host: {
@@ -140,12 +142,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
             const virtualView = this.refreshVirtualView();
             const diff = this.diffVirtualView(virtualView);
-            if (diff) {
-                this.applyVirtualView(virtualView);
-                if (this.listRender.initialized) {
-                    this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+            if (diff.isDiff) {
+                if (diff.isMissingTop || diff.isMissingBottom) {
+                    this.measureHeightByIndexes([...diff.diffTopRenderedIndexes, ...diff.diffBottomRenderedIndexes], true).then(result => {
+                        if (isDebug) {
+                            console.log('async measureHeightByIndexes:', result);
+                        }
+                        this.applyVirtualView(result || virtualView);
+                        if (this.listRender.initialized) {
+                            this.listRender.update(this.renderedChildren, this.editor, this.context);
+                        }
+                        this.scheduleMeasureVisibleHeights();
+                    });
+                } else {
+                    this.applyVirtualView(virtualView);
+                    if (this.listRender.initialized) {
+                        this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+                    }
+                    this.scheduleMeasureVisibleHeights();
                 }
-                this.scheduleMeasureVisibleHeights();
             }
         });
     }
@@ -659,58 +674,63 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private diffVirtualView(virtualView: VirtualViewResult) {
         if (!this.renderedChildren.length) {
-            return true;
+            return {
+                isDiff: true,
+                diffTopRenderedIndexes: [],
+                diffBottomRenderedIndexes: []
+            };
         }
         const oldVisibleIndexes = [...this.virtualVisibleIndexes];
         const newVisibleIndexes = [...virtualView.visibleIndexes];
-        if (
-            newVisibleIndexes[0] !== oldVisibleIndexes[0] ||
-            newVisibleIndexes[newVisibleIndexes.length - 1] !== oldVisibleIndexes[oldVisibleIndexes.length - 1]
-        ) {
-            if (localStorage.getItem(SLATE_DEBUG_KEY) === 'true') {
-                const diffTopRenderedIndexes = [];
-                const diffBottomRenderedIndexes = [];
-                const isMissingTop = newVisibleIndexes[0] > oldVisibleIndexes[0];
-                const isAddedTop = newVisibleIndexes[0] < oldVisibleIndexes[0];
-                const isMissingBottom = newVisibleIndexes[newVisibleIndexes.length - 1] > oldVisibleIndexes[oldVisibleIndexes.length - 1];
-                const isAddedBottom = newVisibleIndexes[newVisibleIndexes.length - 1] < oldVisibleIndexes[oldVisibleIndexes.length - 1];
-                if (isMissingTop || isMissingBottom) {
-                    // 向下
-                    for (let index = 0; index < oldVisibleIndexes.length; index++) {
-                        const element = oldVisibleIndexes[index];
-                        if (!newVisibleIndexes.includes(element)) {
-                            diffTopRenderedIndexes.push(element);
-                        } else {
-                            break;
-                        }
-                    }
-                    for (let index = newVisibleIndexes.length - 1; index >= 0; index--) {
-                        const element = newVisibleIndexes[index];
-                        if (!oldVisibleIndexes.includes(element)) {
-                            diffBottomRenderedIndexes.push(element);
-                        } else {
-                            break;
-                        }
-                    }
-                } else if (isAddedTop || isAddedBottom) {
-                    // 向上
-                    for (let index = 0; index < newVisibleIndexes.length; index++) {
-                        const element = newVisibleIndexes[index];
-                        if (!oldVisibleIndexes.includes(element)) {
-                            diffTopRenderedIndexes.push(element);
-                        } else {
-                            break;
-                        }
-                    }
-                    for (let index = oldVisibleIndexes.length - 1; index >= 0; index--) {
-                        const element = oldVisibleIndexes[index];
-                        if (!newVisibleIndexes.includes(element)) {
-                            diffBottomRenderedIndexes.push(element);
-                        } else {
-                            break;
-                        }
+        const firstNewIndex = newVisibleIndexes[0];
+        const lastNewIndex = newVisibleIndexes[newVisibleIndexes.length - 1];
+        const firstOldIndex = oldVisibleIndexes[0];
+        const lastOldIndex = oldVisibleIndexes[oldVisibleIndexes.length - 1];
+        if (firstNewIndex !== firstOldIndex || lastNewIndex !== lastOldIndex) {
+            const diffTopRenderedIndexes = [];
+            const diffBottomRenderedIndexes = [];
+            const isMissingTop = firstNewIndex !== firstOldIndex && firstNewIndex > firstOldIndex;
+            const isAddedTop = firstNewIndex !== firstOldIndex && firstNewIndex < firstOldIndex;
+            const isMissingBottom = lastNewIndex !== lastOldIndex && lastOldIndex > lastNewIndex;
+            const isAddedBottom = lastNewIndex !== lastOldIndex && lastOldIndex < lastNewIndex;
+            if (isMissingTop || isAddedBottom) {
+                // 向下
+                for (let index = 0; index < oldVisibleIndexes.length; index++) {
+                    const element = oldVisibleIndexes[index];
+                    if (!newVisibleIndexes.includes(element)) {
+                        diffTopRenderedIndexes.push(element);
+                    } else {
+                        break;
                     }
                 }
+                for (let index = newVisibleIndexes.length - 1; index >= 0; index--) {
+                    const element = newVisibleIndexes[index];
+                    if (!oldVisibleIndexes.includes(element)) {
+                        diffBottomRenderedIndexes.push(element);
+                    } else {
+                        break;
+                    }
+                }
+            } else if (isAddedTop || isMissingBottom) {
+                // 向上
+                for (let index = 0; index < newVisibleIndexes.length; index++) {
+                    const element = newVisibleIndexes[index];
+                    if (!oldVisibleIndexes.includes(element)) {
+                        diffTopRenderedIndexes.push(element);
+                    } else {
+                        break;
+                    }
+                }
+                for (let index = oldVisibleIndexes.length - 1; index >= 0; index--) {
+                    const element = oldVisibleIndexes[index];
+                    if (!newVisibleIndexes.includes(element)) {
+                        diffBottomRenderedIndexes.push(element);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (isDebug) {
                 console.log('oldVisibleIndexes:', oldVisibleIndexes);
                 console.log('newVisibleIndexes:', newVisibleIndexes);
                 console.log(
@@ -721,7 +741,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 );
                 console.log(
                     'diffBottomRenderedIndexes:',
-                    isMissingBottom ? '+' : isAddedBottom ? '-' : '+',
+                    isAddedBottom ? '+' : isMissingBottom ? '-' : '+',
                     diffBottomRenderedIndexes,
                     diffBottomRenderedIndexes.map(index => this.getBlockHeight(index, 0))
                 );
@@ -733,9 +753,21 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 console.log('newBottomHeight:', needBottom, 'prevBottomHeight:', parseFloat(this.virtualBottomHeightElement.style.height));
                 console.warn('=========== Dividing line ===========');
             }
-            return true;
+            return {
+                isDiff: true,
+                isMissingTop,
+                isAddedTop,
+                isMissingBottom,
+                isAddedBottom,
+                diffTopRenderedIndexes,
+                diffBottomRenderedIndexes
+            };
         }
-        return false;
+        return {
+            isDiff: false,
+            diffTopRenderedIndexes: [],
+            diffBottomRenderedIndexes: []
+        };
     }
 
     private getBlockHeight(index: number, defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT) {
@@ -806,6 +838,43 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.measuredHeights.set(key.id, height);
             });
         });
+    }
+
+    private async measureHeightByIndexes(indexes: number[], isRefresh: boolean = false): Promise<VirtualViewResult | null> {
+        const children = (this.editor.children || []) as Element[];
+        let isHeightChanged = false;
+        const promises: Promise<void>[] = [];
+        indexes.forEach(index => {
+            const node = children[index];
+            if (!node) {
+                return;
+            }
+            const key = AngularEditor.findKey(this.editor, node);
+            const view = ELEMENT_TO_COMPONENT.get(node);
+            if (!view) {
+                return;
+            }
+            const promise = (view as BaseElementComponent | BaseElementFlavour).getRealHeight()?.then(height => {
+                const prevHeight = this.measuredHeights.get(key.id);
+                if (isDebug) {
+                    console.log('measureHeightByIndexes: get index:', index, 'prevHeight:', prevHeight, 'newHeight:', height);
+                }
+                if (prevHeight && height !== prevHeight) {
+                    this.measuredHeights.set(key.id, height);
+                    isHeightChanged = true;
+                }
+            });
+            if (promise) {
+                promises.push(promise);
+            }
+        });
+        if (promises.length > 0) {
+            await Promise.all(promises);
+            if (isHeightChanged && isRefresh) {
+                return this.refreshVirtualView();
+            }
+        }
+        return null;
     }
 
     //#region event proxy
