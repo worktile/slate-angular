@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.4
+
+### Minor Changes
+
+- [#311](https://github.com/worktile/slate-angular/pull/311) [`023de1b987c48c0f98c182e35c27de19bbb812a8`](https://github.com/worktile/slate-angular/commit/023de1b987c48c0f98c182e35c27de19bbb812a8) Thanks [@Xwatson](https://github.com/Xwatson)! - correct visible elements calculation logic
+
 ## 20.2.0-next.3
 
 ### Minor Changes
