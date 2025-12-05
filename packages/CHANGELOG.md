@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.2
+
+### Patch Changes
+
+- [#309](https://github.com/worktile/slate-angular/pull/309) [`2e17f3f2271233a7518971d5a1afc3a4c2aee518`](https://github.com/worktile/slate-angular/commit/2e17f3f2271233a7518971d5a1afc3a4c2aee518) Thanks [@Xwatson](https://github.com/Xwatson)! - optimize virtual logs
+
+- [#310](https://github.com/worktile/slate-angular/pull/310) [`2a4898a72b7fc4a22be15a861939c67b15ffd1dd`](https://github.com/worktile/slate-angular/commit/2a4898a72b7fc4a22be15a861939c67b15ffd1dd) Thanks [@Xwatson](https://github.com/Xwatson)! - strategy for getting realHeight when scrolling
+
 ## 20.2.0-next.1
 
 ### Patch Changes
