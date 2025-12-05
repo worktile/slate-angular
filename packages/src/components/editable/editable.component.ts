@@ -568,7 +568,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !!(this.virtualConfig && this.virtualConfig.enabled);
     }
 
-    private h1: number = 0;
+    // the height from scroll container top to editor top height element
+    private businessHeight: number = 0;
 
     virtualScrollInitialized = false;
 
@@ -593,8 +594,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
-            // businessHeight
-            this.h1 = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
+            this.businessHeight = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
         }
     }
 
@@ -629,7 +629,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const elementLength = children.length;
-        const adjustedScrollTop = Math.max(0, scrollTop - this.h1);
+        const adjustedScrollTop = Math.max(0, scrollTop - this.businessHeight);
         const viewBottom = scrollTop + viewportHeight;
         let accumulatedOffset = 0;
         let visibleStartIndex = -1;
