@@ -845,9 +845,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!view) {
                 return;
             }
-            const slateView = view as BaseElementComponent | BaseElementFlavour;
             const prevHeight = this.measuredHeights.get(key.id);
-            const ret = slateView.getRealHeight();
+            const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
             if (ret instanceof Promise) {
                 ret.then(height => {
                     if (height !== prevHeight) {
