@@ -146,7 +146,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
             if (diff.isMissingTop) {
-                const result = this.remeasureHeightByIndics([...diff.diffTopRenderedIndexes]);
+                const result = this.remeasureHeightByIndics(diff.diffTopRenderedIndexes);
                 if (result) {
                     virtualView = this.refreshVirtualView();
                     diff = this.diffVirtualView(virtualView, 'second');
@@ -219,7 +219,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private renderedChildren: Element[] = [];
     private virtualVisibleIndexes = new Set<number>();
     private measuredHeights = new Map<string, number>();
-    private measurePending = false;
     private refreshVirtualViewAnimId: number;
     private measureVisibleHeightsAnimId: number;
 
@@ -630,17 +629,22 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const elementLength = children.length;
         const adjustedScrollTop = Math.max(0, scrollTop - this.businessHeight);
-        const viewBottom = scrollTop + viewportHeight;
+        const heights = children.map((_, idx) => this.getBlockHeight(idx));
+        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        const totalHeight = accumulatedHeights[elementLength];
+        const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
+        const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
+        const viewBottom = limitedScrollTop + viewportHeight + this.businessHeight;
         let accumulatedOffset = 0;
         let visibleStartIndex = -1;
         const visible: Element[] = [];
         const visibleIndexes: number[] = [];
 
         for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
-            const currentHeight = this.getBlockHeight(i);
+            const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
             // 可视区域有交集，加入渲染
-            if (nextOffset > adjustedScrollTop && accumulatedOffset < viewBottom) {
+            if (nextOffset > limitedScrollTop && accumulatedOffset < viewBottom) {
                 if (visibleStartIndex === -1) visibleStartIndex = i; // 第一个相交起始位置
                 visible.push(children[i]);
                 visibleIndexes.push(i);
@@ -648,11 +652,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             accumulatedOffset = nextOffset;
         }
 
-        const visibleEndIndex = visibleStartIndex === -1 ? elementLength - 1 : visibleIndexes.length - 1;
-        const heights = children.map((_, idx) => this.getBlockHeight(idx));
-        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        if (visibleStartIndex === -1 && elementLength) {
+            visibleStartIndex = elementLength - 1;
+            visible.push(children[visibleStartIndex]);
+            visibleIndexes.push(visibleStartIndex);
+        }
+
+        const visibleEndIndex =
+            visibleStartIndex === -1 ? elementLength - 1 : (visibleIndexes[visibleIndexes.length - 1] ?? visibleStartIndex);
         const top = visibleStartIndex === -1 ? 0 : accumulatedHeights[visibleStartIndex];
-        const bottom = accumulatedHeights[elementLength] - accumulatedHeights[visibleEndIndex];
+        const bottom = totalHeight - accumulatedHeights[visibleEndIndex + 1];
 
         return {
             renderedChildren: visible.length ? visible : children,
@@ -784,21 +793,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             accumulatedHeights[i + 1] = accumulatedHeights[i] + heights[i];
         }
         return accumulatedHeights;
-    }
-
-    private getBufferBelowHeight(viewportHeight: number, visibleStart: number, bufferCount: number) {
-        let blockHeight = 0;
-        let start = visibleStart;
-        // 循环累计高度超出视图高度代表找到向下缓冲区的起始位置
-        while (blockHeight < viewportHeight) {
-            blockHeight += this.getBlockHeight(start);
-            start++;
-        }
-        let bufferHeight = 0;
-        for (let i = start; i < start + bufferCount; i++) {
-            bufferHeight += this.getBlockHeight(i);
-        }
-        return bufferHeight;
     }
 
     private scheduleMeasureVisibleHeights() {
