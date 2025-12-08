@@ -65,6 +65,7 @@ import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
+import { getBlockCardByNativeElement } from '../block-card/block-card';
 
 export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
 
@@ -159,6 +160,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (this.listRender.initialized) {
                 this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
             }
+            this.updateBlockCardMinheight(virtualView);
             this.scheduleMeasureVisibleHeights();
         });
     }
@@ -672,6 +674,20 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         };
     }
 
+    private updateBlockCardMinheight(virtualView: VirtualViewResult) {
+        const children = (this.editor.children || []) as Element[];
+        virtualView.visibleIndexes.forEach(index => {
+            const node = children[index];
+            const view = ELEMENT_TO_COMPONENT.get(node);
+            const block = getBlockCardByNativeElement(
+                (view as BaseElementComponent | BaseElementFlavour).viewContainerRef.element.nativeElement
+            );
+            if (block) {
+                block.style.minHeight = virtualView.heights[index] + 'px';
+            }
+        });
+    }
+
     private applyVirtualView(virtualView: VirtualViewResult) {
         this.renderedChildren = virtualView.renderedChildren;
         this.changeVirtualHeight(virtualView.top, virtualView.bottom);
@@ -845,7 +861,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!view) {
                 return;
             }
-            const prevHeight = this.measuredHeights.get(key.id);
+            const prevHeight = this.measuredHeights.get(key.id) ?? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT;
             const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
             if (ret instanceof Promise) {
                 ret.then(height => {
