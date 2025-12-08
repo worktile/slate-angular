@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.5
+
+### Patch Changes
+
+- [#312](https://github.com/worktile/slate-angular/pull/312) [`c3d33101f64c111f3d546043061270041a694b6d`](https://github.com/worktile/slate-angular/commit/c3d33101f64c111f3d546043061270041a694b6d) Thanks [@Xwatson](https://github.com/Xwatson)! - fix(virtual): fix scrolling lag
+
 ## 20.2.0-next.4
 
 ### Minor Changes
