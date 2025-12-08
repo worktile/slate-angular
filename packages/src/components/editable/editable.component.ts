@@ -851,20 +851,20 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (ret instanceof Promise) {
                 ret.then(height => {
                     if (height !== prevHeight) {
+                        this.measuredHeights.set(key.id, height);
                         isHeightChanged = true;
-                    }
-                    this.measuredHeights.set(key.id, height);
-                    if (isDebug) {
-                        console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
+                        if (isDebug) {
+                            console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
+                        }
                     }
                 });
             } else {
                 if (ret !== prevHeight) {
+                    this.measuredHeights.set(key.id, ret);
                     isHeightChanged = true;
-                }
-                this.measuredHeights.set(key.id, ret);
-                if (isDebug) {
-                    console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
+                    if (isDebug) {
+                        console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
+                    }
                 }
             }
         });
