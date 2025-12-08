@@ -146,8 +146,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
             if (diff.isMissingTop) {
-                const syncIndics = diff.diffTopRenderedIndexes.sort((a, b) => b - a).slice(0, 5);
-                const result = syncIndics.length ? this.remeasureHeightByIndics(syncIndics) : false;
+                const result = this.remeasureHeightByIndics(diff.diffTopRenderedIndexes);
                 if (result) {
                     virtualView = this.refreshVirtualView();
                     diff = this.diffVirtualView(virtualView, 'second');
@@ -220,7 +219,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private renderedChildren: Element[] = [];
     private virtualVisibleIndexes = new Set<number>();
     private measuredHeights = new Map<string, number>();
-    private stableHiddenHeights = new Map<string, number>();
     private refreshVirtualViewAnimId: number;
     private measureVisibleHeightsAnimId: number;
 
@@ -843,20 +841,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
             const key = AngularEditor.findKey(this.editor, node);
-            const stableHeight = this.stableHiddenHeights.get(key.id);
-            if (stableHeight !== undefined) {
-                const prevHeight = this.measuredHeights.get(key.id);
-                if (prevHeight !== stableHeight) {
-                    this.measuredHeights.set(key.id, stableHeight);
-                    isHeightChanged = true;
-                    if (isDebug) {
-                        console.log(
-                            `remeasureHeightByIndics(stable), index: ${index} prevHeight: ${prevHeight} stableHeight: ${stableHeight}`
-                        );
-                    }
-                }
-                return;
-            }
             const view = ELEMENT_TO_COMPONENT.get(node);
             if (!view) {
                 return;
@@ -870,7 +854,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         isHeightChanged = true;
                     }
                     this.measuredHeights.set(key.id, height);
-                    this.stableHiddenHeights.set(key.id, height);
                     if (isDebug) {
                         console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
                     }
@@ -880,7 +863,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     isHeightChanged = true;
                 }
                 this.measuredHeights.set(key.id, ret);
-                this.stableHiddenHeights.set(key.id, ret);
                 if (isDebug) {
                     console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
                 }
