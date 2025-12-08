@@ -135,7 +135,8 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         const blockCard = getBlockCardByNativeElement(this.nativeElement);
         const target = blockCard || this.nativeElement;
         const computedStyle = getComputedStyle(target);
-        const height = target.offsetHeight + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
+        const height =
+            Math.ceil(target.getBoundingClientRect().height) + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
         if (this.isStableHeight()) {
             this.stableHeight = height;
         }
