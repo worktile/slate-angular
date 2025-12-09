@@ -65,6 +65,7 @@ import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
+import { isKeyHotkey } from 'is-hotkey';
 
 export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
 
@@ -158,6 +159,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.applyVirtualView(virtualView);
             if (this.listRender.initialized) {
                 this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+                if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
+                    this.toNativeSelection();
+                }
             }
             this.scheduleMeasureVisibleHeights();
         });
@@ -335,7 +339,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     toNativeSelection() {
         try {
-            const { selection } = this.editor;
+            let { selection: currentSelection } = this.editor;
+            let selection = currentSelection;
+            if (this.virtualConfig?.enabled) {
+                const indics = Array.from(this.virtualVisibleIndexes.values());
+                if (indics.length > 0) {
+                    const currentVisibleRange: Range = {
+                        anchor: Editor.start(this.editor, [indics[0]]),
+                        focus: Editor.end(this.editor, [indics[indics.length - 1]])
+                    };
+                    selection = Range.intersection(selection, currentVisibleRange);
+                    if ((!selection && currentSelection) || (selection && !Range.equals(selection, currentSelection))) {
+                        if (isDebug) {
+                            console.log(
+                                `selection is not in visible range, selection: ${JSON.stringify(currentSelection)}, intersection selection: ${JSON.stringify(selection)}`
+                            );
+                        }
+                    }
+                }
+            }
             const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
             const { activeElement } = root;
             const domSelection = (root as Document).getSelection();
@@ -586,8 +608,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.virtualScrollInitialized = true;
             this.virtualTopHeightElement = document.createElement('div');
             this.virtualTopHeightElement.classList.add('virtual-top-height');
+            this.virtualTopHeightElement.contentEditable = 'false';
             this.virtualBottomHeightElement = document.createElement('div');
             this.virtualBottomHeightElement.classList.add('virtual-bottom-height');
+            this.virtualBottomHeightElement.contentEditable = 'false';
             this.virtualCenterOutlet = document.createElement('div');
             this.virtualCenterOutlet.classList.add('virtual-center-outlet');
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
@@ -1490,6 +1514,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     }
 
                     Transforms.move(editor, { unit: 'word', reverse: isRTL });
+                    return;
+                }
+
+                if (isKeyHotkey('mod+a', event)) {
+                    this.editor.selectAll();
+                    event.preventDefault();
                     return;
                 }
 
