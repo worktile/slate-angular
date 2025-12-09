@@ -339,20 +339,22 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     toNativeSelection() {
         try {
-            let { selection: currentSelection } = this.editor;
-            let selection = currentSelection;
-            if (this.virtualConfig?.enabled) {
+            let { selection } = this.editor;
+            if (this.virtualConfig?.enabled && selection) {
                 const indics = Array.from(this.virtualVisibleIndexes.values());
                 if (indics.length > 0) {
                     const currentVisibleRange: Range = {
                         anchor: Editor.start(this.editor, [indics[0]]),
                         focus: Editor.end(this.editor, [indics[indics.length - 1]])
                     };
-                    selection = Range.intersection(selection, currentVisibleRange);
-                    if ((!selection && currentSelection) || (selection && !Range.equals(selection, currentSelection))) {
+                    const [start, end] = Range.edges(selection);
+                    const forwardSelection = { anchor: start, focus: end };
+                    const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
+                    if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
+                        selection = intersectedSelection;
                         if (isDebug) {
                             console.log(
-                                `selection is not in visible range, selection: ${JSON.stringify(currentSelection)}, intersection selection: ${JSON.stringify(selection)}`
+                                `selection is not in visible range, selection: ${JSON.stringify(selection)}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
                             );
                         }
                     }
