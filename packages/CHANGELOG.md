@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.0-next.6
+
+### Minor Changes
+
+- [#315](https://github.com/worktile/slate-angular/pull/315) [`70c36a10a412b6440d9cb8a4bfc7b04a3d5d463c`](https://github.com/worktile/slate-angular/commit/70c36a10a412b6440d9cb8a4bfc7b04a3d5d463c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support selection in visible range
+
+### Patch Changes
+
+- [#313](https://github.com/worktile/slate-angular/pull/313) [`93b000cf79a5f6fcfad1bbe69e3400f98dabc8a6`](https://github.com/worktile/slate-angular/commit/93b000cf79a5f6fcfad1bbe69e3400f98dabc8a6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use getBoundingClientRect to get height
+
 ## 20.2.0-next.5
 
 ### Patch Changes
