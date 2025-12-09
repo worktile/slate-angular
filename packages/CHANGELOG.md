@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.7
+
+### Patch Changes
+
+- [`89515431be9f573cd13cf6b1b65bc1b96b8ecb5e`](https://github.com/worktile/slate-angular/commit/89515431be9f573cd13cf6b1b65bc1b96b8ecb5e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix select in backward scenario and selection is null scenario
+
 ## 20.2.0-next.6
 
 ### Minor Changes
