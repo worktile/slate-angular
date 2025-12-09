@@ -225,5 +225,9 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
     };
 
+    e.selectAll = () => {
+        Transforms.select(e, []);
+    };
+
     return e;
 };
