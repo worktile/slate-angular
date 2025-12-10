@@ -311,19 +311,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         BEFORE_INPUT_EVENTS.forEach(event => {
             this.addEventListener(event.name, () => {});
         });
-
-        let editorResizeObserverRectWidth = 0;
-        this.editorResizeObserver = new ResizeObserver(entries => {
-            if (!this.virtualConfig?.enabled) {
-                return;
-            }
-            if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
-                editorResizeObserverRectWidth = entries[0].contentRect.width;
-                this.measuredHeights.clear();
-                this.doVirtualScroll();
-            }
-        });
-        this.editorResizeObserver.observe(this.elementRef.nativeElement);
     }
 
     toNativeSelection() {
@@ -609,6 +596,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
             this.businessHeight = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
+
+            let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect()?.width ?? 0;
+            this.editorResizeObserver = new ResizeObserver(entries => {
+                if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
+                    editorResizeObserverRectWidth = entries[0].contentRect.width;
+                    this.measuredHeights.clear();
+                    this.doVirtualScroll();
+                }
+            });
+            this.editorResizeObserver.observe(this.elementRef.nativeElement);
         }
     }
 
