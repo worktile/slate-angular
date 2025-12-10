@@ -139,32 +139,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualConfig = config;
-        this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
-        this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
-            let virtualView = this.refreshVirtualView();
-            let diff = this.diffVirtualView(virtualView);
-            if (!diff.isDiff) {
-                return;
-            }
-            if (diff.isMissingTop) {
-                const result = this.remeasureHeightByIndics(diff.diffTopRenderedIndexes);
-                if (result) {
-                    virtualView = this.refreshVirtualView();
-                    diff = this.diffVirtualView(virtualView, 'second');
-                    if (!diff.isDiff) {
-                        return;
-                    }
-                }
-            }
-            this.applyVirtualView(virtualView);
-            if (this.listRender.initialized) {
-                this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
-                if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
-                    this.toNativeSelection();
-                }
-            }
-            this.scheduleMeasureVisibleHeights();
-        });
+        this.doVirtualScroll();
     }
 
     //#region input event handler
@@ -225,6 +200,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private measuredHeights = new Map<string, number>();
     private refreshVirtualViewAnimId: number;
     private measureVisibleHeightsAnimId: number;
+    private editorResizeObserver?: ResizeObserver;
 
     constructor(
         public elementRef: ElementRef,
@@ -335,6 +311,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         BEFORE_INPUT_EVENTS.forEach(event => {
             this.addEventListener(event.name, () => {});
         });
+
+        let editorResizeObserverRectWidth = 0;
+        this.editorResizeObserver = new ResizeObserver(entries => {
+            if (!this.virtualConfig?.enabled) {
+                return;
+            }
+            if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
+                editorResizeObserverRectWidth = entries[0].contentRect.width;
+                this.measuredHeights.clear();
+                this.doVirtualScroll();
+            }
+        });
+        this.editorResizeObserver.observe(this.elementRef.nativeElement);
     }
 
     toNativeSelection() {
@@ -629,6 +618,35 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         this.virtualTopHeightElement.style.height = `${topHeight}px`;
         this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
+    }
+
+    private doVirtualScroll() {
+        this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
+        this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
+            let virtualView = this.refreshVirtualView();
+            let diff = this.diffVirtualView(virtualView);
+            if (!diff.isDiff) {
+                return;
+            }
+            if (diff.isMissingTop) {
+                const result = this.remeasureHeightByIndics(diff.diffTopRenderedIndexes);
+                if (result) {
+                    virtualView = this.refreshVirtualView();
+                    diff = this.diffVirtualView(virtualView, 'second');
+                    if (!diff.isDiff) {
+                        return;
+                    }
+                }
+            }
+            this.applyVirtualView(virtualView);
+            if (this.listRender.initialized) {
+                this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
+                if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
+                    this.toNativeSelection();
+                }
+            }
+            this.scheduleMeasureVisibleHeights();
+        });
     }
 
     private refreshVirtualView() {
@@ -1714,6 +1732,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     //#endregion
 
     ngOnDestroy() {
+        this.editorResizeObserver?.disconnect();
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
             manualListener();
