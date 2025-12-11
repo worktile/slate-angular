@@ -66,6 +66,7 @@ import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
+import { VirtualScrollDebugOverlay } from './debug';
 
 export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
 
@@ -329,8 +330,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
                         selection = intersectedSelection;
                         if (isDebug) {
-                            console.log(
-                                `selection is not in visible range, selection: ${JSON.stringify(selection)}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
+                            this.debugLog(
+                                'log',
+                                `selection is not in visible range, selection: ${JSON.stringify(
+                                    selection
+                                )}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
                             );
                         }
                     }
@@ -578,6 +582,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     virtualCenterOutlet: HTMLElement;
 
+    private debugOverlay?: VirtualScrollDebugOverlay;
+
     initializeVirtualScrolling() {
         if (this.virtualScrollInitialized) {
             return;
@@ -606,6 +612,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
+            if (isDebug) {
+                const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
+                this.debugOverlay = new VirtualScrollDebugOverlay(doc);
+                this.debugOverlay.init();
+            }
         }
     }
 
@@ -615,6 +626,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         this.virtualTopHeightElement.style.height = `${topHeight}px`;
         this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
+    }
+
+    private debugLog(type: 'log' | 'warn', ...args: any[]) {
+        if (!this.debugOverlay) {
+            const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
+            this.debugOverlay = new VirtualScrollDebugOverlay(doc);
+        }
+        this.debugOverlay.log(type, ...args);
     }
 
     private doVirtualScroll() {
@@ -778,16 +797,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             }
             if (isDebug) {
-                console.log(`====== diffVirtualView stage: ${stage} ======`);
-                console.log('oldVisibleIndexes:', oldVisibleIndexes);
-                console.log('newVisibleIndexes:', newVisibleIndexes);
-                console.log(
+                this.debugLog('log', `====== diffVirtualView stage: ${stage} ======`);
+                this.debugLog('log', 'oldVisibleIndexes:', oldVisibleIndexes);
+                this.debugLog('log', 'newVisibleIndexes:', newVisibleIndexes);
+                this.debugLog(
+                    'log',
                     'diffTopRenderedIndexes:',
                     isMissingTop ? '-' : isAddedTop ? '+' : '-',
                     diffTopRenderedIndexes,
                     diffTopRenderedIndexes.map(index => this.getBlockHeight(index, 0))
                 );
-                console.log(
+                this.debugLog(
+                    'log',
                     'diffBottomRenderedIndexes:',
                     isAddedBottom ? '+' : isMissingBottom ? '-' : '+',
                     diffBottomRenderedIndexes,
@@ -797,9 +818,15 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 const needBottom = virtualView.heights
                     .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
                     .reduce((acc, height) => acc + height, 0);
-                console.log('newTopHeight:', needTop, 'prevTopHeight:', parseFloat(this.virtualTopHeightElement.style.height));
-                console.log('newBottomHeight:', needBottom, 'prevBottomHeight:', parseFloat(this.virtualBottomHeightElement.style.height));
-                console.warn('=========== Dividing line ===========');
+                this.debugLog('log', 'newTopHeight:', needTop, 'prevTopHeight:', parseFloat(this.virtualTopHeightElement.style.height));
+                this.debugLog(
+                    'log',
+                    'newBottomHeight:',
+                    needBottom,
+                    'prevBottomHeight:',
+                    parseFloat(this.virtualBottomHeightElement.style.height)
+                );
+                this.debugLog('warn', '=========== Dividing line ===========');
             }
             return {
                 isDiff: true,
@@ -894,7 +921,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         this.measuredHeights.set(key.id, height);
                         isHeightChanged = true;
                         if (isDebug) {
-                            console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
+                            this.debugLog('log', `remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
                         }
                     }
                 });
@@ -903,7 +930,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.measuredHeights.set(key.id, ret);
                     isHeightChanged = true;
                     if (isDebug) {
-                        console.log(`remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
+                        this.debugLog('log', `remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
                     }
                 }
             }
@@ -1730,6 +1757,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     ngOnDestroy() {
         this.editorResizeObserver?.disconnect();
+        this.debugOverlay?.dispose();
+        this.debugOverlay = undefined;
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
             manualListener();
