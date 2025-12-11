@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.11
+
+### Patch Changes
+
+- [`ced6f27212eba20fb0f39fdee8d309fdc9189594`](https://github.com/worktile/slate-angular/commit/ced6f27212eba20fb0f39fdee8d309fdc9189594) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix first loading issue
+
 ## 20.2.0-next.10
 
 ### Patch Changes
