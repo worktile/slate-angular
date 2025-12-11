@@ -852,7 +852,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             return defaultHeight;
         }
         const key = AngularEditor.findKey(this.editor, node);
-        return this.measuredHeights.get(key.id) ?? defaultHeight;
+        const height = this.measuredHeights.get(key.id);
+        if (typeof height === 'number') {
+            return height;
+        }
+        if (this.measuredHeights.has(key.id)) {
+            console.error('getBlockHeight: invalid height value', key.id, height);
+        }
+        return defaultHeight;
     }
 
     private buildAccumulatedHeight(heights: number[]) {
