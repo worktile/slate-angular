@@ -70,6 +70,8 @@ import { VirtualScrollDebugOverlay } from './debug';
 
 export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
 
+export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
+
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
@@ -220,6 +222,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         ELEMENT_TO_NODE.set(this.elementRef.nativeElement, this.editor);
         IS_READ_ONLY.set(this.editor, this.readonly);
+        ELEMENT_KEY_TO_HEIGHTS.set(this.editor, this.measuredHeights);
         EDITOR_TO_ON_CHANGE.set(this.editor, () => {
             this.ngZone.run(() => {
                 this.onChange();
