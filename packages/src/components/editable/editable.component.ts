@@ -847,7 +847,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private getBlockHeight(index: number, defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT) {
-        const node = this.editor.children[index];
+        const node = this.editor.children[index] as Element;
+        const isVisible = this.editor.isVisible(node);
+        if (!isVisible) {
+            return 0;
+        }
         if (!node) {
             return defaultHeight;
         }
