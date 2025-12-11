@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.10
+
+### Patch Changes
+
+- [#319](https://github.com/worktile/slate-angular/pull/319) [`4165f855b4fe959aaa337ead5f4dd759853eb5ba`](https://github.com/worktile/slate-angular/commit/4165f855b4fe959aaa337ead5f4dd759853eb5ba) Thanks [@Xwatson](https://github.com/Xwatson)! - add element keys to measure height of wekmap
+
+- [#318](https://github.com/worktile/slate-angular/pull/318) [`d4a3d4942007de7ca0aee1c26e95547782ccca7f`](https://github.com/worktile/slate-angular/commit/d4a3d4942007de7ca0aee1c26e95547782ccca7f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support remeasure heights on data change
+
 ## 20.2.0-next.9
 
 ### Patch Changes
