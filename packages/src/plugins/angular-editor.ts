@@ -12,6 +12,7 @@ import { ClipboardData } from '../types/clipboard';
 export interface AngularEditor extends CustomDOMEditor {
     deleteCutData: () => void;
     selectAll: () => void;
+    isVisible: (element: Element) => boolean;
     onKeydown: (event: KeyboardEvent) => void;
     onClick: (event: MouseEvent) => void;
     injector: Injector;
