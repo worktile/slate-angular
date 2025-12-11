@@ -450,10 +450,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        const virtualView = this.refreshVirtualView();
-        this.applyVirtualView(virtualView);
-        this.listRender.update(virtualView.renderedChildren, this.editor, this.context);
-        this.scheduleMeasureVisibleHeights();
+        let visibleIndexes = Array.from(this.virtualVisibleIndexes);
+        const isFirstRender = visibleIndexes.length === 0;
+        if (isFirstRender) {
+            const virtualView = this.refreshVirtualView();
+            this.applyVirtualView(virtualView);
+            visibleIndexes = Array.from(this.virtualVisibleIndexes);
+        } else {
+            this.renderedChildren = visibleIndexes.map(index => this.editor.children[index]) as Element[];
+        }
+        this.listRender.update(this.renderedChildren, this.editor, this.context);
+        this.remeasureHeightByIndics(visibleIndexes);
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -737,7 +744,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.virtualVisibleIndexes = virtualView.visibleIndexes;
     }
 
-    private diffVirtualView(virtualView: VirtualViewResult, stage: 'first' | 'second' = 'first') {
+    private diffVirtualView(virtualView: VirtualViewResult, stage: 'first' | 'second' | 'onChange' = 'first') {
         if (!this.renderedChildren.length) {
             return {
                 isDiff: true,
@@ -880,7 +887,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 return;
             }
             const key = AngularEditor.findKey(this.editor, node);
-            // 跳过已测过的块
+            // 跳过已测过的块，除非强制测量
             if (this.measuredHeights.has(key.id)) {
                 return;
             }
