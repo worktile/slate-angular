@@ -856,7 +856,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (typeof height === 'number') {
             return height;
         }
-        console.error('getBlockHeight: height not found', key.id, height);
+        if (this.measuredHeights.has(key.id)) {
+            console.error('getBlockHeight: invalid height value', key.id, height);
+        }
         return defaultHeight;
     }
 
