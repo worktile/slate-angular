@@ -592,8 +592,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     virtualCenterOutlet: HTMLElement;
 
-    private debugOverlay?: VirtualScrollDebugOverlay;
-
     initializeVirtualScrolling() {
         if (this.virtualScrollInitialized) {
             return;
@@ -623,8 +621,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
             if (isDebug) {
                 const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
-                this.debugOverlay = new VirtualScrollDebugOverlay(doc);
-                this.debugOverlay.init();
+                VirtualScrollDebugOverlay.getInstance(doc);
             }
         }
     }
@@ -638,11 +635,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private debugLog(type: 'log' | 'warn', ...args: any[]) {
-        if (!this.debugOverlay) {
-            const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
-            this.debugOverlay = new VirtualScrollDebugOverlay(doc);
-        }
-        this.debugOverlay.log(type, ...args);
+        const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
+        VirtualScrollDebugOverlay.log(doc, type, ...args);
     }
 
     private doVirtualScroll() {
@@ -686,6 +680,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const scrollTop = this.virtualConfig.scrollTop;
+        if (isDebug) {
+            const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
+            VirtualScrollDebugOverlay.syncScrollTop(doc, Number.isFinite(scrollTop) ? (scrollTop as number) : 0);
+        }
         const viewportHeight = this.virtualConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
             return {
@@ -1766,8 +1764,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     ngOnDestroy() {
         this.editorResizeObserver?.disconnect();
-        this.debugOverlay?.dispose();
-        this.debugOverlay = undefined;
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
             manualListener();
