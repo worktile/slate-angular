@@ -229,5 +229,9 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         Transforms.select(e, []);
     };
 
+    e.isVisible = element => {
+        return true;
+    };
+
     return e;
 };
