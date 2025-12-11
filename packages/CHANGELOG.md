@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.0-next.12
+
+### Minor Changes
+
+- [#322](https://github.com/worktile/slate-angular/pull/322) [`10c92779d08e7393613489485b2c351d3f21ad78`](https://github.com/worktile/slate-angular/commit/10c92779d08e7393613489485b2c351d3f21ad78) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support isVisible in withAngular plugin
+
+### Patch Changes
+
+- [#321](https://github.com/worktile/slate-angular/pull/321) [`b16260d0dd8ac7419b05f93552f89229777b1868`](https://github.com/worktile/slate-angular/commit/b16260d0dd8ac7419b05f93552f89229777b1868) Thanks [@Xwatson](https://github.com/Xwatson)! - get measured height strengthen the judgment of numeric types
+
 ## 20.2.0-next.11
 
 ### Patch Changes
