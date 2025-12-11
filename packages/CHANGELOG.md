@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.8
+
+### Patch Changes
+
+- [#316](https://github.com/worktile/slate-angular/pull/316) [`54bd3f7fbb0f9833d36307bee1acf0106976c15e`](https://github.com/worktile/slate-angular/commit/54bd3f7fbb0f9833d36307bee1acf0106976c15e) Thanks [@Xwatson](https://github.com/Xwatson)! - there is a blank space below the scroll when the page switches to widescreen
+
 ## 20.2.0-next.7
 
 ### Patch Changes
