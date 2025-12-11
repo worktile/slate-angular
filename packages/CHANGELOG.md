@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.9
+
+### Patch Changes
+
+- [#317](https://github.com/worktile/slate-angular/pull/317) [`89b6fb8aaf0664dc314c8863a8b434f8c2c154a1`](https://github.com/worktile/slate-angular/commit/89b6fb8aaf0664dc314c8863a8b434f8c2c154a1) Thanks [@Xwatson](https://github.com/Xwatson)! - fix(virtual): width change remeasurement height, add debug overlay
+
 ## 20.2.0-next.8
 
 ### Patch Changes
