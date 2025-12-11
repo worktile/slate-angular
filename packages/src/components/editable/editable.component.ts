@@ -607,8 +607,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
-                    this.measuredHeights.clear();
-                    this.doVirtualScroll();
+                    this.remeasureHeightByIndics(Array.from(this.virtualVisibleIndexes));
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
