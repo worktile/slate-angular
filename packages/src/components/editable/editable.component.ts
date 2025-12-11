@@ -453,15 +453,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        let visibleIndexes = Array.from(this.virtualVisibleIndexes);
-        const isFirstRender = visibleIndexes.length === 0;
-        if (isFirstRender) {
-            const virtualView = this.refreshVirtualView();
-            this.applyVirtualView(virtualView);
-            visibleIndexes = Array.from(this.virtualVisibleIndexes);
-        } else {
-            this.renderedChildren = visibleIndexes.map(index => this.editor.children[index]) as Element[];
-        }
+        const virtualView = this.refreshVirtualView();
+        this.applyVirtualView(virtualView);
+        const visibleIndexes = Array.from(this.virtualVisibleIndexes);
         this.listRender.update(this.renderedChildren, this.editor, this.context);
         this.remeasureHeightByIndics(visibleIndexes);
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
