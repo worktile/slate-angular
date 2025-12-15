@@ -14,7 +14,7 @@ import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
 
 export class ListRender {
-    private children: Descendant[];
+    private children: Descendant[] = [];
     private views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
     private blockCards: (BlockCardRef | null)[] = [];
     private contexts: (SlateTextContext | SlateElementContext)[] = [];
@@ -184,6 +184,7 @@ export class ListRender {
                 this.blockCards[index].destroy();
             }
         });
+        this.children = [];
         this.views = [];
         this.blockCards = [];
         this.contexts = [];
