@@ -142,7 +142,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualScrollConfig = config;
-        this.tryUpdateVirtualViewport();
+        if (this.isEnabledVirtualScroll()) {
+            this.tryUpdateVirtualViewport();
+        }
     }
 
     //#region input event handler
@@ -273,15 +275,23 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (value && value.length) {
             this.editor.children = value;
             this.initializeContext();
-            const virtualView = this.calculateVirtualViewport();
-            this.applyVirtualView(virtualView);
-            const childrenForRender = virtualView.inViewportChildren;
-            if (!this.listRender.initialized) {
-                this.listRender.initialize(childrenForRender, this.editor, this.context);
+            if (this.isEnabledVirtualScroll()) {
+                const virtualView = this.calculateVirtualViewport();
+                this.applyVirtualView(virtualView);
+                const childrenForRender = virtualView.inViewportChildren;
+                if (!this.listRender.initialized) {
+                    this.listRender.initialize(childrenForRender, this.editor, this.context);
+                } else {
+                    this.listRender.update(childrenForRender, this.editor, this.context);
+                }
+                this.scheduleMeasureVisibleHeights();
             } else {
-                this.listRender.update(childrenForRender, this.editor, this.context);
+                if (!this.listRender.initialized) {
+                    this.listRender.initialize(this.editor.children, this.editor, this.context);
+                } else {
+                    this.listRender.update(this.editor.children, this.editor, this.context);
+                }
             }
-            this.scheduleMeasureVisibleHeights();
             this.cdr.markForCheck();
         }
     }
@@ -321,7 +331,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     toNativeSelection() {
         try {
             let { selection } = this.editor;
-            if (this.virtualScrollConfig?.enabled && selection) {
+            if (this.isEnabledVirtualScroll() && selection) {
                 const indics = Array.from(this.inViewportIndics.values());
                 if (indics.length > 0) {
                     const currentVisibleRange: Range = {
@@ -454,11 +464,15 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     forceRender() {
         this.updateContext();
-        const virtualView = this.calculateVirtualViewport();
-        this.applyVirtualView(virtualView);
-        const visibleIndexes = Array.from(this.inViewportIndics);
+        if (this.isEnabledVirtualScroll()) {
+            const virtualView = this.calculateVirtualViewport();
+            this.applyVirtualView(virtualView);
+        }
         this.listRender.update(this.inViewportChildren, this.editor, this.context);
-        this.remeasureHeightByIndics(visibleIndexes);
+        if (this.isEnabledVirtualScroll()) {
+            const visibleIndexes = Array.from(this.inViewportIndics);
+            this.remeasureHeightByIndics(visibleIndexes);
+        }
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
         // the compositionupdate and compositionend events will no longer be fired
@@ -498,10 +512,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     render() {
         const changed = this.updateContext();
         if (changed) {
-            const virtualView = this.calculateVirtualViewport();
-            this.applyVirtualView(virtualView);
-            this.listRender.update(virtualView.inViewportChildren, this.editor, this.context);
-            this.scheduleMeasureVisibleHeights();
+            if (this.isEnabledVirtualScroll()) {
+                const virtualView = this.calculateVirtualViewport();
+                this.applyVirtualView(virtualView);
+                this.listRender.update(virtualView.inViewportChildren, this.editor, this.context);
+                this.scheduleMeasureVisibleHeights();
+            } else {
+                this.listRender.update(this.editor.children, this.editor, this.context);
+            }
         }
     }
 
@@ -591,7 +609,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (this.virtualScrollInitialized) {
             return;
         }
-        if (this.virtualScrollConfig && this.virtualScrollConfig.enabled) {
+        if (this.isEnabledVirtualScroll()) {
             this.virtualScrollInitialized = true;
             this.virtualTopHeightElement = document.createElement('div');
             this.virtualTopHeightElement.classList.add('virtual-top-height');
@@ -605,7 +623,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
             this.businessHeight = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
-
             let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect()?.width ?? 0;
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
