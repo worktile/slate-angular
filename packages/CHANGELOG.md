@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.13
+
+### Patch Changes
+
+- [`45d074617ecc3c6c92d8baa18e2bd5f07bf75631`](https://github.com/worktile/slate-angular/commit/45d074617ecc3c6c92d8baa18e2bd5f07bf75631) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - rename virtual-scroll
+
 ## 20.2.0-next.12
 
 ### Minor Changes
