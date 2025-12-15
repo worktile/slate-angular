@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.14
+
+### Minor Changes
+
+- [#324](https://github.com/worktile/slate-angular/pull/324) [`2dab563329ae55c616e163c31d752f94bedbfb7b`](https://github.com/worktile/slate-angular/commit/2dab563329ae55c616e163c31d752f94bedbfb7b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - prevent executing virtual scroll logic when the editor is not enabled virtual scroll
+
+- [`69f12884cceb1f9dcb8dd5cedfe90fb6d80f3553`](https://github.com/worktile/slate-angular/commit/69f12884cceb1f9dcb8dd5cedfe90fb6d80f3553) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix text flavour can not destroy issue
+
 ## 20.2.0-next.13
 
 ### Patch Changes
