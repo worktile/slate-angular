@@ -5,6 +5,7 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET } from '../ut
 import { CustomDOMEditor } from './with-dom';
 import { DOMEditor, EDITOR_TO_ELEMENT, IS_FOCUSED } from 'slate-dom';
 import { ClipboardData } from '../types/clipboard';
+import { IS_ENABLED_VIRTUAL_SCROLL } from '../utils/weak-maps';
 
 /**
  * An Angular and DOM-specific version of the `Editor` interface.
@@ -115,5 +116,8 @@ export const AngularEditor = {
             // FocusedContext is updated to the correct value
             el.focus({ preventScroll: true });
         }
+    },
+    isEnabledVirtualScroll(editor: AngularEditor): boolean {
+        return IS_ENABLED_VIRTUAL_SCROLL.get(editor);
     }
 };

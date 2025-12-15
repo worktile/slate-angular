@@ -13,4 +13,6 @@ export const PLACEHOLDER_SYMBOL = Symbol('placeholder') as unknown as string;
  */
 export const ELEMENT_TO_COMPONENT: WeakMap<Node, BaseElementComponent | BaseFlavour> = new WeakMap();
 
+export const IS_ENABLED_VIRTUAL_SCROLL: WeakMap<Editor, boolean> = new WeakMap();
+
 export const EDITOR_TO_AFTER_VIEW_INIT_QUEUE: WeakMap<Editor, (() => void)[]> = new WeakMap();

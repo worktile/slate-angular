@@ -57,7 +57,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { ELEMENT_TO_COMPONENT, isDecoratorRangeListEqual } from '../../utils';
+import { ELEMENT_TO_COMPONENT, IS_ENABLED_VIRTUAL_SCROLL, isDecoratorRangeListEqual } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { ListRender } from '../../view/render/list-render';
@@ -142,6 +142,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualScrollConfig = config;
+        IS_ENABLED_VIRTUAL_SCROLL.set(this.editor, config.enabled);
         if (this.isEnabledVirtualScroll()) {
             this.tryUpdateVirtualViewport();
         }
