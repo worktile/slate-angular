@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.16
+
+### Patch Changes
+
+- [`4aaa3a9d7096788e36085a9c95d35f1243e6d1fb`](https://github.com/worktile/slate-angular/commit/4aaa3a9d7096788e36085a9c95d35f1243e6d1fb) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix throw error when destroy element which hadn't been initialized
+
 ## 20.2.0-next.15
 
 ### Patch Changes
