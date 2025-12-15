@@ -37,6 +37,7 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
             NODE_TO_ELEMENT.delete(this.text);
         }
         ELEMENT_TO_NODE.delete(this.nativeElement);
+        this.leavesRender.destroy();
         this.nativeElement?.remove();
     }
 

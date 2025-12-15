@@ -89,6 +89,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         if (ELEMENT_TO_COMPONENT.get(this.element) === this) {
             ELEMENT_TO_COMPONENT.delete(this.element);
         }
+        this.listRender.destroy();
         this.nativeElement?.remove();
     }
 

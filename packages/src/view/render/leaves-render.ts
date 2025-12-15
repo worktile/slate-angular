@@ -102,6 +102,10 @@ export class LeavesRender {
         });
         return { decoratedLeaves, contexts };
     }
+
+    public destroy() {
+        this.views.forEach(view => view.destroy());
+    }
 }
 
 export function getContext(index: number, leafContexts: SlateLeafContext[]): SlateLeafContext {

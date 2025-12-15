@@ -169,6 +169,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         if (ELEMENT_TO_COMPONENT.get(this.element) === this) {
             ELEMENT_TO_COMPONENT.delete(this.element);
         }
+        this.listRender.destroy();
     }
 
     onContextChange() {
@@ -265,6 +266,7 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
             NODE_TO_ELEMENT.delete(this.text);
         }
         ELEMENT_TO_NODE.delete(this.nativeElement);
+        this.leavesRender.destroy();
     }
 
     onContextChange() {
