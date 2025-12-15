@@ -467,11 +467,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (this.isEnabledVirtualScroll()) {
             const virtualView = this.calculateVirtualViewport();
             this.applyVirtualView(virtualView);
-        }
-        this.listRender.update(this.inViewportChildren, this.editor, this.context);
-        if (this.isEnabledVirtualScroll()) {
+            this.listRender.update(this.inViewportChildren, this.editor, this.context);
             const visibleIndexes = Array.from(this.inViewportIndics);
             this.remeasureHeightByIndics(visibleIndexes);
+        } else {
+            this.listRender.update(this.editor.children, this.editor, this.context);
         }
         // repair collaborative editing when Chinese input is interrupted by other users' cursors
         // when the DOMElement where the selection is located is removed
