@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.15
+
+### Patch Changes
+
+- [`8f04cfdb150d6f7aa35c58c99520537315c73b2a`](https://github.com/worktile/slate-angular/commit/8f04cfdb150d6f7aa35c58c99520537315c73b2a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support isEnabledVirtualScroll status
+
 ## 20.2.0-next.14
 
 ### Minor Changes
