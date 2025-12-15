@@ -26,7 +26,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     editor = withAngular(createEditor());
 
-    virtualConfig = {
+    virtualScrollConfig = {
         enabled: true,
         scrollTop: 0,
         viewportHeight: 0,
@@ -45,22 +45,22 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
         this.ngZone.onStable.pipe(take(1)).subscribe(() => {
             console.timeEnd();
         });
-        this.syncVirtualConfig();
+        this.syncvirtualScrollConfig();
     }
 
     switchScrollMode(mode: 'default' | 'component' | 'virtual') {
         this.mode = mode;
-        this.syncVirtualConfig();
+        this.syncvirtualScrollConfig();
     }
 
     @HostListener('window:scroll')
     onWindowScroll() {
-        this.syncVirtualConfig();
+        this.syncvirtualScrollConfig();
     }
 
     @HostListener('window:resize')
     onWindowResize() {
-        this.syncVirtualConfig();
+        this.syncvirtualScrollConfig();
     }
 
     renderElement() {
@@ -74,12 +74,12 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     valueChange(event) {}
 
-    private syncVirtualConfig() {
+    private syncvirtualScrollConfig() {
         if (this.mode !== 'virtual') {
             return;
         }
-        this.virtualConfig = {
-            ...this.virtualConfig,
+        this.virtualScrollConfig = {
+            ...this.virtualScrollConfig,
             scrollTop: window.scrollY || 0,
             viewportHeight: window.innerHeight || 0
         };
