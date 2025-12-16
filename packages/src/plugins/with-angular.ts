@@ -1,7 +1,7 @@
 import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
 import { ClipboardData, OriginEvent } from '../types/clipboard';
 import { SlateError } from '../types/error';
-import { completeTable, isInvalidTable } from '../utils';
+import { completeTable, EDITOR_TO_VIRTUAL_SCROLL_SELECTION, isInvalidTable } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
 import { AngularEditor } from './angular-editor';
 import { Key, NODE_TO_KEY, withDOM } from 'slate-dom';
@@ -30,7 +30,14 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
         // Create a fake selection so that we can add a Base64-encoded copy of the
         // fragment to the HTML, to decode on future pastes.
-        const domRange = AngularEditor.toDOMRange(e, selection);
+        let domRange: globalThis.Range;
+        if (AngularEditor.isEnabledVirtualScroll(e)) {
+            const virtualScrollSelection = EDITOR_TO_VIRTUAL_SCROLL_SELECTION.get(e);
+            if (virtualScrollSelection) {
+                domRange = AngularEditor.toDOMRange(e, virtualScrollSelection);
+            }
+        }
+        domRange = domRange ?? AngularEditor.toDOMRange(e, selection);
         let contents = domRange.cloneContents();
         let attach = contents.childNodes[0] as HTMLElement;
 

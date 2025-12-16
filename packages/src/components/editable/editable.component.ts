@@ -18,7 +18,7 @@ import {
     inject,
     ViewContainerRef
 } from '@angular/core';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Selection } from 'slate';
 import { direction } from 'direction';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { AngularEditor } from '../../plugins/angular-editor';
@@ -45,7 +45,6 @@ import {
     IS_CHROME,
     HAS_BEFORE_INPUT_SUPPORT,
     IS_ANDROID,
-    VIRTUAL_SCROLL_DEFAULT_BUFFER_COUNT,
     VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT,
     SLATE_DEBUG_KEY
 } from '../../utils/environment';
@@ -57,7 +56,12 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
-import { ELEMENT_TO_COMPONENT, IS_ENABLED_VIRTUAL_SCROLL, isDecoratorRangeListEqual } from '../../utils';
+import {
+    EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
+    ELEMENT_TO_COMPONENT,
+    IS_ENABLED_VIRTUAL_SCROLL,
+    isDecoratorRangeListEqual
+} from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { ListRender } from '../../view/render/list-render';
@@ -329,31 +333,41 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
+    calculateVirtualScrollSelection(selection: Selection) {
+        if (selection) {
+            const indics = Array.from(this.inViewportIndics.values());
+            if (indics.length > 0) {
+                const currentVisibleRange: Range = {
+                    anchor: Editor.start(this.editor, [indics[0]]),
+                    focus: Editor.end(this.editor, [indics[indics.length - 1]])
+                };
+                const [start, end] = Range.edges(selection);
+                const forwardSelection = { anchor: start, focus: end };
+                const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
+                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
+                if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
+                    if (isDebug) {
+                        this.debugLog(
+                            'log',
+                            `selection is not in visible range, selection: ${JSON.stringify(
+                                selection
+                            )}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
+                        );
+                    }
+                    return intersectedSelection;
+                }
+                return selection;
+            }
+        }
+        EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
+        return selection;
+    }
+
     toNativeSelection() {
         try {
             let { selection } = this.editor;
-            if (this.isEnabledVirtualScroll() && selection) {
-                const indics = Array.from(this.inViewportIndics.values());
-                if (indics.length > 0) {
-                    const currentVisibleRange: Range = {
-                        anchor: Editor.start(this.editor, [indics[0]]),
-                        focus: Editor.end(this.editor, [indics[indics.length - 1]])
-                    };
-                    const [start, end] = Range.edges(selection);
-                    const forwardSelection = { anchor: start, focus: end };
-                    const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
-                    if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
-                        selection = intersectedSelection;
-                        if (isDebug) {
-                            this.debugLog(
-                                'log',
-                                `selection is not in visible range, selection: ${JSON.stringify(
-                                    selection
-                                )}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
-                            );
-                        }
-                    }
-                }
+            if (this.isEnabledVirtualScroll()) {
+                selection = this.calculateVirtualScrollSelection(selection);
             }
             const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
             const { activeElement } = root;
@@ -985,6 +999,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private toSlateSelection() {
         if ((!this.isComposing || IS_ANDROID) && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
+                if (isDebug) {
+                    console.log('toSlateSelection');
+                }
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
                 const { activeElement } = root;
                 const el = AngularEditor.toDOMNode(this.editor, this.editor);
