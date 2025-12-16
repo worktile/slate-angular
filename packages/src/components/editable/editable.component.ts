@@ -58,6 +58,7 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import {
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
+    ELEMENT_KEY_TO_HEIGHTS,
     ELEMENT_TO_COMPONENT,
     IS_ENABLED_VIRTUAL_SCROLL,
     isDecoratorRangeListEqual
@@ -71,10 +72,6 @@ import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
 import { VirtualScrollDebugOverlay } from './debug';
-
-export const JUST_NOW_UPDATED_VIRTUAL_VIEW = new WeakMap<AngularEditor, boolean>();
-
-export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
