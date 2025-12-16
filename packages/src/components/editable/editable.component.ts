@@ -68,7 +68,7 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { BaseElementComponent } from '../../view/base';
 import { BaseElementFlavour } from '../../view/flavour/element';
-import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
+import { SlateVirtualScrollConfig, SlateVirtualScrollToAnchorConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
 import { VirtualScrollDebugOverlay } from './debug';
 
@@ -152,6 +152,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
     }
 
+    @Input()
+    set virtualScrollToAnchor(config: SlateVirtualScrollToAnchorConfig) {
+        this.virtualToAnchorConfig = config;
+        if (this.isEnabledVirtualScroll()) {
+            this.tryAnchorScroll();
+        }
+    }
+
     //#region input event handler
     @Input() beforeInput: (event: Event) => void;
     @Input() blur: (event: Event) => void;
@@ -212,6 +220,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private refreshVirtualViewAnimId: number;
     private measureVisibleHeightsAnimId: number;
     private editorResizeObserver?: ResizeObserver;
+    private virtualToAnchorConfig: SlateVirtualScrollToAnchorConfig | null = null;
+    private lastAnchorKey?: string;
 
     constructor(
         public elementRef: ElementRef,
@@ -695,6 +705,75 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
+    private tryAnchorScroll() {
+        if (!this.isEnabledVirtualScroll()) {
+            return;
+        }
+        const { anchorKey, scrollTo } = this.virtualToAnchorConfig || {};
+        if (!anchorKey || !scrollTo) {
+            return;
+        }
+        if (anchorKey === this.lastAnchorKey) {
+            return;
+        }
+        const children = (this.editor.children || []) as Element[];
+        if (!children.length) {
+            return;
+        }
+        const anchorIndex = this.getElementIndexByKeyId(anchorKey);
+        if (anchorIndex < 0) {
+            return;
+        }
+
+        const viewportHeight = this.virtualScrollConfig.viewportHeight ?? 0;
+        if (!viewportHeight) {
+            return;
+        }
+        const { accumulatedHeights } = this.buildHeightsAndAccumulatedHeights();
+
+        const itemTop = accumulatedHeights[anchorIndex] ?? 0;
+        const targetScrollTop = itemTop + this.businessHeight;
+
+        this.lastAnchorKey = anchorKey;
+        if (isDebug) {
+            this.debugLog(
+                'log',
+                'anchorScroll key:',
+                anchorKey,
+                'targetScrollTop:',
+                targetScrollTop,
+                'businessHeight:',
+                this.businessHeight
+            );
+        }
+        scrollTo(targetScrollTop);
+        this.lastAnchorKey = '';
+    }
+
+    private getElementIndexByKeyId(keyId: string): number {
+        const children = this.editor.children;
+        for (let i = 0; i < children.length; i++) {
+            const key = AngularEditor.findKey(this.editor, children[i]);
+            if (key?.id === keyId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private buildHeightsAndAccumulatedHeights() {
+        const children = (this.editor.children || []) as Element[];
+        const heights = new Array(children.length);
+        const accumulatedHeights = new Array(children.length + 1);
+        accumulatedHeights[0] = 0;
+        for (let i = 0; i < children.length; i++) {
+            const height = this.getBlockHeight(i);
+            heights[i] = height;
+            accumulatedHeights[i + 1] = accumulatedHeights[i] + height;
+        }
+        return { heights, accumulatedHeights };
+    }
+
     private calculateVirtualViewport() {
         const children = (this.editor.children || []) as Element[];
         if (!children.length || !this.isEnabledVirtualScroll()) {
@@ -723,8 +802,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const elementLength = children.length;
         const adjustedScrollTop = Math.max(0, scrollTop - this.businessHeight);
-        const heights = children.map((_, idx) => this.getBlockHeight(idx));
-        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        const { heights, accumulatedHeights } = this.buildHeightsAndAccumulatedHeights();
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -897,15 +975,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             console.error('getBlockHeight: invalid height value', key.id, height);
         }
         return defaultHeight;
-    }
-
-    private buildAccumulatedHeight(heights: number[]) {
-        const accumulatedHeights = new Array(heights.length + 1).fill(0);
-        for (let i = 0; i < heights.length; i++) {
-            // 存储前 i 个的累计高度
-            accumulatedHeights[i + 1] = accumulatedHeights[i] + heights[i];
-        }
-        return accumulatedHeights;
     }
 
     private scheduleMeasureVisibleHeights() {

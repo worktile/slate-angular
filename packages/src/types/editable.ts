@@ -6,6 +6,12 @@ export interface SlateVirtualScrollConfig {
     viewportHeight: number;
     blockHeight?: number;
     bufferCount?: number;
+    anchorKey?: string;
+}
+
+export interface SlateVirtualScrollToAnchorConfig {
+    anchorKey: string;
+    scrollTo: (scrollTop: number) => void;
 }
 
 export interface VirtualViewResult {
