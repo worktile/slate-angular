@@ -547,9 +547,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (isDebug && remeasureIndics.length > 0) {
             console.log('remeasure height by indics: ', remeasureIndics);
         }
-        // 清理高度，记录之前的高度
-        const previousHeights = this.getPreviousHeightsAndClear(remeasureIndics);
-        this.remeasureHeightByIndics(remeasureIndics, previousHeights);
+        this.remeasureHeightByIndics(remeasureIndics);
     }
 
     updateContext() {
@@ -657,8 +655,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     const remeasureIndics = Array.from(this.inViewportIndics);
-                    const previousHeights = this.getPreviousHeightsAndClear(remeasureIndics);
-                    this.remeasureHeightByIndics(remeasureIndics, previousHeights);
+                    this.remeasureHeightByIndics(remeasureIndics);
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
@@ -692,8 +689,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             if (diff.isMissingTop) {
                 const remeasureIndics = diff.diffTopRenderedIndexes;
-                const previousHeights = this.getPreviousHeightsAndClear(remeasureIndics);
-                const result = this.remeasureHeightByIndics(remeasureIndics, previousHeights);
+                const result = this.remeasureHeightByIndics(remeasureIndics);
                 if (result) {
                     virtualView = this.calculateVirtualViewport();
                     diff = this.diffVirtualViewport(virtualView, 'second');
@@ -963,19 +959,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
-    private getPreviousHeightsAndClear(indics: number[]): number[] {
-        const previousHeights = [];
-        indics.forEach(index => {
-            const element = this.editor.children[index];
-            const key = element && AngularEditor.findKey(this.editor, element);
-            const previousHeight = (key && this.keyHeightMap.get(key.id)) || -1;
-            this.keyHeightMap.delete(key.id);
-            previousHeights.push(previousHeight);
-        });
-        return previousHeights;
-    }
-
-    private remeasureHeightByIndics(indics: number[], previousHeights: number[]): boolean {
+    private remeasureHeightByIndics(indics: number[]): boolean {
         const children = (this.editor.children || []) as Element[];
         let isHeightChanged = false;
         indics.forEach((index, i) => {
@@ -988,7 +972,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!view) {
                 return;
             }
-            const prevHeight = previousHeights[i];
+            const prevHeight = this.keyHeightMap.get(key.id);
             const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
             if (ret instanceof Promise) {
                 ret.then(height => {

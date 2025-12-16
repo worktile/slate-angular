@@ -6,7 +6,5 @@ support remeasure height only when element is changed or added
 
 extract updateListRenderAndRemeasureHeights to update dom and remeasure heights and apply it to force to fix height can not be updated on Chinese composition type
 
-add getPreviousHeightsAndClear to add remeasureHeightByIndics in an animation frame(finally don't need it)
-
 rename refreshVirtualViewAnimId to tryUpdateVirtualViewportAnimId, measureVisibleHeightsAnimId to tryMeasureInViewportChildrenHeightsAnimId
 
