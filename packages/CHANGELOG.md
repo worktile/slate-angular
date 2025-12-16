@@ -1,5 +1,17 @@
 # Changelog
 
+## 20.2.0-next.18
+
+### Patch Changes
+
+- [#326](https://github.com/worktile/slate-angular/pull/326) [`fe441072669f235b2398e4691168bc5dd170d73a`](https://github.com/worktile/slate-angular/commit/fe441072669f235b2398e4691168bc5dd170d73a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support remeasure height only when element is changed or added
+
+  extract updateListRenderAndRemeasureHeights to update dom and remeasure heights and apply it to force to fix height can not be updated on Chinese composition type
+
+  rename refreshVirtualViewAnimId to tryUpdateVirtualViewportAnimId, measureVisibleHeightsAnimId to tryMeasureInViewportChildrenHeightsAnimId, scheduleMeasureVisibleHeights to tryMeasureInViewportChildrenHeights
+
+- [`f996fd40828ebd6e84482f0e980b06cb37bf3b44`](https://github.com/worktile/slate-angular/commit/f996fd40828ebd6e84482f0e980b06cb37bf3b44) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add virtual-scroll utils
+
 ## 20.2.0-next.17
 
 ### Patch Changes
