@@ -4,7 +4,7 @@
 </div>
 @if (mode === 'virtual') {
   <div>
-    <input type="text" [(ngModel)]="virtualToAnchorConfig.anchorKey" placeholder="锚点key" />
+    <input type="text" [(ngModel)]="anchorKey" placeholder="data-slate-key" />
     <button type="button" (click)="anchorScroll()">滚动</button>
   </div>
   <div class="demo-rich-editor-wrapper single" #demoContainer>

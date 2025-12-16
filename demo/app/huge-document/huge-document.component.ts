@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, NgZone, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { faker } from '@faker-js/faker';
-import { createEditor } from 'slate';
-import { SlateVirtualScrollToAnchorConfig, withAngular } from 'slate-angular';
+import { createEditor, Element } from 'slate';
+import { AngularEditor, SlateVirtualScrollToAnchorConfig, withAngular } from 'slate-angular';
 import { take } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
@@ -33,9 +33,11 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     };
 
     virtualToAnchorConfig: SlateVirtualScrollToAnchorConfig = {
-        anchorKey: '',
+        anchorElement: null,
         scrollTo: () => {}
     };
+
+    anchorKey = '';
 
     @ViewChild('demoContainer') demoContainer?: ElementRef<HTMLDivElement>;
 
@@ -90,13 +92,14 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     }
 
     anchorScroll() {
+        const anchorElement = this.editor.children.find(
+            child => AngularEditor.findKey(this.editor, child)?.id === this.anchorKey
+        ) as Element;
         this.virtualToAnchorConfig = {
             ...this.virtualToAnchorConfig,
+            anchorElement,
             scrollTo: (scrollTop: number) => {
                 window.scrollTo(0, scrollTop - 54);
-                setTimeout(() => {
-                    this.virtualToAnchorConfig.anchorKey = '';
-                }, 100);
             }
         };
     }

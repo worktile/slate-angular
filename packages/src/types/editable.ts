@@ -10,7 +10,7 @@ export interface SlateVirtualScrollConfig {
 }
 
 export interface SlateVirtualScrollToAnchorConfig {
-    anchorKey: string;
+    anchorElement: Element;
     scrollTo: (scrollTop: number) => void;
 }
 

@@ -221,7 +221,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private measureVisibleHeightsAnimId: number;
     private editorResizeObserver?: ResizeObserver;
     private virtualToAnchorConfig: SlateVirtualScrollToAnchorConfig | null = null;
-    private lastAnchorKey?: string;
+    private lastAnchorElement?: Element;
 
     constructor(
         public elementRef: ElementRef,
@@ -709,18 +709,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.isEnabledVirtualScroll()) {
             return;
         }
-        const { anchorKey, scrollTo } = this.virtualToAnchorConfig || {};
-        if (!anchorKey || !scrollTo) {
+        const { anchorElement, scrollTo } = this.virtualToAnchorConfig || {};
+        if (!anchorElement || !scrollTo) {
             return;
         }
-        if (anchorKey === this.lastAnchorKey) {
+        if (anchorElement === this.lastAnchorElement) {
             return;
         }
-        const children = (this.editor.children || []) as Element[];
+        const children = this.editor.children;
         if (!children.length) {
             return;
         }
-        const anchorIndex = this.getElementIndexByKeyId(anchorKey);
+        const anchorIndex = children.findIndex(item => item === anchorElement);
         if (anchorIndex < 0) {
             return;
         }
@@ -734,12 +734,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const itemTop = accumulatedHeights[anchorIndex] ?? 0;
         const targetScrollTop = itemTop + this.businessHeight;
 
-        this.lastAnchorKey = anchorKey;
+        this.lastAnchorElement = anchorElement;
         if (isDebug) {
             this.debugLog(
                 'log',
-                'anchorScroll key:',
-                anchorKey,
+                'anchorScroll element:',
+                anchorElement,
                 'targetScrollTop:',
                 targetScrollTop,
                 'businessHeight:',
@@ -747,18 +747,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             );
         }
         scrollTo(targetScrollTop);
-        this.lastAnchorKey = '';
-    }
-
-    private getElementIndexByKeyId(keyId: string): number {
-        const children = this.editor.children;
-        for (let i = 0; i < children.length; i++) {
-            const key = AngularEditor.findKey(this.editor, children[i]);
-            if (key?.id === keyId) {
-                return i;
-            }
-        }
-        return -1;
+        this.lastAnchorElement = null;
     }
 
     private buildHeightsAndAccumulatedHeights() {
