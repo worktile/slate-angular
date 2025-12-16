@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, NgZone, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { faker } from '@faker-js/faker';
 import { createEditor } from 'slate';
-import { SlateVirtualScrollConfig, SlateVirtualScrollToAnchorConfig, withAngular } from 'slate-angular';
+import { SlateVirtualScrollToAnchorConfig, withAngular } from 'slate-angular';
 import { take } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
@@ -26,11 +26,10 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     editor = withAngular(createEditor());
 
-    virtualScrollConfig: SlateVirtualScrollConfig = {
+    virtualScrollConfig = {
         enabled: true,
         scrollTop: 0,
-        viewportHeight: 0,
-        anchorKey: ''
+        viewportHeight: 0
     };
 
     virtualToAnchorConfig: SlateVirtualScrollToAnchorConfig = {
