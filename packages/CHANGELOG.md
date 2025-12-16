@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.17
+
+### Patch Changes
+
+- [`b15e496268e86c5be3991f82f10adacf5b730a08`](https://github.com/worktile/slate-angular/commit/b15e496268e86c5be3991f82f10adacf5b730a08) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support EDITOR_TO_VIRTUAL_SCROLL_SELECTION to get virtual scroll selection from everywhere
+
+  extract calculateVirtualScrollSelection as individual function
+
 ## 20.2.0-next.16
 
 ### Patch Changes
