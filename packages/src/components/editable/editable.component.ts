@@ -206,8 +206,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private inViewportChildren: Element[] = [];
     private inViewportIndics = new Set<number>();
     private keyHeightMap = new Map<string, number>();
-    private refreshVirtualViewAnimId: number;
-    private measureVisibleHeightsAnimId: number;
+    private tryUpdateVirtualViewportAnimId: number;
+    private tryMeasureInViewportChildrenHeightsAnimId: number;
     private editorResizeObserver?: ResizeObserver;
 
     constructor(
@@ -286,7 +286,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 } else {
                     this.listRender.update(childrenForRender, this.editor, this.context);
                 }
-                this.scheduleMeasureVisibleHeights();
+                this.tryMeasureInViewportChildrenHeights();
             } else {
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(this.editor.children, this.editor, this.context);
@@ -477,11 +477,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     forceRender() {
         this.updateContext();
         if (this.isEnabledVirtualScroll()) {
-            const virtualView = this.calculateVirtualViewport();
-            this.applyVirtualView(virtualView);
-            this.listRender.update(this.inViewportChildren, this.editor, this.context);
-            const visibleIndexes = Array.from(this.inViewportIndics);
-            this.remeasureHeightByIndics(visibleIndexes);
+            this.updateListRenderAndRemeasureHeights();
         } else {
             this.listRender.update(this.editor.children, this.editor, this.context);
         }
@@ -525,14 +521,30 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const changed = this.updateContext();
         if (changed) {
             if (this.isEnabledVirtualScroll()) {
-                const virtualView = this.calculateVirtualViewport();
-                this.applyVirtualView(virtualView);
-                this.listRender.update(virtualView.inViewportChildren, this.editor, this.context);
-                this.scheduleMeasureVisibleHeights();
+                this.updateListRenderAndRemeasureHeights();
             } else {
                 this.listRender.update(this.editor.children, this.editor, this.context);
             }
         }
+    }
+
+    updateListRenderAndRemeasureHeights() {
+        const virtualView = this.calculateVirtualViewport();
+        const oldInViewportChildren = this.inViewportChildren;
+        this.applyVirtualView(virtualView);
+        this.listRender.update(this.inViewportChildren, this.editor, this.context);
+        // 新增或者修改的才需要重算，计算出这个结果
+        const remeasureIndics = [];
+        const newInViewportIndics = Array.from(this.inViewportIndics);
+        this.inViewportChildren.forEach((child, index) => {
+            if (oldInViewportChildren.indexOf(child) === -1) {
+                remeasureIndics.push(newInViewportIndics[index]);
+            }
+        });
+        if (isDebug && remeasureIndics.length > 0) {
+            console.log('remeasure height by indics: ', remeasureIndics);
+        }
+        this.remeasureHeightByIndics(remeasureIndics);
     }
 
     updateContext() {
@@ -639,7 +651,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
-                    this.remeasureHeightByIndics(Array.from(this.inViewportIndics));
+                    const remeasureIndics = Array.from(this.inViewportIndics);
+                    this.remeasureHeightByIndics(remeasureIndics);
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
@@ -664,15 +677,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private tryUpdateVirtualViewport() {
-        this.refreshVirtualViewAnimId && cancelAnimationFrame(this.refreshVirtualViewAnimId);
-        this.refreshVirtualViewAnimId = requestAnimationFrame(() => {
+        this.tryUpdateVirtualViewportAnimId && cancelAnimationFrame(this.tryUpdateVirtualViewportAnimId);
+        this.tryUpdateVirtualViewportAnimId = requestAnimationFrame(() => {
             let virtualView = this.calculateVirtualViewport();
             let diff = this.diffVirtualViewport(virtualView);
             if (!diff.isDiff) {
                 return;
             }
             if (diff.isMissingTop) {
-                const result = this.remeasureHeightByIndics(diff.diffTopRenderedIndexes);
+                const remeasureIndics = diff.diffTopRenderedIndexes;
+                const result = this.remeasureHeightByIndics(remeasureIndics);
                 if (result) {
                     virtualView = this.calculateVirtualViewport();
                     diff = this.diffVirtualViewport(virtualView, 'second');
@@ -688,7 +702,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.toNativeSelection();
                 }
             }
-            this.scheduleMeasureVisibleHeights();
+            this.tryMeasureInViewportChildrenHeights();
         });
     }
 
@@ -905,12 +919,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return accumulatedHeights;
     }
 
-    private scheduleMeasureVisibleHeights() {
+    private tryMeasureInViewportChildrenHeights() {
         if (!this.isEnabledVirtualScroll()) {
             return;
         }
-        this.measureVisibleHeightsAnimId && cancelAnimationFrame(this.measureVisibleHeightsAnimId);
-        this.measureVisibleHeightsAnimId = requestAnimationFrame(() => {
+        this.tryMeasureInViewportChildrenHeightsAnimId && cancelAnimationFrame(this.tryMeasureInViewportChildrenHeightsAnimId);
+        this.tryMeasureInViewportChildrenHeightsAnimId = requestAnimationFrame(() => {
             this.measureVisibleHeights();
         });
     }
@@ -945,7 +959,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private remeasureHeightByIndics(indics: number[]): boolean {
         const children = (this.editor.children || []) as Element[];
         let isHeightChanged = false;
-        indics.forEach(index => {
+        indics.forEach((index, i) => {
             const node = children[index];
             if (!node) {
                 return;
@@ -959,20 +973,23 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
             if (ret instanceof Promise) {
                 ret.then(height => {
+                    this.keyHeightMap.set(key.id, height);
                     if (height !== prevHeight) {
-                        this.keyHeightMap.set(key.id, height);
                         isHeightChanged = true;
                         if (isDebug) {
-                            this.debugLog('log', `remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`);
+                            this.debugLog(
+                                'log',
+                                `remeasure element height, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`
+                            );
                         }
                     }
                 });
             } else {
+                this.keyHeightMap.set(key.id, ret);
                 if (ret !== prevHeight) {
-                    this.keyHeightMap.set(key.id, ret);
                     isHeightChanged = true;
                     if (isDebug) {
-                        this.debugLog('log', `remeasureHeightByIndics, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
+                        this.debugLog('log', `remeasure element height, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
                     }
                 }
             }
