@@ -39,7 +39,7 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, SLATE_DEBUG_KEY } from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -73,6 +73,7 @@ import { VirtualScrollDebugOverlay } from './debug';
 const forceOnDOMPaste = IS_SAFARI;
 
 const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
+const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
 
 @Component({
     selector: 'slate-editable',
@@ -139,7 +140,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualScrollConfig = config;
-        console.log('virtualScrollConfig', config);
+        if (isDebugScrollTop) {
+            this.debugLog('log', 'virtualScrollConfig scrollTop:', config.scrollTop);
+        }
         IS_ENABLED_VIRTUAL_SCROLL.set(this.editor, config.enabled);
         if (this.isEnabledVirtualScroll()) {
             this.tryUpdateVirtualViewport();
@@ -697,6 +700,32 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.toNativeSelection();
                 }
             }
+            if (diff.isAddedTop) {
+                const remeasureAddedIndics = diff.diffTopRenderedIndexes;
+                if (isDebug) {
+                    this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
+                }
+                const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
+                const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+                const result = this.remeasureHeightByIndics(remeasureAddedIndics);
+                if (result) {
+                    const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+                    const visibleStartIndex = diff.diffTopRenderedIndexes[0];
+                    const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
+                    const adjustedTopHeight =
+                        (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
+                        (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                    if (adjustedTopHeight !== virtualView.top) {
+                        if (isDebug) {
+                            this.debugLog(
+                                'log',
+                                `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
+                            );
+                        }
+                        this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
+                    }
+                }
+            }
             this.tryMeasureInViewportChildrenHeights();
         });
     }
@@ -781,7 +810,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             visibleIndexes: new Set(visibleIndexes),
             top,
             bottom,
-            heights
+            heights,
+            accumulatedHeights
         };
     }
 
@@ -992,9 +1022,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private toSlateSelection() {
         if ((!this.isComposing || IS_ANDROID) && !this.isUpdatingSelection && !this.isDraggingInternally) {
             try {
-                if (isDebug) {
-                    console.log('toSlateSelection');
-                }
                 const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
                 const { activeElement } = root;
                 const el = AngularEditor.toDOMNode(this.editor, this.editor);
