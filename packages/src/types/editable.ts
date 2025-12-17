@@ -6,6 +6,7 @@ export interface SlateVirtualScrollConfig {
     viewportHeight: number;
     blockHeight?: number;
     bufferCount?: number;
+    viewportBoundingTop: number;
 }
 
 export interface VirtualViewResult {

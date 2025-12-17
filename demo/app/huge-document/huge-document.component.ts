@@ -29,7 +29,8 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     virtualScrollConfig = {
         enabled: true,
         scrollTop: 0,
-        viewportHeight: 0
+        viewportHeight: 0,
+        viewportBoundingTop: 0
     };
 
     anchorKey = '';
@@ -91,7 +92,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
             child => AngularEditor.findKey(this.editor, child)?.id === this.anchorKey
         ) as Element;
         scrollToElement(this.editor, anchorElement, (scrollTop: number) => {
-            window.scrollTo(0, scrollTop + this.demoContainer?.nativeElement.getBoundingClientRect().top - 20);
+            window.scrollTo(0, scrollTop);
         });
     }
 }

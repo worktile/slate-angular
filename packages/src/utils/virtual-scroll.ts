@@ -1,8 +1,14 @@
-import { Editor, Element } from 'slate';
+import { Element } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
 import { VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
 
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
+
+export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
+
+export const getBusinessTop = (editor: AngularEditor) => {
+    return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
+};
 
 export const getRealHeightByElement = (
     editor: AngularEditor,
@@ -52,5 +58,5 @@ export const scrollToElement = (editor: AngularEditor, element: Element, scrollT
     }
 
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
-    scrollTo(accumulatedHeights[anchorIndex] ?? 0);
+    scrollTo((accumulatedHeights[anchorIndex] ?? 0) + getBusinessTop(editor));
 };

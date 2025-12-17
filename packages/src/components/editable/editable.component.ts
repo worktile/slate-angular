@@ -50,9 +50,11 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import {
     buildHeightsAndAccumulatedHeights,
+    EDITOR_TO_BUSINESS_TOP,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
     ELEMENT_KEY_TO_HEIGHTS,
     ELEMENT_TO_COMPONENT,
+    getBusinessTop,
     getRealHeightByElement,
     IS_ENABLED_VIRTUAL_SCROLL,
     isDecoratorRangeListEqual
@@ -137,6 +139,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualScrollConfig = config;
+        console.log('virtualScrollConfig', config);
         IS_ENABLED_VIRTUAL_SCROLL.set(this.editor, config.enabled);
         if (this.isEnabledVirtualScroll()) {
             this.tryUpdateVirtualViewport();
@@ -194,7 +197,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private virtualScrollConfig: SlateVirtualScrollConfig = {
         enabled: false,
         scrollTop: 0,
-        viewportHeight: 0
+        viewportHeight: 0,
+        viewportBoundingTop: 0
     };
 
     private inViewportChildren: Element[] = [];
@@ -612,9 +616,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !!(this.virtualScrollConfig && this.virtualScrollConfig.enabled);
     }
 
-    // the height from scroll container top to editor top height element
-    private businessHeight: number = 0;
-
     virtualScrollInitialized = false;
 
     virtualTopHeightElement: HTMLElement;
@@ -640,7 +641,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
-            this.businessHeight = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
             let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect()?.width ?? 0;
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
@@ -678,6 +678,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (!diff.isDiff) {
                 return;
             }
+            // diff.isAddedTop
             if (diff.isMissingTop) {
                 const remeasureIndics = diff.diffTopRenderedIndexes;
                 const result = this.remeasureHeightByIndics(remeasureIndics);
@@ -727,12 +728,26 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const elementLength = children.length;
-        const adjustedScrollTop = Math.max(0, scrollTop - this.businessHeight);
+        if (!EDITOR_TO_BUSINESS_TOP.has(this.editor)) {
+            EDITOR_TO_BUSINESS_TOP.set(this.editor, 0);
+            setTimeout(() => {
+                const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
+                const businessTop =
+                    Math.ceil(virtualTopBoundingTop) +
+                    Math.ceil(this.virtualScrollConfig.scrollTop) -
+                    Math.floor(this.virtualScrollConfig.viewportBoundingTop);
+                EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
+                if (isDebug) {
+                    this.debugLog('log', 'businessTop', businessTop);
+                }
+            }, 100);
+        }
+        const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
         const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
-        const viewBottom = limitedScrollTop + viewportHeight + this.businessHeight;
+        const viewBottom = limitedScrollTop + viewportHeight + getBusinessTop(this.editor);
         let accumulatedOffset = 0;
         let visibleStartIndex = -1;
         const visible: Element[] = [];

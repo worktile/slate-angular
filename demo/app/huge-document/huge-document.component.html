@@ -3,7 +3,7 @@
   <button type="button" [disabled]="mode === 'virtual'" (click)="switchScrollMode('virtual')">虚拟滚动</button>
 </div>
 @if (mode === 'virtual') {
-  <div>
+  <div style="position: fixed; top: 100px; background: #fff;">
     <input type="text" [(ngModel)]="anchorKey" placeholder="data-slate-key" />
     <button type="button" (click)="anchorScroll()">滚动</button>
   </div>
