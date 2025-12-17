@@ -28,7 +28,7 @@ export const getRealHeightByElement = (
     return defaultHeight;
 };
 
-export const buildHeightsAndAccumulatedHeights = (editor: Editor) => {
+export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const children = (editor.children || []) as Element[];
     const heights = new Array(children.length);
     const accumulatedHeights = new Array(children.length + 1);
@@ -41,7 +41,7 @@ export const buildHeightsAndAccumulatedHeights = (editor: Editor) => {
     return { heights, accumulatedHeights };
 };
 
-export const scrollToElement = (editor: Editor, element: Element, scrollTo: (scrollTop: number) => void) => {
+export const scrollToElement = (editor: AngularEditor, element: Element, scrollTo: (scrollTop: number) => void) => {
     const children = editor.children;
     if (!children.length) {
         return;
