@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.20
+
+### Minor Changes
+
+- [`38fd8d689789745303c5754d13251993c0861bec`](https://github.com/worktile/slate-angular/commit/38fd8d689789745303c5754d13251993c0861bec) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - calculate business top
+
 ## 20.2.0-next.19
 
 ### Patch Changes
