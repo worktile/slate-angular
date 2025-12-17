@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.19
+
+### Patch Changes
+
+- [#325](https://github.com/worktile/slate-angular/pull/325) [`8476b5e2a4a9b69fe28a77af3af06a137e7d961b`](https://github.com/worktile/slate-angular/commit/8476b5e2a4a9b69fe28a77af3af06a137e7d961b) Thanks [@Xwatson](https://github.com/Xwatson)! - support scrolling to element
+
 ## 20.2.0-next.18
 
 ### Patch Changes
