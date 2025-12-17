@@ -39,15 +39,7 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
-import {
-    IS_FIREFOX,
-    IS_SAFARI,
-    IS_CHROME,
-    HAS_BEFORE_INPUT_SUPPORT,
-    IS_ANDROID,
-    VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT,
-    SLATE_DEBUG_KEY
-} from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, SLATE_DEBUG_KEY } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -57,9 +49,11 @@ import { SlateChildrenContext, SlateViewContext } from '../../view/context';
 import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import {
+    buildHeightsAndAccumulatedHeights,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
     ELEMENT_KEY_TO_HEIGHTS,
     ELEMENT_TO_COMPONENT,
+    getRealHeightByElement,
     IS_ENABLED_VIRTUAL_SCROLL,
     isDecoratorRangeListEqual
 } from '../../utils';
@@ -734,8 +728,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const elementLength = children.length;
         const adjustedScrollTop = Math.max(0, scrollTop - this.businessHeight);
-        const heights = children.map((_, idx) => this.getBlockHeight(idx));
-        const accumulatedHeights = this.buildAccumulatedHeight(heights);
+        const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -850,14 +843,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     'diffTopRenderedIndexes:',
                     isMissingTop ? '-' : isAddedTop ? '+' : '-',
                     diffTopRenderedIndexes,
-                    diffTopRenderedIndexes.map(index => this.getBlockHeight(index, 0))
+                    diffTopRenderedIndexes.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
                 );
                 this.debugLog(
                     'log',
                     'diffBottomRenderedIndexes:',
                     isAddedBottom ? '+' : isMissingBottom ? '-' : '+',
                     diffBottomRenderedIndexes,
-                    diffBottomRenderedIndexes.map(index => this.getBlockHeight(index, 0))
+                    diffBottomRenderedIndexes.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
                 );
                 const needTop = virtualView.heights.slice(0, newVisibleIndexes[0]).reduce((acc, height) => acc + height, 0);
                 const needBottom = virtualView.heights
@@ -888,35 +881,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             diffTopRenderedIndexes: [],
             diffBottomRenderedIndexes: []
         };
-    }
-
-    private getBlockHeight(index: number, defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT) {
-        const node = this.editor.children[index] as Element;
-        const isVisible = this.editor.isVisible(node);
-        if (!isVisible) {
-            return 0;
-        }
-        if (!node) {
-            return defaultHeight;
-        }
-        const key = AngularEditor.findKey(this.editor, node);
-        const height = this.keyHeightMap.get(key.id);
-        if (typeof height === 'number') {
-            return height;
-        }
-        if (this.keyHeightMap.has(key.id)) {
-            console.error('getBlockHeight: invalid height value', key.id, height);
-        }
-        return defaultHeight;
-    }
-
-    private buildAccumulatedHeight(heights: number[]) {
-        const accumulatedHeights = new Array(heights.length + 1).fill(0);
-        for (let i = 0; i < heights.length; i++) {
-            // 存储前 i 个的累计高度
-            accumulatedHeights[i + 1] = accumulatedHeights[i] + heights[i];
-        }
-        return accumulatedHeights;
     }
 
     private tryMeasureInViewportChildrenHeights() {

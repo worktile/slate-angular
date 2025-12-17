@@ -3,6 +3,10 @@
   <button type="button" [disabled]="mode === 'virtual'" (click)="switchScrollMode('virtual')">虚拟滚动</button>
 </div>
 @if (mode === 'virtual') {
+  <div>
+    <input type="text" [(ngModel)]="anchorKey" placeholder="data-slate-key" />
+    <button type="button" (click)="anchorScroll()">滚动</button>
+  </div>
   <div class="demo-rich-editor-wrapper single" #demoContainer>
     <slate-editable
       class="demo-slate-angular-editor"
