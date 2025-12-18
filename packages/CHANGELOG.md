@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.21
+
+### Minor Changes
+
+- [#327](https://github.com/worktile/slate-angular/pull/327) [`002de85da75610fd04131050ae5b8d1afda007fe`](https://github.com/worktile/slate-angular/commit/002de85da75610fd04131050ae5b8d1afda007fe) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix top height when scroll to upward
+
 ## 20.2.0-next.20
 
 ### Minor Changes
