@@ -39,7 +39,15 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { Subject } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP } from '../../utils/environment';
+import {
+    IS_FIREFOX,
+    IS_SAFARI,
+    IS_CHROME,
+    HAS_BEFORE_INPUT_SUPPORT,
+    IS_ANDROID,
+    SLATE_DEBUG_KEY,
+    SLATE_DEBUG_KEY_SCROLL_TOP
+} from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -648,6 +656,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
+                    this.keyHeightMap.clear();
                     const remeasureIndics = Array.from(this.inViewportIndics);
                     this.remeasureHeightByIndics(remeasureIndics);
                 }
