@@ -785,7 +785,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
-        const viewBottom = limitedScrollTop + viewportHeight + getBusinessTop(this.editor);
+        const viewBottom = limitedScrollTop + viewportHeight;
         let accumulatedOffset = 0;
         let visibleStartIndex = -1;
         const visible: Element[] = [];
