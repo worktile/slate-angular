@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.23
+
+### Patch Changes
+
+- [`534e38ab50a407b94329c049c2be29cbb9f6c312`](https://github.com/worktile/slate-angular/commit/534e38ab50a407b94329c049c2be29cbb9f6c312) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert string component
+
 ## 20.2.0-next.22
 
 ### Patch Changes
