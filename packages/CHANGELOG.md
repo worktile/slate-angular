@@ -1,5 +1,17 @@
 # Changelog
 
+## 20.2.0-next.22
+
+### Patch Changes
+
+- [`065381d38766ec7bc87c6f0acab0f6ff6c7e152d`](https://github.com/worktile/slate-angular/commit/065381d38766ec7bc87c6f0acab0f6ff6c7e152d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove business top when calculate view bottom
+
+- [#328](https://github.com/worktile/slate-angular/pull/328) [`5bb1f28b9966859e23f852a2f0fab4c2d76ae54a`](https://github.com/worktile/slate-angular/commit/5bb1f28b9966859e23f852a2f0fab4c2d76ae54a) Thanks [@Xwatson](https://github.com/Xwatson)! - Change the container width change clearing to height
+  - This operation is to prevent the problem of inconsistent height calculation caches under containers of different widths.
+  - If not cleared, the cache heights under different containers will be mixed, leading to errors in rendering calculations.
+
+- [`1f7365ce813afbd3b8fcaf469af5a2e9d445f11e`](https://github.com/worktile/slate-angular/commit/1f7365ce813afbd3b8fcaf469af5a2e9d445f11e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support custom leaf component outlet parent
+
 ## 20.2.0-next.21
 
 ### Minor Changes
