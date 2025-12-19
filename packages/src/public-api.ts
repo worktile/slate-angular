@@ -15,3 +15,4 @@ export * from './view/flavour';
 export * from './view/context-change';
 export * from './utils';
 export * from './types';
+export * from './components/string/string.component';
