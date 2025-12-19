@@ -297,6 +297,10 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         return this.context && this.context.leaf;
     }
 
+    getOutletParent = () => {
+        return this.elementRef.nativeElement;
+    };
+
     ngOnInit() {
         this.initialized = true;
     }
@@ -305,7 +309,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         if (!this.initialized) {
             this.stringRender = new SlateStringRender(this.context, this.viewContext);
             const stringNode = this.stringRender.render();
-            this.nativeElement.appendChild(stringNode);
+            this.getOutletParent().appendChild(stringNode);
         } else {
             this.stringRender?.update(this.context, this.viewContext);
         }
