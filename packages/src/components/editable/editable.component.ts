@@ -724,41 +724,42 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         this.toNativeSelection();
                     }
                 }
-                // if (diff.isAddedTop) {
-                //     const remeasureAddedIndics = diff.diffTopRenderedIndexes;
-                //     if (isDebug) {
-                //         this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
-                //     }
-                //     const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
-                //     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
-                //     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
-                //     if (result) {
-                //         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
-                //         const visibleStartIndex = diff.diffTopRenderedIndexes[0];
-                //         const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
-                //         const adjustedTopHeight =
-                //             (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
-                //             (actualTopHeightAfterAdd - topHeightBeforeAdd);
-                //         if (adjustedTopHeight !== virtualView.top) {
-                //             if (isDebug) {
-                //                 this.debugLog(
-                //                     'log',
-                //                     `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
-                //                 );
-                //             }
-                //             this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
-                //         }
-                //     }
-                // }
+                if (diff.isAddedTop) {
+                    const remeasureAddedIndics = diff.diffTopRenderedIndexes;
+                    if (isDebug) {
+                        this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
+                    }
+                    const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
+                    const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+                    const result = this.remeasureHeightByIndics(remeasureAddedIndics);
+                    if (result) {
+                        const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+                        const visibleStartIndex = diff.diffTopRenderedIndexes[0];
+                        const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
+                        const adjustedTopHeight =
+                            (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
+                            (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                        if (adjustedTopHeight !== virtualView.top) {
+                            if (isDebug) {
+                                this.debugLog(
+                                    'log',
+                                    `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
+                                );
+                            }
+                            this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
+                            this.topHeight = adjustedTopHeight;
+                        }
+                    }
+                }
                 this.tryMeasureInViewportChildrenHeights();
             } else {
-                if (virtualView.top !== this.topHeight) {
-                    if (isDebug) {
-                        console.log('update top height: ', virtualView.top - this.topHeight, 'start index', this.inViewportIndics[0]);
-                    }
-                    this.virtualTopHeightElement.style.height = `${virtualView.top}px`;
-                    this.topHeight = virtualView.top;
-                }
+                // if (virtualView.top !== this.topHeight) {
+                //     if (isDebug) {
+                //         console.log('update top height: ', virtualView.top - this.topHeight, 'start index', this.inViewportIndics[0]);
+                //     }
+                //     this.virtualTopHeightElement.style.height = `${virtualView.top}px`;
+                //     this.topHeight = virtualView.top;
+                // }
             }
             if (isDebug) {
                 this.debugLog('log', 'tryUpdateVirtualViewport Anim end');
@@ -988,10 +989,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const children = (this.editor.children || []) as Element[];
         const xxx = [...this.inViewportIndics];
         let preRendingIndex = -1;
-        if (this.preRenderingCount) {
-            preRendingIndex = this.inViewportIndics[0] - 1;
-            xxx.unshift(preRendingIndex);
-        }
+        // if (this.preRenderingCount) {
+        //     preRendingIndex = this.inViewportIndics[0] - 1;
+        //     xxx.unshift(preRendingIndex);
+        // }
         xxx.forEach(index => {
             const node = children[index];
             if (!node) {
