@@ -708,32 +708,32 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.toNativeSelection();
                 }
             }
-            if (diff.isAddedTop) {
-                const remeasureAddedIndics = diff.diffTopRenderedIndexes;
-                if (isDebug) {
-                    this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
-                }
-                const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
-                const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
-                const result = this.remeasureHeightByIndics(remeasureAddedIndics);
-                if (result) {
-                    const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
-                    const visibleStartIndex = diff.diffTopRenderedIndexes[0];
-                    const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
-                    const adjustedTopHeight =
-                        (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
-                        (actualTopHeightAfterAdd - topHeightBeforeAdd);
-                    if (adjustedTopHeight !== virtualView.top) {
-                        if (isDebug) {
-                            this.debugLog(
-                                'log',
-                                `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
-                            );
-                        }
-                        this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
-                    }
-                }
-            }
+            // if (diff.isAddedTop) {
+            //     const remeasureAddedIndics = diff.diffTopRenderedIndexes;
+            //     if (isDebug) {
+            //         this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
+            //     }
+            //     const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
+            //     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+            //     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
+            //     if (result) {
+            //         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+            //         const visibleStartIndex = diff.diffTopRenderedIndexes[0];
+            //         const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
+            //         const adjustedTopHeight =
+            //             (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
+            //             (actualTopHeightAfterAdd - topHeightBeforeAdd);
+            //         if (adjustedTopHeight !== virtualView.top) {
+            //             if (isDebug) {
+            //                 this.debugLog(
+            //                     'log',
+            //                     `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
+            //                 );
+            //             }
+            //             this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
+            //         }
+            //     }
+            // }
             this.tryMeasureInViewportChildrenHeights();
         });
     }
