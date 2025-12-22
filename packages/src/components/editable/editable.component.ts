@@ -213,7 +213,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     };
 
     private inViewportChildren: Element[] = [];
-    private inViewportIndics = new Set<number>();
+    private inViewportIndics: number[] = [];
     private keyHeightMap = new Map<string, number>();
     private tryUpdateVirtualViewportAnimId: number;
     private tryMeasureInViewportChildrenHeightsAnimId: number;
@@ -341,7 +341,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     calculateVirtualScrollSelection(selection: Selection) {
         if (selection) {
-            const indics = Array.from(this.inViewportIndics.values());
+            const indics = this.inViewportIndics;
             if (indics.length > 0) {
                 const currentVisibleRange: Range = {
                     anchor: Editor.start(this.editor, [indics[0]]),
@@ -544,10 +544,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.listRender.update(this.inViewportChildren, this.editor, this.context);
         // 新增或者修改的才需要重算，计算出这个结果
         const remeasureIndics = [];
-        const newInViewportIndics = Array.from(this.inViewportIndics);
         this.inViewportChildren.forEach((child, index) => {
             if (oldInViewportChildren.indexOf(child) === -1) {
-                remeasureIndics.push(newInViewportIndics[index]);
+                remeasureIndics.push(this.inViewportIndics[index]);
             }
         });
         if (isDebug && remeasureIndics.length > 0) {
@@ -657,7 +656,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     this.keyHeightMap.clear();
-                    const remeasureIndics = Array.from(this.inViewportIndics);
+                    const remeasureIndics = this.inViewportIndics;
                     this.remeasureHeightByIndics(remeasureIndics);
                 }
             });
@@ -744,7 +743,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!children.length || !this.isEnabledVirtualScroll()) {
             return {
                 inViewportChildren: children,
-                visibleIndexes: new Set<number>(),
+                visibleIndexes: [],
                 top: 0,
                 bottom: 0,
                 heights: []
@@ -759,7 +758,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!viewportHeight) {
             return {
                 inViewportChildren: [],
-                visibleIndexes: new Set<number>(),
+                visibleIndexes: [],
                 top: 0,
                 bottom: 0,
                 heights: []
@@ -816,7 +815,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
         return {
             inViewportChildren: visible.length ? visible : children,
-            visibleIndexes: new Set(visibleIndexes),
+            visibleIndexes,
             top,
             bottom,
             heights,

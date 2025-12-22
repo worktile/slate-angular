@@ -11,7 +11,7 @@ export interface SlateVirtualScrollConfig {
 
 export interface VirtualViewResult {
     inViewportChildren: Element[];
-    visibleIndexes: Set<number>;
+    visibleIndexes: number[];
     top: number;
     bottom: number;
     heights: number[];
