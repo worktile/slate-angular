@@ -12,6 +12,7 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
+import { EDITOR_TO_WIDTH } from '../../utils/virtual-scroll';
 
 export class ListRender {
     private children: Descendant[] = [];
@@ -21,6 +22,7 @@ export class ListRender {
     private viewTypes: ViewType[] = [];
     private differ: IterableDiffer<any> | null = null;
     public initialized = false;
+    private preRenderingHTMLElement: HTMLElement[][] = [];
 
     constructor(
         private viewContext: SlateViewContext,
@@ -29,7 +31,10 @@ export class ListRender {
         private getOutletElement: () => HTMLElement | null
     ) {}
 
-    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
+    preRenderingCount = 0;
+
+    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
+        this.preRenderingCount = preRenderingCount;
         this.initialized = true;
         this.children = children;
         const isRoot = parent === this.viewContext.editor;
@@ -56,15 +61,25 @@ export class ListRender {
         }
     }
 
-    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
+    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
         if (!this.initialized || this.children.length === 0) {
-            this.initialize(children, parent, childrenContext);
+            this.initialize(children, parent, childrenContext, preRenderingCount);
             return;
         }
         if (!this.differ) {
             throw new Error('Exception: Can not find differ ');
         }
         const outletParent = this.getOutletParent();
+        if (this.preRenderingHTMLElement.length > 0) {
+            this.preRenderingHTMLElement.forEach((rootNodes, index) => {
+                rootNodes.forEach(rootNode => {
+                    rootNode.style.position = '';
+                    rootNode.style.top = '';
+                    rootNode.style.width = '';
+                });
+            });
+            this.preRenderingHTMLElement = [];
+        }
         const diffResult = this.differ.diff(children);
         const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         const isRoot = parent === this.viewContext.editor;
@@ -124,6 +139,15 @@ export class ListRender {
                     newContexts.push(context);
                     newViews.push(view);
                     newBlockCards.push(blockCard);
+                    mountOnItemChange(
+                        record.currentIndex,
+                        record.item,
+                        newViews,
+                        newBlockCards,
+                        outletParent,
+                        firstRootNode,
+                        this.viewContext
+                    );
                 }
             });
             diffResult.forEachOperation(record => {
@@ -173,7 +197,19 @@ export class ListRender {
             });
             this.contexts = newContexts;
         }
+        if (preRenderingCount > 0) {
+            for (let i = 0; i < preRenderingCount; i++) {
+                const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
+                rootNodes.forEach(rootNode => {
+                    rootNode.style = `position: absolute;top: -100%;width: ${EDITOR_TO_WIDTH.get(this.viewContext.editor)}px;`;
+                });
+                this.preRenderingHTMLElement.push(rootNodes);
+            }
+            this.preRenderingCount = preRenderingCount;
+        }
     }
+
+    width = 0;
 
     public destroy() {
         this.children.forEach((element: Element, index: number) => {

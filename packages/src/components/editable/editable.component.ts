@@ -60,6 +60,7 @@ import {
     buildHeightsAndAccumulatedHeights,
     EDITOR_TO_BUSINESS_TOP,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
+    EDITOR_TO_WIDTH,
     ELEMENT_KEY_TO_HEIGHTS,
     ELEMENT_TO_COMPONENT,
     getBusinessTop,
@@ -291,9 +292,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.applyVirtualView(virtualView);
                 const childrenForRender = virtualView.inViewportChildren;
                 if (!this.listRender.initialized) {
-                    this.listRender.initialize(childrenForRender, this.editor, this.context);
+                    this.listRender.initialize(childrenForRender, this.editor, this.context, virtualView.preRenderingCount);
                 } else {
-                    this.listRender.update(childrenForRender, this.editor, this.context);
+                    this.listRender.update(childrenForRender, this.editor, this.context, virtualView.preRenderingCount);
                 }
                 this.tryMeasureInViewportChildrenHeights();
             } else {
@@ -630,9 +631,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     virtualTopHeightElement: HTMLElement;
 
+    topHeight = 0;
+
     virtualBottomHeightElement: HTMLElement;
 
     virtualCenterOutlet: HTMLElement;
+
+    preRenderingCount = 0;
 
     initializeVirtualScroll() {
         if (this.virtualScrollInitialized) {
@@ -673,6 +678,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             return;
         }
         this.virtualTopHeightElement.style.height = `${topHeight}px`;
+        this.topHeight = topHeight;
         this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
     }
 
@@ -682,59 +688,81 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private tryUpdateVirtualViewport() {
+        if (isDebug) {
+            this.debugLog('log', 'tryUpdateVirtualViewport');
+        }
         this.tryUpdateVirtualViewportAnimId && cancelAnimationFrame(this.tryUpdateVirtualViewportAnimId);
         this.tryUpdateVirtualViewportAnimId = requestAnimationFrame(() => {
+            if (isDebug) {
+                this.debugLog('log', 'tryUpdateVirtualViewport Anim start');
+            }
             let virtualView = this.calculateVirtualViewport();
             let diff = this.diffVirtualViewport(virtualView);
-            if (!diff.isDiff) {
-                return;
-            }
-            // diff.isAddedTop
-            if (diff.isMissingTop) {
-                const remeasureIndics = diff.diffTopRenderedIndexes;
-                const result = this.remeasureHeightByIndics(remeasureIndics);
-                if (result) {
-                    virtualView = this.calculateVirtualViewport();
-                    diff = this.diffVirtualViewport(virtualView, 'second');
-                    if (!diff.isDiff) {
-                        return;
+            if (diff.isDiff) {
+                // diff.isAddedTop
+                // if (diff.isMissingTop) {
+                //     const remeasureIndics = diff.diffTopRenderedIndexes;
+                //     const result = this.remeasureHeightByIndics(remeasureIndics);
+                //     if (result) {
+                //         virtualView = this.calculateVirtualViewport();
+                //         diff = this.diffVirtualViewport(virtualView, 'second');
+                //         if (!diff.isDiff) {
+                //             return;
+                //         }
+                //     }
+                // }
+                this.applyVirtualView(virtualView);
+                if (this.listRender.initialized) {
+                    this.preRenderingCount = 0;
+                    const childrenWithPreRendering = [...this.inViewportChildren];
+                    if (this.inViewportIndics[0] !== 0) {
+                        this.preRenderingCount = 1;
+                        childrenWithPreRendering.unshift(this.editor.children[this.inViewportIndics[0] - 1] as Element);
+                    }
+                    this.listRender.update(childrenWithPreRendering, this.editor, this.context, this.preRenderingCount);
+                    if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
+                        this.toNativeSelection();
                     }
                 }
-            }
-            this.applyVirtualView(virtualView);
-            if (this.listRender.initialized) {
-                this.listRender.update(virtualView.inViewportChildren, this.editor, this.context);
-                if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
-                    this.toNativeSelection();
+                // if (diff.isAddedTop) {
+                //     const remeasureAddedIndics = diff.diffTopRenderedIndexes;
+                //     if (isDebug) {
+                //         this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
+                //     }
+                //     const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
+                //     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+                //     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
+                //     if (result) {
+                //         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+                //         const visibleStartIndex = diff.diffTopRenderedIndexes[0];
+                //         const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
+                //         const adjustedTopHeight =
+                //             (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
+                //             (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                //         if (adjustedTopHeight !== virtualView.top) {
+                //             if (isDebug) {
+                //                 this.debugLog(
+                //                     'log',
+                //                     `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
+                //                 );
+                //             }
+                //             this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
+                //         }
+                //     }
+                // }
+                this.tryMeasureInViewportChildrenHeights();
+            } else {
+                if (virtualView.top !== this.topHeight) {
+                    if (isDebug) {
+                        console.log('update top height: ', virtualView.top - this.topHeight, 'start index', this.inViewportIndics[0]);
+                    }
+                    this.virtualTopHeightElement.style.height = `${virtualView.top}px`;
+                    this.topHeight = virtualView.top;
                 }
             }
-            // if (diff.isAddedTop) {
-            //     const remeasureAddedIndics = diff.diffTopRenderedIndexes;
-            //     if (isDebug) {
-            //         this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
-            //     }
-            //     const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
-            //     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
-            //     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
-            //     if (result) {
-            //         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
-            //         const visibleStartIndex = diff.diffTopRenderedIndexes[0];
-            //         const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
-            //         const adjustedTopHeight =
-            //             (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
-            //             (actualTopHeightAfterAdd - topHeightBeforeAdd);
-            //         if (adjustedTopHeight !== virtualView.top) {
-            //             if (isDebug) {
-            //                 this.debugLog(
-            //                     'log',
-            //                     `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
-            //                 );
-            //             }
-            //             this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
-            //         }
-            //     }
-            // }
-            this.tryMeasureInViewportChildrenHeights();
+            if (isDebug) {
+                this.debugLog('log', 'tryUpdateVirtualViewport Anim end');
+            }
         });
     }
 
@@ -744,6 +772,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             return {
                 inViewportChildren: children,
                 visibleIndexes: [],
+                preRenderingCount: 0,
                 top: 0,
                 bottom: 0,
                 heights: []
@@ -759,6 +788,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             return {
                 inViewportChildren: [],
                 visibleIndexes: [],
+                preRenderingCount: 0,
                 top: 0,
                 bottom: 0,
                 heights: []
@@ -769,11 +799,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             EDITOR_TO_BUSINESS_TOP.set(this.editor, 0);
             setTimeout(() => {
                 const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
+                const width = this.virtualTopHeightElement.getBoundingClientRect()?.width ?? 0;
                 const businessTop =
                     Math.ceil(virtualTopBoundingTop) +
                     Math.ceil(this.virtualScrollConfig.scrollTop) -
                     Math.floor(this.virtualScrollConfig.viewportBoundingTop);
                 EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
+                EDITOR_TO_WIDTH.set(this.editor, width);
                 if (isDebug) {
                     this.debugLog('log', 'businessTop', businessTop);
                 }
@@ -812,7 +844,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             visibleStartIndex === -1 ? elementLength - 1 : (visibleIndexes[visibleIndexes.length - 1] ?? visibleStartIndex);
         const top = visibleStartIndex === -1 ? 0 : accumulatedHeights[visibleStartIndex];
         const bottom = totalHeight - accumulatedHeights[visibleEndIndex + 1];
-
         return {
             inViewportChildren: visible.length ? visible : children,
             visibleIndexes,
@@ -909,7 +940,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 const needBottom = virtualView.heights
                     .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
                     .reduce((acc, height) => acc + height, 0);
-                this.debugLog('log', 'newTopHeight:', needTop, 'prevTopHeight:', parseFloat(this.virtualTopHeightElement.style.height));
+                this.debugLog(
+                    'log',
+                    needTop - parseFloat(this.virtualTopHeightElement.style.height),
+                    'newTopHeight:',
+                    needTop,
+                    'prevTopHeight:',
+                    parseFloat(this.virtualTopHeightElement.style.height)
+                );
                 this.debugLog(
                     'log',
                     'newBottomHeight:',
@@ -948,7 +986,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private measureVisibleHeights() {
         const children = (this.editor.children || []) as Element[];
-        this.inViewportIndics.forEach(index => {
+        const xxx = [...this.inViewportIndics];
+        let preRendingIndex = -1;
+        if (this.preRenderingCount) {
+            preRendingIndex = this.inViewportIndics[0] - 1;
+            xxx.unshift(preRendingIndex);
+        }
+        xxx.forEach(index => {
             const node = children[index];
             if (!node) {
                 return;
@@ -969,6 +1013,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 });
             } else {
                 this.keyHeightMap.set(key.id, ret);
+            }
+            if (preRendingIndex === index) {
+                if (isDebug) {
+                    console.log('pre height', ret);
+                }
+                const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
+                const startIndex = preRendingIndex === -1 ? 0 : preRendingIndex + 1;
+                const top = accumulatedHeights[startIndex];
+                if (top !== this.topHeight) {
+                    const res = top - this.topHeight;
+                    if (isDebug) {
+                        console.log('update top height and sub scroll y: ', res, 'start index', startIndex);
+                    }
+                    this.topHeight = top;
+                    this.virtualTopHeightElement.style.height = `${top}px`;
+                    // const scrollTop = window.scrollY;
+                    // window.scrollTo(0, scrollTop + res);
+                    this.tryUpdateVirtualViewportAnimId && cancelAnimationFrame(this.tryUpdateVirtualViewportAnimId);
+                }
             }
         });
     }
