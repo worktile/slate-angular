@@ -736,34 +736,27 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     // 会造成 topHeight 整体是增加的，下次滚动计算时会补偿上
                     if (result) {
                         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
-                        const visibleStartIndex = diff.diffTopRenderedIndexes[0];
                         const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
-                        const adjustedTopHeight =
-                            (visibleStartIndex === -1 ? 0 : newHeights.accumulatedHeights[visibleStartIndex]) -
-                            (actualTopHeightAfterAdd - topHeightBeforeAdd);
-                        if (adjustedTopHeight !== virtualView.top) {
-                            if (isDebug) {
-                                this.debugLog(
-                                    'log',
-                                    `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
-                                );
-                            }
-                            this.virtualTopHeightElement.style.height = `${newHeights.accumulatedHeights[visibleStartIndex]}px`;
-                            const scrollY = window.scrollY;
-                            window.scroll({ top: scrollY - (adjustedTopHeight - virtualView.top) });
-                            this.topHeight = adjustedTopHeight;
-                        }
+                        const scrollY = window.scrollY;
+                        const newTopHeight = this.topHeight - (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                        this.setVirtualSpaceHeight(newTopHeight, virtualView.bottom);
+                        this.debugLog(
+                            'log',
+                            `update top height cause added element in top, 减去: ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
+                        );
+                        // this.debugLog(
+                        //     'log',
+                        //     `scroll cause added element in top, scroll distance(正数代表滚动条向下): ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
+                        // );
+                        // window.scroll({ top: scrollY + (actualTopHeightAfterAdd - topHeightBeforeAdd) , behavior: 'instant' });
                     }
                 }
                 this.tryMeasureInViewportChildrenHeights();
             } else {
-                // if (virtualView.top !== this.topHeight) {
-                //     if (isDebug) {
-                //         console.log('update top height: ', virtualView.top - this.topHeight, 'start index', this.inViewportIndics[0]);
-                //     }
-                //     this.virtualTopHeightElement.style.height = `${virtualView.top}px`;
-                //     this.topHeight = virtualView.top;
-                // }
+                if (virtualView.top !== this.topHeight) {
+                    this.debugLog('log', 'update top height: ', virtualView.top - this.topHeight, 'start index', this.inViewportIndics[0]);
+                    this.setVirtualSpaceHeight(virtualView.top, virtualView.bottom);
+                }
             }
             if (isDebug) {
                 this.debugLog('log', 'tryUpdateVirtualViewport Anim end');
