@@ -796,7 +796,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             EDITOR_TO_BUSINESS_TOP.set(this.editor, 0);
             setTimeout(() => {
                 const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
-                const width = this.virtualTopHeightElement.getBoundingClientRect()?.width ?? 0;
                 const businessTop =
                     Math.ceil(virtualTopBoundingTop) +
                     Math.ceil(this.virtualScrollConfig.scrollTop) -
