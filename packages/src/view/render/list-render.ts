@@ -31,7 +31,6 @@ export class ListRender {
         private getOutletElement: () => HTMLElement | null
     ) {}
 
-
     public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
         this.initialized = true;
         this.children = children;
@@ -69,7 +68,8 @@ export class ListRender {
         }
         const outletParent = this.getOutletParent();
         if (this.preRenderingHTMLElement.length > 0) {
-            this.preRenderingHTMLElement.forEach((rootNodes, index) => {
+            const preRenderingElement = [...this.preRenderingHTMLElement];
+            preRenderingElement.forEach((rootNodes, index) => {
                 rootNodes.forEach(rootNode => {
                     rootNode.style.position = '';
                     rootNode.style.top = '';

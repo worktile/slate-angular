@@ -748,7 +748,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                                     `update top height cause added element in top: ${adjustedTopHeight}, old height: ${virtualView.top}`
                                 );
                             }
-                            this.virtualTopHeightElement.style.height = `${adjustedTopHeight}px`;
+                            this.virtualTopHeightElement.style.height = `${newHeights.accumulatedHeights[visibleStartIndex]}px`;
+                            const scrollY = window.scrollY;
+                            window.scroll({ top: scrollY - (adjustedTopHeight - virtualView.top) });
                             this.topHeight = adjustedTopHeight;
                         }
                     }
