@@ -982,13 +982,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private measureVisibleHeights() {
         const children = (this.editor.children || []) as Element[];
-        const xxx = [...this.inViewportIndics];
-        let preRendingIndex = -1;
-        // if (this.preRenderingCount) {
-        //     preRendingIndex = this.inViewportIndics[0] - 1;
-        //     xxx.unshift(preRendingIndex);
-        // }
-        xxx.forEach(index => {
+        const inViewportIndics = [...this.inViewportIndics];
+        inViewportIndics.forEach(index => {
             const node = children[index];
             if (!node) {
                 return;
@@ -1009,25 +1004,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 });
             } else {
                 this.keyHeightMap.set(key.id, ret);
-            }
-            if (preRendingIndex === index) {
-                if (isDebug) {
-                    console.log('pre height', ret);
-                }
-                const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
-                const startIndex = preRendingIndex === -1 ? 0 : preRendingIndex + 1;
-                const top = accumulatedHeights[startIndex];
-                if (top !== this.topHeight) {
-                    const res = top - this.topHeight;
-                    if (isDebug) {
-                        console.log('update top height and sub scroll y: ', res, 'start index', startIndex);
-                    }
-                    this.topHeight = top;
-                    this.virtualTopHeightElement.style.height = `${top}px`;
-                    // const scrollTop = window.scrollY;
-                    // window.scrollTo(0, scrollTop + res);
-                    this.tryUpdateVirtualViewportAnimId && cancelAnimationFrame(this.tryUpdateVirtualViewportAnimId);
-                }
             }
         });
     }
