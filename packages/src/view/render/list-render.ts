@@ -31,10 +31,8 @@ export class ListRender {
         private getOutletElement: () => HTMLElement | null
     ) {}
 
-    preRenderingCount = 0;
 
     public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
-        this.preRenderingCount = preRenderingCount;
         this.initialized = true;
         this.children = children;
         const isRoot = parent === this.viewContext.editor;
@@ -139,15 +137,6 @@ export class ListRender {
                     newContexts.push(context);
                     newViews.push(view);
                     newBlockCards.push(blockCard);
-                    mountOnItemChange(
-                        record.currentIndex,
-                        record.item,
-                        newViews,
-                        newBlockCards,
-                        outletParent,
-                        firstRootNode,
-                        this.viewContext
-                    );
                 }
             });
             diffResult.forEachOperation(record => {
@@ -205,11 +194,8 @@ export class ListRender {
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
             }
-            this.preRenderingCount = preRenderingCount;
         }
     }
-
-    width = 0;
 
     public destroy() {
         this.children.forEach((element: Element, index: number) => {

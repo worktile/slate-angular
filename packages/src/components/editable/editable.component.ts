@@ -732,6 +732,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
                     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
                     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
+                    // 补偿添加元素导致的高度变化，但是可能出现负数
+                    // 会造成 topHeight 整体是增加的，下次滚动计算时会补偿上
                     if (result) {
                         const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
                         const visibleStartIndex = diff.diffTopRenderedIndexes[0];
