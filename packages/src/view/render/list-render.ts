@@ -12,7 +12,6 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
-import { EDITOR_TO_WIDTH } from '../../utils/virtual-scroll';
 
 export class ListRender {
     private children: Descendant[] = [];
@@ -190,7 +189,7 @@ export class ListRender {
             for (let i = 0; i < preRenderingCount; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 rootNodes.forEach(rootNode => {
-                    rootNode.style = `position: absolute;top: -100%;width: ${EDITOR_TO_WIDTH.get(this.viewContext.editor)}px;`;
+                    rootNode.style = `position: absolute;top: -100%;`;
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
             }

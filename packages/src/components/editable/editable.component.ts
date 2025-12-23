@@ -60,7 +60,6 @@ import {
     buildHeightsAndAccumulatedHeights,
     EDITOR_TO_BUSINESS_TOP,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
-    EDITOR_TO_WIDTH,
     ELEMENT_KEY_TO_HEIGHTS,
     ELEMENT_TO_COMPONENT,
     getBusinessTop,
@@ -803,7 +802,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     Math.ceil(this.virtualScrollConfig.scrollTop) -
                     Math.floor(this.virtualScrollConfig.viewportBoundingTop);
                 EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
-                EDITOR_TO_WIDTH.set(this.editor, width);
                 if (isDebug) {
                     this.debugLog('log', 'businessTop', businessTop);
                 }

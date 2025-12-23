@@ -5,7 +5,6 @@ import { VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 
 export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
-export const EDITOR_TO_WIDTH = new WeakMap<AngularEditor, number>();
 
 export const getBusinessTop = (editor: AngularEditor) => {
     return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
