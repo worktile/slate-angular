@@ -718,7 +718,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             let virtualView = this.calculateVirtualViewport();
             let diff = this.diffVirtualViewport(virtualView);
-            if (diff.isDiff) {
+            if (diff.isDifferent) {
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
                     const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
@@ -727,12 +727,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         this.toNativeSelection();
                     }
                 }
-                if (diff.isAddedTop) {
-                    const remeasureAddedIndics = diff.diffTopRenderedIndexes;
+                if (diff.needAddOnTop) {
+                    const remeasureAddedIndics = diff.changedIndexesOfTop;
                     if (isDebug) {
-                        this.debugLog('log', 'isAddedTop to remeasure heights: ', remeasureAddedIndics);
+                        this.debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
                     }
-                    const startIndexBeforeAdd = diff.diffTopRenderedIndexes[diff.diffTopRenderedIndexes.length - 1] + 1;
+                    const startIndexBeforeAdd = diff.changedIndexesOfTop[diff.changedIndexesOfTop.length - 1] + 1;
                     const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
                     const result = this.remeasureHeightByIndics(remeasureAddedIndics);
                     if (result) {
@@ -853,56 +853,56 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private diffVirtualViewport(virtualView: VirtualViewResult, stage: 'first' | 'second' | 'onChange' = 'first') {
         if (!this.inViewportChildren.length) {
             return {
-                isDiff: true,
-                diffTopRenderedIndexes: [],
-                diffBottomRenderedIndexes: []
+                isDifferent: true,
+                changedIndexesOfTop: [],
+                changedIndexesOfBottom: []
             };
         }
-        const oldVisibleIndexes = [...this.inViewportIndics];
-        const newVisibleIndexes = [...virtualView.visibleIndexes];
-        const firstNewIndex = newVisibleIndexes[0];
-        const lastNewIndex = newVisibleIndexes[newVisibleIndexes.length - 1];
-        const firstOldIndex = oldVisibleIndexes[0];
-        const lastOldIndex = oldVisibleIndexes[oldVisibleIndexes.length - 1];
+        const oldIndexesInViewport = [...this.inViewportIndics];
+        const newIndexesInViewport = [...virtualView.visibleIndexes];
+        const firstNewIndex = newIndexesInViewport[0];
+        const lastNewIndex = newIndexesInViewport[newIndexesInViewport.length - 1];
+        const firstOldIndex = oldIndexesInViewport[0];
+        const lastOldIndex = oldIndexesInViewport[oldIndexesInViewport.length - 1];
         if (firstNewIndex !== firstOldIndex || lastNewIndex !== lastOldIndex) {
-            const diffTopRenderedIndexes = [];
-            const diffBottomRenderedIndexes = [];
-            const isMissingTop = firstNewIndex !== firstOldIndex && firstNewIndex > firstOldIndex;
-            const isAddedTop = firstNewIndex !== firstOldIndex && firstNewIndex < firstOldIndex;
-            const isMissingBottom = lastNewIndex !== lastOldIndex && lastOldIndex > lastNewIndex;
-            const isAddedBottom = lastNewIndex !== lastOldIndex && lastOldIndex < lastNewIndex;
-            if (isMissingTop || isAddedBottom) {
+            const changedIndexesOfTop = [];
+            const changedIndexesOfBottom = [];
+            const needRemoveOnTop = firstNewIndex !== firstOldIndex && firstNewIndex > firstOldIndex;
+            const needAddOnTop = firstNewIndex !== firstOldIndex && firstNewIndex < firstOldIndex;
+            const needRemoveOnBottom = lastNewIndex !== lastOldIndex && lastOldIndex > lastNewIndex;
+            const needAddOnBottom = lastNewIndex !== lastOldIndex && lastOldIndex < lastNewIndex;
+            if (needRemoveOnTop || needAddOnBottom) {
                 // 向下
-                for (let index = 0; index < oldVisibleIndexes.length; index++) {
-                    const element = oldVisibleIndexes[index];
-                    if (!newVisibleIndexes.includes(element)) {
-                        diffTopRenderedIndexes.push(element);
+                for (let index = 0; index < oldIndexesInViewport.length; index++) {
+                    const element = oldIndexesInViewport[index];
+                    if (!newIndexesInViewport.includes(element)) {
+                        changedIndexesOfTop.push(element);
                     } else {
                         break;
                     }
                 }
-                for (let index = newVisibleIndexes.length - 1; index >= 0; index--) {
-                    const element = newVisibleIndexes[index];
-                    if (!oldVisibleIndexes.includes(element)) {
-                        diffBottomRenderedIndexes.push(element);
+                for (let index = newIndexesInViewport.length - 1; index >= 0; index--) {
+                    const element = newIndexesInViewport[index];
+                    if (!oldIndexesInViewport.includes(element)) {
+                        changedIndexesOfBottom.push(element);
                     } else {
                         break;
                     }
                 }
-            } else if (isAddedTop || isMissingBottom) {
+            } else if (needAddOnTop || needRemoveOnBottom) {
                 // 向上
-                for (let index = 0; index < newVisibleIndexes.length; index++) {
-                    const element = newVisibleIndexes[index];
-                    if (!oldVisibleIndexes.includes(element)) {
-                        diffTopRenderedIndexes.push(element);
+                for (let index = 0; index < newIndexesInViewport.length; index++) {
+                    const element = newIndexesInViewport[index];
+                    if (!oldIndexesInViewport.includes(element)) {
+                        changedIndexesOfTop.push(element);
                     } else {
                         break;
                     }
                 }
-                for (let index = oldVisibleIndexes.length - 1; index >= 0; index--) {
-                    const element = oldVisibleIndexes[index];
-                    if (!newVisibleIndexes.includes(element)) {
-                        diffBottomRenderedIndexes.push(element);
+                for (let index = oldIndexesInViewport.length - 1; index >= 0; index--) {
+                    const element = oldIndexesInViewport[index];
+                    if (!newIndexesInViewport.includes(element)) {
+                        changedIndexesOfBottom.push(element);
                     } else {
                         break;
                     }
@@ -910,25 +910,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             if (isDebug) {
                 this.debugLog('log', `====== diffVirtualViewport stage: ${stage} ======`);
-                this.debugLog('log', 'oldVisibleIndexes:', oldVisibleIndexes);
-                this.debugLog('log', 'newVisibleIndexes:', newVisibleIndexes);
+                this.debugLog('log', 'oldIndexesInViewport:', oldIndexesInViewport);
+                this.debugLog('log', 'newIndexesInViewport:', newIndexesInViewport);
                 this.debugLog(
                     'log',
-                    'diffTopRenderedIndexes:',
-                    isMissingTop ? '-' : isAddedTop ? '+' : '-',
-                    diffTopRenderedIndexes,
-                    diffTopRenderedIndexes.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
+                    'changedIndexesOfTop:',
+                    needRemoveOnTop ? '-' : needAddOnTop ? '+' : '-',
+                    changedIndexesOfTop,
+                    changedIndexesOfTop.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
                 );
                 this.debugLog(
                     'log',
-                    'diffBottomRenderedIndexes:',
-                    isAddedBottom ? '+' : isMissingBottom ? '-' : '+',
-                    diffBottomRenderedIndexes,
-                    diffBottomRenderedIndexes.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
+                    'changedIndexesOfBottom:',
+                    needAddOnBottom ? '+' : needRemoveOnBottom ? '-' : '+',
+                    changedIndexesOfBottom,
+                    changedIndexesOfBottom.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
                 );
-                const needTop = virtualView.heights.slice(0, newVisibleIndexes[0]).reduce((acc, height) => acc + height, 0);
+                const needTop = virtualView.heights.slice(0, newIndexesInViewport[0]).reduce((acc, height) => acc + height, 0);
                 const needBottom = virtualView.heights
-                    .slice(newVisibleIndexes[newVisibleIndexes.length - 1] + 1)
+                    .slice(newIndexesInViewport[newIndexesInViewport.length - 1] + 1)
                     .reduce((acc, height) => acc + height, 0);
                 this.debugLog(
                     'log',
@@ -948,19 +948,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.debugLog('warn', '=========== Dividing line ===========');
             }
             return {
-                isDiff: true,
-                isMissingTop,
-                isAddedTop,
-                isMissingBottom,
-                isAddedBottom,
-                diffTopRenderedIndexes,
-                diffBottomRenderedIndexes
+                isDifferent: true,
+                needRemoveOnTop,
+                needAddOnTop,
+                needRemoveOnBottom,
+                needAddOnBottom,
+                changedIndexesOfTop,
+                changedIndexesOfBottom
             };
         }
         return {
-            isDiff: false,
-            diffTopRenderedIndexes: [],
-            diffBottomRenderedIndexes: []
+            isDifferent: false,
+            changedIndexesOfTop: [],
+            changedIndexesOfBottom: []
         };
     }
 
