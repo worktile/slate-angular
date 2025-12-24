@@ -61,18 +61,16 @@ import {
     EDITOR_TO_BUSINESS_TOP,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
     ELEMENT_KEY_TO_HEIGHTS,
-    ELEMENT_TO_COMPONENT,
     getBusinessTop,
     getRealHeightByElement,
     IS_ENABLED_VIRTUAL_SCROLL,
-    isDecoratorRangeListEqual
+    isDecoratorRangeListEqual,
+    measureHeightByIndics
 } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
 import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
-import { BaseElementComponent } from '../../view/base';
-import { BaseElementFlavour } from '../../view/flavour/element';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
 import { VirtualScrollDebugOverlay } from './debug';
@@ -296,7 +294,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
                     this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
                 }
-                this.tryMeasureInViewportChildrenHeights();
             } else {
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(this.editor.children, this.editor, this.context);
@@ -554,7 +551,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (isDebug && remeasureIndics.length > 0) {
             console.log('remeasure height by indics: ', remeasureIndics);
         }
-        this.remeasureHeightByIndics(remeasureIndics);
+        measureHeightByIndics(this.editor, remeasureIndics, true);
     }
 
     updateContext() {
@@ -659,7 +656,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     this.keyHeightMap.clear();
                     const remeasureIndics = this.inViewportIndics;
-                    this.remeasureHeightByIndics(remeasureIndics);
+                    measureHeightByIndics(this.editor, remeasureIndics);
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
@@ -718,39 +715,52 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             let virtualView = this.calculateVirtualViewport();
             let diff = this.diffVirtualViewport(virtualView);
+            if (diff.isDifferent && diff.needRemoveOnTop) {
+                const remeasureIndics = diff.changedIndexesOfTop;
+                const changed = measureHeightByIndics(this.editor, remeasureIndics);
+                if (changed) {
+                    virtualView = this.calculateVirtualViewport();
+                    diff = this.diffVirtualViewport(virtualView, 'second');
+                }
+            }
             if (diff.isDifferent) {
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
                     const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
                     this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
+                    if (diff.needAddOnTop) {
+                        const remeasureAddedIndics = diff.changedIndexesOfTop;
+                        if (isDebug) {
+                            this.debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
+                        }
+                        const startIndexBeforeAdd = diff.changedIndexesOfTop[diff.changedIndexesOfTop.length - 1] + 1;
+                        const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+                        const result = measureHeightByIndics(this.editor, remeasureAddedIndics);
+                        if (result) {
+                            const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+                            const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
+                            const newTopHeight = virtualView.top - (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                            this.setVirtualSpaceHeight(newTopHeight);
+                            if (isDebug) {
+                                this.debugLog(
+                                    'log',
+                                    `update top height since will add element in top（正数减去高度，负数代表增加高度）: ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
+                                );
+                            }
+                        }
+                    }
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
                         this.toNativeSelection();
                     }
                 }
-                if (diff.needAddOnTop) {
-                    const remeasureAddedIndics = diff.changedIndexesOfTop;
-                    if (isDebug) {
-                        this.debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
-                    }
-                    const startIndexBeforeAdd = diff.changedIndexesOfTop[diff.changedIndexesOfTop.length - 1] + 1;
-                    const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
-                    const result = this.remeasureHeightByIndics(remeasureAddedIndics);
-                    if (result) {
-                        const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
-                        const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
-                        const newTopHeight = virtualView.top - (actualTopHeightAfterAdd - topHeightBeforeAdd);
-                        this.setVirtualSpaceHeight(newTopHeight);
-                        this.debugLog(
-                            'log',
-                            `update top height cause added element in top, 减去: ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
-                        );
-                    }
-                }
-                this.tryMeasureInViewportChildrenHeights();
             } else {
                 const topHeight = this.getVirtualTopHeight();
                 if (virtualView.top !== topHeight) {
-                    this.debugLog('log', 'update top height: ', virtualView.top - topHeight, 'start index', this.inViewportIndics[0]);
+                    this.debugLog(
+                        'log',
+                        'update top height since invalid status（正数减去高度，负数代表增加高度）: ',
+                        topHeight - virtualView.top
+                    );
                     this.setVirtualSpaceHeight(virtualView.top);
                 }
             }
@@ -962,85 +972,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             changedIndexesOfTop: [],
             changedIndexesOfBottom: []
         };
-    }
-
-    private tryMeasureInViewportChildrenHeights() {
-        if (!this.isEnabledVirtualScroll()) {
-            return;
-        }
-        this.tryMeasureInViewportChildrenHeightsAnimId && cancelAnimationFrame(this.tryMeasureInViewportChildrenHeightsAnimId);
-        this.tryMeasureInViewportChildrenHeightsAnimId = requestAnimationFrame(() => {
-            this.measureVisibleHeights();
-        });
-    }
-
-    private measureVisibleHeights() {
-        const children = (this.editor.children || []) as Element[];
-        const inViewportIndics = [...this.inViewportIndics];
-        inViewportIndics.forEach(index => {
-            const node = children[index];
-            if (!node) {
-                return;
-            }
-            const key = AngularEditor.findKey(this.editor, node);
-            // 跳过已测过的块，除非强制测量
-            if (this.keyHeightMap.has(key.id)) {
-                return;
-            }
-            const view = ELEMENT_TO_COMPONENT.get(node);
-            if (!view) {
-                return;
-            }
-            const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
-            if (ret instanceof Promise) {
-                ret.then(height => {
-                    this.keyHeightMap.set(key.id, height);
-                });
-            } else {
-                this.keyHeightMap.set(key.id, ret);
-            }
-        });
-    }
-
-    private remeasureHeightByIndics(indics: number[]): boolean {
-        const children = (this.editor.children || []) as Element[];
-        let isHeightChanged = false;
-        indics.forEach((index, i) => {
-            const node = children[index];
-            if (!node) {
-                return;
-            }
-            const key = AngularEditor.findKey(this.editor, node);
-            const view = ELEMENT_TO_COMPONENT.get(node);
-            if (!view) {
-                return;
-            }
-            const prevHeight = this.keyHeightMap.get(key.id);
-            const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
-            if (ret instanceof Promise) {
-                ret.then(height => {
-                    this.keyHeightMap.set(key.id, height);
-                    if (height !== prevHeight) {
-                        isHeightChanged = true;
-                        if (isDebug) {
-                            this.debugLog(
-                                'log',
-                                `remeasure element height, index: ${index} prevHeight: ${prevHeight} newHeight: ${height}`
-                            );
-                        }
-                    }
-                });
-            } else {
-                this.keyHeightMap.set(key.id, ret);
-                if (ret !== prevHeight) {
-                    isHeightChanged = true;
-                    if (isDebug) {
-                        this.debugLog('log', `remeasure element height, index: ${index} prevHeight: ${prevHeight} newHeight: ${ret}`);
-                    }
-                }
-            }
-        });
-        return isHeightChanged;
     }
 
     //#region event proxy

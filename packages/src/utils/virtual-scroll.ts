@@ -1,10 +1,39 @@
 import { Element } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
 import { VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
+import { ELEMENT_TO_COMPONENT } from './weak-maps';
+import { BaseElementComponent } from '../view/base';
+import { BaseElementFlavour } from '../view/flavour/element';
 
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 
 export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
+
+export const measureHeightByElement = (editor: AngularEditor, element: Element) => {
+    const key = AngularEditor.findKey(editor, element);
+    const view = ELEMENT_TO_COMPONENT.get(element);
+    if (!view) {
+        return;
+    }
+    const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
+    const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
+    heights.set(key.id, ret as number);
+    return ret as number;
+};
+
+export const measureHeightByIndics = (editor: AngularEditor, indics: number[], force = false) => {
+    let hasChanged = false;
+    indics.forEach((index, i) => {
+        const element = editor.children[index] as Element;
+        const preHeight = getRealHeightByElement(editor, element, 0);
+        if (preHeight && !force) {
+            return;
+        }
+        hasChanged = true;
+        measureHeightByElement(editor, element);
+    });
+    return hasChanged;
+};
 
 export const getBusinessTop = (editor: AngularEditor) => {
     return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
@@ -18,9 +47,6 @@ export const getRealHeightByElement = (
     const isVisible = editor.isVisible(element);
     if (!isVisible) {
         return 0;
-    }
-    if (!element) {
-        return defaultHeight;
     }
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     const key = AngularEditor.findKey(editor, element);
