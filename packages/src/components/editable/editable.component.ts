@@ -293,7 +293,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(childrenForRender, this.editor, this.context);
                 } else {
-                    this.listRender.update(childrenForRender, this.editor, this.context);
+                    const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
+                    this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
                 }
                 this.tryMeasureInViewportChildrenHeights();
             } else {
@@ -541,7 +542,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const virtualView = this.calculateVirtualViewport();
         const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
-        this.listRender.update(this.inViewportChildren, this.editor, this.context);
+        const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
+        this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
         // 新增或者修改的才需要重算，计算出这个结果
         const remeasureIndics = [];
         this.inViewportChildren.forEach((child, index) => {
@@ -690,6 +692,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         VirtualScrollDebugOverlay.log(doc, type, ...args);
     }
 
+    handlePreRendering() {
+        let preRenderingCount = 0;
+        const childrenWithPreRendering = [...this.inViewportChildren];
+        if (this.inViewportIndics[0] !== 0) {
+            preRenderingCount = 1;
+            childrenWithPreRendering.unshift(this.editor.children[this.inViewportIndics[0] - 1] as Element);
+        }
+        return { preRenderingCount, childrenWithPreRendering };
+    }
+
     private tryUpdateVirtualViewport() {
         if (isDebug) {
             this.debugLog('log', 'tryUpdateVirtualViewport');
@@ -704,12 +716,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (diff.isDiff) {
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
-                    let preRenderingCount = 0;
-                    const childrenWithPreRendering = [...this.inViewportChildren];
-                    if (this.inViewportIndics[0] !== 0) {
-                        preRenderingCount = 1;
-                        childrenWithPreRendering.unshift(this.editor.children[this.inViewportIndics[0] - 1] as Element);
-                    }
+                    const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
                     this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
                         this.toNativeSelection();
