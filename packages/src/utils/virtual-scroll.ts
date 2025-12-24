@@ -1,13 +1,22 @@
 import { Element } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
-import { VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
+import { SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP, VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
 import { ELEMENT_TO_COMPONENT } from './weak-maps';
 import { BaseElementComponent } from '../view/base';
 import { BaseElementFlavour } from '../view/flavour/element';
+import { VirtualScrollDebugOverlay } from '../components/editable/debug';
+
+export const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
+export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
 
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 
 export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
+
+export const debugLog = (type: 'log' | 'warn', ...args: any[]) => {
+    const doc = document;
+    VirtualScrollDebugOverlay.log(doc, type, ...args);
+};
 
 export const measureHeightByElement = (editor: AngularEditor, element: Element) => {
     const key = AngularEditor.findKey(editor, element);
@@ -27,7 +36,20 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
         const element = editor.children[index] as Element;
         const preHeight = getRealHeightByElement(editor, element, 0);
         if (preHeight && !force) {
-            return;
+            if (isDebug) {
+                const height = measureHeightByElement(editor, element);
+                if (height !== preHeight) {
+                    debugLog(
+                        'warn',
+                        'measureHeightByElement: height not equal, index: ',
+                        index,
+                        'preHeight: ',
+                        preHeight,
+                        'height: ',
+                        height
+                    );
+                }
+            }
         }
         hasChanged = true;
         measureHeightByElement(editor, element);
