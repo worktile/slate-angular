@@ -21,6 +21,7 @@ export class ListRender {
     private viewTypes: ViewType[] = [];
     private differ: IterableDiffer<any> | null = null;
     public initialized = false;
+    private preRenderingHTMLElement: HTMLElement[][] = [];
 
     constructor(
         private viewContext: SlateViewContext,
@@ -29,7 +30,7 @@ export class ListRender {
         private getOutletElement: () => HTMLElement | null
     ) {}
 
-    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
+    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
         this.initialized = true;
         this.children = children;
         const isRoot = parent === this.viewContext.editor;
@@ -56,15 +57,26 @@ export class ListRender {
         }
     }
 
-    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext) {
+    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
         if (!this.initialized || this.children.length === 0) {
-            this.initialize(children, parent, childrenContext);
+            this.initialize(children, parent, childrenContext, preRenderingCount);
             return;
         }
         if (!this.differ) {
             throw new Error('Exception: Can not find differ ');
         }
         const outletParent = this.getOutletParent();
+        if (this.preRenderingHTMLElement.length > 0) {
+            const preRenderingElement = [...this.preRenderingHTMLElement];
+            preRenderingElement.forEach((rootNodes, index) => {
+                rootNodes.forEach(rootNode => {
+                    rootNode.style.position = '';
+                    rootNode.style.top = '';
+                    rootNode.style.width = '';
+                });
+            });
+            this.preRenderingHTMLElement = [];
+        }
         const diffResult = this.differ.diff(children);
         const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         const isRoot = parent === this.viewContext.editor;
@@ -172,6 +184,15 @@ export class ListRender {
                 newContexts.push(context);
             });
             this.contexts = newContexts;
+        }
+        if (preRenderingCount > 0) {
+            for (let i = 0; i < preRenderingCount; i++) {
+                const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
+                rootNodes.forEach(rootNode => {
+                    rootNode.style = `position: absolute;top: -100%;`;
+                });
+                this.preRenderingHTMLElement.push(rootNodes);
+            }
         }
     }
 

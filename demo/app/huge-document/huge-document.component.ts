@@ -40,13 +40,14 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     constructor(private ngZone: NgZone) {}
 
     ngOnInit() {
-        console.time();
+        if (!localStorage.getItem('huge-document-value')) {
+            localStorage.setItem('huge-document-value', JSON.stringify(this.value));
+        } else {
+            this.value = JSON.parse(localStorage.getItem('huge-document-value') || '[]');
+        }
     }
 
     ngAfterViewInit(): void {
-        this.ngZone.onStable.pipe(take(1)).subscribe(() => {
-            console.timeEnd();
-        });
         this.syncvirtualScrollConfig();
     }
 
@@ -88,9 +89,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     }
 
     anchorScroll() {
-        const anchorElement = this.editor.children.find(
-            child => AngularEditor.findKey(this.editor, child)?.id === this.anchorKey
-        ) as Element;
+        const anchorElement = this.editor.children[300] as Element;
         scrollToElement(this.editor, anchorElement, (scrollTop: number) => {
             window.scrollTo(0, scrollTop);
         });
