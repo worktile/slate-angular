@@ -693,11 +693,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     handlePreRendering() {
-        let preRenderingCount = 0;
+        let preRenderingCount = 1;
         const childrenWithPreRendering = [...this.inViewportChildren];
         if (this.inViewportIndics[0] !== 0) {
-            preRenderingCount = 1;
             childrenWithPreRendering.unshift(this.editor.children[this.inViewportIndics[0] - 1] as Element);
+        } else {
+            preRenderingCount = 0;
+        }
+        const lastIndex = this.inViewportIndics[this.inViewportIndics.length - 1];
+        if (lastIndex !== this.editor.children.length - 1) {
+            childrenWithPreRendering.push(this.editor.children[lastIndex + 1] as Element);
         }
         return { preRenderingCount, childrenWithPreRendering };
     }
