@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.26
+
+### Patch Changes
+
+- [`bc12559059d6d550f88789e72f2b545d0684d84a`](https://github.com/worktile/slate-angular/commit/bc12559059d6d550f88789e72f2b545d0684d84a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove tryMeasureInViewportChildrenHeights logic and revert the handle for needRemoveOnTop
+
 ## 20.2.0-next.25
 
 ### Patch Changes
