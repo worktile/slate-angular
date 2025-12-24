@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.25
+
+### Patch Changes
+
+- [`8b2d8a4cf48e2e0b03292a214685390287b4fd33`](https://github.com/worktile/slate-angular/commit/8b2d8a4cf48e2e0b03292a214685390287b4fd33) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support pre-rendering on bottom elements to ensure the DOM is steady when the element is in viewport
+
 ## 20.2.0-next.24
 
 ### Patch Changes
