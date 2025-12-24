@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.0-next.24
+
+### Patch Changes
+
+- [`63bbb6cb28ef4d9223da2dd3289b89d4b492e87c`](https://github.com/worktile/slate-angular/commit/63bbb6cb28ef4d9223da2dd3289b89d4b492e87c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add preRenderingCount to all listRender.update
+
+- [`af78203052b125e13ae5ab15e2e98d6628dafe62`](https://github.com/worktile/slate-angular/commit/af78203052b125e13ae5ab15e2e98d6628dafe62) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - refactor Set struct to Array struct
+
+- [#329](https://github.com/worktile/slate-angular/pull/329) [`bb32aedcc541406ae7c527d4c052e7e208d3574f`](https://github.com/worktile/slate-angular/commit/bb32aedcc541406ae7c527d4c052e7e208d3574f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support pre render top elements
+
 ## 20.2.0-next.23
 
 ### Patch Changes
