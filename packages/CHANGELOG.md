@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.27
+
+### Patch Changes
+
+- [`9ca040bda59a793c5b1cd2e0d59d1286d755b824`](https://github.com/worktile/slate-angular/commit/9ca040bda59a793c5b1cd2e0d59d1286d755b824) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add debugLog and move debugLog to virtual-scroll
+
+- [`dcb48f9a6de33ecf38d181d70f1ae71ad29def9f`](https://github.com/worktile/slate-angular/commit/dcb48f9a6de33ecf38d181d70f1ae71ad29def9f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix min-height was reset issue
+
 ## 20.2.0-next.26
 
 ### Patch Changes
