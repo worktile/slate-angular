@@ -50,6 +50,7 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
                     );
                 }
             }
+            return;
         }
         hasChanged = true;
         measureHeightByElement(editor, element);
