@@ -207,7 +207,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         enabled: false,
         scrollTop: 0,
         viewportHeight: 0,
-        viewportBoundingTop: 0
+        viewportBoundingTop: 0,
+        scrollContainer: null
     };
 
     private inViewportChildren: Element[] = [];
@@ -354,10 +355,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     forwardSelection = { anchor: { path: start.path, offset: 0 }, focus: { path: end.path, offset: 0 } };
                 }
                 const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
-                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
                 if (intersectedSelection && isBlockCardCursor) {
                     return selection;
                 }
+                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
                 if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
                     if (isDebug) {
                         debugLog(
@@ -376,7 +377,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return selection;
     }
 
-    toNativeSelection() {
+    toNativeSelection(autoScroll = true) {
         try {
             let { selection } = this.editor;
             if (this.isEnabledVirtualScroll()) {
@@ -461,15 +462,25 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             setTimeout(() => {
-                // handle scrolling in setTimeout because of
-                // dom should not have updated immediately after listRender's updating
-                newDomRange && this.scrollSelectionIntoView(this.editor, newDomRange);
-                // COMPAT: In Firefox, it's not enough to create a range, you also need
-                // to focus the contenteditable element too. (2016/11/16)
-                if (newDomRange && IS_FIREFOX) {
-                    el.focus();
+                if (
+                    this.isEnabledVirtualScroll() &&
+                    !selection &&
+                    this.editor.selection &&
+                    autoScroll &&
+                    this.virtualScrollConfig.scrollContainer
+                ) {
+                    this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
+                    return;
+                } else {
+                    // handle scrolling in setTimeout because of
+                    // dom should not have updated immediately after listRender's updating
+                    newDomRange && autoScroll && this.scrollSelectionIntoView(this.editor, newDomRange);
+                    // COMPAT: In Firefox, it's not enough to create a range, you also need
+                    // to focus the contenteditable element too. (2016/11/16)
+                    if (newDomRange && IS_FIREFOX) {
+                        el.focus();
+                    }
                 }
-
                 this.isUpdatingSelection = false;
             });
         } catch (error) {
@@ -750,7 +761,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         }
                     }
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
-                        this.toNativeSelection();
+                        this.toNativeSelection(false);
                     }
                 }
             } else {
@@ -1023,7 +1034,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     if (this.editor.selection && Range.equals(range, this.editor.selection) && !hasStringTarget(domSelection)) {
                         if (!isTargetInsideVoid(this.editor, activeElement)) {
                             // force adjust DOMSelection
-                            this.toNativeSelection();
+                            this.toNativeSelection(false);
                         }
                     } else {
                         Transforms.select(this.editor, range);
