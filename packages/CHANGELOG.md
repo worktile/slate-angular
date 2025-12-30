@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.0-next.28
+
+### Patch Changes
+
+- [`5e3343d78dd9895f3c2b2c831710ccdf22b84b85`](https://github.com/worktile/slate-angular/commit/5e3343d78dd9895f3c2b2c831710ccdf22b84b85) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - adapt block card in calculateVirtualScrollSelection
+
+- [`8a34c45fdf4f3bafcec40c8550b2a94db797c7a0`](https://github.com/worktile/slate-angular/commit/8a34c45fdf4f3bafcec40c8550b2a94db797c7a0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support auto scroll param on toNativeSelection and scroll to bottom when autoScroll is true and the selection is not in viewport
+
+  add scrollContainer in virtualScrollConfig
+
 ## 20.2.0-next.27
 
 ### Patch Changes
