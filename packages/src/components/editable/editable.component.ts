@@ -355,7 +355,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             'log',
                             `selection is not in visible range, selection: ${JSON.stringify(
                                 selection
-                            )}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
+                            )}, currentVisibleRange: ${JSON.stringify(currentVisibleRange)}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
                         );
                     }
                     return intersectedSelection;
