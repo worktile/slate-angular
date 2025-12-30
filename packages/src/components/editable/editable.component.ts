@@ -339,6 +339,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     calculateVirtualScrollSelection(selection: Selection) {
         if (selection) {
+            const isBlockCardCursor = AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor);
             const indics = this.inViewportIndics;
             if (indics.length > 0) {
                 const currentVisibleRange: Range = {
@@ -346,9 +347,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     focus: Editor.end(this.editor, [indics[indics.length - 1]])
                 };
                 const [start, end] = Range.edges(selection);
-                const forwardSelection = { anchor: start, focus: end };
+                let forwardSelection = { anchor: start, focus: end };
+                if (!isBlockCardCursor) {
+                    forwardSelection = { anchor: start, focus: end };
+                } else {
+                    forwardSelection = { anchor: { path: start.path, offset: 0 }, focus: { path: end.path, offset: 0 } };
+                }
                 const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
                 EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
+                if (intersectedSelection && isBlockCardCursor) {
+                    return selection;
+                }
                 if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
                     if (isDebug) {
                         debugLog(
