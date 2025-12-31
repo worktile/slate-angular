@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.29
+
+### Patch Changes
+
+- [`eddf9b105b27ff8f866f7f721e10ce2256e9dcd7`](https://github.com/worktile/slate-angular/commit/eddf9b105b27ff8f866f7f721e10ce2256e9dcd7) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add `position: relative;` style to ensure pre rendering element's width is same as other elements
+
+  if pre rendering element does not have correct width(such as table in theia), it will cause style issue
+
 ## 20.2.0-next.28
 
 ### Patch Changes
