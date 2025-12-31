@@ -795,10 +795,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const scrollTop = this.virtualScrollConfig.scrollTop;
-        if (isDebug) {
-            const doc = this.elementRef?.nativeElement?.ownerDocument ?? document;
-            VirtualScrollDebugOverlay.syncScrollTop(doc, Number.isFinite(scrollTop) ? (scrollTop as number) : 0);
-        }
         const viewportHeight = this.virtualScrollConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
             return {

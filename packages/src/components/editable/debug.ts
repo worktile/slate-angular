@@ -26,6 +26,7 @@ export class VirtualScrollDebugOverlay {
         this.getInstance(doc).log(type, ...args);
     }
 
+    // will trigger selectionchange and clear editor's selection
     static syncScrollTop(doc: Document, value: number) {
         const instance = this.getInstance(doc);
         instance.setScrollTopValue(value);
