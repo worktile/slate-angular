@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.0-next.30
+
+### Patch Changes
+
+- [`27e86aa6dea15ffd894b7abdcc67f19bd82b133a`](https://github.com/worktile/slate-angular/commit/27e86aa6dea15ffd894b7abdcc67f19bd82b133a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove syncScrollTop logic in calculateVirtualViewport
+
+  will trigger `selectionchange` event and clear editor's selection if syncScrollTop is called and selection is not in viewport
+
+- [`9a18c14222ea571fda12c1211770054467229fc0`](https://github.com/worktile/slate-angular/commit/9a18c14222ea571fda12c1211770054467229fc0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - correct virtual top height when scroll and prevent current calculation of calculateVirtualViewport
+
 ## 20.2.0-next.29
 
 ### Patch Changes
