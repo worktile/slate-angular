@@ -96,6 +96,11 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     return { heights, accumulatedHeights };
 };
 
+export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number) => {
+    const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
+    return accumulatedHeights[startIndex] ?? 0;
+};
+
 export const scrollToElement = (editor: AngularEditor, element: Element, scrollTo: (scrollTop: number) => void) => {
     const children = editor.children;
     if (!children.length) {

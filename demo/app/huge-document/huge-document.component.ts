@@ -89,7 +89,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     }
 
     anchorScroll() {
-        const anchorElement = this.editor.children[300] as Element;
+        const anchorElement = this.editor.children[1300] as Element;
         scrollToElement(this.editor, anchorElement, (scrollTop: number) => {
             window.scrollTo(0, scrollTop);
         });

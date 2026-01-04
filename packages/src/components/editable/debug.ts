@@ -119,8 +119,6 @@ export class VirtualScrollDebugOverlay {
     init() {
         if (!this.container) {
             this.createContainer();
-        } else {
-            this.applyState();
         }
     }
 
@@ -526,7 +524,6 @@ export class VirtualScrollDebugOverlay {
         item.appendChild(time);
         item.appendChild(text);
         this.logList.appendChild(item);
-        this.logList.scrollTop = this.logList.scrollHeight;
     }
 
     private formatValue(value: any) {

@@ -75,8 +75,7 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
-import { debugLog } from '../../utils/virtual-scroll';
-import { VirtualScrollDebugOverlay } from './debug';
+import { calculateVirtualTopHeight, debugLog } from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -289,6 +288,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 const virtualView = this.calculateVirtualViewport();
                 this.applyVirtualView(virtualView);
                 const childrenForRender = virtualView.inViewportChildren;
+                if (isDebug) {
+                    debugLog('log', 'writeValue calculate: ', virtualView.visibleIndexes, 'initialized: ', this.listRender.initialized);
+                }
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(childrenForRender, this.editor, this.context);
                 } else {
@@ -693,7 +695,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
     }
 
-    getVirtualTopHeight() {
+    getActualVirtualTopHeight() {
         if (!this.virtualScrollInitialized) {
             return 0;
         }
@@ -718,6 +720,21 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private tryUpdateVirtualViewport() {
         if (isDebug) {
             debugLog('log', 'tryUpdateVirtualViewport');
+        }
+        if (this.inViewportIndics.length > 0) {
+            const topHeight = this.getActualVirtualTopHeight();
+            const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0]);
+            if (topHeight !== refreshVirtualTopHeight) {
+                if (isDebug) {
+                    debugLog(
+                        'log',
+                        'update top height since dirty state（正数减去高度，负数代表增加高度）: ',
+                        topHeight - refreshVirtualTopHeight
+                    );
+                }
+                this.setVirtualSpaceHeight(refreshVirtualTopHeight);
+                return;
+            }
         }
         this.tryUpdateVirtualViewportAnimId && cancelAnimationFrame(this.tryUpdateVirtualViewportAnimId);
         this.tryUpdateVirtualViewportAnimId = requestAnimationFrame(() => {
@@ -763,18 +780,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
                         this.toNativeSelection(false);
                     }
-                }
-            } else {
-                const topHeight = this.getVirtualTopHeight();
-                if (virtualView.top !== topHeight) {
-                    if (isDebug) {
-                        debugLog(
-                            'log',
-                            'update top height since invalid status（正数减去高度，负数代表增加高度）: ',
-                            topHeight - virtualView.top
-                        );
-                    }
-                    this.setVirtualSpaceHeight(virtualView.top);
                 }
             }
             if (isDebug) {
@@ -871,6 +876,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     private diffVirtualViewport(virtualView: VirtualViewResult, stage: 'first' | 'second' | 'onChange' = 'first') {
         if (!this.inViewportChildren.length) {
+            if (isDebug) {
+                debugLog('log', 'diffVirtualViewport', stage, 'empty inViewportChildren', virtualView.visibleIndexes);
+            }
             return {
                 isDifferent: true,
                 changedIndexesOfTop: [],
