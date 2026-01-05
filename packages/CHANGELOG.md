@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.33
+
+### Patch Changes
+
+- [`4cc21d4281d578c44064157d2a000b1a8f987dab`](https://github.com/worktile/slate-angular/commit/4cc21d4281d578c44064157d2a000b1a8f987dab) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cache root node width and set pre-rendering width
+
 ## 20.2.0-next.32
 
 ### Patch Changes
