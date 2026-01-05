@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.32
+
+### Patch Changes
+
+- [`6469b4b83f06cc90e4f14d34240153ae6c5bb5f8`](https://github.com/worktile/slate-angular/commit/6469b4b83f06cc90e4f14d34240153ae6c5bb5f8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set left and right to keep the width of pre-rendering element is the same as the width of normal element
+
 ## 20.2.0-next.31
 
 ### Patch Changes
