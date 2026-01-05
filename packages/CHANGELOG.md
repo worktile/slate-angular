@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.0-next.31
+
+### Patch Changes
+
+- [`a4c81b91a2374946b8d00b83260c38f1b6320be6`](https://github.com/worktile/slate-angular/commit/a4c81b91a2374946b8d00b83260c38f1b6320be6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add 100% width to pre rendering element
+
+- [`780c2e4e36ecc9cbb73f7429fc148b013972c28a`](https://github.com/worktile/slate-angular/commit/780c2e4e36ecc9cbb73f7429fc148b013972c28a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - rename visible to inViewport
+
 ## 20.2.0-next.30
 
 ### Patch Changes
