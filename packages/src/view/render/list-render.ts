@@ -72,6 +72,7 @@ export class ListRender {
                 rootNodes.forEach(rootNode => {
                     rootNode.style.position = '';
                     rootNode.style.top = '';
+                    rootNode.style.width = '';
                 });
             });
             this.preRenderingHTMLElement = [];
@@ -190,6 +191,7 @@ export class ListRender {
                 rootNodes.forEach(rootNode => {
                     rootNode.style.top = '-100%';
                     rootNode.style.position = 'absolute';
+                    rootNode.style.width = '100%';
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
             }
