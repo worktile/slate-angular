@@ -13,6 +13,20 @@ import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/defau
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
 
+export const setPreRenderingElementStyle = (rootNode: HTMLElement, isClear: boolean = false) => {
+    if (isClear) {
+        rootNode.style.top = '';
+        rootNode.style.left = '';
+        rootNode.style.right = '';
+        rootNode.style.position = '';
+        return;
+    }
+    rootNode.style.top = '-100%';
+    rootNode.style.left = '0px';
+    rootNode.style.right = '0px';
+    rootNode.style.position = 'absolute';
+};
+
 export class ListRender {
     private children: Descendant[] = [];
     private views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
@@ -70,9 +84,7 @@ export class ListRender {
             const preRenderingElement = [...this.preRenderingHTMLElement];
             preRenderingElement.forEach((rootNodes, index) => {
                 rootNodes.forEach(rootNode => {
-                    rootNode.style.position = '';
-                    rootNode.style.top = '';
-                    rootNode.style.width = '';
+                    setPreRenderingElementStyle(rootNode, true);
                 });
             });
             this.preRenderingHTMLElement = [];
@@ -189,9 +201,7 @@ export class ListRender {
             for (let i = 0; i < preRenderingCount; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 rootNodes.forEach(rootNode => {
-                    rootNode.style.top = '-100%';
-                    rootNode.style.position = 'absolute';
-                    rootNode.style.width = '100%';
+                    setPreRenderingElementStyle(rootNode);
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
             }
