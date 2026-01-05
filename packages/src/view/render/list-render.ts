@@ -12,18 +12,22 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
+import { EDITOR_TO_ROOT_NODE_WIDTH } from '../../utils/virtual-scroll';
 
-export const setPreRenderingElementStyle = (rootNode: HTMLElement, isClear: boolean = false) => {
+export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTMLElement, isClear: boolean = false) => {
     if (isClear) {
         rootNode.style.top = '';
-        rootNode.style.left = '';
-        rootNode.style.right = '';
+        rootNode.style.width = '';
         rootNode.style.position = '';
         return;
     }
+    const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
     rootNode.style.top = '-100%';
-    rootNode.style.left = '0px';
-    rootNode.style.right = '0px';
+    if (preRenderingWidth) {
+        rootNode.style.width = `${preRenderingWidth}px`;
+    } else {
+        rootNode.style.width = '100%';
+    }
     rootNode.style.position = 'absolute';
 };
 
@@ -84,7 +88,7 @@ export class ListRender {
             const preRenderingElement = [...this.preRenderingHTMLElement];
             preRenderingElement.forEach((rootNodes, index) => {
                 rootNodes.forEach(rootNode => {
-                    setPreRenderingElementStyle(rootNode, true);
+                    setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
                 });
             });
             this.preRenderingHTMLElement = [];
@@ -201,7 +205,7 @@ export class ListRender {
             for (let i = 0; i < preRenderingCount; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 rootNodes.forEach(rootNode => {
-                    setPreRenderingElementStyle(rootNode);
+                    setPreRenderingElementStyle(this.viewContext.editor, rootNode);
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
             }
