@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.34
+
+### Patch Changes
+
+- [`3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327`](https://github.com/worktile/slate-angular/commit/3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - will skip reset preRenderingHTMLElement style if it is not in children of viewport
+
 ## 20.2.0-next.33
 
 ### Patch Changes
