@@ -472,6 +472,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.virtualScrollConfig.scrollContainer
                 ) {
                     this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
+                    this.isUpdatingSelection = false;
                     return;
                 } else {
                     // handle scrolling in setTimeout because of
@@ -573,7 +574,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (isDebug && remeasureIndics.length > 0) {
             console.log('remeasure height by indics: ', remeasureIndics);
         }
-        measureHeightByIndics(this.editor, remeasureIndics, true);
     }
 
     updateContext() {
