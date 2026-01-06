@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.0-next.35
+
+### Patch Changes
+
+- [`5d7e72d90b19a1b41a55d63652d96dfa5e9293d6`](https://github.com/worktile/slate-angular/commit/5d7e72d90b19a1b41a55d63652d96dfa5e9293d6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set isUpdatingSelection to false after updating selection(auto scroll condition)
+
 ## 20.2.0-next.34
 
 ### Patch Changes
