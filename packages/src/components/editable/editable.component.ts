@@ -292,10 +292,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     debugLog('log', 'writeValue calculate: ', virtualView.inViewportIndics, 'initialized: ', this.listRender.initialized);
                 }
                 if (!this.listRender.initialized) {
-                    this.listRender.initialize(childrenForRender, this.editor, this.context);
+                    this.listRender.initialize(childrenForRender, this.editor, this.context, 0, virtualView.inViewportIndics);
                 } else {
-                    const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
-                    this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
+                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+                    this.listRender.update(
+                        childrenWithPreRendering,
+                        this.editor,
+                        this.context,
+                        preRenderingCount,
+                        childrenWithPreRenderingIndics
+                    );
                 }
             } else {
                 if (!this.listRender.initialized) {
@@ -561,8 +567,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const virtualView = this.calculateVirtualViewport();
         const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
-        const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
-        this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
+        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+        this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         // 新增或者修改的才需要重算，计算出这个结果
         const remeasureIndics = [];
         this.inViewportChildren.forEach((child, index) => {
@@ -703,18 +709,29 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     handlePreRendering() {
-        let preRenderingCount = 1;
+        let preRenderingCount = 0;
         const childrenWithPreRendering = [...this.inViewportChildren];
-        if (this.inViewportIndics[0] !== 0) {
-            childrenWithPreRendering.unshift(this.editor.children[this.inViewportIndics[0] - 1] as Element);
-        } else {
-            preRenderingCount = 0;
+        const childrenWithPreRenderingIndics = [...this.inViewportIndics];
+        const firstIndex = this.inViewportIndics[0];
+        for (let index = firstIndex - 1; index >= 0; index--) {
+            const element = this.editor.children[index] as Element;
+            if (this.editor.isVisible(element)) {
+                childrenWithPreRendering.unshift(element);
+                childrenWithPreRenderingIndics.unshift(index);
+                preRenderingCount = 1;
+                break;
+            }
         }
         const lastIndex = this.inViewportIndics[this.inViewportIndics.length - 1];
-        if (lastIndex !== this.editor.children.length - 1) {
-            childrenWithPreRendering.push(this.editor.children[lastIndex + 1] as Element);
+        for (let index = lastIndex + 1; index < this.editor.children.length; index++) {
+            const element = this.editor.children[index] as Element;
+            if (this.editor.isVisible(element)) {
+                childrenWithPreRendering.push(element);
+                childrenWithPreRenderingIndics.push(index);
+                break;
+            }
         }
-        return { preRenderingCount, childrenWithPreRendering };
+        return { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics };
     }
 
     private tryUpdateVirtualViewport() {
@@ -754,8 +771,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (diff.isDifferent) {
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
-                    const { preRenderingCount, childrenWithPreRendering } = this.handlePreRendering();
-                    this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount);
+                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+                    this.listRender.update(
+                        childrenWithPreRendering,
+                        this.editor,
+                        this.context,
+                        preRenderingCount,
+                        childrenWithPreRenderingIndics
+                    );
                     if (diff.needAddOnTop) {
                         const remeasureAddedIndics = diff.changedIndexesOfTop;
                         if (isDebug) {
@@ -826,7 +849,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }, 100);
         }
         const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
-        const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
+        const { heights, accumulatedHeights, visibles } = buildHeightsAndAccumulatedHeights(this.editor);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -839,6 +862,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
+            if (!visibles[i]) {
+                accumulatedOffset = nextOffset;
+                continue;
+            }
             // 可视区域有交集，加入渲染
             if (nextOffset > limitedScrollTop && accumulatedOffset < viewBottom) {
                 if (inViewportStartIndex === -1) inViewportStartIndex = i; // 第一个相交起始位置
@@ -846,12 +873,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 inViewportIndics.push(i);
             }
             accumulatedOffset = nextOffset;
-        }
-
-        if (inViewportStartIndex === -1 && elementLength) {
-            inViewportStartIndex = elementLength - 1;
-            visible.push(children[inViewportStartIndex]);
-            inViewportIndics.push(inViewportStartIndex);
         }
 
         const inViewportEndIndex =
@@ -887,6 +908,30 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const oldIndexesInViewport = [...this.inViewportIndics];
         const newIndexesInViewport = [...virtualView.inViewportIndics];
+        if (oldIndexesInViewport.length === 0 && newIndexesInViewport.length === 0) {
+            return {
+                isDifferent: false,
+                changedIndexesOfTop: [],
+                changedIndexesOfBottom: []
+            };
+        }
+        if (oldIndexesInViewport.length === 0 || newIndexesInViewport.length === 0) {
+            return {
+                isDifferent: true,
+                changedIndexesOfTop: [],
+                changedIndexesOfBottom: []
+            };
+        }
+        const isSameViewport =
+            oldIndexesInViewport.length === newIndexesInViewport.length &&
+            oldIndexesInViewport.every((index, i) => index === newIndexesInViewport[i]);
+        if (isSameViewport) {
+            return {
+                isDifferent: false,
+                changedIndexesOfTop: [],
+                changedIndexesOfBottom: []
+            };
+        }
         const firstNewIndex = newIndexesInViewport[0];
         const lastNewIndex = newIndexesInViewport[newIndexesInViewport.length - 1];
         const firstOldIndex = oldIndexesInViewport[0];
@@ -985,7 +1030,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         return {
-            isDifferent: false,
+            isDifferent: true,
             changedIndexesOfTop: [],
             changedIndexesOfBottom: []
         };
