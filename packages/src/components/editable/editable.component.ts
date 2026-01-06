@@ -75,7 +75,7 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
-import { calculateVirtualTopHeight, debugLog } from '../../utils/virtual-scroll';
+import { calculateVirtualTopHeight, debugLog, EDITOR_TO_ROOT_NODE_WIDTH } from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -678,13 +678,24 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
-            let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect()?.width ?? 0;
+            let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect().width;
+            EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.getBoundingClientRect().width);
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     this.keyHeightMap.clear();
                     const remeasureIndics = this.inViewportIndics;
                     measureHeightByIndics(this.editor, remeasureIndics, true);
+                    EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.getBoundingClientRect().width);
+                    if (isDebug) {
+                        debugLog(
+                            'log',
+                            'editorResizeObserverRectWidth: ',
+                            editorResizeObserverRectWidth,
+                            'EDITOR_TO_ROOT_NODE_WIDTH: ',
+                            EDITOR_TO_ROOT_NODE_WIDTH.get(this.editor)
+                        );
+                    }
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);

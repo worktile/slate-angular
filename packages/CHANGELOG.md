@@ -1,5 +1,23 @@
 # Changelog
 
+## 20.2.0-next.34
+
+### Patch Changes
+
+- [`3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327`](https://github.com/worktile/slate-angular/commit/3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - will skip reset preRenderingHTMLElement style if it is not in children of viewport
+
+## 20.2.0-next.33
+
+### Patch Changes
+
+- [`4cc21d4281d578c44064157d2a000b1a8f987dab`](https://github.com/worktile/slate-angular/commit/4cc21d4281d578c44064157d2a000b1a8f987dab) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cache root node width and set pre-rendering width
+
+## 20.2.0-next.32
+
+### Patch Changes
+
+- [`6469b4b83f06cc90e4f14d34240153ae6c5bb5f8`](https://github.com/worktile/slate-angular/commit/6469b4b83f06cc90e4f14d34240153ae6c5bb5f8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set left and right to keep the width of pre-rendering element is the same as the width of normal element
+
 ## 20.2.0-next.31
 
 ### Patch Changes

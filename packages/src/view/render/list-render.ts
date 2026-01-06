@@ -12,6 +12,24 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
+import { debugLog, EDITOR_TO_ROOT_NODE_WIDTH, isDebug } from '../../utils/virtual-scroll';
+
+export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTMLElement, isClear: boolean = false) => {
+    if (isClear) {
+        rootNode.style.top = '';
+        rootNode.style.width = '';
+        rootNode.style.position = '';
+        return;
+    }
+    const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
+    rootNode.style.top = '-100%';
+    if (preRenderingWidth) {
+        rootNode.style.width = `${preRenderingWidth}px`;
+    } else {
+        rootNode.style.width = '100%';
+    }
+    rootNode.style.position = 'absolute';
+};
 
 export class ListRender {
     private children: Descendant[] = [];
@@ -88,11 +106,29 @@ export class ListRender {
         if (this.preRenderingHTMLElement.length > 0) {
             const preRenderingElement = [...this.preRenderingHTMLElement];
             preRenderingElement.forEach((rootNodes, index) => {
-                rootNodes.forEach(rootNode => {
-                    rootNode.style.position = '';
-                    rootNode.style.top = '';
-                    rootNode.style.width = '';
-                });
+                const slateElement = this.children[index];
+                if (slateElement && children.indexOf(slateElement) >= 0) {
+                    rootNodes.forEach(rootNode => {
+                        setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
+                    });
+                    if (isDebug) {
+                        debugLog(
+                            'log',
+                            'preRenderingHTMLElement index: ',
+                            this.viewContext.editor.children.indexOf(this.children[index]),
+                            'is clear true'
+                        );
+                    }
+                } else {
+                    if (isDebug) {
+                        debugLog(
+                            'log',
+                            'preRenderingHTMLElement index: ',
+                            this.viewContext.editor.children.indexOf(this.children[index]),
+                            'do not clear since it would be removed soon'
+                        );
+                    }
+                }
             });
             this.preRenderingHTMLElement = [];
         }
@@ -215,11 +251,12 @@ export class ListRender {
             for (let i = 0; i < preRenderingCount; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 rootNodes.forEach(rootNode => {
-                    rootNode.style.top = '-100%';
-                    rootNode.style.position = 'absolute';
-                    rootNode.style.width = '100%';
+                    setPreRenderingElementStyle(this.viewContext.editor, rootNode);
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
+                if (isDebug) {
+                    debugLog('log', 'preRenderingHTMLElement index: ', this.viewContext.editor.children.indexOf(children[i]));
+                }
             }
         }
     }
