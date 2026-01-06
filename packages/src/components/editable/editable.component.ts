@@ -919,34 +919,20 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const oldIndexesInViewport = [...this.inViewportIndics];
         const newIndexesInViewport = [...virtualView.inViewportIndics];
-        if (oldIndexesInViewport.length === 0 && newIndexesInViewport.length === 0) {
-            return {
-                isDifferent: false,
-                changedIndexesOfTop: [],
-                changedIndexesOfBottom: []
-            };
-        }
-        if (oldIndexesInViewport.length === 0 || newIndexesInViewport.length === 0) {
-            return {
-                isDifferent: true,
-                changedIndexesOfTop: [],
-                changedIndexesOfBottom: []
-            };
-        }
-        const isSameViewport =
-            oldIndexesInViewport.length === newIndexesInViewport.length &&
-            oldIndexesInViewport.every((index, i) => index === newIndexesInViewport[i]);
-        if (isSameViewport) {
-            return {
-                isDifferent: false,
-                changedIndexesOfTop: [],
-                changedIndexesOfBottom: []
-            };
-        }
         const firstNewIndex = newIndexesInViewport[0];
         const lastNewIndex = newIndexesInViewport[newIndexesInViewport.length - 1];
         const firstOldIndex = oldIndexesInViewport[0];
         const lastOldIndex = oldIndexesInViewport[oldIndexesInViewport.length - 1];
+        const isSameViewport =
+            oldIndexesInViewport.length === newIndexesInViewport.length &&
+            oldIndexesInViewport.every((index, i) => index === newIndexesInViewport[i]);
+        if (firstNewIndex === firstOldIndex && lastNewIndex === lastOldIndex) {
+            return {
+                isDifferent: !isSameViewport,
+                changedIndexesOfTop: [],
+                changedIndexesOfBottom: []
+            };
+        }
         if (firstNewIndex !== firstOldIndex || lastNewIndex !== lastOldIndex) {
             const changedIndexesOfTop = [];
             const changedIndexesOfBottom = [];
@@ -1041,7 +1027,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         return {
-            isDifferent: true,
+            isDifferent: false,
             changedIndexesOfTop: [],
             changedIndexesOfBottom: []
         };
