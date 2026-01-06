@@ -342,6 +342,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     calculateVirtualScrollSelection(selection: Selection) {
         if (selection) {
+            if (this.isSelectionHidden(selection)) {
+                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
+                return null;
+            }
             const isBlockCardCursor = AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor);
             const indics = this.inViewportIndics;
             if (indics.length > 0) {
@@ -377,6 +381,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
         return selection;
+    }
+
+    private isSelectionHidden(selection?: Selection | null) {
+        if (!this.isEnabledVirtualScroll() || !selection) {
+            return false;
+        }
+        const anchorIndex = selection.anchor.path[0];
+        const focusIndex = selection.focus.path[0];
+        const anchorElement = this.editor.children[anchorIndex] as Element | undefined;
+        const focusElement = this.editor.children[focusIndex] as Element | undefined;
+        return !anchorElement || !focusElement || !this.editor.isVisible(anchorElement) || !this.editor.isVisible(focusElement);
     }
 
     toNativeSelection(autoScroll = true) {
@@ -469,7 +484,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     !selection &&
                     this.editor.selection &&
                     autoScroll &&
-                    this.virtualScrollConfig.scrollContainer
+                    this.virtualScrollConfig.scrollContainer &&
+                    !this.isSelectionHidden(this.editor.selection)
                 ) {
                     this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
                     this.isUpdatingSelection = false;
