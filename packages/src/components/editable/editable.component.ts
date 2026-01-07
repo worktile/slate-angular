@@ -348,10 +348,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     calculateVirtualScrollSelection(selection: Selection) {
         if (selection) {
-            if (this.isSelectionHidden(selection)) {
-                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
-                return null;
-            }
             const isBlockCardCursor = AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor);
             const indics = this.inViewportIndics;
             if (indics.length > 0) {
@@ -389,10 +385,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return selection;
     }
 
-    private isSelectionHidden(selection?: Selection | null) {
-        if (!this.isEnabledVirtualScroll() || !selection) {
-            return false;
-        }
+    private isSelectionInvisible(selection: Selection) {
         const anchorIndex = selection.anchor.path[0];
         const focusIndex = selection.focus.path[0];
         const anchorElement = this.editor.children[anchorIndex] as Element | undefined;
@@ -403,9 +396,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     toNativeSelection(autoScroll = true) {
         try {
             let { selection } = this.editor;
+
             if (this.isEnabledVirtualScroll()) {
                 selection = this.calculateVirtualScrollSelection(selection);
             }
+
             const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
             const { activeElement } = root;
             const domSelection = (root as Document).getSelection();
@@ -490,8 +485,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     !selection &&
                     this.editor.selection &&
                     autoScroll &&
-                    this.virtualScrollConfig.scrollContainer &&
-                    !this.isSelectionHidden(this.editor.selection)
+                    this.virtualScrollConfig.scrollContainer
                 ) {
                     this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
                     this.isUpdatingSelection = false;
@@ -566,7 +560,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             }, 0);
         }
-        this.toNativeSelection();
+        if (this.editor.selection && this.isSelectionInvisible(this.editor.selection)) {
+            Transforms.deselect(this.editor);
+            return;
+        } else {
+            this.toNativeSelection();
+        }
     }
 
     render() {
