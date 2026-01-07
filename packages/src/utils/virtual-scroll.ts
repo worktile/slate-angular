@@ -67,10 +67,11 @@ export const getBusinessTop = (editor: AngularEditor) => {
 export const getRealHeightByElement = (
     editor: AngularEditor,
     element: Element,
-    defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT
+    defaultHeight: number = VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT,
+    isVisible?: boolean
 ) => {
-    const isVisible = editor.isVisible(element);
-    if (!isVisible) {
+    const visible = isVisible ?? editor.isVisible(element);
+    if (!visible) {
         return 0;
     }
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
@@ -88,14 +89,17 @@ export const getRealHeightByElement = (
 export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const children = (editor.children || []) as Element[];
     const heights = new Array(children.length);
+    const visibles = new Array(children.length);
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
-        const height = getRealHeightByElement(editor, children[i]);
+        const isVisible = editor.isVisible(children[i]);
+        visibles[i] = isVisible;
+        const height = getRealHeightByElement(editor, children[i], VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT, isVisible);
         heights[i] = height;
         accumulatedHeights[i + 1] = accumulatedHeights[i] + height;
     }
-    return { heights, accumulatedHeights };
+    return { heights, accumulatedHeights, visibles };
 };
 
 export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number) => {
