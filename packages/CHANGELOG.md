@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.1
+
+### Patch Changes
+
+- [#330](https://github.com/worktile/slate-angular/pull/330) [`8cb2380e1ef9a0ac3c17361a4610939719aa26df`](https://github.com/worktile/slate-angular/commit/8cb2380e1ef9a0ac3c17361a4610939719aa26df) Thanks [@Xwatson](https://github.com/Xwatson)! - collapsed content will not be rendered
+
+- [`648b9370c1a199d7fe04aa0af5dc176fb6e6aa12`](https://github.com/worktile/slate-angular/commit/648b9370c1a199d7fe04aa0af5dc176fb6e6aa12) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - deselect selection if selection is in invisible range and add isSelectionInvisible method to ensure selection is not in invisible range
+
 ## 20.2.0
 
 ### Minor Changes
