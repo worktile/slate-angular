@@ -48,16 +48,29 @@ export class ListRender {
         private getOutletElement: () => HTMLElement | null
     ) {}
 
-    public initialize(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
+    public initialize(
+        children: Descendant[],
+        parent: Ancestor,
+        childrenContext: SlateChildrenContext,
+        preRenderingCount = 0,
+        childrenIndics?: number[]
+    ) {
         this.initialized = true;
         this.children = children;
         const isRoot = parent === this.viewContext.editor;
         const firstIndex = isRoot ? this.viewContext.editor.children.indexOf(children[0]) : 0;
         const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
+        const getBlockIndex = (index: number) => {
+            if (childrenIndics && childrenIndics[index] !== undefined) {
+                return childrenIndics[index];
+            }
+            return isRoot ? firstIndex + index : index;
+        };
         children.forEach((descendant, _index) => {
-            NODE_TO_INDEX.set(descendant, firstIndex + _index);
+            const currentIndex = getBlockIndex(_index);
+            NODE_TO_INDEX.set(descendant, currentIndex);
             NODE_TO_PARENT.set(descendant, parent);
-            const context = getContext(firstIndex + _index, descendant, parentPath, childrenContext, this.viewContext);
+            const context = getContext(currentIndex, descendant, parentPath, childrenContext, this.viewContext);
             const viewType = getViewType(descendant, parent, this.viewContext);
             const view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
             const blockCard = createBlockCard(descendant, view, this.viewContext);
@@ -75,9 +88,15 @@ export class ListRender {
         }
     }
 
-    public update(children: Descendant[], parent: Ancestor, childrenContext: SlateChildrenContext, preRenderingCount = 0) {
+    public update(
+        children: Descendant[],
+        parent: Ancestor,
+        childrenContext: SlateChildrenContext,
+        preRenderingCount = 0,
+        childrenIndics?: number[]
+    ) {
         if (!this.initialized || this.children.length === 0) {
-            this.initialize(children, parent, childrenContext, preRenderingCount);
+            this.initialize(children, parent, childrenContext, preRenderingCount, childrenIndics);
             return;
         }
         if (!this.differ) {
@@ -116,7 +135,13 @@ export class ListRender {
         const diffResult = this.differ.diff(children);
         const parentPath = AngularEditor.findPath(this.viewContext.editor, parent);
         const isRoot = parent === this.viewContext.editor;
-        const firstIndex = isRoot ? this.viewContext.editor.children.indexOf(children[0]) : 0;
+        const firstIndex = isRoot && children.length ? this.viewContext.editor.children.indexOf(children[0]) : 0;
+        const getBlockIndex = (index: number) => {
+            if (childrenIndics && childrenIndics[index] !== undefined) {
+                return childrenIndics[index];
+            }
+            return isRoot ? firstIndex + index : index;
+        };
         if (diffResult) {
             let firstRootNode = getRootNodes(this.views[0], this.blockCards[0])[0];
             const newContexts = [];
@@ -124,7 +149,7 @@ export class ListRender {
             const newViews = [];
             const newBlockCards: (BlockCardRef | null)[] = [];
             diffResult.forEachItem(record => {
-                const currentIndex = firstIndex + record.currentIndex;
+                const currentIndex = getBlockIndex(record.currentIndex);
                 NODE_TO_INDEX.set(record.item, currentIndex);
                 NODE_TO_PARENT.set(record.item, parent);
                 let context = getContext(currentIndex, record.item, parentPath, childrenContext, this.viewContext);
@@ -208,9 +233,10 @@ export class ListRender {
         } else {
             const newContexts = [];
             this.children.forEach((child, _index) => {
-                NODE_TO_INDEX.set(child, firstIndex + _index);
+                const currentIndex = getBlockIndex(_index);
+                NODE_TO_INDEX.set(child, currentIndex);
                 NODE_TO_PARENT.set(child, parent);
-                let context = getContext(firstIndex + _index, child, parentPath, childrenContext, this.viewContext);
+                let context = getContext(currentIndex, child, parentPath, childrenContext, this.viewContext);
                 const previousContext = this.contexts[_index];
                 if (memoizedContext(this.viewContext, child, previousContext as any, context as any)) {
                     context = previousContext;
