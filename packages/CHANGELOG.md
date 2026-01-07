@@ -1,5 +1,135 @@
 # Changelog
 
+## 20.2.0
+
+### Minor Changes
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`1d4d10e076a959f066b2a714e135a014bced6e84`](https://github.com/worktile/slate-angular/commit/1d4d10e076a959f066b2a714e135a014bced6e84) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - getRealHeight support both number and promise return type
+
+  remeasureHeightByIndics changed to sync method and improve logs
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`ad5d46054849e07206f684b5d3089c75b9344176`](https://github.com/worktile/slate-angular/commit/ad5d46054849e07206f684b5d3089c75b9344176) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support isVisible in withAngular plugin
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`b1f881f6ec4dd80d92507274fd71f5d15ac6927b`](https://github.com/worktile/slate-angular/commit/b1f881f6ec4dd80d92507274fd71f5d15ac6927b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support selection in visible range
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`1d2fbd5d224934354f347cd2316625c1096cecb6`](https://github.com/worktile/slate-angular/commit/1d2fbd5d224934354f347cd2316625c1096cecb6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set up virtual scrolling structure
+
+- [`38fd8d689789745303c5754d13251993c0861bec`](https://github.com/worktile/slate-angular/commit/38fd8d689789745303c5754d13251993c0861bec) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - calculate business top
+
+- [#327](https://github.com/worktile/slate-angular/pull/327) [`002de85da75610fd04131050ae5b8d1afda007fe`](https://github.com/worktile/slate-angular/commit/002de85da75610fd04131050ae5b8d1afda007fe) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix top height when scroll to upward
+
+- [#324](https://github.com/worktile/slate-angular/pull/324) [`2dab563329ae55c616e163c31d752f94bedbfb7b`](https://github.com/worktile/slate-angular/commit/2dab563329ae55c616e163c31d752f94bedbfb7b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - prevent executing virtual scroll logic when the editor is not enabled virtual scroll
+
+- [`69f12884cceb1f9dcb8dd5cedfe90fb6d80f3553`](https://github.com/worktile/slate-angular/commit/69f12884cceb1f9dcb8dd5cedfe90fb6d80f3553) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix text flavour can not destroy issue
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`420fa649ca83acf8d0a79edb903744edc7a2cac8`](https://github.com/worktile/slate-angular/commit/420fa649ca83acf8d0a79edb903744edc7a2cac8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - correct visible elements calculation logic
+
+### Patch Changes
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`eba539977f3619388ae0fcd85b790355f18b6753`](https://github.com/worktile/slate-angular/commit/eba539977f3619388ae0fcd85b790355f18b6753) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - optimize virtual logs
+
+- [`5d7e72d90b19a1b41a55d63652d96dfa5e9293d6`](https://github.com/worktile/slate-angular/commit/5d7e72d90b19a1b41a55d63652d96dfa5e9293d6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set isUpdatingSelection to false after updating selection(auto scroll condition)
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`214d60b456e58fdcb542e21cfaa58bb411722853`](https://github.com/worktile/slate-angular/commit/214d60b456e58fdcb542e21cfaa58bb411722853) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix(virtual): fix scrolling lag
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`6963ec3e3d3cc1bfe3e87204804710a995a9750a`](https://github.com/worktile/slate-angular/commit/6963ec3e3d3cc1bfe3e87204804710a995a9750a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - optmize virtual logs，diff needs to determine whether it is consistent before and after
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`fbf8502bbc813bf62fec762fa506de2414b529a9`](https://github.com/worktile/slate-angular/commit/fbf8502bbc813bf62fec762fa506de2414b529a9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - strategy for getting realHeight when scrolling
+
+- [`065381d38766ec7bc87c6f0acab0f6ff6c7e152d`](https://github.com/worktile/slate-angular/commit/065381d38766ec7bc87c6f0acab0f6ff6c7e152d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove business top when calculate view bottom
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`090f811c6221bd9954a01b17d0ebb7f68d57187a`](https://github.com/worktile/slate-angular/commit/090f811c6221bd9954a01b17d0ebb7f68d57187a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - calculate real height base on block card or native element
+
+- [`27e86aa6dea15ffd894b7abdcc67f19bd82b133a`](https://github.com/worktile/slate-angular/commit/27e86aa6dea15ffd894b7abdcc67f19bd82b133a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove syncScrollTop logic in calculateVirtualViewport
+
+  will trigger `selectionchange` event and clear editor's selection if syncScrollTop is called and selection is not in viewport
+
+- [#325](https://github.com/worktile/slate-angular/pull/325) [`8476b5e2a4a9b69fe28a77af3af06a137e7d961b`](https://github.com/worktile/slate-angular/commit/8476b5e2a4a9b69fe28a77af3af06a137e7d961b) Thanks [@Xwatson](https://github.com/Xwatson)! - support scrolling to specified node key
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`0de41f9320417127641582a9a55a2a0ab453c6fb`](https://github.com/worktile/slate-angular/commit/0de41f9320417127641582a9a55a2a0ab453c6fb) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - move marginTop and marginBottom to getRealHeight
+
+- [`5e3343d78dd9895f3c2b2c831710ccdf22b84b85`](https://github.com/worktile/slate-angular/commit/5e3343d78dd9895f3c2b2c831710ccdf22b84b85) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - adapt block card in calculateVirtualScrollSelection
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`8815ac622d2af7660271815e61167e78a1b88a0b`](https://github.com/worktile/slate-angular/commit/8815ac622d2af7660271815e61167e78a1b88a0b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add element keys to measure height of wekmap
+
+- [`3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327`](https://github.com/worktile/slate-angular/commit/3bbcdd528bcb3fdeaa9ca017d88a66ed7416a327) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - will skip reset preRenderingHTMLElement style if it is not in children of viewport
+
+- [`63bbb6cb28ef4d9223da2dd3289b89d4b492e87c`](https://github.com/worktile/slate-angular/commit/63bbb6cb28ef4d9223da2dd3289b89d4b492e87c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add preRenderingCount to all listRender.update
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`07740c973d6949b82bb7f3134b6818b30567c098`](https://github.com/worktile/slate-angular/commit/07740c973d6949b82bb7f3134b6818b30567c098) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix select in backward scenario and selection is null scenario
+
+- [`8a34c45fdf4f3bafcec40c8550b2a94db797c7a0`](https://github.com/worktile/slate-angular/commit/8a34c45fdf4f3bafcec40c8550b2a94db797c7a0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support auto scroll param on toNativeSelection and scroll to bottom when autoScroll is true and the selection is not in viewport
+
+  add scrollContainer in virtualScrollConfig
+
+- [`a4c81b91a2374946b8d00b83260c38f1b6320be6`](https://github.com/worktile/slate-angular/commit/a4c81b91a2374946b8d00b83260c38f1b6320be6) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add 100% width to pre rendering element
+
+- [`534e38ab50a407b94329c049c2be29cbb9f6c312`](https://github.com/worktile/slate-angular/commit/534e38ab50a407b94329c049c2be29cbb9f6c312) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert string component
+
+- [`45d074617ecc3c6c92d8baa18e2bd5f07bf75631`](https://github.com/worktile/slate-angular/commit/45d074617ecc3c6c92d8baa18e2bd5f07bf75631) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - rename virtual-scroll
+
+- [`9a18c14222ea571fda12c1211770054467229fc0`](https://github.com/worktile/slate-angular/commit/9a18c14222ea571fda12c1211770054467229fc0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - correct virtual top height when scroll and prevent current calculation of calculateVirtualViewport
+
+- [`bc12559059d6d550f88789e72f2b545d0684d84a`](https://github.com/worktile/slate-angular/commit/bc12559059d6d550f88789e72f2b545d0684d84a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove tryMeasureInViewportChildrenHeights logic and revert the handle for needRemoveOnTop
+
+- [#326](https://github.com/worktile/slate-angular/pull/326) [`fe441072669f235b2398e4691168bc5dd170d73a`](https://github.com/worktile/slate-angular/commit/fe441072669f235b2398e4691168bc5dd170d73a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support remeasure height only when element is changed or added
+
+  extract updateListRenderAndRemeasureHeights to update dom and remeasure heights and apply it to force to fix height can not be updated on Chinese composition type
+
+  rename refreshVirtualViewAnimId to tryUpdateVirtualViewportAnimId, measureVisibleHeightsAnimId to tryMeasureInViewportChildrenHeightsAnimId, scheduleMeasureVisibleHeights to tryMeasureInViewportChildrenHeights
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`6c3ca7df39a1812a6d686cbd42cb66fed4c69a3f`](https://github.com/worktile/slate-angular/commit/6c3ca7df39a1812a6d686cbd42cb66fed4c69a3f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support remeasure heights on data change
+
+- [`eddf9b105b27ff8f866f7f721e10ce2256e9dcd7`](https://github.com/worktile/slate-angular/commit/eddf9b105b27ff8f866f7f721e10ce2256e9dcd7) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add `position: relative;` style to ensure pre rendering element's width is same as other elements
+
+  if pre rendering element does not have correct width(such as table in theia), it will cause style issue
+
+- [`af78203052b125e13ae5ab15e2e98d6628dafe62`](https://github.com/worktile/slate-angular/commit/af78203052b125e13ae5ab15e2e98d6628dafe62) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - refactor Set struct to Array struct
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`bdfe3884613772b94a6883703820134ccea6ea46`](https://github.com/worktile/slate-angular/commit/bdfe3884613772b94a6883703820134ccea6ea46) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix first loading issue
+
+- [`8b2d8a4cf48e2e0b03292a214685390287b4fd33`](https://github.com/worktile/slate-angular/commit/8b2d8a4cf48e2e0b03292a214685390287b4fd33) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support pre-rendering on bottom elements to ensure the DOM is steady when the element is in viewport
+
+- [`b15e496268e86c5be3991f82f10adacf5b730a08`](https://github.com/worktile/slate-angular/commit/b15e496268e86c5be3991f82f10adacf5b730a08) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support EDITOR_TO_VIRTUAL_SCROLL_SELECTION to get virtual scroll selection from everywhere
+
+  extract calculateVirtualScrollSelection as individual function
+
+- [#328](https://github.com/worktile/slate-angular/pull/328) [`5bb1f28b9966859e23f852a2f0fab4c2d76ae54a`](https://github.com/worktile/slate-angular/commit/5bb1f28b9966859e23f852a2f0fab4c2d76ae54a) Thanks [@Xwatson](https://github.com/Xwatson)! - Change the container width change clearing to height
+  - This operation is to prevent the problem of inconsistent height calculation caches under containers of different widths.
+  - If not cleared, the cache heights under different containers will be mixed, leading to errors in rendering calculations.
+
+- [`4aaa3a9d7096788e36085a9c95d35f1243e6d1fb`](https://github.com/worktile/slate-angular/commit/4aaa3a9d7096788e36085a9c95d35f1243e6d1fb) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix throw error when destroy element which hadn't been initialized
+
+- [`6469b4b83f06cc90e4f14d34240153ae6c5bb5f8`](https://github.com/worktile/slate-angular/commit/6469b4b83f06cc90e4f14d34240153ae6c5bb5f8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - set left and right to keep the width of pre-rendering element is the same as the width of normal element
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`aaa26b8de83b515d69c50c467621cbada1b0c175`](https://github.com/worktile/slate-angular/commit/aaa26b8de83b515d69c50c467621cbada1b0c175) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - use getBoundingClientRect to get height
+
+- [`4cc21d4281d578c44064157d2a000b1a8f987dab`](https://github.com/worktile/slate-angular/commit/4cc21d4281d578c44064157d2a000b1a8f987dab) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cache root node width and set pre-rendering width
+
+- [`780c2e4e36ecc9cbb73f7429fc148b013972c28a`](https://github.com/worktile/slate-angular/commit/780c2e4e36ecc9cbb73f7429fc148b013972c28a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - rename visible to inViewport
+
+- [`f996fd40828ebd6e84482f0e980b06cb37bf3b44`](https://github.com/worktile/slate-angular/commit/f996fd40828ebd6e84482f0e980b06cb37bf3b44) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add virtual-scroll utils
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`dacfaf13375a9f90b92f16eef1299d9e58423ea1`](https://github.com/worktile/slate-angular/commit/dacfaf13375a9f90b92f16eef1299d9e58423ea1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. Add top and bottom virtual height elements 2. Add JUST_NOW_UPDATED_VIRTUAL_VIEW to avoid circle trigger virtual scrolling
+
+- [`9ca040bda59a793c5b1cd2e0d59d1286d755b824`](https://github.com/worktile/slate-angular/commit/9ca040bda59a793c5b1cd2e0d59d1286d755b824) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add debugLog and move debugLog to virtual-scroll
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`30e6d98cfe51fbdd18ae8f5f012aa2a15ac4d604`](https://github.com/worktile/slate-angular/commit/30e6d98cfe51fbdd18ae8f5f012aa2a15ac4d604) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - diff scrolling optimization, adding logs
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`9541127a237f036430c006382d7f8ae175b75c3a`](https://github.com/worktile/slate-angular/commit/9541127a237f036430c006382d7f8ae175b75c3a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix(virtual): width change remeasurement height, add debug overlay
+
+- [`dcb48f9a6de33ecf38d181d70f1ae71ad29def9f`](https://github.com/worktile/slate-angular/commit/dcb48f9a6de33ecf38d181d70f1ae71ad29def9f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix min-height was reset issue
+
+- [#329](https://github.com/worktile/slate-angular/pull/329) [`bb32aedcc541406ae7c527d4c052e7e208d3574f`](https://github.com/worktile/slate-angular/commit/bb32aedcc541406ae7c527d4c052e7e208d3574f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support pre render top elements
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`c25ff0fe5d6abebd06e467b09265f41fae493612`](https://github.com/worktile/slate-angular/commit/c25ff0fe5d6abebd06e467b09265f41fae493612) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - get measured height strengthen the judgment of numeric types
+
+- [#323](https://github.com/worktile/slate-angular/pull/323) [`0dad72647fc70532ac3aae08df2a221ee86a6b22`](https://github.com/worktile/slate-angular/commit/0dad72647fc70532ac3aae08df2a221ee86a6b22) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - there is a blank space below the scroll when the page switches to widescreen
+
+- [`8f04cfdb150d6f7aa35c58c99520537315c73b2a`](https://github.com/worktile/slate-angular/commit/8f04cfdb150d6f7aa35c58c99520537315c73b2a) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support isEnabledVirtualScroll status
+
+- [`1f7365ce813afbd3b8fcaf469af5a2e9d445f11e`](https://github.com/worktile/slate-angular/commit/1f7365ce813afbd3b8fcaf469af5a2e9d445f11e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support custom leaf component outlet parent
+
 ## 20.2.0-next.35
 
 ### Patch Changes
