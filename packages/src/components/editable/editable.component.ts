@@ -580,7 +580,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     updateListRenderAndRemeasureHeights() {
-        const virtualView = this.calculateVirtualViewport();
+        let virtualView = this.calculateVirtualViewport();
+        let diff = this.diffVirtualViewport(virtualView, 'onChange');
+        if (diff.isDifferent && diff.needRemoveOnTop) {
+            const remeasureIndics = diff.changedIndexesOfTop;
+            const changed = measureHeightByIndics(this.editor, remeasureIndics);
+            if (changed) {
+                virtualView = this.calculateVirtualViewport();
+                diff = this.diffVirtualViewport(virtualView, 'second');
+            }
+        }
         const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
         const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
@@ -993,19 +1002,30 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 debugLog('log', `====== diffVirtualViewport stage: ${stage} ======`);
                 debugLog('log', 'oldIndexesInViewport:', oldIndexesInViewport);
                 debugLog('log', 'newIndexesInViewport:', newIndexesInViewport);
+                // this.editor.children[index] will be undefined when it is removed
                 debugLog(
                     'log',
                     'changedIndexesOfTop:',
                     needRemoveOnTop ? '-' : needAddOnTop ? '+' : '-',
                     changedIndexesOfTop,
-                    changedIndexesOfTop.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
+                    changedIndexesOfTop.map(
+                        index =>
+                            (this.editor.children[index] &&
+                                getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0)) ||
+                            0
+                    )
                 );
                 debugLog(
                     'log',
                     'changedIndexesOfBottom:',
                     needAddOnBottom ? '+' : needRemoveOnBottom ? '-' : '+',
                     changedIndexesOfBottom,
-                    changedIndexesOfBottom.map(index => getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0))
+                    changedIndexesOfBottom.map(
+                        index =>
+                            (this.editor.children[index] &&
+                                getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0)) ||
+                            0
+                    )
                 );
                 const needTop = virtualView.heights.slice(0, newIndexesInViewport[0]).reduce((acc, height) => acc + height, 0);
                 const needBottom = virtualView.heights
