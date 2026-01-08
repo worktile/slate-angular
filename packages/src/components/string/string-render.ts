@@ -115,6 +115,9 @@ export class SlateStringRender {
         if (this.type === StringType.normalString) {
             this.nativeElement.textContent = this.leaf.text;
         }
+        if (this.type === StringType.compatibleString) {
+            updateCompatibleStringNode(this.nativeElement, this.leaf.text);
+        }
     }
 
     getElementStringLength() {
@@ -150,6 +153,13 @@ export const createCompatibleStringNode = (text: string) => {
     const zeroWidthSpace = getZeroTextNode();
     zeroWidthSpan.setAttribute('data-slate-zero-width', '');
     zeroWidthSpan.appendChild(zeroWidthSpace);
+    stringNode.appendChild(zeroWidthSpan);
+    return stringNode;
+};
+
+export const updateCompatibleStringNode = (stringNode: HTMLSpanElement, text: string) => {
+    const zeroWidthSpan = stringNode.querySelector('span');
+    stringNode.textContent = text;
     stringNode.appendChild(zeroWidthSpan);
     return stringNode;
 };
