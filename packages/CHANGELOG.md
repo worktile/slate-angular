@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.2
+
+### Patch Changes
+
+- [`308600752ed1e51f93d0bc8ccb1ee4bd4a4e2124`](https://github.com/worktile/slate-angular/commit/308600752ed1e51f93d0bc8ccb1ee4bd4a4e2124) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - need to measure element height when diff is different and need remove on top in onChange scenario #WIK-19747
+
+- [`007193bf9534c4482828a81c9ea459c6405d5f23`](https://github.com/worktile/slate-angular/commit/007193bf9534c4482828a81c9ea459c6405d5f23) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support update compatible string to fix the issue mentioned in #WIK-19720
+
 ## 20.2.1
 
 ### Patch Changes
