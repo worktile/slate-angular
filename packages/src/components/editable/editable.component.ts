@@ -592,9 +592,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 remeasureIndics.push(this.inViewportIndics[index]);
             }
         });
-        if (isDebug && remeasureIndics.length > 0) {
-            console.log('remeasure height by indics: ', remeasureIndics);
-        }
     }
 
     updateContext() {
@@ -875,7 +872,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }, 100);
         }
         const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
-        const { heights, accumulatedHeights, visibles } = buildHeightsAndAccumulatedHeights(this.editor);
+        const { heights, accumulatedHeights, visibleStates } = buildHeightsAndAccumulatedHeights(this.editor);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -888,7 +885,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
-            if (!visibles[i]) {
+            if (!visibleStates[i]) {
                 accumulatedOffset = nextOffset;
                 continue;
             }
