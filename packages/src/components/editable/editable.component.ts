@@ -38,7 +38,7 @@ import {
     IS_FOCUSED,
     IS_READ_ONLY
 } from 'slate-dom';
-import { Subject } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 import {
     IS_FIREFOX,
     IS_SAFARI,
@@ -214,8 +214,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private inViewportIndics: number[] = [];
     private keyHeightMap = new Map<string, number>();
     private tryUpdateVirtualViewportAnimId: number;
-    private tryMeasureInViewportChildrenHeightsAnimId: number;
     private editorResizeObserver?: ResizeObserver;
+
+    viewportRefresh$ = new Subject<void>();
 
     constructor(
         public elementRef: ElementRef,
@@ -303,6 +304,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         childrenWithPreRenderingIndics
                     );
                 }
+                this.viewportRefresh$.next();
             } else {
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(this.editor.children, this.editor, this.context);
@@ -590,17 +592,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 diff = this.diffVirtualViewport(virtualView, 'second');
             }
         }
-        const oldInViewportChildren = this.inViewportChildren;
+        // const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
         const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         // 新增或者修改的才需要重算，计算出这个结果
-        const remeasureIndics = [];
-        this.inViewportChildren.forEach((child, index) => {
-            if (oldInViewportChildren.indexOf(child) === -1) {
-                remeasureIndics.push(this.inViewportIndics[index]);
-            }
-        });
+        // const remeasureIndics = [];
+        // this.inViewportChildren.forEach((child, index) => {
+        //     if (oldInViewportChildren.indexOf(child) === -1) {
+        //         remeasureIndics.push(this.inViewportIndics[index]);
+        //     }
+        // });
+        this.viewportRefresh$.next();
     }
 
     updateContext() {
@@ -705,9 +708,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     this.keyHeightMap.clear();
-                    const remeasureIndics = this.inViewportIndics;
-                    measureHeightByIndics(this.editor, remeasureIndics, true);
                     EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.getBoundingClientRect().width);
+                    this.viewportRefresh$.next();
                     if (isDebug) {
                         debugLog(
                             'log',
@@ -720,6 +722,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
+            this.viewportRefresh$.pipe(debounceTime(1000)).subscribe(() => {
+                const res = measureHeightByIndics(this.editor, this.inViewportIndics);
+                if (isDebug) {
+                    debugLog(
+                        'log',
+                        'viewportRefresh$ debounceTime 1000ms',
+                        'inViewportIndics: ',
+                        this.inViewportIndics,
+                        'measureHeightByIndics height changed: ',
+                        res
+                    );
+                }
+            });
         }
     }
 
@@ -835,6 +850,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
                         this.toNativeSelection(false);
                     }
+                    this.viewportRefresh$.next();
                 }
             }
             if (isDebug) {
