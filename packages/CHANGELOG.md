@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.3
+
+### Patch Changes
+
+- [`65e298b4af26224a5b18eb260021e12599f2a934`](https://github.com/worktile/slate-angular/commit/65e298b4af26224a5b18eb260021e12599f2a934) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - optimize measure height timing, but do not measure height all in viewport
+
+- [`d1e608e9b784e5b7981354ddb6e8a05c2a76ae53`](https://github.com/worktile/slate-angular/commit/d1e608e9b784e5b7981354ddb6e8a05c2a76ae53) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support getRoughHeight to help plugin to get rough height by element data
+
 ## 20.2.2
 
 ### Patch Changes
