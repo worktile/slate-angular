@@ -263,10 +263,12 @@ export class ListRender {
             for (let i = 0; i < children.length; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 const index = this.viewContext.editor.children.indexOf(children[i]);
-                const height = getRealHeightByElement(this.viewContext.editor, children[i] as Element);
+                const height =
+                    getRealHeightByElement(this.viewContext.editor, children[i] as Element) ||
+                    this.viewContext.editor.getRoughHeight(children[i] as Element);
                 rootNodes.forEach(rootNode => {
                     rootNode.setAttribute('debug-index', index.toString());
-                    rootNode.setAttribute('debug-height', height.toString());
+                    rootNode.setAttribute('debug-height', height?.toString());
                 });
             }
         }
