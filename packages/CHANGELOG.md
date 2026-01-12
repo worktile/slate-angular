@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.6
+
+### Patch Changes
+
+- [`64bf758cf66ff6a3dfcc9f9c681609afd0a81f65`](https://github.com/worktile/slate-angular/commit/64bf758cf66ff6a3dfcc9f9c681609afd0a81f65) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add EDITOR_TO_IS_FROM_SCROLL_TO state and skip updating dirty top height and handing on needAddOnTop and needRemoveOnTop #WIK-19748
+
 ## 20.2.5
 
 ### Patch Changes
