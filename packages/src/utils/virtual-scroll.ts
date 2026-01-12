@@ -1,6 +1,6 @@
 import { Element } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
-import { SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP, VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from './environment';
+import { SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP } from './environment';
 import { ELEMENT_TO_COMPONENT } from './weak-maps';
 import { BaseElementComponent } from '../view/base';
 import { BaseElementFlavour } from '../view/flavour/element';
@@ -36,7 +36,7 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
     let hasChanged = false;
     indics.forEach((index, i) => {
         const element = editor.children[index] as Element;
-        const preHeight = getRealHeightByElement(editor, element, 0);
+        const preHeight = getRealHeightByElement(editor, element);
         if (preHeight && !force) {
             if (isDebug) {
                 const height = measureHeightByElement(editor, element);
@@ -64,7 +64,7 @@ export const getBusinessTop = (editor: AngularEditor) => {
     return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
 };
 
-export const getRealHeightByElement = (editor: AngularEditor, element: Element, defaultHeight?: number) => {
+export const getRealHeightByElement = (editor: AngularEditor, element: Element) => {
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     const key = AngularEditor.findKey(editor, element);
     const height = heights?.get(key.id);
@@ -74,7 +74,7 @@ export const getRealHeightByElement = (editor: AngularEditor, element: Element, 
     if (heights?.has(key.id)) {
         console.error('getBlockHeight: invalid height value', key.id, height);
     }
-    return editor.getRoughHeight(element, defaultHeight);
+    return null;
 };
 
 export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
@@ -83,7 +83,7 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
-        const height = getRealHeightByElement(editor, children[i], VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT);
+        const height = getRealHeightByElement(editor, children[i]) || editor.getRoughHeight(children[i]);
         heights[i] = height;
         accumulatedHeights[i + 1] = accumulatedHeights[i] + height;
     }

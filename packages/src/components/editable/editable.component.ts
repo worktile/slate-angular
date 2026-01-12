@@ -1027,8 +1027,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     changedIndexesOfTop,
                     changedIndexesOfTop.map(
                         index =>
-                            (this.editor.children[index] &&
-                                getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0)) ||
+                            (this.editor.children[index] && getRealHeightByElement(this.editor, this.editor.children[index] as Element)) ||
                             0
                     )
                 );
@@ -1039,8 +1038,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     changedIndexesOfBottom,
                     changedIndexesOfBottom.map(
                         index =>
-                            (this.editor.children[index] &&
-                                getRealHeightByElement(this.editor, this.editor.children[index] as Element, 0)) ||
+                            (this.editor.children[index] && getRealHeightByElement(this.editor, this.editor.children[index] as Element)) ||
                             0
                     )
                 );
