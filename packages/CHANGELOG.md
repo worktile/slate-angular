@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.5
+
+### Patch Changes
+
+- [`8b6fa3dd658bae4759f8d6bbaeb28f93cfbb22c8`](https://github.com/worktile/slate-angular/commit/8b6fa3dd658bae4759f8d6bbaeb28f93cfbb22c8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix getRealHeightByElement will return null if it never been measured.
+
+- [`218b5f1e2bd74453615cf26b950e46361d190226`](https://github.com/worktile/slate-angular/commit/218b5f1e2bd74453615cf26b950e46361d190226) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - getRealHeightByElement will return null if it never been measured.
+
 ## 20.2.4
 
 ### Patch Changes
