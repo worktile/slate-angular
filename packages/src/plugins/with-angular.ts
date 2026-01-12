@@ -1,7 +1,7 @@
 import { Editor, Element, Node, Operation, Path, PathRef, Range, Transforms } from 'slate';
 import { ClipboardData, OriginEvent } from '../types/clipboard';
 import { SlateError } from '../types/error';
-import { completeTable, EDITOR_TO_VIRTUAL_SCROLL_SELECTION, isInvalidTable } from '../utils';
+import { completeTable, EDITOR_TO_VIRTUAL_SCROLL_SELECTION, isInvalidTable, VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT } from '../utils';
 import { getClipboardData, setClipboardData } from '../utils/clipboard/clipboard';
 import { AngularEditor } from './angular-editor';
 import { Key, NODE_TO_KEY, withDOM } from 'slate-dom';
@@ -238,6 +238,10 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
     e.isVisible = element => {
         return true;
+    };
+
+    e.getRoughHeight = (element: Element, defaultHeight?: number) => {
+        return defaultHeight === undefined ? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT : defaultHeight;
     };
 
     return e;

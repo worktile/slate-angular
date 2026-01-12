@@ -19,6 +19,7 @@ export interface AngularEditor extends CustomDOMEditor {
     injector: Injector;
     isBlockCard: (node: Node) => boolean;
     isExpanded: (node: Element) => boolean;
+    getRoughHeight: (node: Element, defaultHeight?: number) => number;
     onError: (errorData: SlateError) => void;
     customInsertFragmentData: (data: DataTransfer, clipboardData: ClipboardData | null) => Promise<boolean>;
     customInsertTextData: (data: DataTransfer) => Promise<boolean>;
