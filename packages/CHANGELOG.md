@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.4
+
+### Patch Changes
+
+- [`f7281f23c52e16807ec6d3eba8f7b22610670120`](https://github.com/worktile/slate-angular/commit/f7281f23c52e16807ec6d3eba8f7b22610670120) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - revert isVisible check
+
 ## 20.2.3
 
 ### Patch Changes
