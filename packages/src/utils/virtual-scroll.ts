@@ -15,6 +15,8 @@ export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
 
 export const EDITOR_TO_ROOT_NODE_WIDTH = new WeakMap<AngularEditor, number>();
 
+export const EDITOR_TO_IS_FROM_SCROLL_TO = new WeakMap<AngularEditor, boolean>();
+
 export const debugLog = (type: 'log' | 'warn', ...args: any[]) => {
     const doc = document;
     VirtualScrollDebugOverlay.log(doc, type, ...args);
@@ -107,4 +109,9 @@ export const scrollToElement = (editor: AngularEditor, element: Element, scrollT
 
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
     scrollTo((accumulatedHeights[anchorIndex] ?? 0) + getBusinessTop(editor));
+    EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, true);  
+    setTimeout(() => {
+        console.log('scrollToElement: end scroll');
+        EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, false);
+    }, 0);
 };

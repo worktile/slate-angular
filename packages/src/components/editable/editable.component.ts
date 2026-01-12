@@ -75,7 +75,7 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
-import { calculateVirtualTopHeight, debugLog, EDITOR_TO_ROOT_NODE_WIDTH } from '../../utils/virtual-scroll';
+import { calculateVirtualTopHeight, debugLog, EDITOR_TO_IS_FROM_SCROLL_TO, EDITOR_TO_ROOT_NODE_WIDTH } from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -785,7 +785,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (isDebug) {
             debugLog('log', 'tryUpdateVirtualViewport');
         }
-        if (this.inViewportIndics.length > 0) {
+        const isFromScrollTo = EDITOR_TO_IS_FROM_SCROLL_TO.get(this.editor);
+        if (this.inViewportIndics.length > 0 && !isFromScrollTo) {
             const topHeight = this.getActualVirtualTopHeight();
             const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0]);
             if (topHeight !== refreshVirtualTopHeight) {
@@ -807,7 +808,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             let virtualView = this.calculateVirtualViewport();
             let diff = this.diffVirtualViewport(virtualView);
-            if (diff.isDifferent && diff.needRemoveOnTop) {
+            if (diff.isDifferent && diff.needRemoveOnTop && !isFromScrollTo) {
                 const remeasureIndics = diff.changedIndexesOfTop;
                 const changed = measureHeightByIndics(this.editor, remeasureIndics);
                 if (changed) {
@@ -826,7 +827,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         preRenderingCount,
                         childrenWithPreRenderingIndics
                     );
-                    if (diff.needAddOnTop) {
+                    if (diff.needAddOnTop && !isFromScrollTo) {
                         const remeasureAddedIndics = diff.changedIndexesOfTop;
                         if (isDebug) {
                             debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
