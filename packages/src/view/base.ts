@@ -201,24 +201,12 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         };
     }
 
-    stableHeight: null | number = null;
-
-    isStableHeight(): boolean {
-        return false;
-    }
-
     getRealHeight(): number | Promise<number> {
-        if (this.isStableHeight() && this.stableHeight !== null) {
-            return this.stableHeight;
-        }
         const blockCard = getBlockCardByNativeElement(this.nativeElement);
         const target = blockCard || this.nativeElement;
         const computedStyle = getComputedStyle(target);
         const height =
             Math.ceil(target.getBoundingClientRect().height) + parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
-        if (this.isStableHeight()) {
-            this.stableHeight = height;
-        }
         return height;
     }
 }
