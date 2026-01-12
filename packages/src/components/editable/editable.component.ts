@@ -897,7 +897,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }, 100);
         }
         const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
-        const { heights, accumulatedHeights, visibleStates } = buildHeightsAndAccumulatedHeights(this.editor);
+        const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -910,7 +910,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
-            if (!visibleStates[i]) {
+            const isVisible = this.editor.isVisible(children[i]);
+            if (!isVisible) {
                 accumulatedOffset = nextOffset;
                 continue;
             }

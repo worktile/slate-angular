@@ -80,7 +80,6 @@ export const getRealHeightByElement = (editor: AngularEditor, element: Element, 
 export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const children = (editor.children || []) as Element[];
     const heights = new Array(children.length);
-    const visibleStates = new Array(children.length);
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
@@ -88,7 +87,7 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
         heights[i] = height;
         accumulatedHeights[i + 1] = accumulatedHeights[i] + height;
     }
-    return { heights, accumulatedHeights, visibleStates };
+    return { heights, accumulatedHeights };
 };
 
 export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number) => {
