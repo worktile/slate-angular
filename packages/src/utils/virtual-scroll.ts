@@ -85,7 +85,14 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
-        const height = getRealHeightByElement(editor, children[i]) || editor.getRoughHeight(children[i]);
+        let height = getRealHeightByElement(editor, children[i]);
+        if (height === null) {
+            try {
+                height = editor.getRoughHeight(children[i]);
+            } catch (error) {
+                console.error('buildHeightsAndAccumulatedHeights: getRoughHeight error', error);
+            }
+        }
         heights[i] = height;
         accumulatedHeights[i + 1] = accumulatedHeights[i] + height;
     }
@@ -109,7 +116,7 @@ export const scrollToElement = (editor: AngularEditor, element: Element, scrollT
 
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
     scrollTo((accumulatedHeights[anchorIndex] ?? 0) + getBusinessTop(editor));
-    EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, true);  
+    EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, true);
     setTimeout(() => {
         console.log('scrollToElement: end scroll');
         EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, false);
