@@ -48,7 +48,7 @@ export const HAS_BEFORE_INPUT_SUPPORT =
     // @ts-ignore The `getTargetRanges` property isn't recognized.
     typeof globalThis.InputEvent.prototype.getTargetRanges === 'function';
 
-export const VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT = 30;
+export const VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT = 32;
 
 export const SLATE_DEBUG_KEY = '__SLATE_DEBUG__';
 export const SLATE_DEBUG_KEY_SCROLL_TOP = '__SLATE_DEBUG_SCROLL_TOP__';
