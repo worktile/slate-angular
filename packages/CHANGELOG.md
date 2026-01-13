@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.7
+
+### Patch Changes
+
+- [`62ee091241328f2c1f2d6f8aa315780604366883`](https://github.com/worktile/slate-angular/commit/62ee091241328f2c1f2d6f8aa315780604366883) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - update VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT to 32
+
 ## 20.2.6
 
 ### Patch Changes
