@@ -22,13 +22,13 @@ export const debugLog = (type: 'log' | 'warn', ...args: any[]) => {
     VirtualScrollDebugOverlay.log(doc, type, ...args);
 };
 
-export const measureHeightByElement = (editor: AngularEditor, element: Element) => {
+export const calcHeightByElement = (editor: AngularEditor, element: Element) => {
     const key = AngularEditor.findKey(editor, element);
     const view = ELEMENT_TO_COMPONENT.get(element);
     if (!view) {
         return;
     }
-    const ret = (view as BaseElementComponent | BaseElementFlavour).getRealHeight();
+    const ret = (view as BaseElementComponent | BaseElementFlavour).calcHeight();
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     heights.set(key.id, ret as number);
     return ret as number;
@@ -38,26 +38,18 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
     let hasChanged = false;
     indics.forEach((index, i) => {
         const element = editor.children[index] as Element;
-        const preHeight = getRealHeightByElement(editor, element);
+        const preHeight = getCachedHeightByElement(editor, element);
         if (preHeight && !force) {
             if (isDebug) {
-                const height = measureHeightByElement(editor, element);
+                const height = calcHeightByElement(editor, element);
                 if (height !== preHeight) {
-                    debugLog(
-                        'warn',
-                        'measureHeightByElement: height not equal, index: ',
-                        index,
-                        'preHeight: ',
-                        preHeight,
-                        'height: ',
-                        height
-                    );
+                    debugLog('warn', 'calcHeightByElement: height not equal, index: ', index, 'preHeight: ', preHeight, 'height: ', height);
                 }
             }
             return;
         }
         hasChanged = true;
-        measureHeightByElement(editor, element);
+        calcHeightByElement(editor, element);
     });
     return hasChanged;
 };
@@ -66,7 +58,7 @@ export const getBusinessTop = (editor: AngularEditor) => {
     return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
 };
 
-export const getRealHeightByElement = (editor: AngularEditor, element: Element) => {
+export const getCachedHeightByElement = (editor: AngularEditor, element: Element) => {
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     const key = AngularEditor.findKey(editor, element);
     const height = heights?.get(key.id);
@@ -85,7 +77,7 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
-        let height = getRealHeightByElement(editor, children[i]);
+        let height = getCachedHeightByElement(editor, children[i]);
         if (height === null) {
             try {
                 height = editor.getRoughHeight(children[i]);

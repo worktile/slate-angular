@@ -39,15 +39,7 @@ import {
     IS_READ_ONLY
 } from 'slate-dom';
 import { debounceTime, Subject } from 'rxjs';
-import {
-    IS_FIREFOX,
-    IS_SAFARI,
-    IS_CHROME,
-    HAS_BEFORE_INPUT_SUPPORT,
-    IS_ANDROID,
-    SLATE_DEBUG_KEY,
-    SLATE_DEBUG_KEY_SCROLL_TOP
-} from '../../utils/environment';
+import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
@@ -62,7 +54,6 @@ import {
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
     ELEMENT_KEY_TO_HEIGHTS,
     getBusinessTop,
-    getRealHeightByElement,
     IS_ENABLED_VIRTUAL_SCROLL,
     isDebug,
     isDebugScrollTop,
@@ -75,7 +66,13 @@ import { ListRender } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
-import { calculateVirtualTopHeight, debugLog, EDITOR_TO_IS_FROM_SCROLL_TO, EDITOR_TO_ROOT_NODE_WIDTH } from '../../utils/virtual-scroll';
+import {
+    calculateVirtualTopHeight,
+    debugLog,
+    EDITOR_TO_IS_FROM_SCROLL_TO,
+    EDITOR_TO_ROOT_NODE_WIDTH,
+    getCachedHeightByElement
+} from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -1028,7 +1025,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     changedIndexesOfTop,
                     changedIndexesOfTop.map(
                         index =>
-                            (this.editor.children[index] && getRealHeightByElement(this.editor, this.editor.children[index] as Element)) ||
+                            (this.editor.children[index] &&
+                                getCachedHeightByElement(this.editor, this.editor.children[index] as Element)) ||
                             0
                     )
                 );
@@ -1039,7 +1037,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     changedIndexesOfBottom,
                     changedIndexesOfBottom.map(
                         index =>
-                            (this.editor.children[index] && getRealHeightByElement(this.editor, this.editor.children[index] as Element)) ||
+                            (this.editor.children[index] &&
+                                getCachedHeightByElement(this.editor, this.editor.children[index] as Element)) ||
                             0
                     )
                 );

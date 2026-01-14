@@ -12,7 +12,7 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
-import { debugLog, EDITOR_TO_ROOT_NODE_WIDTH, getRealHeightByElement, isDebug } from '../../utils/virtual-scroll';
+import { debugLog, EDITOR_TO_ROOT_NODE_WIDTH, getCachedHeightByElement, isDebug } from '../../utils/virtual-scroll';
 
 export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTMLElement, isClear: boolean = false) => {
     if (isClear) {
@@ -264,7 +264,7 @@ export class ListRender {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 const index = this.viewContext.editor.children.indexOf(children[i]);
                 const height =
-                    getRealHeightByElement(this.viewContext.editor, children[i] as Element) ||
+                    getCachedHeightByElement(this.viewContext.editor, children[i] as Element) ||
                     this.viewContext.editor.getRoughHeight(children[i] as Element);
                 rootNodes.forEach(rootNode => {
                     rootNode.setAttribute('debug-index', index.toString());
