@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.8
+
+### Patch Changes
+
+- [`8cbc8c3acb20a1252bec62c5f302e324017a2216`](https://github.com/worktile/slate-angular/commit/8cbc8c3acb20a1252bec62c5f302e324017a2216) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add try catch for getRoughHeight to avoid page render fail
+
+- [`9a260f59c4c160c06d1f1d2a2650cf594bc25e6c`](https://github.com/worktile/slate-angular/commit/9a260f59c4c160c06d1f1d2a2650cf594bc25e6c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - rename getRealHeightByElement to getCachedHeightByElement and hasStableHeight and assign true as default return value
+
 ## 20.2.7
 
 ### Patch Changes
