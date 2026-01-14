@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.9
+
+### Patch Changes
+
+- [`1d5b4f843d01cb31918724225d0dea9e1a31c4d8`](https://github.com/worktile/slate-angular/commit/1d5b4f843d01cb31918724225d0dea9e1a31c4d8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support both setMinHeightByElement and clearMinHeightByElement methods
+
+- [`6f50ea9fe4424ce3b1eea1b95348ddc737245ade`](https://github.com/worktile/slate-angular/commit/6f50ea9fe4424ce3b1eea1b95348ddc737245ade) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add cacheHeightByElement on virtual-scroll
+
+- [`fb569aa61c61c41cd0c70b671f62633ea784e919`](https://github.com/worktile/slate-angular/commit/fb569aa61c61c41cd0c70b671f62633ea784e919) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - verify height type in cacheHeightByElement
+
 ## 20.2.8
 
 ### Patch Changes
