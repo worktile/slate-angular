@@ -5,6 +5,7 @@ import { ELEMENT_TO_COMPONENT } from './weak-maps';
 import { BaseElementComponent } from '../view/base';
 import { BaseElementFlavour } from '../view/flavour/element';
 import { VirtualScrollDebugOverlay } from '../components/editable/debug';
+import { getBlockCardByNativeElement } from '../components/block-card/block-card';
 
 export const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
 export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
@@ -33,6 +34,35 @@ export const cacheHeightByElement = (editor: AngularEditor, element: Element, he
     const key = AngularEditor.findKey(editor, element);
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     heights.set(key.id, height);
+};
+
+export const setMinHeightByElement = (editor: AngularEditor, element: Element, rootElementMarginBottom) => {
+    if (!AngularEditor.isEnabledVirtualScroll(editor)) {
+        return;
+    }
+    const realHeight = getCachedHeightByElement(editor, element);
+    if (realHeight) {
+        const nativeElement = AngularEditor.toDOMNode(editor, element);
+        const blockCard = getBlockCardByNativeElement(nativeElement);
+        if (blockCard) {
+            const minHeight = realHeight - rootElementMarginBottom;
+            blockCard.style.minHeight = minHeight + 'px';
+        }
+    }
+};
+
+export const clearMinHeightByElement = (editor: AngularEditor, element: Element) => {
+    if (!AngularEditor.isEnabledVirtualScroll(editor)) {
+        return;
+    }
+    const nativeElement = AngularEditor.toDOMNode(editor, element);
+    const blockCard = getBlockCardByNativeElement(nativeElement);
+    if (blockCard && blockCard.style.minHeight) {
+        blockCard.style.minHeight = '';
+        return true;
+    } else {
+        return false;
+    }
 };
 
 export const calcHeightByElement = (editor: AngularEditor, element: Element) => {
