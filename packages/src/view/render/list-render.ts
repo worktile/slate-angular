@@ -259,7 +259,7 @@ export class ListRender {
                 }
             }
         }
-        if (isDebug) {
+        if (isDebug && isRoot) {
             for (let i = 0; i < children.length; i++) {
                 const rootNodes = [...getRootNodes(this.views[i], this.blockCards[i])];
                 const index = this.viewContext.editor.children.indexOf(children[i]);
