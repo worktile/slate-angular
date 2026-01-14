@@ -62,7 +62,7 @@ import {
 } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
-import { ListRender } from '../../view/render/list-render';
+import { ListRender, updatePreRenderingElementWidth } from '../../view/render/list-render';
 import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
@@ -700,12 +700,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
             let editorResizeObserverRectWidth = this.elementRef.nativeElement.getBoundingClientRect().width;
-            EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.getBoundingClientRect().width);
+            EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.offsetWidth);
             this.editorResizeObserver = new ResizeObserver(entries => {
                 if (entries.length > 0 && entries[0].contentRect.width !== editorResizeObserverRectWidth) {
                     editorResizeObserverRectWidth = entries[0].contentRect.width;
                     this.keyHeightMap.clear();
-                    EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, this.virtualTopHeightElement.getBoundingClientRect().width);
+                    const firstElement = this.inViewportChildren[0];
+                    const firstDomElement = AngularEditor.toDOMNode(this.editor, firstElement);
+                    const target = firstDomElement || this.virtualTopHeightElement;
+                    EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, target.offsetWidth);
+                    updatePreRenderingElementWidth(this.editor);
                     this.viewportRefresh$.next();
                     if (isDebug) {
                         debugLog(

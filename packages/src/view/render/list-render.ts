@@ -14,11 +14,14 @@ import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
 import { debugLog, EDITOR_TO_ROOT_NODE_WIDTH, getCachedHeightByElement, isDebug } from '../../utils/virtual-scroll';
 
+export const PRE_RENDERING_ELEMENT_ON_TOP_CLASS = 'pre-rendering-element-on-top';
+
 export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTMLElement, isClear: boolean = false) => {
     if (isClear) {
         rootNode.style.top = '';
         rootNode.style.width = '';
         rootNode.style.position = '';
+        rootNode.classList.remove(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
         return;
     }
     const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
@@ -29,6 +32,20 @@ export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTM
         rootNode.style.width = '100%';
     }
     rootNode.style.position = 'absolute';
+    rootNode.classList.add(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
+};
+
+export const updatePreRenderingElementWidth = (editor: AngularEditor) => {
+    const editorDom = AngularEditor.toDOMNode(editor, editor);
+    const rootNodes = editorDom.querySelectorAll<HTMLElement>(`.${PRE_RENDERING_ELEMENT_ON_TOP_CLASS}`);
+    const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
+    rootNodes.forEach(rootNode => {
+        if (preRenderingWidth) {
+            rootNode.style.width = `${preRenderingWidth}px`;
+        } else {
+            rootNode.style.width = '100%';
+        }
+    });
 };
 
 export class ListRender {
