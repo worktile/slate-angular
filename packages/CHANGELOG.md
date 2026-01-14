@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.10
+
+### Patch Changes
+
+- [`a0838f0d378744600aff9fa33688e39c8980f0dd`](https://github.com/worktile/slate-angular/commit/a0838f0d378744600aff9fa33688e39c8980f0dd) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support update pre-rendering element width dynamic when editor width changed and use offsetWidth to remove the effect of scale
+
+- [`52e3c5d2723636b4ab7cd8141b0be8a61828b0dd`](https://github.com/worktile/slate-angular/commit/52e3c5d2723636b4ab7cd8141b0be8a61828b0dd) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - apply isVisible check when calculate height
+
 ## 20.2.9
 
 ### Patch Changes
