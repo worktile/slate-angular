@@ -123,11 +123,7 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         };
     }
 
-    hasStableHeight() {
-        return true;
-    }
-
-    calcHeight(): number | Promise<number> {
+    calcHeight(): number {
         const blockCard = getBlockCardByNativeElement(this.nativeElement);
         const target = blockCard || this.nativeElement;
         const computedStyle = getComputedStyle(target);

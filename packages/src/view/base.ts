@@ -201,11 +201,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         };
     }
 
-    hasStableHeight() {
-        return true;
-    }
-
-    calcHeight(): number | Promise<number> {
+    calcHeight(): number {
         const blockCard = getBlockCardByNativeElement(this.nativeElement);
         const target = blockCard || this.nativeElement;
         const computedStyle = getComputedStyle(target);

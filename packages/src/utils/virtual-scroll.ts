@@ -22,16 +22,23 @@ export const debugLog = (type: 'log' | 'warn', ...args: any[]) => {
     VirtualScrollDebugOverlay.log(doc, type, ...args);
 };
 
-export const calcHeightByElement = (editor: AngularEditor, element: Element) => {
+export const cacheHeightByElement = (editor: AngularEditor, element: Element, height: number) => {
+    if (!AngularEditor.isEnabledVirtualScroll(editor)) {
+        return;
+    }
     const key = AngularEditor.findKey(editor, element);
+    const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
+    heights.set(key.id, height);
+};
+
+export const calcHeightByElement = (editor: AngularEditor, element: Element) => {
     const view = ELEMENT_TO_COMPONENT.get(element);
     if (!view) {
         return;
     }
-    const ret = (view as BaseElementComponent | BaseElementFlavour).calcHeight();
-    const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
-    heights.set(key.id, ret as number);
-    return ret as number;
+    const height = (view as BaseElementComponent | BaseElementFlavour).calcHeight();
+    cacheHeightByElement(editor, element, height);
+    return height;
 };
 
 export const measureHeightByIndics = (editor: AngularEditor, indics: number[], force = false) => {
