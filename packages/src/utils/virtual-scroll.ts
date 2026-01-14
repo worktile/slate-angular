@@ -26,6 +26,10 @@ export const cacheHeightByElement = (editor: AngularEditor, element: Element, he
     if (!AngularEditor.isEnabledVirtualScroll(editor)) {
         return;
     }
+    if (typeof height !== 'number') {
+        console.error('cacheHeightByElement: height must be number', height);
+        return;
+    }
     const key = AngularEditor.findKey(editor, element);
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     heights.set(key.id, height);
