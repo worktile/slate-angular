@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.11
+
+### Patch Changes
+
+- [`b8c3ca9cbdddbfc6c49d2b79c186eddd12532136`](https://github.com/worktile/slate-angular/commit/b8c3ca9cbdddbfc6c49d2b79c186eddd12532136) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support get all visible states to performance improvement #WIK-19805
+
 ## 20.2.10
 
 ### Patch Changes
