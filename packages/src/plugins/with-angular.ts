@@ -240,6 +240,10 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         return true;
     };
 
+    e.getAllVisibleStates = () => {
+        return new Array(e.children.length).fill(true);
+    };
+
     e.getRoughHeight = (element: Element, defaultHeight?: number) => {
         return defaultHeight === undefined ? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT : defaultHeight;
     };

@@ -283,7 +283,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editor.children = value;
             this.initializeContext();
             if (this.isEnabledVirtualScroll()) {
-                const virtualView = this.calculateVirtualViewport();
+                const visibleStates = this.editor.getAllVisibleStates();
+                const virtualView = this.calculateVirtualViewport(visibleStates);
                 this.applyVirtualView(virtualView);
                 const childrenForRender = virtualView.inViewportChildren;
                 if (isDebug) {
@@ -292,7 +293,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(childrenForRender, this.editor, this.context, 0, virtualView.inViewportIndics);
                 } else {
-                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
+                        this.handlePreRendering(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -579,19 +581,20 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     updateListRenderAndRemeasureHeights() {
-        let virtualView = this.calculateVirtualViewport();
+        const visibleStates = this.editor.getAllVisibleStates();
+        let virtualView = this.calculateVirtualViewport(visibleStates);
         let diff = this.diffVirtualViewport(virtualView, 'onChange');
         if (diff.isDifferent && diff.needRemoveOnTop) {
             const remeasureIndics = diff.changedIndexesOfTop;
             const changed = measureHeightByIndics(this.editor, remeasureIndics);
             if (changed) {
-                virtualView = this.calculateVirtualViewport();
+                virtualView = this.calculateVirtualViewport(visibleStates);
                 diff = this.diffVirtualViewport(virtualView, 'second');
             }
         }
         // const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
-        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         // 新增或者修改的才需要重算，计算出这个结果
         // const remeasureIndics = [];
@@ -756,14 +759,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return parseFloat(this.virtualTopHeightElement.style.height.replace('px', ''));
     }
 
-    handlePreRendering() {
+    handlePreRendering(visibleStates: boolean[]) {
         let preRenderingCount = 0;
         const childrenWithPreRendering = [...this.inViewportChildren];
         const childrenWithPreRenderingIndics = [...this.inViewportIndics];
         const firstIndex = this.inViewportIndics[0];
         for (let index = firstIndex - 1; index >= 0; index--) {
             const element = this.editor.children[index] as Element;
-            if (this.editor.isVisible(element)) {
+            if (visibleStates[index]) {
                 childrenWithPreRendering.unshift(element);
                 childrenWithPreRenderingIndics.unshift(index);
                 preRenderingCount = 1;
@@ -773,7 +776,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const lastIndex = this.inViewportIndics[this.inViewportIndics.length - 1];
         for (let index = lastIndex + 1; index < this.editor.children.length; index++) {
             const element = this.editor.children[index] as Element;
-            if (this.editor.isVisible(element)) {
+            if (visibleStates[index]) {
                 childrenWithPreRendering.push(element);
                 childrenWithPreRenderingIndics.push(index);
                 break;
@@ -789,7 +792,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const isFromScrollTo = EDITOR_TO_IS_FROM_SCROLL_TO.get(this.editor);
         if (this.inViewportIndics.length > 0 && !isFromScrollTo) {
             const topHeight = this.getActualVirtualTopHeight();
-            const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0]);
+            const visibleStates = this.editor.getAllVisibleStates();
+            const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
             if (topHeight !== refreshVirtualTopHeight) {
                 if (isDebug) {
                     debugLog(
@@ -807,20 +811,22 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (isDebug) {
                 debugLog('log', 'tryUpdateVirtualViewport Anim start');
             }
-            let virtualView = this.calculateVirtualViewport();
+            const visibleStates = this.editor.getAllVisibleStates();
+            let virtualView = this.calculateVirtualViewport(visibleStates);
             let diff = this.diffVirtualViewport(virtualView);
             if (diff.isDifferent && diff.needRemoveOnTop && !isFromScrollTo) {
                 const remeasureIndics = diff.changedIndexesOfTop;
                 const changed = measureHeightByIndics(this.editor, remeasureIndics);
                 if (changed) {
-                    virtualView = this.calculateVirtualViewport();
+                    virtualView = this.calculateVirtualViewport(visibleStates);
                     diff = this.diffVirtualViewport(virtualView, 'second');
                 }
             }
             if (diff.isDifferent) {
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
-                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering();
+                    const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
+                        this.handlePreRendering(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -837,7 +843,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
                         const changed = measureHeightByIndics(this.editor, remeasureAddedIndics);
                         if (changed) {
-                            const newHeights = buildHeightsAndAccumulatedHeights(this.editor);
+                            const newHeights = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
                             const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
                             const newTopHeight = virtualView.top - (actualTopHeightAfterAdd - topHeightBeforeAdd);
                             this.setVirtualSpaceHeight(newTopHeight);
@@ -861,7 +867,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
-    private calculateVirtualViewport() {
+    private calculateVirtualViewport(visibleStates: boolean[]) {
         const children = (this.editor.children || []) as Element[];
         if (!children.length || !this.isEnabledVirtualScroll()) {
             return {
@@ -899,7 +905,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }, 100);
         }
         const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
-        const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor);
+        const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
         const totalHeight = accumulatedHeights[elementLength];
         const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
         const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
@@ -912,7 +918,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
-            const isVisible = this.editor.isVisible(children[i]);
+            const isVisible = visibleStates[i];
             if (!isVisible) {
                 accumulatedOffset = nextOffset;
                 continue;

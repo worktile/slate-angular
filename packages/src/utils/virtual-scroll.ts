@@ -112,13 +112,13 @@ export const getCachedHeightByElement = (editor: AngularEditor, element: Element
     return null;
 };
 
-export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
+export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor, visibleStates: boolean[]) => {
     const children = (editor.children || []) as Element[];
     const heights = new Array(children.length);
     const accumulatedHeights = new Array(children.length + 1);
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
-        const isVisible = editor.isVisible(children[i]);
+        const isVisible = visibleStates[i];
         let height = isVisible ? getCachedHeightByElement(editor, children[i]) : 0;
         if (height === null) {
             try {
@@ -133,8 +133,8 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor) => {
     return { heights, accumulatedHeights };
 };
 
-export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number) => {
-    const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
+export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number, visibleStates: boolean[]) => {
+    const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor, visibleStates);
     return accumulatedHeights[startIndex] ?? 0;
 };
 
@@ -147,8 +147,8 @@ export const scrollToElement = (editor: AngularEditor, element: Element, scrollT
     if (anchorIndex < 0) {
         return;
     }
-
-    const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor);
+    const visibleStates = editor.getAllVisibleStates();
+    const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor, visibleStates);
     scrollTo((accumulatedHeights[anchorIndex] ?? 0) + getBusinessTop(editor));
     EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, true);
     setTimeout(() => {
