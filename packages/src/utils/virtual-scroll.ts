@@ -90,7 +90,10 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
             return;
         }
         hasChanged = true;
-        calcHeightByElement(editor, element);
+        const currentHeight = calcHeightByElement(editor, element);
+        if (isDebug) {
+            debugLog('log', 'measureHeightByIndics: height not equal, index: ', index, 'preHeight: ', preHeight, 'height: ', currentHeight);
+        }
     });
     return hasChanged;
 };

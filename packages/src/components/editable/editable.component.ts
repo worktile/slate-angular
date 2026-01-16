@@ -18,7 +18,7 @@ import {
     inject,
     ViewContainerRef
 } from '@angular/core';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Selection } from 'slate';
+import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Selection, Descendant } from 'slate';
 import { direction } from 'direction';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { AngularEditor } from '../../plugins/angular-editor';
@@ -38,7 +38,7 @@ import {
     IS_FOCUSED,
     IS_READ_ONLY
 } from 'slate-dom';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, filter, Subject, tap } from 'rxjs';
 import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
 import Hotkeys from '../../utils/hotkeys';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
@@ -213,7 +213,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private tryUpdateVirtualViewportAnimId: number;
     private editorResizeObserver?: ResizeObserver;
 
-    viewportRefresh$ = new Subject<void>();
+    indicsOfNeedBeMeasured$ = new Subject<number[]>();
 
     constructor(
         public elementRef: ElementRef,
@@ -283,6 +283,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editor.children = value;
             this.initializeContext();
             if (this.isEnabledVirtualScroll()) {
+                const previousInViewportChildren = [...this.inViewportChildren];
                 const visibleStates = this.editor.getAllVisibleStates();
                 const virtualView = this.calculateVirtualViewport(visibleStates);
                 this.applyVirtualView(virtualView);
@@ -303,7 +304,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         childrenWithPreRenderingIndics
                     );
                 }
-                this.viewportRefresh$.next();
+                const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
+                if (remeasureIndics.length) {
+                    this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+                }
             } else {
                 if (!this.listRender.initialized) {
                     this.listRender.initialize(this.editor.children, this.editor, this.context);
@@ -582,6 +586,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     updateListRenderAndRemeasureHeights() {
         const visibleStates = this.editor.getAllVisibleStates();
+        const previousInViewportChildren = [...this.inViewportChildren];
         let virtualView = this.calculateVirtualViewport(visibleStates);
         let diff = this.diffVirtualViewport(virtualView, 'onChange');
         if (diff.isDifferent && diff.needRemoveOnTop) {
@@ -592,18 +597,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 diff = this.diffVirtualViewport(virtualView, 'second');
             }
         }
-        // const oldInViewportChildren = this.inViewportChildren;
         this.applyVirtualView(virtualView);
         const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
-        // 新增或者修改的才需要重算，计算出这个结果
-        // const remeasureIndics = [];
-        // this.inViewportChildren.forEach((child, index) => {
-        //     if (oldInViewportChildren.indexOf(child) === -1) {
-        //         remeasureIndics.push(this.inViewportIndics[index]);
-        //     }
-        // });
-        this.viewportRefresh$.next();
+        const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
+        if (remeasureIndics.length) {
+            this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+        }
     }
 
     updateContext() {
@@ -713,7 +713,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     const target = firstDomElement || this.virtualTopHeightElement;
                     EDITOR_TO_ROOT_NODE_WIDTH.set(this.editor, target.offsetWidth);
                     updatePreRenderingElementWidth(this.editor);
-                    this.viewportRefresh$.next();
                     if (isDebug) {
                         debugLog(
                             'log',
@@ -726,20 +725,39 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
-            this.viewportRefresh$.pipe(debounceTime(1000)).subscribe(() => {
-                // const res = measureHeightByIndics(this.editor, this.inViewportIndics);
-                // if (isDebug) {
-                //     debugLog(
-                //         'log',
-                //         'viewportRefresh$ debounceTime 1000ms',
-                //         'inViewportIndics: ',
-                //         this.inViewportIndics,
-                //         'measureHeightByIndics height changed: ',
-                //         res
-                //     );
-                // }
-            });
+
+            let pendingRemeasureIndics: number[] = [];
+            this.indicsOfNeedBeMeasured$
+                .pipe(
+                    tap((previousValue: number[]) => {
+                        previousValue.forEach((index: number) => {
+                            if (!pendingRemeasureIndics.includes(index)) {
+                                pendingRemeasureIndics.push(index);
+                            }
+                        });
+                    }),
+                    debounceTime(500),
+                    filter(() => pendingRemeasureIndics.length > 0)
+                )
+                .subscribe(() => {
+                    measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
+                    pendingRemeasureIndics = [];
+                    if (isDebug) {
+                        debugLog('log', 'exist pendingRemeasureIndics: ', pendingRemeasureIndics, 'will try to update virtual viewport');
+                    }
+                    this.tryUpdateVirtualViewport();
+                });
         }
+    }
+
+    getChangedIndics(previousValue: Descendant[]) {
+        const remeasureIndics = [];
+        this.inViewportChildren.forEach((child, index) => {
+            if (previousValue.indexOf(child) === -1) {
+                remeasureIndics.push(this.inViewportIndics[index]);
+            }
+        });
+        return remeasureIndics;
     }
 
     setVirtualSpaceHeight(topHeight: number, bottomHeight?: number) {
@@ -858,7 +876,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
                         this.toNativeSelection(false);
                     }
-                    this.viewportRefresh$.next();
                 }
             }
             if (isDebug) {
