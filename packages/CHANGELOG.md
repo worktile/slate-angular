@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.12
+
+### Patch Changes
+
+- [`4ae18f415bc14c70ea5711431d225352b3a629de`](https://github.com/worktile/slate-angular/commit/4ae18f415bc14c70ea5711431d225352b3a629de) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support remeasure indics and try to update virtual viewport after remeasure
+
 ## 20.2.11
 
 ### Patch Changes
