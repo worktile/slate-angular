@@ -873,7 +873,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             }
                         }
                     }
-                    if (!AngularEditor.isReadOnly(this.editor) && this.editor.selection) {
+                    if (this.editor.selection) {
                         this.toNativeSelection(false);
                     }
                 }
