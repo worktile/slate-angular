@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.13
+
+### Patch Changes
+
+- [`a49e674139db673c40b4e0eae237a6376f7684d0`](https://github.com/worktile/slate-angular/commit/a49e674139db673c40b4e0eae237a6376f7684d0) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support toNativeSelection on read only mode
+
+- [`fe74bca688f6c63c03f55620902e8dd7e3cb16fb`](https://github.com/worktile/slate-angular/commit/fe74bca688f6c63c03f55620902e8dd7e3cb16fb) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - verify inViewportChildren is empty in editorResizeObserver
+
 ## 20.2.12
 
 ### Patch Changes
