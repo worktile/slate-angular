@@ -899,7 +899,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const scrollTop = this.virtualScrollConfig.scrollTop;
-        const viewportHeight = this.virtualScrollConfig.viewportHeight ?? 0;
+        let viewportHeight = this.virtualScrollConfig.viewportHeight ?? 0;
         if (!viewportHeight) {
             return {
                 inViewportChildren: [],
@@ -921,21 +921,23 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
                 if (isDebug) {
                     debugLog('log', 'businessTop', businessTop);
+                    this.virtualTopHeightElement.setAttribute('data-business-top', businessTop.toString());
                 }
             }, 100);
         }
-        const adjustedScrollTop = Math.max(0, scrollTop - getBusinessTop(this.editor));
+        const businessTop = getBusinessTop(this.editor);
         const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
-        const totalHeight = accumulatedHeights[elementLength];
-        const maxScrollTop = Math.max(0, totalHeight - viewportHeight);
-        const limitedScrollTop = Math.min(adjustedScrollTop, maxScrollTop);
-        const viewBottom = limitedScrollTop + viewportHeight;
+        const totalHeight = accumulatedHeights[elementLength] + businessTop;
+        let startPosition = Math.max(scrollTop - businessTop, 0);
+        let endPosition = startPosition + viewportHeight;
+        if (scrollTop < businessTop) {
+            endPosition = startPosition + viewportHeight - (businessTop - scrollTop);
+        }
         let accumulatedOffset = 0;
         let inViewportStartIndex = -1;
         const visible: Element[] = [];
         const inViewportIndics: number[] = [];
-
-        for (let i = 0; i < elementLength && accumulatedOffset < viewBottom; i++) {
+        for (let i = 0; i < elementLength && accumulatedOffset < endPosition; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
             const isVisible = visibleStates[i];
@@ -944,7 +946,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 continue;
             }
             // 可视区域有交集，加入渲染
-            if (nextOffset > limitedScrollTop && accumulatedOffset < viewBottom) {
+            if (nextOffset > startPosition && accumulatedOffset < endPosition) {
                 if (inViewportStartIndex === -1) inViewportStartIndex = i; // 第一个相交起始位置
                 visible.push(children[i]);
                 inViewportIndics.push(i);
