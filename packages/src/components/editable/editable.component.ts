@@ -743,12 +743,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     filter(() => pendingRemeasureIndics.length > 0)
                 )
                 .subscribe(() => {
-                    measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
-                    pendingRemeasureIndics = [];
-                    if (isDebug) {
-                        debugLog('log', 'exist pendingRemeasureIndics: ', pendingRemeasureIndics, 'will try to update virtual viewport');
+                    const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
+                    if (changed) {
+                        this.tryUpdateVirtualViewport();
+                        if (isDebug) {
+                            debugLog(
+                                'log',
+                                'exist pendingRemeasureIndics: ',
+                                pendingRemeasureIndics,
+                                'will try to update virtual viewport'
+                            );
+                        }
                     }
-                    this.tryUpdateVirtualViewport();
+                    pendingRemeasureIndics = [];
                 });
         }
     }

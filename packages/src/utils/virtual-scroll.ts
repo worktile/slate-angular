@@ -18,6 +18,10 @@ export const EDITOR_TO_ROOT_NODE_WIDTH = new WeakMap<AngularEditor, number>();
 
 export const EDITOR_TO_IS_FROM_SCROLL_TO = new WeakMap<AngularEditor, boolean>();
 
+export const isValidNumber = (value: any) => {
+    return typeof value === 'number' && !Number.isNaN(value);
+};
+
 export const debugLog = (type: 'log' | 'warn', ...args: any[]) => {
     const doc = document;
     VirtualScrollDebugOverlay.log(doc, type, ...args);
@@ -27,7 +31,7 @@ export const cacheHeightByElement = (editor: AngularEditor, element: Element, he
     if (!AngularEditor.isEnabledVirtualScroll(editor)) {
         return;
     }
-    if (typeof height !== 'number') {
+    if (!isValidNumber(height)) {
         console.error('cacheHeightByElement: height must be number', height);
         return;
     }
@@ -89,9 +93,11 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
             }
             return;
         }
-        hasChanged = true;
         const currentHeight = calcHeightByElement(editor, element);
-        if (isDebug) {
+        if (isValidNumber(currentHeight) && currentHeight !== preHeight) {
+            hasChanged = true;
+        }
+        if (isDebug && isValidNumber(currentHeight)) {
             debugLog('log', 'measureHeightByIndics: height not equal, index: ', index, 'preHeight: ', preHeight, 'height: ', currentHeight);
         }
     });
