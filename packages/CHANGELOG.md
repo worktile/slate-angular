@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.14
+
+### Patch Changes
+
+- [`9023800e52d575077520cad1d0959fc1243e861c`](https://github.com/worktile/slate-angular/commit/9023800e52d575077520cad1d0959fc1243e861c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - verify height is NaN to avoid invalid height to cause virtual scroll error
+
+- [`7c6dc2436ebf6e3d038fd2f767eef882f26e6121`](https://github.com/worktile/slate-angular/commit/7c6dc2436ebf6e3d038fd2f767eef882f26e6121) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - refactor business logic
+
 ## 20.2.13
 
 ### Patch Changes
