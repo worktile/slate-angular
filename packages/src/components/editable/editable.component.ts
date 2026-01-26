@@ -215,6 +215,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     indicsOfNeedBeMeasured$ = new Subject<number[]>();
 
+    virtualScrollInitialized = false;
+
+    virtualTopHeightElement: HTMLElement;
+
+    virtualBottomHeightElement: HTMLElement;
+
+    virtualCenterOutlet: HTMLElement;
+
     constructor(
         public elementRef: ElementRef,
         public renderer2: Renderer2,
@@ -351,339 +359,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
     }
 
-    calculateVirtualScrollSelection(selection: Selection) {
-        if (selection) {
-            const isBlockCardCursor = AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor);
-            const indics = this.inViewportIndics;
-            if (indics.length > 0) {
-                const currentVisibleRange: Range = {
-                    anchor: Editor.start(this.editor, [indics[0]]),
-                    focus: Editor.end(this.editor, [indics[indics.length - 1]])
-                };
-                const [start, end] = Range.edges(selection);
-                let forwardSelection = { anchor: start, focus: end };
-                if (!isBlockCardCursor) {
-                    forwardSelection = { anchor: start, focus: end };
-                } else {
-                    forwardSelection = { anchor: { path: start.path, offset: 0 }, focus: { path: end.path, offset: 0 } };
-                }
-                const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
-                if (intersectedSelection && isBlockCardCursor) {
-                    return selection;
-                }
-                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
-                if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
-                    if (isDebug) {
-                        debugLog(
-                            'log',
-                            `selection is not in visible range, selection: ${JSON.stringify(
-                                selection
-                            )}, currentVisibleRange: ${JSON.stringify(currentVisibleRange)}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
-                        );
-                    }
-                    return intersectedSelection;
-                }
-                return selection;
-            }
-        }
-        EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
-        return selection;
-    }
-
-    private isSelectionInvisible(selection: Selection) {
-        const anchorIndex = selection.anchor.path[0];
-        const focusIndex = selection.focus.path[0];
-        const anchorElement = this.editor.children[anchorIndex] as Element | undefined;
-        const focusElement = this.editor.children[focusIndex] as Element | undefined;
-        return !anchorElement || !focusElement || !this.editor.isVisible(anchorElement) || !this.editor.isVisible(focusElement);
-    }
-
-    toNativeSelection(autoScroll = true) {
-        try {
-            let { selection } = this.editor;
-
-            if (this.isEnabledVirtualScroll()) {
-                selection = this.calculateVirtualScrollSelection(selection);
-            }
-
-            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
-            const { activeElement } = root;
-            const domSelection = (root as Document).getSelection();
-
-            if ((this.isComposing && !IS_ANDROID) || !domSelection || !AngularEditor.isFocused(this.editor)) {
-                return;
-            }
-
-            const hasDomSelection = domSelection.type !== 'None';
-
-            // If the DOM selection is properly unset, we're done.
-            if (!selection && !hasDomSelection) {
-                return;
-            }
-
-            // If the DOM selection is already correct, we're done.
-            // verify that the dom selection is in the editor
-            const editorElement = EDITOR_TO_ELEMENT.get(this.editor)!;
-            let hasDomSelectionInEditor = false;
-            if (editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode)) {
-                hasDomSelectionInEditor = true;
-            }
-
-            // If the DOM selection is in the editor and the editor selection is already correct, we're done.
-            if (hasDomSelection && hasDomSelectionInEditor && selection && hasStringTarget(domSelection)) {
-                const rangeFromDOMSelection = AngularEditor.toSlateRange(this.editor, domSelection, {
-                    exactMatch: false,
-                    suppressThrow: true
-                });
-                if (rangeFromDOMSelection && Range.equals(rangeFromDOMSelection, selection)) {
-                    return;
-                }
-            }
-
-            // prevent updating native selection when active element is void element
-            if (isTargetInsideVoid(this.editor, activeElement)) {
-                return;
-            }
-
-            // when <Editable/> is being controlled through external value
-            // then its children might just change - DOM responds to it on its own
-            // but Slate's value is not being updated through any operation
-            // and thus it doesn't transform selection on its own
-            if (selection && !AngularEditor.hasRange(this.editor, selection)) {
-                this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection, { exactMatch: false, suppressThrow: false });
-                return;
-            }
-
-            // Otherwise the DOM selection is out of sync, so update it.
-            const el = AngularEditor.toDOMNode(this.editor, this.editor);
-            this.isUpdatingSelection = true;
-
-            const newDomRange = selection && AngularEditor.toDOMRange(this.editor, selection);
-
-            if (newDomRange) {
-                // COMPAT: Since the DOM range has no concept of backwards/forwards
-                // we need to check and do the right thing here.
-                if (Range.isBackward(selection)) {
-                    // eslint-disable-next-line max-len
-                    domSelection.setBaseAndExtent(
-                        newDomRange.endContainer,
-                        newDomRange.endOffset,
-                        newDomRange.startContainer,
-                        newDomRange.startOffset
-                    );
-                } else {
-                    // eslint-disable-next-line max-len
-                    domSelection.setBaseAndExtent(
-                        newDomRange.startContainer,
-                        newDomRange.startOffset,
-                        newDomRange.endContainer,
-                        newDomRange.endOffset
-                    );
-                }
-            } else {
-                domSelection.removeAllRanges();
-            }
-
-            setTimeout(() => {
-                if (
-                    this.isEnabledVirtualScroll() &&
-                    !selection &&
-                    this.editor.selection &&
-                    autoScroll &&
-                    this.virtualScrollConfig.scrollContainer
-                ) {
-                    this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
-                    this.isUpdatingSelection = false;
-                    return;
-                } else {
-                    // handle scrolling in setTimeout because of
-                    // dom should not have updated immediately after listRender's updating
-                    newDomRange && autoScroll && this.scrollSelectionIntoView(this.editor, newDomRange);
-                    // COMPAT: In Firefox, it's not enough to create a range, you also need
-                    // to focus the contenteditable element too. (2016/11/16)
-                    if (newDomRange && IS_FIREFOX) {
-                        el.focus();
-                    }
-                }
-                this.isUpdatingSelection = false;
-            });
-        } catch (error) {
-            this.editor.onError({
-                code: SlateErrorCode.ToNativeSelectionError,
-                nativeError: error
-            });
-            this.isUpdatingSelection = false;
-        }
-    }
-
-    onChange() {
-        this.forceRender();
-        this.onChangeCallback(this.editor.children);
-    }
-
-    ngAfterViewChecked() {}
-
-    ngDoCheck() {}
-
-    forceRender() {
-        this.updateContext();
-        if (this.isEnabledVirtualScroll()) {
-            this.updateListRenderAndRemeasureHeights();
-        } else {
-            this.listRender.update(this.editor.children, this.editor, this.context);
-        }
-        // repair collaborative editing when Chinese input is interrupted by other users' cursors
-        // when the DOMElement where the selection is located is removed
-        // the compositionupdate and compositionend events will no longer be fired
-        // so isComposing needs to be corrected
-        // need exec after this.cdr.detectChanges() to render HTML
-        // need exec before this.toNativeSelection() to correct native selection
-        if (this.isComposing) {
-            // Composition input text be not rendered when user composition input with selection is expanded
-            // At this time, the following matching conditions are met, assign isComposing to false, and the status is wrong
-            // this time condition is true and isComposing is assigned false
-            // Therefore, need to wait for the composition input text to be rendered before performing condition matching
-            setTimeout(() => {
-                const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
-                const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
-                let textContent = '';
-                // skip decorate text
-                textDOMNode.querySelectorAll('[editable-text]').forEach(stringDOMNode => {
-                    let text = stringDOMNode.textContent;
-                    const zeroChar = '\uFEFF';
-                    // remove zero with char
-                    if (text.startsWith(zeroChar)) {
-                        text = text.slice(1);
-                    }
-                    if (text.endsWith(zeroChar)) {
-                        text = text.slice(0, text.length - 1);
-                    }
-                    textContent += text;
-                });
-                if (Node.string(textNode).endsWith(textContent)) {
-                    this.isComposing = false;
-                }
-            }, 0);
-        }
-        if (this.editor.selection && this.isSelectionInvisible(this.editor.selection)) {
-            Transforms.deselect(this.editor);
-            return;
-        } else {
-            this.toNativeSelection();
-        }
-    }
-
-    render() {
-        const changed = this.updateContext();
-        if (changed) {
-            if (this.isEnabledVirtualScroll()) {
-                this.updateListRenderAndRemeasureHeights();
-            } else {
-                this.listRender.update(this.editor.children, this.editor, this.context);
-            }
-        }
-    }
-
-    updateListRenderAndRemeasureHeights() {
-        const visibleStates = this.editor.getAllVisibleStates();
-        const previousInViewportChildren = [...this.inViewportChildren];
-        let virtualView = this.calculateVirtualViewport(visibleStates);
-        let diff = this.diffVirtualViewport(virtualView, 'onChange');
-        if (diff.isDifferent && diff.needRemoveOnTop) {
-            const remeasureIndics = diff.changedIndexesOfTop;
-            const changed = measureHeightByIndics(this.editor, remeasureIndics);
-            if (changed) {
-                virtualView = this.calculateVirtualViewport(visibleStates);
-                diff = this.diffVirtualViewport(virtualView, 'second');
-            }
-        }
-        this.applyVirtualView(virtualView);
-        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
-        this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
-        const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
-        if (remeasureIndics.length) {
-            this.indicsOfNeedBeMeasured$.next(remeasureIndics);
-        }
-    }
-
-    updateContext() {
-        const decorations = this.generateDecorations();
-        if (
-            this.context.selection !== this.editor.selection ||
-            this.context.decorate !== this.decorate ||
-            this.context.readonly !== this.readonly ||
-            !isDecoratorRangeListEqual(this.context.decorations, decorations)
-        ) {
-            this.context = {
-                parent: this.editor,
-                selection: this.editor.selection,
-                decorations: decorations,
-                decorate: this.decorate,
-                readonly: this.readonly
-            };
-            return true;
-        }
-        return false;
-    }
-
-    initializeContext() {
-        this.context = {
-            parent: this.editor,
-            selection: this.editor.selection,
-            decorations: this.generateDecorations(),
-            decorate: this.decorate,
-            readonly: this.readonly
-        };
-    }
-
-    initializeViewContext() {
-        this.viewContext = {
-            editor: this.editor,
-            renderElement: this.renderElement,
-            renderLeaf: this.renderLeaf,
-            renderText: this.renderText,
-            trackBy: this.trackBy,
-            isStrictDecorate: this.isStrictDecorate
-        };
-    }
-
-    composePlaceholderDecorate(editor: Editor) {
-        if (this.placeholderDecorate) {
-            return this.placeholderDecorate(editor) || [];
-        }
-
-        if (this.placeholder && editor.children.length === 1 && Array.from(Node.texts(editor)).length === 1 && Node.string(editor) === '') {
-            const start = Editor.start(editor, []);
-            return [
-                {
-                    placeholder: this.placeholder,
-                    anchor: start,
-                    focus: start
-                }
-            ];
-        } else {
-            return [];
-        }
-    }
-
-    generateDecorations() {
-        const decorations = this.decorate([this.editor, []]);
-        const placeholderDecorations = this.isComposing ? [] : this.composePlaceholderDecorate(this.editor);
-        decorations.push(...placeholderDecorations);
-        return decorations;
-    }
-
     private isEnabledVirtualScroll() {
         return !!(this.virtualScrollConfig && this.virtualScrollConfig.enabled);
     }
-
-    virtualScrollInitialized = false;
-
-    virtualTopHeightElement: HTMLElement;
-
-    virtualBottomHeightElement: HTMLElement;
-
-    virtualCenterOutlet: HTMLElement;
 
     initializeVirtualScroll() {
         if (this.virtualScrollInitialized) {
@@ -1130,6 +808,328 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 listener(event);
             })
         );
+    }
+
+    calculateVirtualScrollSelection(selection: Selection) {
+        if (selection) {
+            const isBlockCardCursor = AngularEditor.isBlockCardLeftCursor(this.editor) || AngularEditor.isBlockCardRightCursor(this.editor);
+            const indics = this.inViewportIndics;
+            if (indics.length > 0) {
+                const currentVisibleRange: Range = {
+                    anchor: Editor.start(this.editor, [indics[0]]),
+                    focus: Editor.end(this.editor, [indics[indics.length - 1]])
+                };
+                const [start, end] = Range.edges(selection);
+                let forwardSelection = { anchor: start, focus: end };
+                if (!isBlockCardCursor) {
+                    forwardSelection = { anchor: start, focus: end };
+                } else {
+                    forwardSelection = { anchor: { path: start.path, offset: 0 }, focus: { path: end.path, offset: 0 } };
+                }
+                const intersectedSelection = Range.intersection(forwardSelection, currentVisibleRange);
+                if (intersectedSelection && isBlockCardCursor) {
+                    return selection;
+                }
+                EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, intersectedSelection);
+                if (!intersectedSelection || !Range.equals(intersectedSelection, forwardSelection)) {
+                    if (isDebug) {
+                        debugLog(
+                            'log',
+                            `selection is not in visible range, selection: ${JSON.stringify(
+                                selection
+                            )}, currentVisibleRange: ${JSON.stringify(currentVisibleRange)}, intersectedSelection: ${JSON.stringify(intersectedSelection)}`
+                        );
+                    }
+                    return intersectedSelection;
+                }
+                return selection;
+            }
+        }
+        EDITOR_TO_VIRTUAL_SCROLL_SELECTION.set(this.editor, null);
+        return selection;
+    }
+
+    private isSelectionInvisible(selection: Selection) {
+        const anchorIndex = selection.anchor.path[0];
+        const focusIndex = selection.focus.path[0];
+        const anchorElement = this.editor.children[anchorIndex] as Element | undefined;
+        const focusElement = this.editor.children[focusIndex] as Element | undefined;
+        return !anchorElement || !focusElement || !this.editor.isVisible(anchorElement) || !this.editor.isVisible(focusElement);
+    }
+
+    toNativeSelection(autoScroll = true) {
+        try {
+            let { selection } = this.editor;
+
+            if (this.isEnabledVirtualScroll()) {
+                selection = this.calculateVirtualScrollSelection(selection);
+            }
+
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            const { activeElement } = root;
+            const domSelection = (root as Document).getSelection();
+
+            if ((this.isComposing && !IS_ANDROID) || !domSelection || !AngularEditor.isFocused(this.editor)) {
+                return;
+            }
+
+            const hasDomSelection = domSelection.type !== 'None';
+
+            // If the DOM selection is properly unset, we're done.
+            if (!selection && !hasDomSelection) {
+                return;
+            }
+
+            // If the DOM selection is already correct, we're done.
+            // verify that the dom selection is in the editor
+            const editorElement = EDITOR_TO_ELEMENT.get(this.editor)!;
+            let hasDomSelectionInEditor = false;
+            if (editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode)) {
+                hasDomSelectionInEditor = true;
+            }
+
+            // If the DOM selection is in the editor and the editor selection is already correct, we're done.
+            if (hasDomSelection && hasDomSelectionInEditor && selection && hasStringTarget(domSelection)) {
+                const rangeFromDOMSelection = AngularEditor.toSlateRange(this.editor, domSelection, {
+                    exactMatch: false,
+                    suppressThrow: true
+                });
+                if (rangeFromDOMSelection && Range.equals(rangeFromDOMSelection, selection)) {
+                    return;
+                }
+            }
+
+            // prevent updating native selection when active element is void element
+            if (isTargetInsideVoid(this.editor, activeElement)) {
+                return;
+            }
+
+            // when <Editable/> is being controlled through external value
+            // then its children might just change - DOM responds to it on its own
+            // but Slate's value is not being updated through any operation
+            // and thus it doesn't transform selection on its own
+            if (selection && !AngularEditor.hasRange(this.editor, selection)) {
+                this.editor.selection = AngularEditor.toSlateRange(this.editor, domSelection, { exactMatch: false, suppressThrow: false });
+                return;
+            }
+
+            // Otherwise the DOM selection is out of sync, so update it.
+            const el = AngularEditor.toDOMNode(this.editor, this.editor);
+            this.isUpdatingSelection = true;
+
+            const newDomRange = selection && AngularEditor.toDOMRange(this.editor, selection);
+
+            if (newDomRange) {
+                // COMPAT: Since the DOM range has no concept of backwards/forwards
+                // we need to check and do the right thing here.
+                if (Range.isBackward(selection)) {
+                    // eslint-disable-next-line max-len
+                    domSelection.setBaseAndExtent(
+                        newDomRange.endContainer,
+                        newDomRange.endOffset,
+                        newDomRange.startContainer,
+                        newDomRange.startOffset
+                    );
+                } else {
+                    // eslint-disable-next-line max-len
+                    domSelection.setBaseAndExtent(
+                        newDomRange.startContainer,
+                        newDomRange.startOffset,
+                        newDomRange.endContainer,
+                        newDomRange.endOffset
+                    );
+                }
+            } else {
+                domSelection.removeAllRanges();
+            }
+
+            setTimeout(() => {
+                if (
+                    this.isEnabledVirtualScroll() &&
+                    !selection &&
+                    this.editor.selection &&
+                    autoScroll &&
+                    this.virtualScrollConfig.scrollContainer
+                ) {
+                    this.virtualScrollConfig.scrollContainer.scrollTop = this.virtualScrollConfig.scrollContainer.scrollTop + 100;
+                    this.isUpdatingSelection = false;
+                    return;
+                } else {
+                    // handle scrolling in setTimeout because of
+                    // dom should not have updated immediately after listRender's updating
+                    newDomRange && autoScroll && this.scrollSelectionIntoView(this.editor, newDomRange);
+                    // COMPAT: In Firefox, it's not enough to create a range, you also need
+                    // to focus the contenteditable element too. (2016/11/16)
+                    if (newDomRange && IS_FIREFOX) {
+                        el.focus();
+                    }
+                }
+                this.isUpdatingSelection = false;
+            });
+        } catch (error) {
+            this.editor.onError({
+                code: SlateErrorCode.ToNativeSelectionError,
+                nativeError: error
+            });
+            this.isUpdatingSelection = false;
+        }
+    }
+
+    onChange() {
+        this.forceRender();
+        this.onChangeCallback(this.editor.children);
+    }
+
+    ngAfterViewChecked() {}
+
+    ngDoCheck() {}
+
+    forceRender() {
+        this.updateContext();
+        if (this.isEnabledVirtualScroll()) {
+            this.updateListRenderAndRemeasureHeights();
+        } else {
+            this.listRender.update(this.editor.children, this.editor, this.context);
+        }
+        // repair collaborative editing when Chinese input is interrupted by other users' cursors
+        // when the DOMElement where the selection is located is removed
+        // the compositionupdate and compositionend events will no longer be fired
+        // so isComposing needs to be corrected
+        // need exec after this.cdr.detectChanges() to render HTML
+        // need exec before this.toNativeSelection() to correct native selection
+        if (this.isComposing) {
+            // Composition input text be not rendered when user composition input with selection is expanded
+            // At this time, the following matching conditions are met, assign isComposing to false, and the status is wrong
+            // this time condition is true and isComposing is assigned false
+            // Therefore, need to wait for the composition input text to be rendered before performing condition matching
+            setTimeout(() => {
+                const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
+                const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
+                let textContent = '';
+                // skip decorate text
+                textDOMNode.querySelectorAll('[editable-text]').forEach(stringDOMNode => {
+                    let text = stringDOMNode.textContent;
+                    const zeroChar = '\uFEFF';
+                    // remove zero with char
+                    if (text.startsWith(zeroChar)) {
+                        text = text.slice(1);
+                    }
+                    if (text.endsWith(zeroChar)) {
+                        text = text.slice(0, text.length - 1);
+                    }
+                    textContent += text;
+                });
+                if (Node.string(textNode).endsWith(textContent)) {
+                    this.isComposing = false;
+                }
+            }, 0);
+        }
+        if (this.editor.selection && this.isSelectionInvisible(this.editor.selection)) {
+            Transforms.deselect(this.editor);
+            return;
+        } else {
+            this.toNativeSelection();
+        }
+    }
+
+    render() {
+        const changed = this.updateContext();
+        if (changed) {
+            if (this.isEnabledVirtualScroll()) {
+                this.updateListRenderAndRemeasureHeights();
+            } else {
+                this.listRender.update(this.editor.children, this.editor, this.context);
+            }
+        }
+    }
+
+    updateListRenderAndRemeasureHeights() {
+        const visibleStates = this.editor.getAllVisibleStates();
+        const previousInViewportChildren = [...this.inViewportChildren];
+        let virtualView = this.calculateVirtualViewport(visibleStates);
+        let diff = this.diffVirtualViewport(virtualView, 'onChange');
+        if (diff.isDifferent && diff.needRemoveOnTop) {
+            const remeasureIndics = diff.changedIndexesOfTop;
+            const changed = measureHeightByIndics(this.editor, remeasureIndics);
+            if (changed) {
+                virtualView = this.calculateVirtualViewport(visibleStates);
+                diff = this.diffVirtualViewport(virtualView, 'second');
+            }
+        }
+        this.applyVirtualView(virtualView);
+        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
+        this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
+        const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
+        if (remeasureIndics.length) {
+            this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+        }
+    }
+
+    updateContext() {
+        const decorations = this.generateDecorations();
+        if (
+            this.context.selection !== this.editor.selection ||
+            this.context.decorate !== this.decorate ||
+            this.context.readonly !== this.readonly ||
+            !isDecoratorRangeListEqual(this.context.decorations, decorations)
+        ) {
+            this.context = {
+                parent: this.editor,
+                selection: this.editor.selection,
+                decorations: decorations,
+                decorate: this.decorate,
+                readonly: this.readonly
+            };
+            return true;
+        }
+        return false;
+    }
+
+    initializeContext() {
+        this.context = {
+            parent: this.editor,
+            selection: this.editor.selection,
+            decorations: this.generateDecorations(),
+            decorate: this.decorate,
+            readonly: this.readonly
+        };
+    }
+
+    initializeViewContext() {
+        this.viewContext = {
+            editor: this.editor,
+            renderElement: this.renderElement,
+            renderLeaf: this.renderLeaf,
+            renderText: this.renderText,
+            trackBy: this.trackBy,
+            isStrictDecorate: this.isStrictDecorate
+        };
+    }
+
+    composePlaceholderDecorate(editor: Editor) {
+        if (this.placeholderDecorate) {
+            return this.placeholderDecorate(editor) || [];
+        }
+
+        if (this.placeholder && editor.children.length === 1 && Array.from(Node.texts(editor)).length === 1 && Node.string(editor) === '') {
+            const start = Editor.start(editor, []);
+            return [
+                {
+                    placeholder: this.placeholder,
+                    anchor: start,
+                    focus: start
+                }
+            ];
+        } else {
+            return [];
+        }
+    }
+
+    generateDecorations() {
+        const decorations = this.decorate([this.editor, []]);
+        const placeholderDecorations = this.isComposing ? [] : this.composePlaceholderDecorate(this.editor);
+        decorations.push(...placeholderDecorations);
+        return decorations;
     }
 
     private toSlateSelection() {
