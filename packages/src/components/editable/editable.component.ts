@@ -1044,19 +1044,55 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     updateListRenderAndRemeasureHeights() {
+        const operations = this.editor.operations;
+        const firstIndex = this.inViewportIndics[0];
+        const operationsOfFirstElementMerged = operations.filter(
+            op => op.type === 'merge_node' && op.path.length === 1 && firstIndex === op.path[0] - 1
+        );
+        const operationsOfFirstElementSplitted = operations.filter(
+            op => op.type === 'split_node' && op.path.length === 1 && firstIndex === op.path[0]
+        );
+        const mutationOfFirstElementHeight = operationsOfFirstElementSplitted.length > 0 || operationsOfFirstElementMerged.length > 0;
         const visibleStates = this.editor.getAllVisibleStates();
         const previousInViewportChildren = [...this.inViewportChildren];
-        let virtualView = this.calculateVirtualViewport(visibleStates);
-        let diff = this.diffVirtualViewport(virtualView, 'onChange');
-        if (diff.isDifferent && diff.needRemoveOnTop) {
-            const remeasureIndics = diff.changedIndexesOfTop;
-            const changed = measureHeightByIndics(this.editor, remeasureIndics);
-            if (changed) {
-                virtualView = this.calculateVirtualViewport(visibleStates);
-                diff = this.diffVirtualViewport(virtualView, 'second');
+        // the first element height will reset to default height when split or merge
+        // if the most top content of the first element is not in viewport, the change of height will cause the viewport to scroll
+        // to keep viewport stable, we need to use the current inViewportIndics temporarily
+        if (mutationOfFirstElementHeight) {
+            const newInViewportIndics = [];
+            const newInViewportChildren = [];
+            this.inViewportIndics.forEach(index => {
+                const element = this.editor.children[index] as Element;
+                const isVisible = visibleStates[index];
+                if (isVisible) {
+                    newInViewportIndics.push(index);
+                    newInViewportChildren.push(element);
+                }
+            });
+            this.inViewportIndics = newInViewportIndics;
+            this.inViewportChildren = newInViewportChildren;
+            if (isDebug) {
+                debugLog(
+                    'log',
+                    'updateListRenderAndRemeasureHeights',
+                    'mutationOfFirstElementHeight',
+                    'newInViewportIndics',
+                    newInViewportIndics
+                );
             }
+        } else {
+            let virtualView = this.calculateVirtualViewport(visibleStates);
+            let diff = this.diffVirtualViewport(virtualView, 'onChange');
+            if (diff.isDifferent && diff.needRemoveOnTop) {
+                const remeasureIndics = diff.changedIndexesOfTop;
+                const changed = measureHeightByIndics(this.editor, remeasureIndics);
+                if (changed) {
+                    virtualView = this.calculateVirtualViewport(visibleStates);
+                    diff = this.diffVirtualViewport(virtualView, 'second');
+                }
+            }
+            this.applyVirtualView(virtualView);
         }
-        this.applyVirtualView(virtualView);
         const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
