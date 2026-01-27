@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.16
+
+### Patch Changes
+
+- [`13e9e7f0862fe678e41976c00f2dd480b455c054`](https://github.com/worktile/slate-angular/commit/13e9e7f0862fe678e41976c00f2dd480b455c054) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - need to add a element when split a element in the viewport
+
 ## 20.2.15
 
 ### Patch Changes
