@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.15
+
+### Patch Changes
+
+- [`705a32e6be26cfe782ff8605615ff1c83104a29d`](https://github.com/worktile/slate-angular/commit/705a32e6be26cfe782ff8605615ff1c83104a29d) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - isFocus is always true when editor is readonly mode
+
+- [`691000ffebaf228e6b71723b314d16d439038219`](https://github.com/worktile/slate-angular/commit/691000ffebaf228e6b71723b314d16d439038219) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - optimize updateListRenderAndRemeasureHeights to avoid bouncing when first element height changed
+
+- [`36bea40994688d30a85f1429706216216d359c49`](https://github.com/worktile/slate-angular/commit/36bea40994688d30a85f1429706216216d359c49) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - refactor editable codes position
+
 ## 20.2.14
 
 ### Patch Changes
