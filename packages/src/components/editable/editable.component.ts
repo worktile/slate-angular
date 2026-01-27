@@ -1069,6 +1069,18 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     newInViewportChildren.push(element);
                 }
             });
+            if (operationsOfFirstElementSplitted.length > 0) {
+                const lastIndex = newInViewportIndics[newInViewportIndics.length - 1];
+                for (let i = lastIndex + 1; i < this.editor.children.length; i++) {
+                    const element = this.editor.children[i] as Element;
+                    const isVisible = visibleStates[i];
+                    if (isVisible) {
+                        newInViewportIndics.push(i);
+                        newInViewportChildren.push(element);
+                        break;
+                    }
+                }
+            }
             this.inViewportIndics = newInViewportIndics;
             this.inViewportChildren = newInViewportChildren;
             if (isDebug) {
