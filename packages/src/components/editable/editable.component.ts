@@ -888,6 +888,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 hasDomSelectionInEditor = true;
             }
 
+            if (!hasDomSelectionInEditor && !AngularEditor.isFocused(this.editor)) {
+                return;
+            }
+
             // If the DOM selection is in the editor and the editor selection is already correct, we're done.
             if (hasDomSelection && hasDomSelectionInEditor && selection && hasStringTarget(domSelection)) {
                 const rangeFromDOMSelection = AngularEditor.toSlateRange(this.editor, domSelection, {
