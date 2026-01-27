@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.17
+
+### Patch Changes
+
+- [`59ad381b15362de880d057549e9bcc374235e92c`](https://github.com/worktile/slate-angular/commit/59ad381b15362de880d057549e9bcc374235e92c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should prevent execution toNativeSelection when window.getSelection() is not in editor
+
 ## 20.2.16
 
 ### Patch Changes
