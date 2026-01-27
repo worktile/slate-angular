@@ -869,7 +869,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const { activeElement } = root;
             const domSelection = (root as Document).getSelection();
 
-            if ((this.isComposing && !IS_ANDROID) || !domSelection || !AngularEditor.isFocused(this.editor)) {
+            if ((this.isComposing && !IS_ANDROID) || !domSelection) {
                 return;
             }
 
