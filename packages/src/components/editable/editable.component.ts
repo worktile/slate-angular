@@ -58,7 +58,8 @@ import {
     isDebug,
     isDebugScrollTop,
     isDecoratorRangeListEqual,
-    measureHeightByIndics
+    measureHeightByIndics,
+    roundTo
 } from '../../utils';
 import { SlatePlaceholder } from '../../types/feature';
 import { restoreDom } from '../../utils/restore-dom';
@@ -452,9 +453,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.virtualScrollInitialized) {
             return;
         }
-        this.virtualTopHeightElement.style.height = `${topHeight}px`;
+        this.virtualTopHeightElement.style.height = `${roundTo(topHeight, 1)}px`;
         if (bottomHeight !== undefined) {
-            this.virtualBottomHeightElement.style.height = `${bottomHeight}px`;
+            this.virtualBottomHeightElement.style.height = `${roundTo(bottomHeight, 1)}px`;
         }
     }
 

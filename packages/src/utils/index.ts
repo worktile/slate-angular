@@ -9,3 +9,4 @@ export * from './throttle';
 export * from './clipboard';
 export * from './dom';
 export * from './virtual-scroll';
+export * from './number';
