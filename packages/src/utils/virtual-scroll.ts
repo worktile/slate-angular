@@ -6,6 +6,7 @@ import { BaseElementComponent } from '../view/base';
 import { BaseElementFlavour } from '../view/flavour/element';
 import { VirtualScrollDebugOverlay } from '../components/editable/debug';
 import { getBlockCardByNativeElement } from '../components/block-card/block-card';
+import { roundTo } from './number';
 
 export const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
 export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
@@ -144,7 +145,8 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor, visible
 
 export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number, visibleStates: boolean[]) => {
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor, visibleStates);
-    return accumulatedHeights[startIndex] ?? 0;
+    const virtualTopHeight = roundTo(accumulatedHeights[startIndex] ?? 0, 1);
+    return virtualTopHeight;
 };
 
 export const scrollToElement = (editor: AngularEditor, element: Element, scrollTo: (scrollTop: number) => void) => {
