@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.19
+
+### Patch Changes
+
+- [`1d1670ad11714f60c61db14987f5a11fa2aed147`](https://github.com/worktile/slate-angular/commit/1d1670ad11714f60c61db14987f5a11fa2aed147) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - cache virtual scroll config to weak-map and support calc business top by pure method
+
+  support calc business top in scrollToElement
+
 ## 20.2.18
 
 ### Patch Changes
