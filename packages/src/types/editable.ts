@@ -4,8 +4,6 @@ export interface SlateVirtualScrollConfig {
     enabled?: boolean;
     scrollContainer?: HTMLElement;
     scrollTop: number;
-    viewportHeight: number;
-    viewportBoundingTop: number;
 }
 
 export interface VirtualViewResult {

@@ -15,6 +15,8 @@ export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, num
 
 export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
 
+export const EDITOR_TO_VIEWPORT_HEIGHT = new WeakMap<AngularEditor, number>();
+
 export const EDITOR_TO_ROOT_NODE_WIDTH = new WeakMap<AngularEditor, number>();
 
 export const EDITOR_TO_IS_FROM_SCROLL_TO = new WeakMap<AngularEditor, boolean>();
@@ -107,6 +109,10 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
 
 export const getBusinessTop = (editor: AngularEditor) => {
     return EDITOR_TO_BUSINESS_TOP.get(editor) ?? 0;
+};
+
+export const getViewportHeight = (editor: AngularEditor) => {
+    return EDITOR_TO_VIEWPORT_HEIGHT.get(editor) ?? window.innerHeight;
 };
 
 export const getCachedHeightByElement = (editor: AngularEditor, element: Element) => {

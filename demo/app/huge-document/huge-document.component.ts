@@ -48,22 +48,22 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.syncvirtualScrollConfig();
+        this.syncVirtualScrollConfig();
     }
 
     switchScrollMode(mode: 'default' | 'component' | 'virtual') {
         this.mode = mode;
-        this.syncvirtualScrollConfig();
+        this.syncVirtualScrollConfig();
     }
 
     @HostListener('window:scroll')
     onWindowScroll() {
-        this.syncvirtualScrollConfig();
+        this.syncVirtualScrollConfig();
     }
 
     @HostListener('window:resize')
     onWindowResize() {
-        this.syncvirtualScrollConfig();
+        this.syncVirtualScrollConfig();
     }
 
     renderElement() {
@@ -77,7 +77,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
 
     valueChange(event) {}
 
-    private syncvirtualScrollConfig() {
+    private syncVirtualScrollConfig() {
         if (this.mode !== 'virtual') {
             return;
         }

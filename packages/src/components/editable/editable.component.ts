@@ -72,7 +72,9 @@ import {
     debugLog,
     EDITOR_TO_IS_FROM_SCROLL_TO,
     EDITOR_TO_ROOT_NODE_WIDTH,
-    getCachedHeightByElement
+    EDITOR_TO_VIEWPORT_HEIGHT,
+    getCachedHeightByElement,
+    getViewportHeight
 } from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
@@ -203,8 +205,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private virtualScrollConfig: SlateVirtualScrollConfig = {
         enabled: false,
         scrollTop: 0,
-        viewportHeight: 0,
-        viewportBoundingTop: 0,
         scrollContainer: null
     };
 
@@ -213,6 +213,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private keyHeightMap = new Map<string, number>();
     private tryUpdateVirtualViewportAnimId: number;
     private editorResizeObserver?: ResizeObserver;
+    private editorScrollContainerResizeObserver?: ResizeObserver;
 
     indicsOfNeedBeMeasured$ = new Subject<number[]>();
 
@@ -252,7 +253,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         });
         this.initializeViewContext();
         this.initializeContext();
-
         // add browser class
         let browserClass = IS_FIREFOX ? 'firefox' : IS_SAFARI ? 'safari' : '';
         browserClass && this.elementRef.nativeElement.classList.add(browserClass);
@@ -407,6 +407,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
             });
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
+            if (this.virtualScrollConfig.scrollContainer) {
+                this.editorScrollContainerResizeObserver = new ResizeObserver(entries => {
+                    const height = this.virtualScrollConfig.scrollContainer.getBoundingClientRect().height;
+                    EDITOR_TO_VIEWPORT_HEIGHT.set(this.editor, height);
+                    if (isDebug) {
+                        debugLog('log', 'editorScrollContainerResizeObserver calc viewport height: ', height);
+                        this.virtualTopHeightElement.setAttribute('viewport-height', height.toString());
+                    }
+                });
+                this.editorScrollContainerResizeObserver.observe(this.virtualScrollConfig.scrollContainer);
+            }
 
             let pendingRemeasureIndics: number[] = [];
             this.indicsOfNeedBeMeasured$
@@ -437,6 +448,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     pendingRemeasureIndics = [];
                 });
         }
+    }
+
+    calcBusinessTop() {
+        const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
+        const viewportBoundingTop = this.virtualScrollConfig.scrollContainer?.getBoundingClientRect()?.top ?? 0;
+        const businessTop =
+            Math.ceil(virtualTopBoundingTop) + Math.ceil(this.virtualScrollConfig.scrollTop) - Math.floor(viewportBoundingTop);
+        EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
+        if (isDebug) {
+            debugLog('log', 'calcBusinessTop: ', businessTop);
+            this.virtualTopHeightElement.setAttribute('data-business-top', businessTop.toString());
+        }
+        return businessTop;
     }
 
     getChangedIndics(previousValue: Descendant[]) {
@@ -583,33 +607,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             };
         }
         const scrollTop = this.virtualScrollConfig.scrollTop;
-        let viewportHeight = this.virtualScrollConfig.viewportHeight ?? 0;
-        if (!viewportHeight) {
-            return {
-                inViewportChildren: [],
-                inViewportIndics: [],
-                top: 0,
-                bottom: 0,
-                heights: []
-            };
-        }
+        let viewportHeight = getViewportHeight(this.editor);
         const elementLength = children.length;
-        if (!EDITOR_TO_BUSINESS_TOP.has(this.editor)) {
-            EDITOR_TO_BUSINESS_TOP.set(this.editor, 0);
-            setTimeout(() => {
-                const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
-                const businessTop =
-                    Math.ceil(virtualTopBoundingTop) +
-                    Math.ceil(this.virtualScrollConfig.scrollTop) -
-                    Math.floor(this.virtualScrollConfig.viewportBoundingTop);
-                EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
-                if (isDebug) {
-                    debugLog('log', 'businessTop', businessTop);
-                    this.virtualTopHeightElement.setAttribute('data-business-top', businessTop.toString());
-                }
-            }, 100);
+        let businessTop = getBusinessTop(this.editor);
+        if (businessTop === 0 && this.virtualScrollConfig.scrollTop > 0) {
+            businessTop = this.calcBusinessTop();
         }
-        const businessTop = getBusinessTop(this.editor);
         const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
         const totalHeight = accumulatedHeights[elementLength] + businessTop;
         let startPosition = Math.max(scrollTop - businessTop, 0);
@@ -1993,6 +1996,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     ngOnDestroy() {
         this.editorResizeObserver?.disconnect();
+        this.editorScrollContainerResizeObserver?.disconnect();
         NODE_TO_ELEMENT.delete(this.editor);
         this.manualListeners.forEach(manualListener => {
             manualListener();
