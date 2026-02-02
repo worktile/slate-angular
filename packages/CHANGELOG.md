@@ -1,5 +1,17 @@
 # Changelog
 
+## 20.2.18
+
+### Patch Changes
+
+- [`cb97aeb0aa3ddb03b507ffefcaf5f1f60f80b1d9`](https://github.com/worktile/slate-angular/commit/cb97aeb0aa3ddb03b507ffefcaf5f1f60f80b1d9) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add check condition before needAddOnTop scenario and element height changed
+
+  if editor is readonly mode and selection is null or selection is collapsed, then not need handle operate dom selection
+
+- [#333](https://github.com/worktile/slate-angular/pull/333) [`13d2ac96788155e4954da754f1aa1ee6f97c9a86`](https://github.com/worktile/slate-angular/commit/13d2ac96788155e4954da754f1aa1ee6f97c9a86) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support precision on calculate virtual top height, set height attribute, compare virtual top height
+
+- [`355e0bbcaa5736a757fcc2d97bfd45bbadb7601b`](https://github.com/worktile/slate-angular/commit/355e0bbcaa5736a757fcc2d97bfd45bbadb7601b) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - 1. optimize businessTop calc logic 2. calc viewport height in scrollContainer resize observer to resolve viewport height is zero in safari #WIK-19888
+
 ## 20.2.17
 
 ### Patch Changes
