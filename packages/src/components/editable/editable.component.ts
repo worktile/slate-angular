@@ -549,12 +549,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             const newHeights = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
                             const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
                             const newTopHeight = virtualView.top - (actualTopHeightAfterAdd - topHeightBeforeAdd);
-                            this.setVirtualSpaceHeight(newTopHeight);
-                            if (isDebug) {
-                                debugLog(
-                                    'log',
-                                    `update top height since will add element in top，减去高度: ${topHeightBeforeAdd - actualTopHeightAfterAdd}`
-                                );
+                            if (topHeightBeforeAdd !== actualTopHeightAfterAdd) {
+                                this.setVirtualSpaceHeight(newTopHeight);
+                                if (isDebug) {
+                                    debugLog(
+                                        'log',
+                                        `update top height since will add element in top，减去高度: ${topHeightBeforeAdd - actualTopHeightAfterAdd}`
+                                    );
+                                }
                             }
                         }
                     }
@@ -886,6 +888,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             if (!hasDomSelectionInEditor && !AngularEditor.isFocused(this.editor)) {
+                return;
+            }
+
+            if (AngularEditor.isReadOnly(this.editor) && (!selection || Range.isCollapsed(selection))) {
                 return;
             }
 
