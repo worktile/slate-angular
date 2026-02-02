@@ -50,11 +50,9 @@ import { ViewType } from '../../types/view';
 import { HistoryEditor } from 'slate-history';
 import {
     buildHeightsAndAccumulatedHeights,
-    EDITOR_TO_BUSINESS_TOP,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
     ELEMENT_KEY_TO_HEIGHTS,
     getBusinessTop,
-    IS_ENABLED_VIRTUAL_SCROLL,
     isDebug,
     isDebugScrollTop,
     isDecoratorRangeListEqual,
@@ -68,13 +66,18 @@ import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
 import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
 import {
+    calcBusinessTop,
     calculateVirtualTopHeight,
     debugLog,
     EDITOR_TO_IS_FROM_SCROLL_TO,
     EDITOR_TO_ROOT_NODE_WIDTH,
     EDITOR_TO_VIEWPORT_HEIGHT,
+    EDITOR_TO_VIRTUAL_SCROLL_CONFIG,
     getCachedHeightByElement,
-    getViewportHeight
+    getViewportHeight,
+    VIRTUAL_BOTTOM_HEIGHT_CLASS_NAME,
+    VIRTUAL_CENTER_OUTLET_CLASS_NAME,
+    VIRTUAL_TOP_HEIGHT_CLASS_NAME
 } from '../../utils/virtual-scroll';
 
 // not correctly clipboardData on beforeinput
@@ -145,10 +148,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
         this.virtualScrollConfig = config;
+        EDITOR_TO_VIRTUAL_SCROLL_CONFIG.set(this.editor, config);
         if (isDebugScrollTop) {
             debugLog('log', 'virtualScrollConfig scrollTop:', config.scrollTop);
         }
-        IS_ENABLED_VIRTUAL_SCROLL.set(this.editor, config.enabled);
         if (this.isEnabledVirtualScroll()) {
             this.tryUpdateVirtualViewport();
         }
@@ -371,13 +374,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (this.isEnabledVirtualScroll()) {
             this.virtualScrollInitialized = true;
             this.virtualTopHeightElement = document.createElement('div');
-            this.virtualTopHeightElement.classList.add('virtual-top-height');
+            this.virtualTopHeightElement.classList.add(VIRTUAL_TOP_HEIGHT_CLASS_NAME);
             this.virtualTopHeightElement.contentEditable = 'false';
             this.virtualBottomHeightElement = document.createElement('div');
-            this.virtualBottomHeightElement.classList.add('virtual-bottom-height');
+            this.virtualBottomHeightElement.classList.add(VIRTUAL_BOTTOM_HEIGHT_CLASS_NAME);
             this.virtualBottomHeightElement.contentEditable = 'false';
             this.virtualCenterOutlet = document.createElement('div');
-            this.virtualCenterOutlet.classList.add('virtual-center-outlet');
+            this.virtualCenterOutlet.classList.add(VIRTUAL_CENTER_OUTLET_CLASS_NAME);
             this.elementRef.nativeElement.appendChild(this.virtualTopHeightElement);
             this.elementRef.nativeElement.appendChild(this.virtualCenterOutlet);
             this.elementRef.nativeElement.appendChild(this.virtualBottomHeightElement);
@@ -448,19 +451,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     pendingRemeasureIndics = [];
                 });
         }
-    }
-
-    calcBusinessTop() {
-        const virtualTopBoundingTop = this.virtualTopHeightElement.getBoundingClientRect()?.top ?? 0;
-        const viewportBoundingTop = this.virtualScrollConfig.scrollContainer?.getBoundingClientRect()?.top ?? 0;
-        const businessTop =
-            Math.ceil(virtualTopBoundingTop) + Math.ceil(this.virtualScrollConfig.scrollTop) - Math.floor(viewportBoundingTop);
-        EDITOR_TO_BUSINESS_TOP.set(this.editor, businessTop);
-        if (isDebug) {
-            debugLog('log', 'calcBusinessTop: ', businessTop);
-            this.virtualTopHeightElement.setAttribute('data-business-top', businessTop.toString());
-        }
-        return businessTop;
     }
 
     getChangedIndics(previousValue: Descendant[]) {
@@ -611,7 +601,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const elementLength = children.length;
         let businessTop = getBusinessTop(this.editor);
         if (businessTop === 0 && this.virtualScrollConfig.scrollTop > 0) {
-            businessTop = this.calcBusinessTop();
+            businessTop = calcBusinessTop(this.editor);
         }
         const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
         const totalHeight = accumulatedHeights[elementLength] + businessTop;

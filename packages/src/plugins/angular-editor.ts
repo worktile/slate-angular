@@ -5,7 +5,7 @@ import { FAKE_LEFT_BLOCK_CARD_OFFSET, FAKE_RIGHT_BLOCK_CARD_OFFSET } from '../ut
 import { CustomDOMEditor } from './with-dom';
 import { DOMEditor, EDITOR_TO_ELEMENT, IS_FOCUSED } from 'slate-dom';
 import { ClipboardData } from '../types/clipboard';
-import { IS_ENABLED_VIRTUAL_SCROLL } from '../utils/weak-maps';
+import { EDITOR_TO_VIRTUAL_SCROLL_CONFIG } from '../utils/virtual-scroll';
 
 /**
  * An Angular and DOM-specific version of the `Editor` interface.
@@ -120,6 +120,7 @@ export const AngularEditor = {
         }
     },
     isEnabledVirtualScroll(editor: AngularEditor): boolean {
-        return IS_ENABLED_VIRTUAL_SCROLL.get(editor);
+        const config = EDITOR_TO_VIRTUAL_SCROLL_CONFIG.get(editor);
+        return config?.enabled || false;
     }
 };

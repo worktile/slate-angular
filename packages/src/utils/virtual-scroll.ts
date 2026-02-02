@@ -7,6 +7,13 @@ import { BaseElementFlavour } from '../view/flavour/element';
 import { VirtualScrollDebugOverlay } from '../components/editable/debug';
 import { getBlockCardByNativeElement } from '../components/block-card/block-card';
 import { roundTo } from './number';
+import { SlateVirtualScrollConfig } from '../types/editable';
+
+export const VIRTUAL_TOP_HEIGHT_CLASS_NAME = 'virtual-top-height';
+
+export const VIRTUAL_BOTTOM_HEIGHT_CLASS_NAME = 'virtual-bottom-height';
+
+export const VIRTUAL_CENTER_OUTLET_CLASS_NAME = 'virtual-center-outlet';
 
 export const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
 export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
@@ -14,6 +21,8 @@ export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP)
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 
 export const EDITOR_TO_BUSINESS_TOP = new WeakMap<AngularEditor, number>();
+
+export const EDITOR_TO_VIRTUAL_SCROLL_CONFIG = new WeakMap<AngularEditor, SlateVirtualScrollConfig>();
 
 export const EDITOR_TO_VIEWPORT_HEIGHT = new WeakMap<AngularEditor, number>();
 
@@ -115,6 +124,11 @@ export const getViewportHeight = (editor: AngularEditor) => {
     return EDITOR_TO_VIEWPORT_HEIGHT.get(editor) ?? window.innerHeight;
 };
 
+export const getScrollContainer = (editor: AngularEditor) => {
+    const config = EDITOR_TO_VIRTUAL_SCROLL_CONFIG.get(editor);
+    return config?.scrollContainer || document.body;
+};
+
 export const getCachedHeightByElement = (editor: AngularEditor, element: Element) => {
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
     const key = AngularEditor.findKey(editor, element);
@@ -155,6 +169,30 @@ export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: num
     return virtualTopHeight;
 };
 
+export const calcBusinessTop = (editor: AngularEditor) => {
+    const editable = AngularEditor.toDOMNode(editor, editor);
+    const virtualTopElement = editable.querySelector(`.${VIRTUAL_TOP_HEIGHT_CLASS_NAME}`) as HTMLElement;
+    const virtualTopBoundingTop = virtualTopElement?.getBoundingClientRect()?.top ?? 0;
+    const virtualScrollConfig = EDITOR_TO_VIRTUAL_SCROLL_CONFIG.get(editor);
+    const scrollContainer = virtualScrollConfig?.scrollContainer;
+    const viewportBoundingTop = scrollContainer?.getBoundingClientRect()?.top ?? 0;
+    const businessTop = Math.ceil(virtualTopBoundingTop) + Math.ceil(virtualScrollConfig.scrollTop) - Math.floor(viewportBoundingTop);
+    EDITOR_TO_BUSINESS_TOP.set(editor, businessTop);
+    if (isDebug) {
+        debugLog('log', 'calcBusinessTop: ', businessTop);
+        virtualTopElement.setAttribute('data-business-top', businessTop.toString());
+    }
+    console.log(
+        'virtualTopBoundingTop: ',
+        virtualTopBoundingTop,
+        'virtualScrollConfig.scrollTop: ',
+        virtualScrollConfig.scrollTop,
+        'viewportBoundingTop: ',
+        viewportBoundingTop
+    );
+    return businessTop;
+};
+
 export const scrollToElement = (editor: AngularEditor, element: Element, scrollTo: (scrollTop: number) => void) => {
     const children = editor.children;
     if (!children.length) {
@@ -166,7 +204,11 @@ export const scrollToElement = (editor: AngularEditor, element: Element, scrollT
     }
     const visibleStates = editor.getAllVisibleStates();
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor, visibleStates);
-    scrollTo((accumulatedHeights[anchorIndex] ?? 0) + getBusinessTop(editor));
+    let businessTop = getBusinessTop(editor);
+    if (businessTop === 0) {
+        businessTop = calcBusinessTop(editor);
+    }
+    scrollTo((accumulatedHeights[anchorIndex] ?? 0) + businessTop);
     EDITOR_TO_IS_FROM_SCROLL_TO.set(editor, true);
     setTimeout(() => {
         console.log('scrollToElement: end scroll');
