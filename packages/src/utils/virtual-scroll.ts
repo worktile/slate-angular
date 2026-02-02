@@ -99,7 +99,7 @@ export const measureHeightByIndics = (editor: AngularEditor, indics: number[], f
             hasChanged = true;
         }
         if (isDebug && isValidNumber(currentHeight)) {
-            debugLog('log', 'measureHeightByIndics: height not equal, index: ', index, 'preHeight: ', preHeight, 'height: ', currentHeight);
+            debugLog('log', 'measureHeightByIndics: index: ', index, 'preHeight: ', preHeight, 'height: ', currentHeight);
         }
     });
     return hasChanged;

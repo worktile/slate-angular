@@ -503,11 +503,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
             if (topHeight !== refreshVirtualTopHeight) {
                 if (isDebug) {
-                    debugLog(
-                        'log',
-                        'update top height since dirty state（正数减去高度，负数代表增加高度）: ',
-                        topHeight - refreshVirtualTopHeight
-                    );
+                    debugLog('log', 'update top height since dirty state，增加高度: ', refreshVirtualTopHeight - topHeight);
                 }
                 this.setVirtualSpaceHeight(refreshVirtualTopHeight);
                 return;
@@ -557,7 +553,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             if (isDebug) {
                                 debugLog(
                                     'log',
-                                    `update top height since will add element in top（正数减去高度，负数代表增加高度）: ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
+                                    `update top height since will add element in top，减去高度: ${topHeightBeforeAdd - actualTopHeightAfterAdd}`
                                 );
                             }
                         }
