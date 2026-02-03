@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, TemplateRef, Renderer2, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { Editor, Transforms, createEditor, Element, Range } from 'slate';
-import { withHistory } from 'slate-history';
-import { AngularEditor, withAngular } from 'slate-angular';
-import { MentionElement } from 'custom-types';
 import { NgClass } from '@angular/common';
+import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MentionElement } from 'custom-types';
+import { createEditor, Editor, Element, Range, Transforms } from 'slate';
+import { AngularEditor, withAngular } from 'slate-angular';
+import { withHistory } from 'slate-history';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { MentionFlavour } from './mention.flavour';
 
@@ -27,10 +27,8 @@ export class DemoMentionsComponent implements OnInit {
     @ViewChild('suggestionList', { static: true })
     suggestionList: ElementRef;
 
-    constructor(
-        private renderer2: Renderer2,
-        private cdr: ChangeDetectorRef
-    ) {}
+    public renderer2 = inject(Renderer2);
+    public cdr = inject(ChangeDetectorRef);
 
     ngOnInit() {}
 
