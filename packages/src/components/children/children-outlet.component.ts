@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject } from '@angular/core';
 
 @Component({
     selector: 'slate-children-outlet',
@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
     standalone: true
 })
 export class SlateChildrenOutlet {
-    constructor(private elementRef: ElementRef<HTMLElement>) {}
+    public elementRef = inject(ElementRef<HTMLElement>);
     getNativeElement() {
         return this.elementRef.nativeElement;
     }

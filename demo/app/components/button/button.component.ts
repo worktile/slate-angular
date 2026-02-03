@@ -1,15 +1,4 @@
-import {
-    Component,
-    Directive,
-    ElementRef,
-    EventEmitter,
-    HostBinding,
-    HostListener,
-    Input,
-    OnChanges,
-    Output,
-    Renderer2
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, inject, Input, OnChanges, Output, Renderer2 } from '@angular/core';
 
 @Component({
     selector: 'demo-button',
@@ -24,10 +13,8 @@ export class DemoButtonComponent implements OnChanges {
 
     @Output() onMouseDown: EventEmitter<MouseEvent> = new EventEmitter();
 
-    constructor(
-        private elementRef: ElementRef,
-        private renderer2: Renderer2
-    ) {}
+    public elementRef = inject(ElementRef);
+    public renderer2 = inject(Renderer2);
 
     @HostListener('mousedown', ['$event'])
     mousedown(event: MouseEvent) {

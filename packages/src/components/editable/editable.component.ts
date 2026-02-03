@@ -1,53 +1,55 @@
 import {
-    Component,
-    OnInit,
-    Input,
-    HostBinding,
-    Renderer2,
-    ElementRef,
-    ChangeDetectionStrategy,
-    OnDestroy,
-    ChangeDetectorRef,
-    NgZone,
-    Injector,
-    forwardRef,
-    OnChanges,
-    SimpleChanges,
     AfterViewChecked,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
     DoCheck,
+    ElementRef,
+    forwardRef,
+    HostBinding,
     inject,
+    Injector,
+    Input,
+    NgZone,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Renderer2,
+    SimpleChanges,
     ViewContainerRef
 } from '@angular/core';
-import { Text as SlateText, Element, Transforms, Editor, Range, Path, NodeEntry, Node, Selection, Descendant } from 'slate';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { direction } from 'direction';
+import { isKeyHotkey } from 'is-hotkey';
+import { debounceTime, filter, Subject, tap } from 'rxjs';
 import scrollIntoView from 'scroll-into-view-if-needed';
-import { AngularEditor } from '../../plugins/angular-editor';
+import { Descendant, Editor, Element, Node, NodeEntry, Path, Range, Selection, Text as SlateText, Transforms } from 'slate';
 import {
     DOMElement,
-    isDOMNode,
-    DOMStaticRange,
     DOMRange,
-    isDOMElement,
-    isPlainTextOnlyPaste,
     DOMSelection,
-    getDefaultView,
-    EDITOR_TO_WINDOW,
+    DOMStaticRange,
     EDITOR_TO_ELEMENT,
-    NODE_TO_ELEMENT,
+    EDITOR_TO_ON_CHANGE,
+    EDITOR_TO_WINDOW,
     ELEMENT_TO_NODE,
+    getDefaultView,
     IS_FOCUSED,
-    IS_READ_ONLY
+    IS_READ_ONLY,
+    isDOMElement,
+    isDOMNode,
+    isPlainTextOnlyPaste,
+    NODE_TO_ELEMENT,
+    TRIPLE_CLICK
 } from 'slate-dom';
-import { debounceTime, filter, Subject, tap } from 'rxjs';
-import { IS_FIREFOX, IS_SAFARI, IS_CHROME, HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID } from '../../utils/environment';
-import Hotkeys from '../../utils/hotkeys';
+import { HistoryEditor } from 'slate-history';
 import { BeforeInputEvent, extractBeforeInputEvent } from '../../custom-event/BeforeInputEventPlugin';
 import { BEFORE_INPUT_EVENTS } from '../../custom-event/before-input-polyfill';
+import { AngularEditor } from '../../plugins/angular-editor';
+import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { SlateErrorCode } from '../../types/error';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SlateChildrenContext, SlateViewContext } from '../../view/context';
+import { SlatePlaceholder } from '../../types/feature';
 import { ViewType } from '../../types/view';
-import { HistoryEditor } from 'slate-history';
 import {
     buildHeightsAndAccumulatedHeights,
     EDITOR_TO_VIRTUAL_SCROLL_SELECTION,
@@ -59,12 +61,9 @@ import {
     measureHeightByIndics,
     roundTo
 } from '../../utils';
-import { SlatePlaceholder } from '../../types/feature';
+import { HAS_BEFORE_INPUT_SUPPORT, IS_ANDROID, IS_CHROME, IS_FIREFOX, IS_SAFARI } from '../../utils/environment';
+import Hotkeys from '../../utils/hotkeys';
 import { restoreDom } from '../../utils/restore-dom';
-import { ListRender, updatePreRenderingElementWidth } from '../../view/render/list-render';
-import { TRIPLE_CLICK, EDITOR_TO_ON_CHANGE } from 'slate-dom';
-import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
-import { isKeyHotkey } from 'is-hotkey';
 import {
     calcBusinessTop,
     calculateVirtualTopHeight,
@@ -79,6 +78,8 @@ import {
     VIRTUAL_CENTER_OUTLET_CLASS_NAME,
     VIRTUAL_TOP_HEIGHT_CLASS_NAME
 } from '../../utils/virtual-scroll';
+import { SlateChildrenContext, SlateViewContext } from '../../view/context';
+import { ListRender, updatePreRenderingElementWidth } from '../../view/render/list-render';
 
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
@@ -228,13 +229,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     virtualCenterOutlet: HTMLElement;
 
-    constructor(
-        public elementRef: ElementRef,
-        public renderer2: Renderer2,
-        public cdr: ChangeDetectorRef,
-        private ngZone: NgZone,
-        private injector: Injector
-    ) {}
+    elementRef = inject(ElementRef);
+    renderer2 = inject(Renderer2);
+    cdr = inject(ChangeDetectorRef);
+    ngZone = inject(NgZone);
+    injector = inject(Injector);
+
+    constructor() {}
 
     ngOnInit() {
         this.editor.injector = this.injector;
