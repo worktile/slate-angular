@@ -1,9 +1,8 @@
-import { Component, OnInit, AfterViewInit, NgZone, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
 import { createEditor, Element } from 'slate';
-import { AngularEditor, scrollToElement, withAngular } from 'slate-angular';
-import { take } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
+import { scrollToElement, withAngular } from 'slate-angular';
 import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { H1Flavour } from '../flavours/heading.flavour';
 
@@ -36,8 +35,6 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
     anchorKey = '';
 
     @ViewChild('demoContainer') demoContainer?: ElementRef<HTMLDivElement>;
-
-    constructor(private ngZone: NgZone) {}
 
     ngOnInit() {
         if (!localStorage.getItem('huge-document-value')) {

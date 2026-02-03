@@ -10,6 +10,4 @@ import { SlateLeafContext, SlateViewContext } from '../../view/context';
 export class SlateString {
     @Input() context: SlateLeafContext;
     @Input() viewContext: SlateViewContext;
-
-    ngOnInit(): void {}
 }

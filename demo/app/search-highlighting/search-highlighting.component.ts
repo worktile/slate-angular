@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
+import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
 import { MarkTypes, RichTextFlavour } from '../flavours/richtext.flavour';
 import { DemoLeafComponent } from './hightlighting-leaf.flavour';
-import { SlateEditable } from '../../../packages/src/components/editable/editable.component';
-import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'demo-search-highlight',
@@ -21,7 +21,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
 
     decorate: (nodeEntry: NodeEntry) => Range[];
 
-    constructor(private cdr: ChangeDetectorRef) {}
+    public cdr = inject(ChangeDetectorRef);
 
     ngOnInit(): void {
         this.generateDecorate();
