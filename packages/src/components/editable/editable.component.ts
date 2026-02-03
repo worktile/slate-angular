@@ -1514,7 +1514,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.forceRender();
             }
         }
-        if (AngularEditor.hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionStart)) {
+        if (
+            AngularEditor.hasEditableTarget(this.editor, event.target) &&
+            !isSelectionInsideVoid(this.editor) &&
+            !this.isDOMEventHandled(event, this.compositionStart)
+        ) {
             this.isComposing = true;
         }
         this.render();
@@ -1528,7 +1532,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!event.data && !Range.isCollapsed(this.editor.selection)) {
             Transforms.delete(this.editor);
         }
-        if (AngularEditor.hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.compositionEnd)) {
+        if (
+            AngularEditor.hasEditableTarget(this.editor, event.target) &&
+            !isSelectionInsideVoid(this.editor) &&
+            !this.isDOMEventHandled(event, this.compositionEnd)
+        ) {
             // COMPAT: In Chrome/Firefox, `beforeinput` events for compositions
             // aren't correct and never fire the "insertFromComposition"
             // type that we need. So instead, insert whenever a composition
@@ -1539,7 +1547,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             // COMPAT: In Firefox 87.0 CompositionEnd fire twice
-            // so we need avoid repeat isnertText by isComposing === true,
+            // so we need avoid repeat insertText by isComposing === true,
             this.isComposing = false;
         }
         this.render();
@@ -2034,6 +2042,15 @@ const isTargetInsideVoid = (editor: AngularEditor, target: EventTarget | null): 
         slateNode = AngularEditor.hasTarget(editor, target) && AngularEditor.toSlateNode(editor, target);
     } catch (error) {}
     return slateNode && Element.isElement(slateNode) && Editor.isVoid(editor, slateNode);
+};
+
+export const isSelectionInsideVoid = (editor: AngularEditor) => {
+    const selection = editor.selection;
+    if (selection && Range.isCollapsed(selection)) {
+        const currentNode = Node.parent(editor, selection.anchor.path);
+        return Element.isElement(currentNode) && Editor.isVoid(editor, currentNode);
+    }
+    return false;
 };
 
 const hasStringTarget = (domSelection: DOMSelection) => {
