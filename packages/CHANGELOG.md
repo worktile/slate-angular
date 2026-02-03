@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.2.20
+
+### Patch Changes
+
+- [#335](https://github.com/worktile/slate-angular/pull/335) [`af7a597c49f213cc244c0f2c3ee8cc64eafd0bfa`](https://github.com/worktile/slate-angular/commit/af7a597c49f213cc244c0f2c3ee8cc64eafd0bfa) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add isSelectionInsideVoid condition in compositionStart and compositionEnd to avoid impact typing in void node #TINFR-3409
+
 ## 20.2.19
 
 ### Patch Changes
