@@ -307,7 +307,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.listRender.initialize(childrenForRender, this.editor, this.context, 0, virtualView.inViewportIndics);
                 } else {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
-                        this.handlePreRendering(visibleStates);
+                        this.appendPreRenderingToViewport(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -480,7 +480,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return parseFloat(this.virtualTopHeightElement.style.height.replace('px', ''));
     }
 
-    handlePreRendering(visibleStates: boolean[]) {
+    appendPreRenderingToViewport(visibleStates: boolean[]) {
         let preRenderingCount = 0;
         const childrenWithPreRendering = [...this.inViewportChildren];
         const childrenWithPreRenderingIndics = [...this.inViewportIndics];
@@ -504,6 +504,28 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
         }
         return { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics };
+    }
+
+    calculateInViewportIndicsStartAndEndBySelection() {
+        if (!this.editor.selection || Range.isCollapsed(this.editor.selection)) {
+            return;
+        }
+        const isForward = Range.isBackward(this.editor.selection);
+        const anchorIndex = this.editor.selection.anchor.path[0];
+        const focusIndex = this.editor.selection.focus.path[0];
+        let minStartIndex = anchorIndex;
+        let minEndIndex = focusIndex;
+        if (!isForward) {
+            minStartIndex = focusIndex;
+            minEndIndex = anchorIndex;
+        }
+        if (minStartIndex < this.inViewportIndics[0]) {
+            minStartIndex = this.inViewportIndics[0];
+        }
+        if (minEndIndex > this.inViewportIndics[this.inViewportIndics.length - 1]) {
+            minEndIndex = this.inViewportIndics[this.inViewportIndics.length - 1];
+        }
+        return { minStartIndex, minEndIndex };
     }
 
     private tryUpdateVirtualViewport() {
@@ -543,7 +565,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
-                        this.handlePreRendering(visibleStates);
+                        this.appendPreRenderingToViewport(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -612,8 +634,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         let accumulatedOffset = 0;
         let inViewportStartIndex = -1;
-        const visible: Element[] = [];
+        const inViewportChildren: Element[] = [];
         const inViewportIndics: number[] = [];
+        const { minStartIndex, minEndIndex } = this.calculateInViewportIndicsStartAndEndBySelection();
         for (let i = 0; i < elementLength && accumulatedOffset < endPosition; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
@@ -622,10 +645,17 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 accumulatedOffset = nextOffset;
                 continue;
             }
-            // 可视区域有交集，加入渲染
-            if (nextOffset > startPosition && accumulatedOffset < endPosition) {
-                if (inViewportStartIndex === -1) inViewportStartIndex = i; // 第一个相交起始位置
-                visible.push(children[i]);
+            if (i > minEndIndex && accumulatedOffset > endPosition) {
+                break;
+            }
+            const isInSelection = i >= minStartIndex && i <= minEndIndex;
+            const isInViewport = nextOffset > startPosition && accumulatedOffset < endPosition;
+            if (inViewportStartIndex === -1 && (isInViewport || isInSelection)) {
+                inViewportStartIndex = i;
+                inViewportChildren.push(children[i]);
+                inViewportIndics.push(i);
+            } else {
+                inViewportChildren.push(children[i]);
                 inViewportIndics.push(i);
             }
             accumulatedOffset = nextOffset;
@@ -636,7 +666,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const top = inViewportStartIndex === -1 ? 0 : accumulatedHeights[inViewportStartIndex];
         const bottom = totalHeight - accumulatedHeights[inViewportEndIndex + 1];
         return {
-            inViewportChildren: visible.length ? visible : children,
+            inViewportChildren,
             inViewportIndics,
             top,
             bottom,
@@ -1105,7 +1135,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             this.applyVirtualView(virtualView);
         }
-        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
+        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
+            this.appendPreRenderingToViewport(visibleStates);
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
         if (remeasureIndics.length) {
