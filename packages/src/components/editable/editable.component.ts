@@ -67,7 +67,7 @@ import { SlateVirtualScrollConfig, VirtualViewResult } from '../../types';
 import { isKeyHotkey } from 'is-hotkey';
 import {
     calcBusinessTop,
-    calculateVirtualTopHeight,
+    calculateAccumulatedTopHeight,
     debugLog,
     EDITOR_TO_IS_FROM_SCROLL_TO,
     EDITOR_TO_ROOT_NODE_WIDTH,
@@ -512,14 +512,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const isFromScrollTo = EDITOR_TO_IS_FROM_SCROLL_TO.get(this.editor);
         if (this.inViewportIndics.length > 0 && !isFromScrollTo) {
-            const topHeight = this.getActualVirtualTopHeight();
+            const realTopHeight = this.getActualVirtualTopHeight();
             const visibleStates = this.editor.getAllVisibleStates();
-            const refreshVirtualTopHeight = calculateVirtualTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
-            if (topHeight !== refreshVirtualTopHeight) {
+            const accumulateTopHeigh = calculateAccumulatedTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
+            if (realTopHeight !== accumulateTopHeigh) {
                 if (isDebug) {
-                    debugLog('log', 'update top height since dirty state，增加高度: ', refreshVirtualTopHeight - topHeight);
+                    debugLog('log', 'update top height since dirty state，增加高度: ', accumulateTopHeigh - realTopHeight);
                 }
-                this.setVirtualSpaceHeight(refreshVirtualTopHeight);
+                this.setVirtualSpaceHeight(accumulateTopHeigh);
                 return;
             }
         }

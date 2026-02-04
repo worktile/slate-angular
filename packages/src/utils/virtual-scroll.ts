@@ -163,7 +163,7 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor, visible
     return { heights, accumulatedHeights };
 };
 
-export const calculateVirtualTopHeight = (editor: AngularEditor, startIndex: number, visibleStates: boolean[]) => {
+export const calculateAccumulatedTopHeight = (editor: AngularEditor, startIndex: number, visibleStates: boolean[]) => {
     const { accumulatedHeights } = buildHeightsAndAccumulatedHeights(editor, visibleStates);
     const virtualTopHeight = roundTo(accumulatedHeights[startIndex] ?? 0, 1);
     return virtualTopHeight;
