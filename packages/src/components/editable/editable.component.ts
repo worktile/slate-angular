@@ -83,6 +83,11 @@ import {
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
+class RemeasureConfig {
+    indics: number[];
+    tryUpdateViewport: boolean;
+}
+
 @Component({
     selector: 'slate-editable',
     host: {
@@ -218,7 +223,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private editorResizeObserver?: ResizeObserver;
     private editorScrollContainerResizeObserver?: ResizeObserver;
 
-    indicsOfNeedBeMeasured$ = new Subject<number[]>();
+    indicsOfNeedRemeasured$ = new Subject<RemeasureConfig>();
 
     virtualScrollInitialized = false;
 
@@ -307,7 +312,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     this.listRender.initialize(childrenForRender, this.editor, this.context, 0, virtualView.inViewportIndics);
                 } else {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
-                        this.handlePreRendering(visibleStates);
+                        this.appendPreRenderingToViewport(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -318,7 +323,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
                 const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
                 if (remeasureIndics.length) {
-                    this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+                    this.indicsOfNeedRemeasured$.next({ indics: remeasureIndics, tryUpdateViewport: true });
                 }
             } else {
                 if (!this.listRender.initialized) {
@@ -423,10 +428,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             let pendingRemeasureIndics: number[] = [];
-            this.indicsOfNeedBeMeasured$
+            this.indicsOfNeedRemeasured$
                 .pipe(
-                    tap((previousValue: number[]) => {
-                        previousValue.forEach((index: number) => {
+                    tap((previousValue: RemeasureConfig) => {
+                        previousValue.indics.forEach((index: number) => {
                             if (!pendingRemeasureIndics.includes(index)) {
                                 pendingRemeasureIndics.push(index);
                             }
@@ -435,17 +440,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     debounceTime(500),
                     filter(() => pendingRemeasureIndics.length > 0)
                 )
-                .subscribe(() => {
+                .subscribe((previousValue: RemeasureConfig) => {
                     const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
                     if (changed) {
-                        this.tryUpdateVirtualViewport();
-                        if (isDebug) {
-                            debugLog(
-                                'log',
-                                'exist pendingRemeasureIndics: ',
-                                pendingRemeasureIndics,
-                                'will try to update virtual viewport'
-                            );
+                        if (previousValue.tryUpdateViewport) {
+                            this.tryUpdateVirtualViewport();
+                            if (isDebug) {
+                                debugLog(
+                                    'log',
+                                    'exist pendingRemeasureIndics: ',
+                                    pendingRemeasureIndics,
+                                    'will try to update virtual viewport'
+                                );
+                            }
                         }
                     }
                     pendingRemeasureIndics = [];
@@ -480,7 +487,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return parseFloat(this.virtualTopHeightElement.style.height.replace('px', ''));
     }
 
-    handlePreRendering(visibleStates: boolean[]) {
+    appendPreRenderingToViewport(visibleStates: boolean[]) {
         let preRenderingCount = 0;
         const childrenWithPreRendering = [...this.inViewportChildren];
         const childrenWithPreRenderingIndics = [...this.inViewportIndics];
@@ -504,6 +511,28 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
         }
         return { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics };
+    }
+
+    calculateIndicsStartAndEndBySelection() {
+        if (!this.editor.selection || Range.isCollapsed(this.editor.selection)) {
+            return;
+        }
+        const isBackward = Range.isBackward(this.editor.selection);
+        const anchorIndex = this.editor.selection.anchor.path[0];
+        const focusIndex = this.editor.selection.focus.path[0];
+        let minStartIndex = anchorIndex;
+        let minEndIndex = focusIndex;
+        if (isBackward) {
+            minStartIndex = focusIndex;
+            minEndIndex = anchorIndex;
+        }
+        if (minStartIndex < this.inViewportIndics[0]) {
+            minStartIndex = this.inViewportIndics[0];
+        }
+        if (minEndIndex > this.inViewportIndics[this.inViewportIndics.length - 1]) {
+            minEndIndex = this.inViewportIndics[this.inViewportIndics.length - 1];
+        }
+        return { minStartIndex, minEndIndex };
     }
 
     private tryUpdateVirtualViewport() {
@@ -543,7 +572,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.applyVirtualView(virtualView);
                 if (this.listRender.initialized) {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
-                        this.handlePreRendering(visibleStates);
+                        this.appendPreRenderingToViewport(visibleStates);
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -611,10 +640,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             endPosition = startPosition + viewportHeight - (businessTop - scrollTop);
         }
         let accumulatedOffset = 0;
-        let inViewportStartIndex = -1;
-        const visible: Element[] = [];
+        const inViewportChildren: Element[] = [];
         const inViewportIndics: number[] = [];
-        for (let i = 0; i < elementLength && accumulatedOffset < endPosition; i++) {
+        const indicsBySelection = this.calculateIndicsStartAndEndBySelection();
+        if (isDebug) {
+            debugLog('log', 'indicsBySelection: ', indicsBySelection);
+        }
+        for (let i = 0; i < elementLength; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
             const isVisible = visibleStates[i];
@@ -622,21 +654,30 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 accumulatedOffset = nextOffset;
                 continue;
             }
-            // 可视区域有交集，加入渲染
-            if (nextOffset > startPosition && accumulatedOffset < endPosition) {
-                if (inViewportStartIndex === -1) inViewportStartIndex = i; // 第一个相交起始位置
-                visible.push(children[i]);
-                inViewportIndics.push(i);
+            if (
+                (indicsBySelection && i > indicsBySelection.minEndIndex && accumulatedOffset >= endPosition) ||
+                (!indicsBySelection && accumulatedOffset >= endPosition)
+            ) {
+                break;
             }
+            if (
+                (indicsBySelection && i < indicsBySelection.minStartIndex && nextOffset <= startPosition) ||
+                (!indicsBySelection && nextOffset <= startPosition)
+            ) {
+                accumulatedOffset = nextOffset;
+                continue;
+            }
+            inViewportChildren.push(children[i]);
+            inViewportIndics.push(i);
             accumulatedOffset = nextOffset;
         }
-
+        const inViewportStartIndex = inViewportIndics[0] ?? -1;
         const inViewportEndIndex =
             inViewportStartIndex === -1 ? elementLength - 1 : (inViewportIndics[inViewportIndics.length - 1] ?? inViewportStartIndex);
         const top = inViewportStartIndex === -1 ? 0 : accumulatedHeights[inViewportStartIndex];
         const bottom = totalHeight - accumulatedHeights[inViewportEndIndex + 1];
         return {
-            inViewportChildren: visible.length ? visible : children,
+            inViewportChildren,
             inViewportIndics,
             top,
             bottom,
@@ -853,7 +894,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         try {
             let { selection } = this.editor;
 
-            if (this.isEnabledVirtualScroll()) {
+            if (this.isEnabledVirtualScroll() && selection && Range.isCollapsed(selection)) {
                 selection = this.calculateVirtualScrollSelection(selection);
             }
 
@@ -1105,11 +1146,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             this.applyVirtualView(virtualView);
         }
-        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } = this.handlePreRendering(visibleStates);
+        const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
+            this.appendPreRenderingToViewport(visibleStates);
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
         if (remeasureIndics.length) {
-            this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+            this.indicsOfNeedRemeasured$.next({ indics: remeasureIndics, tryUpdateViewport: true });
         }
     }
 
