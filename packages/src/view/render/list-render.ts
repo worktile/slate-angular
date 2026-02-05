@@ -12,27 +12,33 @@ import { DefaultElementFlavour } from '../../components/element.flavour';
 import { DefaultTextFlavour, VoidTextFlavour } from '../../components/text/default-text.flavour';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
 import { SlateBlockCard } from '../../components/block-card/block-card';
-import { debugLog, EDITOR_TO_ROOT_NODE_WIDTH, getCachedHeightByElement, isDebug } from '../../utils/virtual-scroll';
+import {
+    debugLog,
+    EDITOR_TO_ROOT_NODE_WIDTH,
+    getCachedHeightByElement,
+    isDebug,
+    VIRTUAL_TOP_HEIGHT_CLASS_NAME
+} from '../../utils/virtual-scroll';
 
 export const PRE_RENDERING_ELEMENT_ON_TOP_CLASS = 'pre-rendering-element-on-top';
 
 export const setPreRenderingElementStyle = (editor: AngularEditor, rootNode: HTMLElement, isClear: boolean = false) => {
-    if (isClear) {
-        rootNode.style.top = '';
-        rootNode.style.width = '';
-        rootNode.style.position = '';
-        rootNode.classList.remove(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
-        return;
-    }
-    const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
-    rootNode.style.top = '-100%';
-    if (preRenderingWidth) {
-        rootNode.style.width = `${preRenderingWidth}px`;
-    } else {
-        rootNode.style.width = '100%';
-    }
-    rootNode.style.position = 'absolute';
-    rootNode.classList.add(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
+    // if (isClear) {
+    //     rootNode.style.top = '';
+    //     rootNode.style.width = '';
+    //     rootNode.style.position = '';
+    //     rootNode.classList.remove(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
+    //     return;
+    // }
+    // const preRenderingWidth = EDITOR_TO_ROOT_NODE_WIDTH.get(editor) ?? 0;
+    // rootNode.style.top = '-100%';
+    // if (preRenderingWidth) {
+    //     rootNode.style.width = `${preRenderingWidth}px`;
+    // } else {
+    //     rootNode.style.width = '100%';
+    // }
+    // rootNode.style.position = 'absolute';
+    // rootNode.classList.add(PRE_RENDERING_ELEMENT_ON_TOP_CLASS);
 };
 
 export const updatePreRenderingElementWidth = (editor: AngularEditor) => {
@@ -57,6 +63,7 @@ export class ListRender {
     private differ: IterableDiffer<any> | null = null;
     public initialized = false;
     private preRenderingHTMLElement: HTMLElement[][] = [];
+    private virtualTopHeightElement = null;
 
     constructor(
         private viewContext: SlateViewContext,
@@ -119,33 +126,37 @@ export class ListRender {
         if (!this.differ) {
             throw new Error('Exception: Can not find differ ');
         }
+
         const outletParent = this.getOutletParent();
         if (this.preRenderingHTMLElement.length > 0) {
             const preRenderingElement = [...this.preRenderingHTMLElement];
+            let previousRootNode = this.virtualTopHeightElement;
             preRenderingElement.forEach((rootNodes, index) => {
-                const slateElement = this.children[index];
-                if (slateElement && children.indexOf(slateElement) >= 0) {
-                    rootNodes.forEach(rootNode => {
-                        setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
-                    });
-                    if (isDebug) {
-                        debugLog(
-                            'log',
-                            'preRenderingHTMLElement index: ',
-                            this.viewContext.editor.children.indexOf(this.children[index]),
-                            'is clear true'
-                        );
-                    }
-                } else {
-                    if (isDebug) {
-                        debugLog(
-                            'log',
-                            'preRenderingHTMLElement index: ',
-                            this.viewContext.editor.children.indexOf(this.children[index]),
-                            'do not clear since it would be removed soon'
-                        );
-                    }
+                // const slateElement = this.children[index];
+                // if (slateElement && children.indexOf(slateElement) >= 0) {
+                rootNodes.forEach(rootNode => {
+                    setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
+                    previousRootNode.insertAdjacentElement('afterend', rootNode);
+                    previousRootNode = rootNode;
+                });
+                if (isDebug) {
+                    debugLog(
+                        'log',
+                        'preRenderingHTMLElement index: ',
+                        this.viewContext.editor.children.indexOf(this.children[index]),
+                        'is clear true'
+                    );
                 }
+                // } else {
+                //     if (isDebug) {
+                //         debugLog(
+                //             'log',
+                //             'preRenderingHTMLElement index: ',
+                //             this.viewContext.editor.children.indexOf(this.children[index]),
+                //             'do not clear since it would be removed soon'
+                //         );
+                //     }
+                // }
             });
             this.preRenderingHTMLElement = [];
         }
@@ -271,6 +282,10 @@ export class ListRender {
                     setPreRenderingElementStyle(this.viewContext.editor, rootNode);
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
+                if (!this.virtualTopHeightElement) {
+                    this.virtualTopHeightElement = rootNodes[0].parentElement.querySelector(`.${VIRTUAL_TOP_HEIGHT_CLASS_NAME}`);
+                }
+                this.virtualTopHeightElement.append(...rootNodes);
                 if (isDebug) {
                     debugLog('log', 'preRenderingHTMLElement index: ', this.viewContext.editor.children.indexOf(children[i]));
                 }
