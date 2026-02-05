@@ -671,10 +671,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             inViewportIndics.push(i);
             accumulatedOffset = nextOffset;
         }
-        const inViewportStartIndex = inViewportIndics[0] ?? -1;
-        const inViewportEndIndex =
-            inViewportStartIndex === -1 ? elementLength - 1 : (inViewportIndics[inViewportIndics.length - 1] ?? inViewportStartIndex);
-        const top = inViewportStartIndex === -1 ? 0 : accumulatedHeights[inViewportStartIndex];
+        if (inViewportIndics.length === 0) {
+            inViewportChildren.push(...children);
+            inViewportIndics.push(...Array.from({ length: elementLength }, (_, i) => i));
+        }
+        const inViewportStartIndex = inViewportIndics[0];
+        const inViewportEndIndex = inViewportIndics[inViewportIndics.length - 1];
+        const top = accumulatedHeights[inViewportStartIndex];
+        // todo: toggleHeight: toggleHeight 逻辑需要优化
         const bottom = totalHeight - accumulatedHeights[inViewportEndIndex + 1];
         return {
             inViewportChildren,
