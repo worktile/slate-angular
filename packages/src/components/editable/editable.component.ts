@@ -894,7 +894,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         try {
             let { selection } = this.editor;
 
-            if (this.isEnabledVirtualScroll() && selection && Range.isCollapsed(selection)) {
+            if (this.isEnabledVirtualScroll()) {
                 selection = this.calculateVirtualScrollSelection(selection);
             }
 
