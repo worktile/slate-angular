@@ -83,6 +83,11 @@ import {
 // not correctly clipboardData on beforeinput
 const forceOnDOMPaste = IS_SAFARI;
 
+class RemeasureConfig {
+    indics: number[];
+    tryUpdateViewport: boolean;
+}
+
 @Component({
     selector: 'slate-editable',
     host: {
@@ -218,7 +223,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private editorResizeObserver?: ResizeObserver;
     private editorScrollContainerResizeObserver?: ResizeObserver;
 
-    indicsOfNeedBeMeasured$ = new Subject<number[]>();
+    indicsOfNeedRemeasured$ = new Subject<RemeasureConfig>();
 
     virtualScrollInitialized = false;
 
@@ -318,7 +323,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 }
                 const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
                 if (remeasureIndics.length) {
-                    this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+                    this.indicsOfNeedRemeasured$.next({ indics: remeasureIndics, tryUpdateViewport: true });
                 }
             } else {
                 if (!this.listRender.initialized) {
@@ -423,10 +428,10 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             let pendingRemeasureIndics: number[] = [];
-            this.indicsOfNeedBeMeasured$
+            this.indicsOfNeedRemeasured$
                 .pipe(
-                    tap((previousValue: number[]) => {
-                        previousValue.forEach((index: number) => {
+                    tap((previousValue: RemeasureConfig) => {
+                        previousValue.indics.forEach((index: number) => {
                             if (!pendingRemeasureIndics.includes(index)) {
                                 pendingRemeasureIndics.push(index);
                             }
@@ -435,17 +440,19 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     debounceTime(500),
                     filter(() => pendingRemeasureIndics.length > 0)
                 )
-                .subscribe(() => {
+                .subscribe((previousValue: RemeasureConfig) => {
                     const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
                     if (changed) {
-                        this.tryUpdateVirtualViewport();
-                        if (isDebug) {
-                            debugLog(
-                                'log',
-                                'exist pendingRemeasureIndics: ',
-                                pendingRemeasureIndics,
-                                'will try to update virtual viewport'
-                            );
+                        if (previousValue.tryUpdateViewport) {
+                            this.tryUpdateVirtualViewport();
+                            if (isDebug) {
+                                debugLog(
+                                    'log',
+                                    'exist pendingRemeasureIndics: ',
+                                    pendingRemeasureIndics,
+                                    'will try to update virtual viewport'
+                                );
+                            }
                         }
                     }
                     pendingRemeasureIndics = [];
@@ -506,7 +513,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics };
     }
 
-    calculateInViewportIndicsStartAndEndBySelection() {
+    calculateIndicsStartAndEndBySelection() {
         if (!this.editor.selection || Range.isCollapsed(this.editor.selection)) {
             return;
         }
@@ -635,9 +642,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         let accumulatedOffset = 0;
         const inViewportChildren: Element[] = [];
         const inViewportIndics: number[] = [];
-        const startAndEndBySelection = this.calculateInViewportIndicsStartAndEndBySelection();
+        const indicsBySelection = this.calculateIndicsStartAndEndBySelection();
         if (isDebug) {
-            debugLog('log', 'startAndEndBySelection: ', startAndEndBySelection);
+            debugLog('log', 'indicsBySelection: ', indicsBySelection);
         }
         for (let i = 0; i < elementLength; i++) {
             const currentHeight = heights[i];
@@ -648,14 +655,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 continue;
             }
             if (
-                (startAndEndBySelection && i > startAndEndBySelection.minEndIndex && accumulatedOffset > endPosition) ||
-                (!startAndEndBySelection && accumulatedOffset > endPosition)
+                (indicsBySelection && i > indicsBySelection.minEndIndex && accumulatedOffset > endPosition) ||
+                (!indicsBySelection && accumulatedOffset > endPosition)
             ) {
                 break;
             }
             if (
-                (startAndEndBySelection && i < startAndEndBySelection.minStartIndex && accumulatedOffset < startPosition) ||
-                (!startAndEndBySelection && accumulatedOffset < startPosition)
+                (indicsBySelection && i < indicsBySelection.minStartIndex && nextOffset < startPosition) ||
+                (!indicsBySelection && nextOffset < startPosition)
             ) {
                 accumulatedOffset = nextOffset;
                 continue;
@@ -1144,7 +1151,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
         if (remeasureIndics.length) {
-            this.indicsOfNeedBeMeasured$.next(remeasureIndics);
+            this.indicsOfNeedRemeasured$.next({ indics: remeasureIndics, tryUpdateViewport: true });
         }
     }
 
