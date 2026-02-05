@@ -510,12 +510,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.editor.selection || Range.isCollapsed(this.editor.selection)) {
             return;
         }
-        const isForward = Range.isBackward(this.editor.selection);
+        const isBackward = Range.isBackward(this.editor.selection);
         const anchorIndex = this.editor.selection.anchor.path[0];
         const focusIndex = this.editor.selection.focus.path[0];
         let minStartIndex = anchorIndex;
         let minEndIndex = focusIndex;
-        if (!isForward) {
+        if (isBackward) {
             minStartIndex = focusIndex;
             minEndIndex = anchorIndex;
         }
@@ -633,11 +633,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             endPosition = startPosition + viewportHeight - (businessTop - scrollTop);
         }
         let accumulatedOffset = 0;
-        let inViewportStartIndex = -1;
         const inViewportChildren: Element[] = [];
         const inViewportIndics: number[] = [];
-        const { minStartIndex, minEndIndex } = this.calculateInViewportIndicsStartAndEndBySelection();
-        for (let i = 0; i < elementLength && accumulatedOffset < endPosition; i++) {
+        const startAndEndBySelection = this.calculateInViewportIndicsStartAndEndBySelection();
+        if (isDebug) {
+            debugLog('log', 'startAndEndBySelection: ', startAndEndBySelection);
+        }
+        for (let i = 0; i < elementLength; i++) {
             const currentHeight = heights[i];
             const nextOffset = accumulatedOffset + currentHeight;
             const isVisible = visibleStates[i];
@@ -645,22 +647,24 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 accumulatedOffset = nextOffset;
                 continue;
             }
-            if (i > minEndIndex && accumulatedOffset > endPosition) {
+            if (
+                (startAndEndBySelection && i > startAndEndBySelection.minEndIndex && accumulatedOffset > endPosition) ||
+                (!startAndEndBySelection && accumulatedOffset > endPosition)
+            ) {
                 break;
             }
-            const isInSelection = i >= minStartIndex && i <= minEndIndex;
-            const isInViewport = nextOffset > startPosition && accumulatedOffset < endPosition;
-            if (inViewportStartIndex === -1 && (isInViewport || isInSelection)) {
-                inViewportStartIndex = i;
-                inViewportChildren.push(children[i]);
-                inViewportIndics.push(i);
-            } else {
-                inViewportChildren.push(children[i]);
-                inViewportIndics.push(i);
+            if (
+                (startAndEndBySelection && i < startAndEndBySelection.minStartIndex && accumulatedOffset < startPosition) ||
+                (!startAndEndBySelection && accumulatedOffset < startPosition)
+            ) {
+                accumulatedOffset = nextOffset;
+                continue;
             }
+            inViewportChildren.push(children[i]);
+            inViewportIndics.push(i);
             accumulatedOffset = nextOffset;
         }
-
+        const inViewportStartIndex = inViewportIndics[0] ?? -1;
         const inViewportEndIndex =
             inViewportStartIndex === -1 ? elementLength - 1 : (inViewportIndics[inViewportIndics.length - 1] ?? inViewportStartIndex);
         const top = inViewportStartIndex === -1 ? 0 : accumulatedHeights[inViewportStartIndex];
@@ -883,7 +887,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         try {
             let { selection } = this.editor;
 
-            if (this.isEnabledVirtualScroll()) {
+            if (this.isEnabledVirtualScroll() && Range.isCollapsed(selection)) {
                 selection = this.calculateVirtualScrollSelection(selection);
             }
 
