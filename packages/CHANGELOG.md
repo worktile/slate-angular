@@ -1,5 +1,22 @@
 # Changelog
 
+## 20.2.21
+
+### Patch Changes
+
+- [`825850789a22a5f8845f0ffcba7320147174f5f1`](https://github.com/worktile/slate-angular/commit/825850789a22a5f8845f0ffcba7320147174f5f1) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - adapt scroll top greater than total height scenario #WIK-19901
+
+- [`9b47012fcd491d84785ceec17aef3197aa1cf98c`](https://github.com/worktile/slate-angular/commit/9b47012fcd491d84785ceec17aef3197aa1cf98c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - pre-rendering may cause a little bit shaking after select some elements and scroll down and then click to cancel selection #WIK-19900
+
+- [`37b1fe3b471269a56f60b7a81b62d4048ecb7baf`](https://github.com/worktile/slate-angular/commit/37b1fe3b471269a56f60b7a81b62d4048ecb7baf) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - when selected elements and scroll, should not remove selected elements
+
+  The selected element continues to render during scrolling; the element range corresponding to the selected element and the elements within the viewport together constitute a new rendering range.
+
+- [`d1b59949697d6bd54b86eb8f23be0cb45ca8f4d8`](https://github.com/worktile/slate-angular/commit/d1b59949697d6bd54b86eb8f23be0cb45ca8f4d8) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove css position: relative; from slate-editable-container since it will cause text rendering issue in svg foreign object #WIK-19892
+  we can remove it since we have set precision width for it
+
+- [`93145759d494f7521cacf74feb0b256cd85f4d4e`](https://github.com/worktile/slate-angular/commit/93145759d494f7521cacf74feb0b256cd85f4d4e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - should calculateVirtualScrollSelection all the time otherwise it will throw an error on select all scenario
+
 ## 20.2.20
 
 ### Patch Changes
