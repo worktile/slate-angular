@@ -480,6 +480,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
     }
 
+    setTopHeightDebugInfo(accumulatedHeight: number, accumulatedEndIndex: number) {
+        if (isDebug) {
+            this.virtualTopHeightElement.setAttribute('accumulated-height', accumulatedHeight.toString());
+            this.virtualTopHeightElement.setAttribute('accumulated-height-end-index', accumulatedEndIndex.toString());
+        }
+    }
+
     getActualVirtualTopHeight() {
         if (!this.virtualScrollInitialized) {
             return 0;
@@ -544,6 +551,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const realTopHeight = this.getActualVirtualTopHeight();
             const visibleStates = this.editor.getAllVisibleStates();
             const accumulateTopHeigh = calculateAccumulatedTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
+            this.setTopHeightDebugInfo(accumulateTopHeigh, this.inViewportIndics[0] - 1);
             if (realTopHeight !== accumulateTopHeigh) {
                 if (isDebug) {
                     debugLog('log', 'update top height since dirty state，增加高度: ', accumulateTopHeigh - realTopHeight);
@@ -580,7 +588,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         preRenderingCount,
                         childrenWithPreRenderingIndics
                     );
-                    if (diff.needAddOnTop && !isFromScrollTo) {
+                    if (diff.needAddOnTop && !isFromScrollTo && diff.changedIndexesOfTop.length === 1) {
                         const remeasureAddedIndics = diff.changedIndexesOfTop;
                         if (isDebug) {
                             debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
@@ -592,12 +600,16 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             const newHeights = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
                             const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
                             const newTopHeight = virtualView.top - (actualTopHeightAfterAdd - topHeightBeforeAdd);
+                            this.setTopHeightDebugInfo(
+                                newHeights.accumulatedHeights[this.inViewportIndics[0]],
+                                this.inViewportIndics[0] - 1
+                            );
                             if (topHeightBeforeAdd !== actualTopHeightAfterAdd) {
                                 this.setVirtualSpaceHeight(newTopHeight);
                                 if (isDebug) {
                                     debugLog(
                                         'log',
-                                        `update top height since will add element in top，减去高度: ${topHeightBeforeAdd - actualTopHeightAfterAdd}`
+                                        `update top height since will add element in top，减去高度: ${actualTopHeightAfterAdd - topHeightBeforeAdd}`
                                     );
                                 }
                             }
@@ -678,7 +690,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const inViewportStartIndex = inViewportIndics[0];
         const inViewportEndIndex = inViewportIndics[inViewportIndics.length - 1];
         const top = accumulatedHeights[inViewportStartIndex];
-        // todo: toggleHeight: toggleHeight 逻辑需要优化
+        // todo: totalHeight: totalHeight 逻辑需要优化
         const bottom = totalHeight - accumulatedHeights[inViewportEndIndex + 1];
         return {
             inViewportChildren,
@@ -694,6 +706,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         this.inViewportChildren = virtualView.inViewportChildren;
         this.setVirtualSpaceHeight(virtualView.top, virtualView.bottom);
         this.inViewportIndics = virtualView.inViewportIndics;
+        this.setTopHeightDebugInfo(virtualView.top, this.inViewportIndics[0] - 1);
     }
 
     private diffVirtualViewport(virtualView: VirtualViewResult, stage: 'first' | 'second' | 'onChange' = 'first') {
