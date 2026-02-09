@@ -4,6 +4,9 @@
     outline: none;
     padding: 0 32px;
     white-space: break-spaces;
+    .virtual-top-height {
+        overflow: hidden;
+    }
     & [contenteditable='true'] {
         outline: none;
     }
