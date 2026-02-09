@@ -1,5 +1,15 @@
 # Changelog
 
+## 20.2.22
+
+### Patch Changes
+
+- [#338](https://github.com/worktile/slate-angular/pull/338) [`e5a527ec0aab87e089dd4d3b70c09f4b79761d69`](https://github.com/worktile/slate-angular/commit/e5a527ec0aab87e089dd4d3b70c09f4b79761d69) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - add overflow hidden to virtual-top-height to avoid pre-rendering element height greater than virtual-top-height and cause the pre-rendering content cover the viewport content
+
+- [`f994f1906899c084591c0adf1632d484f9ea547f`](https://github.com/worktile/slate-angular/commit/f994f1906899c084591c0adf1632d484f9ea547f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - will do not measureHeightByIndics and cache heights when needAddOnTop is true and diff.changedIndexesOfTop.length > 1 because it add multiple elements in top and than pre-render will not work and may make performance issue
+
+  to fix virtual top height will not be right when add multiple elements in top and correct virtual top height after measureHeightByIndics be executed #WIK-19906
+
 ## 20.2.21
 
 ### Patch Changes
