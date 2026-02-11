@@ -495,7 +495,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         if (!this.virtualScrollInitialized) {
             return 0;
         }
-        return parseFloat(this.virtualTopHeightElement.style.height.replace('px', ''));
+        const rect = this.virtualTopHeightElement.getBoundingClientRect();
+        return roundTo(rect.height, 1);
     }
 
     appendPreRenderingToViewport(visibleStates: boolean[]) {
@@ -556,7 +557,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             const visibleStates = this.editor.getAllVisibleStates();
             const accumulateTopHeigh = calculateAccumulatedTopHeight(this.editor, this.inViewportIndics[0], visibleStates);
             this.setTopHeightDebugInfo(accumulateTopHeigh, this.inViewportIndics[0] - 1);
-            if (realTopHeight !== accumulateTopHeigh) {
+            if (realTopHeight !== accumulateTopHeigh && Math.abs(realTopHeight - accumulateTopHeigh) > 1) {
                 if (isDebug) {
                     debugLog('log', 'update top height since dirty state，增加高度: ', accumulateTopHeigh - realTopHeight);
                 }
@@ -652,7 +653,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             businessTop = calcBusinessTop(this.editor);
         }
         const { heights, accumulatedHeights } = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
-        const totalHeight = accumulatedHeights[elementLength] + businessTop;
         let startPosition = Math.max(scrollTop - businessTop, 0);
         let endPosition = startPosition + viewportHeight;
         if (scrollTop < businessTop) {
@@ -697,8 +697,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const inViewportStartIndex = inViewportIndics[0];
         const inViewportEndIndex = inViewportIndics[inViewportIndics.length - 1];
         const top = accumulatedHeights[inViewportStartIndex];
-        // todo: totalHeight: totalHeight 逻辑需要优化
-        const bottom = totalHeight - accumulatedHeights[inViewportEndIndex + 1];
+        const bottom = accumulatedHeights[elementLength] - accumulatedHeights[inViewportEndIndex + 1];
         return {
             inViewportChildren,
             inViewportIndics,
