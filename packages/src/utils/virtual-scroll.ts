@@ -1,6 +1,6 @@
 import { Element } from 'slate';
 import { AngularEditor } from '../plugins/angular-editor';
-import { SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP } from './environment';
+import { SLATE_DEBUG_KEY, SLATE_DEBUG_KEY_SCROLL_TOP, SLATE_DEBUG_KEY_UPDATE } from './environment';
 import { ELEMENT_TO_COMPONENT } from './weak-maps';
 import { BaseElementComponent } from '../view/base';
 import { BaseElementFlavour } from '../view/flavour/element';
@@ -17,6 +17,7 @@ export const VIRTUAL_CENTER_OUTLET_CLASS_NAME = 'virtual-center-outlet';
 
 export const isDebug = localStorage.getItem(SLATE_DEBUG_KEY) === 'true';
 export const isDebugScrollTop = localStorage.getItem(SLATE_DEBUG_KEY_SCROLL_TOP) === 'true';
+export const isDebugUpdate = localStorage.getItem(SLATE_DEBUG_KEY_UPDATE) === 'true';
 
 export const ELEMENT_KEY_TO_HEIGHTS = new WeakMap<AngularEditor, Map<string, number>>();
 

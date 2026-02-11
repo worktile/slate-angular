@@ -75,6 +75,7 @@ import {
     EDITOR_TO_VIRTUAL_SCROLL_CONFIG,
     getCachedHeightByElement,
     getViewportHeight,
+    isDebugUpdate,
     VIRTUAL_BOTTOM_HEIGHT_CLASS_NAME,
     VIRTUAL_CENTER_OUTLET_CLASS_NAME,
     VIRTUAL_TOP_HEIGHT_CLASS_NAME
@@ -313,6 +314,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 } else {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
                         this.appendPreRenderingToViewport(visibleStates);
+                    if (isDebugUpdate) {
+                        debugLog('log', 'writeValue update list render');
+                    }
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -581,6 +585,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 if (this.listRender.initialized) {
                     const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
                         this.appendPreRenderingToViewport(visibleStates);
+                    if (isDebugUpdate) {
+                        debugLog('log', 'tryUpdateVirtualViewport update list render');
+                    }
                     this.listRender.update(
                         childrenWithPreRendering,
                         this.editor,
@@ -1045,7 +1052,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     forceRender() {
         this.updateContext();
         if (this.isEnabledVirtualScroll()) {
-            this.updateListRenderAndRemeasureHeights();
+            this.updateListRenderAndRemeasureHeights('forceRender');
         } else {
             this.listRender.update(this.editor.children, this.editor, this.context);
         }
@@ -1094,14 +1101,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const changed = this.updateContext();
         if (changed) {
             if (this.isEnabledVirtualScroll()) {
-                this.updateListRenderAndRemeasureHeights();
+                this.updateListRenderAndRemeasureHeights('render');
             } else {
                 this.listRender.update(this.editor.children, this.editor, this.context);
             }
         }
     }
 
-    updateListRenderAndRemeasureHeights() {
+    updateListRenderAndRemeasureHeights(origin: 'render' | 'forceRender') {
         const operations = this.editor.operations;
         const firstIndex = this.inViewportIndics[0];
         const operationsOfFirstElementMerged = operations.filter(
@@ -1141,15 +1148,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
             this.inViewportIndics = newInViewportIndics;
             this.inViewportChildren = newInViewportChildren;
-            if (isDebug) {
-                debugLog(
-                    'log',
-                    'updateListRenderAndRemeasureHeights',
-                    'mutationOfFirstElementHeight',
-                    'newInViewportIndics',
-                    newInViewportIndics
-                );
-            }
         } else {
             let virtualView = this.calculateVirtualViewport(visibleStates);
             let diff = this.diffVirtualViewport(virtualView, 'onChange');
@@ -1165,6 +1163,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
         const { preRenderingCount, childrenWithPreRendering, childrenWithPreRenderingIndics } =
             this.appendPreRenderingToViewport(visibleStates);
+        if (isDebugUpdate) {
+            debugLog('log', 'updateListRenderAndRemeasureHeights update list render', 'origin', origin);
+        }
         this.listRender.update(childrenWithPreRendering, this.editor, this.context, preRenderingCount, childrenWithPreRenderingIndics);
         const remeasureIndics = this.getChangedIndics(previousInViewportChildren);
         if (remeasureIndics.length) {
