@@ -445,7 +445,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     filter(() => pendingRemeasureIndics.length > 0)
                 )
                 .subscribe((previousValue: RemeasureConfig) => {
-                    const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, true);
+                    const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, 'data-changed', true);
                     if (changed) {
                         if (previousValue.tryUpdateViewport) {
                             this.tryUpdateVirtualViewport();
@@ -575,10 +575,13 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             let diff = this.diffVirtualViewport(virtualView);
             if (diff.isDifferent && diff.needRemoveOnTop && !isFromScrollTo) {
                 const remeasureIndics = diff.changedIndexesOfTop;
-                const changed = measureHeightByIndics(this.editor, remeasureIndics);
+                const changed = measureHeightByIndics(this.editor, remeasureIndics, 'need-remove-from-top');
                 if (changed) {
                     virtualView = this.calculateVirtualViewport(visibleStates);
                     diff = this.diffVirtualViewport(virtualView, 'second');
+                    if (!diff.isDifferent && isDebug) {
+                        debugLog('log', 'viewport need not change after remeasure');
+                    }
                 }
             }
             if (diff.isDifferent) {
@@ -603,7 +606,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         }
                         const startIndexBeforeAdd = diff.changedIndexesOfTop[diff.changedIndexesOfTop.length - 1] + 1;
                         const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
-                        const changed = measureHeightByIndics(this.editor, remeasureAddedIndics);
+                        const changed = measureHeightByIndics(this.editor, remeasureAddedIndics, 'need-add-from-top');
                         if (changed) {
                             const newHeights = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
                             const actualTopHeightAfterAdd = newHeights.accumulatedHeights[startIndexBeforeAdd];
@@ -1152,7 +1155,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             let diff = this.diffVirtualViewport(virtualView, 'onChange');
             if (diff.isDifferent && diff.needRemoveOnTop) {
                 const remeasureIndics = diff.changedIndexesOfTop;
-                const changed = measureHeightByIndics(this.editor, remeasureIndics);
+                const changed = measureHeightByIndics(this.editor, remeasureIndics, 'need-remove-from-top');
                 if (changed) {
                     virtualView = this.calculateVirtualViewport(visibleStates);
                     diff = this.diffVirtualViewport(virtualView, 'second');
