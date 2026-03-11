@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.2.23
+
+### Patch Changes
+
+- [`ff177c7a51731faeae5116bf648b2eac80ce5f0c`](https://github.com/worktile/slate-angular/commit/ff177c7a51731faeae5116bf648b2eac80ce5f0c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix bottom height issue and fix getting real virtual top height issue when height is greater than 1000000
+
+- [`52840738db730975ebc07d152e4aab2a6dbe137f`](https://github.com/worktile/slate-angular/commit/52840738db730975ebc07d152e4aab2a6dbe137f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove force param in measureHeightByIndics, if element include async request the measured height will not be right and can not update the height in time and this scenario do not have any question in debug mode so we can remove it and it will always remeasure the height
+
 ## 20.2.22
 
 ### Patch Changes
