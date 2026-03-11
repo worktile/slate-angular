@@ -95,36 +95,18 @@ export const calcHeightByElement = (editor: AngularEditor, element: Element) => 
 export const measureHeightByIndics = (
     editor: AngularEditor,
     indics: number[],
-    source: 'need-remove-from-top' | 'need-add-from-top' | 'data-changed',
-    force = false
+    source: 'need-remove-from-top' | 'need-add-from-top' | 'data-changed'
 ) => {
     let hasChanged = false;
     indics.forEach((index, i) => {
         const element = editor.children[index] as Element;
         const preHeight = getCachedHeightByElement(editor, element);
-        if (preHeight && !force) {
-            if (isDebug) {
-                const height = calcHeightByElement(editor, element);
-                if (height !== preHeight) {
-                    debugLog(
-                        'warn',
-                        `calcHeightByElement(${source}): height not equal, index: `,
-                        index,
-                        'preHeight: ',
-                        preHeight,
-                        'height: ',
-                        height
-                    );
-                }
-            }
-            return;
-        }
         const currentHeight = calcHeightByElement(editor, element);
         if (isValidNumber(currentHeight) && currentHeight !== preHeight) {
             hasChanged = true;
         }
         if (isDebug && isValidNumber(currentHeight)) {
-            debugLog('log', 'measureHeightByIndics: index: ', index, 'preHeight: ', preHeight, 'height: ', currentHeight);
+            debugLog('log', `measureHeightByIndics（${source}）, index: `, index, 'preHeight: ', preHeight, 'height: ', currentHeight);
         }
     });
     return hasChanged;

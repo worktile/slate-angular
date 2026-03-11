@@ -445,7 +445,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     filter(() => pendingRemeasureIndics.length > 0)
                 )
                 .subscribe((previousValue: RemeasureConfig) => {
-                    const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, 'data-changed', true);
+                    const changed = measureHeightByIndics(this.editor, pendingRemeasureIndics, 'data-changed');
                     if (changed) {
                         if (previousValue.tryUpdateViewport) {
                             this.tryUpdateVirtualViewport();
