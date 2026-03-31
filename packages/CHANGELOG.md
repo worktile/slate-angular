@@ -1,5 +1,11 @@
 # Changelog
 
+## 21.0.0-next.0
+
+### Major Changes
+
+- [`55dbfedf0a3018fd89355095e22fed487905e037`](https://github.com/worktile/slate-angular/commit/55dbfedf0a3018fd89355095e22fed487905e037) Thanks [@xinglu01](https://github.com/xinglu01)! - bump angular version to 21.1.2
+
 ## 20.2.23
 
 ### Patch Changes

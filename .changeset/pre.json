@@ -4,5 +4,7 @@
   "initialVersions": {
     "slate-angular": "20.2.19"
   },
-  "changesets": []
+  "changesets": [
+    "warm-towns-shop"
+  ]
 }
