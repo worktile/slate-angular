@@ -5,6 +5,7 @@
     "slate-angular": "20.2.19"
   },
   "changesets": [
+    "curly-wasps-double",
     "warm-towns-shop"
   ]
 }

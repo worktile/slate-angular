@@ -1,5 +1,11 @@
 # Changelog
 
+## 21.0.0-next.1
+
+### Patch Changes
+
+- [`cbaac42288d831a30e183c1aedbc145dfa1df4a4`](https://github.com/worktile/slate-angular/commit/cbaac42288d831a30e183c1aedbc145dfa1df4a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slate-string component
+
 ## 21.0.0-next.0
 
 ### Major Changes
