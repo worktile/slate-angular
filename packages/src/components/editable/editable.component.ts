@@ -527,7 +527,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     calculateIndicsStartAndEndBySelection() {
-        if (!this.editor.selection || Range.isCollapsed(this.editor.selection)) {
+        if (!this.editor.selection) {
             return;
         }
         const isBackward = Range.isBackward(this.editor.selection);
