@@ -1,5 +1,12 @@
 # Changelog
 
+## 21.0.0-next.2
+
+### Patch Changes
+
+- [#339](https://github.com/worktile/slate-angular/pull/339) [`9a4be590a0b7204baa9034314df769584f45340e`](https://github.com/worktile/slate-angular/commit/9a4be590a0b7204baa9034314df769584f45340e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix shift selection do not work as expected issue
+  apply selection even though it is collapsed to ensure the doms which contains the selection is rendered
+
 ## 21.0.0-next.1
 
 ### Patch Changes
