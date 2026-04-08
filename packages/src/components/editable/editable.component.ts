@@ -2063,6 +2063,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             manualListener();
         });
         this.destroy$.complete();
+        this.indicsOfNeedRemeasured$.complete();
         EDITOR_TO_ON_CHANGE.delete(this.editor);
     }
 }
