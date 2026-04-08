@@ -1,5 +1,18 @@
 # Changelog
 
+## 21.0.0
+
+### Major Changes
+
+- [`55dbfedf0a3018fd89355095e22fed487905e037`](https://github.com/worktile/slate-angular/commit/55dbfedf0a3018fd89355095e22fed487905e037) Thanks [@xinglu01](https://github.com/xinglu01)! - bump angular version to 21.1.2
+
+### Patch Changes
+
+- [`cbaac42288d831a30e183c1aedbc145dfa1df4a4`](https://github.com/worktile/slate-angular/commit/cbaac42288d831a30e183c1aedbc145dfa1df4a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slate-string component
+
+- [#339](https://github.com/worktile/slate-angular/pull/339) [`9a4be590a0b7204baa9034314df769584f45340e`](https://github.com/worktile/slate-angular/commit/9a4be590a0b7204baa9034314df769584f45340e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix shift selection do not work as expected issue
+  apply selection even though it is collapsed to ensure the doms which contains the selection is rendered
+
 ## 21.0.0-next.2
 
 ### Patch Changes
