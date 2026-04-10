@@ -248,5 +248,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         return defaultHeight === undefined ? VIRTUAL_SCROLL_DEFAULT_BLOCK_HEIGHT : defaultHeight;
     };
 
+    e.isFloating = element => false;
+
     return e;
 };

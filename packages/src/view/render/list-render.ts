@@ -301,6 +301,12 @@ export class ListRender {
                 rootNodes.forEach(rootNode => {
                     rootNode.setAttribute('debug-index', index.toString());
                     rootNode.setAttribute('debug-height', height?.toString());
+                    const isFloating = this.viewContext.editor.isFloating(children[i] as Element);
+                    if (isFloating) {
+                        rootNode.setAttribute('debug-floating', 'true');
+                    } else {
+                        rootNode.removeAttribute('debug-floating');
+                    }
                 });
             }
         }
