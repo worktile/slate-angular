@@ -1,5 +1,11 @@
 # Changelog
 
+## 21.1.0
+
+### Minor Changes
+
+- [#340](https://github.com/worktile/slate-angular/pull/340) [`abda94a25d692101169abcabd092e83476cea8ec`](https://github.com/worktile/slate-angular/commit/abda94a25d692101169abcabd092e83476cea8ec) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support overridable isFloating, if element is floating we will skip it's height when calculating virtual-scroll viewport
+
 ## 21.0.0
 
 ### Major Changes
