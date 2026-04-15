@@ -4,6 +4,7 @@ import { ViewType } from '../../types/view';
 import { isComponentType, isFlavourType, isTemplateRef } from '../../utils/view';
 import { SlateElementContext, SlateLeafContext, SlateTextContext, SlateViewContext } from '../context';
 import { BlockCardRef, FlavourRef } from '../flavour/ref';
+import { hasBeforeDomMove } from '../view-interface';
 
 export function createEmbeddedViewOrComponentOrFlavour(
     viewType: ViewType,
@@ -120,6 +121,9 @@ export function mountOnItemChange(
     viewContext: SlateViewContext
 ) {
     const view = views[index];
+    if (hasBeforeDomMove(view)) {
+        view.instance.beforeDomMove('move');
+    }
     let rootNodes = getRootNodes(view);
     if (blockCards) {
         const isBlockCard = viewContext.editor.isBlockCard(item);

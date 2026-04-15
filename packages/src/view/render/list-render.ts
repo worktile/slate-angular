@@ -19,6 +19,7 @@ import {
     isDebug,
     VIRTUAL_TOP_HEIGHT_CLASS_NAME
 } from '../../utils/virtual-scroll';
+import { hasBeforeDomMove } from '../view-interface';
 
 export const PRE_RENDERING_ELEMENT_ON_TOP_CLASS = 'pre-rendering-element-on-top';
 
@@ -132,8 +133,9 @@ export class ListRender {
             const preRenderingElement = [...this.preRenderingHTMLElement];
             let previousRootNode = this.virtualTopHeightElement;
             preRenderingElement.forEach((rootNodes, index) => {
-                // const slateElement = this.children[index];
-                // if (slateElement && children.indexOf(slateElement) >= 0) {
+                if (hasBeforeDomMove(this.views[index])) {
+                    this.views[index].instance.beforeDomMove('virtual-scroll');
+                }
                 rootNodes.forEach(rootNode => {
                     setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
                     previousRootNode.insertAdjacentElement('afterend', rootNode);
@@ -147,16 +149,6 @@ export class ListRender {
                         'is clear true'
                     );
                 }
-                // } else {
-                //     if (isDebug) {
-                //         debugLog(
-                //             'log',
-                //             'preRenderingHTMLElement index: ',
-                //             this.viewContext.editor.children.indexOf(this.children[index]),
-                //             'do not clear since it would be removed soon'
-                //         );
-                //     }
-                // }
             });
             this.preRenderingHTMLElement = [];
         }
