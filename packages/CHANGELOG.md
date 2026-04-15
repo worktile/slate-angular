@@ -1,5 +1,11 @@
 # Changelog
 
+## 21.2.0
+
+### Minor Changes
+
+- [`01ecff207b58822af0ab459126703371cadb587c`](https://github.com/worktile/slate-angular/commit/01ecff207b58822af0ab459126703371cadb587c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support BeforeDomMove to help developer to control the dom move behavior
+
 ## 21.1.0
 
 ### Minor Changes
