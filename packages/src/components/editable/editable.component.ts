@@ -1039,7 +1039,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     newDomRange && autoScroll && this.scrollSelectionIntoView(this.editor, newDomRange);
                     // COMPAT: In Firefox, it's not enough to create a range, you also need
                     // to focus the contenteditable element too. (2016/11/16)
-                    if (newDomRange && IS_FIREFOX) {
+                    // Don't steal focus if another control was focused while this callback was queued.
+                    const currentActiveElement = root.activeElement;
+                    const documentBody = (root as Document).body;
+                    const hasAnotherFocusedElement =
+                        !!currentActiveElement && currentActiveElement !== el && currentActiveElement !== documentBody;
+                    if (newDomRange && IS_FIREFOX && !hasAnotherFocusedElement) {
                         el.focus();
                     }
                 }
@@ -1543,6 +1548,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             !this.isDOMEventHandled(event, this.click) &&
             isDOMNode(event.target)
         ) {
+            // Browsers do not fire selectionchange when clicking the same DOM position.
+            // Sync it explicitly after focus returns from an embedded element.
+            const root = AngularEditor.findDocumentOrShadowRoot(this.editor);
+            const editorElement = AngularEditor.toDOMNode(this.editor, this.editor);
+            if (root.activeElement === editorElement) {
+                this.toSlateSelection();
+            }
+
             const node = AngularEditor.toSlateNode(this.editor, event.target);
             const path = AngularEditor.findPath(this.editor, node);
             const start = Editor.start(this.editor, path);

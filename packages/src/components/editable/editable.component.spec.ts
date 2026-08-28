@@ -1,8 +1,8 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { AngularEditor } from 'slate-angular';
-import { AdvancedEditableComponent, configureBasicEditableTestingModule, dispatchFakeEvent } from '../../testing';
-import { Editor, Transforms } from 'slate';
+import { AdvancedEditableComponent, configureBasicEditableTestingModule, dispatchFakeEvent, dispatchMouseEvent } from '../../testing';
+import { Editor, Node, Range, Transforms } from 'slate';
 
 describe('Editable Component', () => {
     let component: AdvancedEditableComponent;
@@ -180,5 +180,68 @@ describe('Editable Component', () => {
         fixture.detectChanges();
 
         expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(1);
+    }));
+
+    it('should not steal focus from an external control while native selection sync is pending', fakeAsync(() => {
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+
+        const editor = component.editor;
+        const editorElement = AngularEditor.toDOMNode(editor, editor) as HTMLElement;
+        const externalInput = document.createElement('input');
+        document.body.appendChild(externalInput);
+
+        try {
+            editorElement.focus();
+            Transforms.select(editor, Editor.start(editor, [0]));
+            flush();
+
+            const end = Editor.end(editor, [0]);
+            editor.selection = { anchor: end, focus: end };
+            component.editableComponent.toNativeSelection(false);
+
+            externalInput.focus();
+            flush();
+
+            expect(document.activeElement).toBe(externalInput);
+        } finally {
+            externalInput.remove();
+        }
+    }));
+
+    it('should resync Slate selection when focus returns and the DOM range is unchanged', fakeAsync(() => {
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+
+        const editor = component.editor;
+        const editorElement = AngularEditor.toDOMNode(editor, editor) as HTMLElement;
+        const textElement = AngularEditor.toDOMNode(editor, Node.get(editor, [0, 0]));
+        const domRange: Range = {
+            anchor: { path: [0, 0], offset: 4 },
+            focus: { path: [0, 0], offset: 4 }
+        };
+        const staleSlateRange: Range = {
+            anchor: { path: [0, 0], offset: 12 },
+            focus: { path: [0, 0], offset: 12 }
+        };
+
+        editorElement.focus();
+        const nativeRange = AngularEditor.toDOMRange(editor, domRange);
+        document
+            .getSelection()!
+            .setBaseAndExtent(nativeRange.startContainer, nativeRange.startOffset, nativeRange.endContainer, nativeRange.endOffset);
+
+        // Simulate an iframe relay updating Slate while the native selection stays behind.
+        spyOn(component.editableComponent, 'toNativeSelection').and.stub();
+        Transforms.select(editor, staleSlateRange);
+        expect(editor.selection).toEqual(staleSlateRange);
+
+        dispatchMouseEvent(textElement, 'click');
+
+        expect(document.activeElement).toBe(editorElement);
+        expect(editor.selection).toEqual(domRange);
+        editorElement.blur();
     }));
 });
