@@ -1,5 +1,57 @@
 # Changelog
 
+## 21.2.0
+
+### Minor Changes
+
+- [`01ecff207b58822af0ab459126703371cadb587c`](https://github.com/worktile/slate-angular/commit/01ecff207b58822af0ab459126703371cadb587c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support BeforeDomMove to help developer to control the dom move behavior
+
+## 21.1.0
+
+### Minor Changes
+
+- [#340](https://github.com/worktile/slate-angular/pull/340) [`abda94a25d692101169abcabd092e83476cea8ec`](https://github.com/worktile/slate-angular/commit/abda94a25d692101169abcabd092e83476cea8ec) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - support overridable isFloating, if element is floating we will skip it's height when calculating virtual-scroll viewport
+
+## 21.0.0
+
+### Major Changes
+
+- [`55dbfedf0a3018fd89355095e22fed487905e037`](https://github.com/worktile/slate-angular/commit/55dbfedf0a3018fd89355095e22fed487905e037) Thanks [@xinglu01](https://github.com/xinglu01)! - bump angular version to 21.1.2
+
+### Patch Changes
+
+- [`cbaac42288d831a30e183c1aedbc145dfa1df4a4`](https://github.com/worktile/slate-angular/commit/cbaac42288d831a30e183c1aedbc145dfa1df4a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slate-string component
+
+- [#339](https://github.com/worktile/slate-angular/pull/339) [`9a4be590a0b7204baa9034314df769584f45340e`](https://github.com/worktile/slate-angular/commit/9a4be590a0b7204baa9034314df769584f45340e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix shift selection do not work as expected issue
+  apply selection even though it is collapsed to ensure the doms which contains the selection is rendered
+
+## 21.0.0-next.2
+
+### Patch Changes
+
+- [#339](https://github.com/worktile/slate-angular/pull/339) [`9a4be590a0b7204baa9034314df769584f45340e`](https://github.com/worktile/slate-angular/commit/9a4be590a0b7204baa9034314df769584f45340e) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix shift selection do not work as expected issue
+  apply selection even though it is collapsed to ensure the doms which contains the selection is rendered
+
+## 21.0.0-next.1
+
+### Patch Changes
+
+- [`cbaac42288d831a30e183c1aedbc145dfa1df4a4`](https://github.com/worktile/slate-angular/commit/cbaac42288d831a30e183c1aedbc145dfa1df4a4) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove slate-string component
+
+## 21.0.0-next.0
+
+### Major Changes
+
+- [`55dbfedf0a3018fd89355095e22fed487905e037`](https://github.com/worktile/slate-angular/commit/55dbfedf0a3018fd89355095e22fed487905e037) Thanks [@xinglu01](https://github.com/xinglu01)! - bump angular version to 21.1.2
+
+## 20.2.23
+
+### Patch Changes
+
+- [`ff177c7a51731faeae5116bf648b2eac80ce5f0c`](https://github.com/worktile/slate-angular/commit/ff177c7a51731faeae5116bf648b2eac80ce5f0c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - fix bottom height issue and fix getting real virtual top height issue when height is greater than 1000000
+
+- [`52840738db730975ebc07d152e4aab2a6dbe137f`](https://github.com/worktile/slate-angular/commit/52840738db730975ebc07d152e4aab2a6dbe137f) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - remove force param in measureHeightByIndics, if element include async request the measured height will not be right and can not update the height in time and this scenario do not have any question in debug mode so we can remove it and it will always remeasure the height
+
 ## 20.2.22
 
 ### Patch Changes

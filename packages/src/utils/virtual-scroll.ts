@@ -145,7 +145,8 @@ export const buildHeightsAndAccumulatedHeights = (editor: AngularEditor, visible
     accumulatedHeights[0] = 0;
     for (let i = 0; i < children.length; i++) {
         const isVisible = visibleStates[i];
-        let height = isVisible ? getCachedHeightByElement(editor, children[i]) : 0;
+        const isFloating = editor.isFloating(children[i]);
+        let height = isVisible && !isFloating ? getCachedHeightByElement(editor, children[i]) : 0;
         if (height === null) {
             try {
                 height = editor.getRoughHeight(children[i]);
