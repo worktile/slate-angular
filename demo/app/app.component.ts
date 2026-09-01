@@ -58,15 +58,15 @@ export class AppComponent implements OnInit {
         }
     ];
 
-    showSideNav: boolean;
+    showSideNav = false;
 
     get activeNav() {
         return this.menus.filter(item => window.location.href.endsWith(item.url))[0];
     }
 
-    @ViewChild('sideNav', { static: false }) sideNav: ElementRef;
+    @ViewChild('sideNav', { static: false }) sideNav!: ElementRef;
 
-    isSelected(item) {
+    isSelected(item: { url: string; name: string }) {
         return window.location.href.endsWith(item.url);
     }
 

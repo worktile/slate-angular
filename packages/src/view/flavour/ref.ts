@@ -2,7 +2,7 @@ import { SlateBlockCard } from '../../components/block-card/block-card';
 import { BaseFlavour } from './base';
 
 export class FlavourRef {
-    instance: BaseFlavour;
+    instance!: BaseFlavour;
 
     destroy(): void {
         this.instance.onDestroy();
@@ -10,7 +10,7 @@ export class FlavourRef {
 }
 
 export class BlockCardRef {
-    instance: SlateBlockCard;
+    instance!: SlateBlockCard;
 
     destroy(): void {
         this.instance.onDestroy();

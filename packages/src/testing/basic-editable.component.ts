@@ -15,7 +15,7 @@ export class BasicEditableComponent {
     value: Element[] = createDefaultDocument() as Element[];
 
     @ViewChild(SlateEditable, { static: true })
-    editableComponent: SlateEditable;
+    editableComponent!: SlateEditable;
 
     ngModelChange() {}
 

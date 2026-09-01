@@ -22,6 +22,7 @@ import { ELEMENT_TO_NODE, NODE_TO_ELEMENT } from 'slate-dom';
 import { getContentHeight } from '../utils/dom';
 import { SlateStringRender } from '../components/string/string-render';
 import { getBlockCardByNativeElement } from '../components/block-card/block-card';
+import { TextWithPlaceholder } from '../types/feature';
 
 /**
  * base class for template
@@ -41,7 +42,7 @@ export abstract class BaseComponent<
 > {
     initialized = false;
 
-    protected _context: T;
+    protected _context!: T;
 
     @Input()
     set context(value: T) {
@@ -62,7 +63,7 @@ export abstract class BaseComponent<
         return this._context;
     }
 
-    @Input() viewContext: SlateViewContext<K>;
+    @Input() viewContext!: SlateViewContext<K>;
 
     get editor() {
         return this.viewContext && this.viewContext.editor;
@@ -76,7 +77,7 @@ export abstract class BaseComponent<
 
     public cdr = inject(ChangeDetectorRef);
 
-    abstract onContextChange();
+    abstract onContextChange(): void;
 }
 
 /**
@@ -89,7 +90,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
 {
     viewContainerRef = inject(ViewContainerRef);
 
-    childrenContext: SlateChildrenContext;
+    childrenContext!: SlateChildrenContext;
 
     @ViewChild(SlateChildrenOutlet, { static: true })
     childrenOutletInstance?: SlateChildrenOutlet;
@@ -98,7 +99,7 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return this._context && this._context.element;
     }
 
-    get selection(): Range {
+    get selection(): Range | null {
         return this._context && this._context.selection;
     }
 
@@ -133,11 +134,11 @@ export class BaseElementComponent<T extends Element = Element, K extends Angular
         return null;
     };
 
-    listRender: ListRender;
+    listRender!: ListRender;
 
     ngOnInit() {
         for (const key in this._context.attributes) {
-            this.nativeElement.setAttribute(key, this._context.attributes[key]);
+            this.nativeElement.setAttribute(key, (this._context.attributes as any)[key]);
         }
         this.initialized = true;
         this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);
@@ -222,7 +223,7 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
         return this._context && this._context.text;
     }
 
-    leavesRender: LeavesRender;
+    leavesRender!: LeavesRender;
 
     @ViewChild(SlateChildrenOutlet, { static: true })
     childrenOutletInstance?: SlateChildrenOutlet;
@@ -271,7 +272,7 @@ export class BaseTextComponent<T extends Text = Text> extends BaseComponent<Slat
  */
 @Directive()
 export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implements OnInit {
-    placeholderElement: HTMLSpanElement;
+    placeholderElement: HTMLSpanElement | null = null;
 
     stringRender: SlateStringRender | null = null;
 
@@ -310,7 +311,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
         // issue-1: IME input was interrupted
         // issue-2: IME input focus jumping
         // Issue occurs when the span node of the placeholder is before the slateString span node
-        if (this.context.leaf['placeholder']) {
+        if ((this.context.leaf as TextWithPlaceholder).placeholder) {
             if (!this.placeholderElement) {
                 this.createPlaceholder();
             }
@@ -322,7 +323,7 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
 
     createPlaceholder() {
         const placeholderElement = document.createElement('span');
-        placeholderElement.innerText = this.context.leaf['placeholder'];
+        placeholderElement.innerText = (this.context.leaf as TextWithPlaceholder).placeholder!;
         placeholderElement.contentEditable = 'false';
         placeholderElement.setAttribute('data-slate-placeholder', 'true');
         this.placeholderElement = placeholderElement;
@@ -342,8 +343,8 @@ export class BaseLeafComponent extends BaseComponent<SlateLeafContext> implement
     }
 
     updatePlaceholder() {
-        if (this.placeholderElement.innerText !== this.context.leaf['placeholder']) {
-            this.placeholderElement.innerText = this.context.leaf['placeholder'];
+        if (this.placeholderElement!.innerText !== (this.context.leaf as TextWithPlaceholder).placeholder) {
+            this.placeholderElement!.innerText = (this.context.leaf as TextWithPlaceholder).placeholder!;
         }
     }
 

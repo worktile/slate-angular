@@ -42,7 +42,7 @@ export class DemoTablesComponent implements OnInit {
         }
     };
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 
     mousedown(event: MouseEvent) {
         const editableElement = AngularEditor.toDOMNode(this.editor, this.editor);
@@ -50,9 +50,9 @@ export class DemoTablesComponent implements OnInit {
             const rectEditable = editableElement.getBoundingClientRect();
             const centerX = rectEditable.x + rectEditable.width / 2;
             const relativeElement = document.elementFromPoint(centerX, event.y);
-            const relativeBlockCardElement: DOMElement = relativeElement.closest('.slate-block-card');
+            const relativeBlockCardElement = relativeElement?.closest('.slate-block-card') as DOMElement | null;
             if (relativeBlockCardElement) {
-                const blockCardEntry = AngularEditor.toSlateCardEntry(this.editor, relativeBlockCardElement.firstElementChild);
+                const blockCardEntry = AngularEditor.toSlateCardEntry(this.editor, relativeBlockCardElement.firstElementChild!);
                 if (blockCardEntry && blockCardEntry[1]) {
                     const rootNodePath = blockCardEntry[1].slice(0, 1);
                     const rootNode = Node.get(this.editor, rootNodePath);

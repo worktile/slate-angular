@@ -64,7 +64,7 @@ export class ListRender {
     private differ: IterableDiffer<any> | null = null;
     public initialized = false;
     private preRenderingHTMLElement: HTMLElement[][] = [];
-    private virtualTopHeightElement = null;
+    private virtualTopHeightElement: HTMLElement | null = null;
 
     constructor(
         private viewContext: SlateViewContext,
@@ -138,7 +138,7 @@ export class ListRender {
                 }
                 rootNodes.forEach(rootNode => {
                     setPreRenderingElementStyle(this.viewContext.editor, rootNode, true);
-                    previousRootNode.insertAdjacentElement('afterend', rootNode);
+                    previousRootNode!.insertAdjacentElement('afterend', rootNode);
                     previousRootNode = rootNode;
                 });
                 if (isDebug) {
@@ -164,12 +164,12 @@ export class ListRender {
         };
         if (diffResult) {
             let firstRootNode = getRootNodes(this.views[0], this.blockCards[0])[0];
-            const newContexts = [];
-            const newViewTypes = [];
-            const newViews = [];
+            const newContexts: (SlateTextContext | SlateElementContext)[] = [];
+            const newViewTypes: ViewType[] = [];
+            const newViews: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
             const newBlockCards: (BlockCardRef | null)[] = [];
             diffResult.forEachItem(record => {
-                const currentIndex = getBlockIndex(record.currentIndex);
+                const currentIndex = getBlockIndex(record.currentIndex!);
                 NODE_TO_INDEX.set(record.item, currentIndex);
                 NODE_TO_PARENT.set(record.item, parent);
                 let context = getContext(currentIndex, record.item, parentPath, childrenContext, this.viewContext);
@@ -184,7 +184,7 @@ export class ListRender {
                     newViews.push(view);
                     newBlockCards.push(blockCard);
                     mountOnItemChange(
-                        record.currentIndex,
+                        record.currentIndex!,
                         record.item,
                         newViews,
                         newBlockCards,
@@ -222,8 +222,8 @@ export class ListRender {
             diffResult.forEachOperation(record => {
                 // removed
                 if (record.currentIndex === null) {
-                    const view = this.views[record.previousIndex];
-                    const blockCard = this.blockCards[record.previousIndex];
+                    const view = this.views[record.previousIndex!];
+                    const blockCard = this.blockCards[record.previousIndex!];
                     view.destroy();
                     blockCard?.destroy();
                 }
@@ -251,7 +251,7 @@ export class ListRender {
                 executeAfterViewInit(this.viewContext.editor);
             }
         } else {
-            const newContexts = [];
+            const newContexts: (SlateTextContext | SlateElementContext)[] = [];
             this.children.forEach((child, _index) => {
                 const currentIndex = getBlockIndex(_index);
                 NODE_TO_INDEX.set(child, currentIndex);
@@ -275,9 +275,9 @@ export class ListRender {
                 });
                 this.preRenderingHTMLElement.push(rootNodes);
                 if (!this.virtualTopHeightElement) {
-                    this.virtualTopHeightElement = rootNodes[0].parentElement.querySelector(`.${VIRTUAL_TOP_HEIGHT_CLASS_NAME}`);
+                    this.virtualTopHeightElement = rootNodes[0].parentElement!.querySelector(`.${VIRTUAL_TOP_HEIGHT_CLASS_NAME}`);
                 }
-                this.virtualTopHeightElement.append(...rootNodes);
+                this.virtualTopHeightElement!.append(...rootNodes);
                 if (isDebug) {
                     debugLog('log', 'preRenderingHTMLElement index: ', this.viewContext.editor.children.indexOf(children[i]));
                 }
@@ -305,12 +305,12 @@ export class ListRender {
     }
 
     public destroy() {
-        this.children.forEach((element: Element, index: number) => {
+        this.children.forEach((element, index) => {
             if (this.views[index]) {
                 this.views[index].destroy();
             }
             if (this.blockCards[index]) {
-                this.blockCards[index].destroy();
+                this.blockCards[index]!.destroy();
             }
         });
         this.children = [];
@@ -375,7 +375,7 @@ export function getCommonContext(
     parentPath: Path,
     viewContext: SlateViewContext,
     childrenContext: SlateChildrenContext
-): { selection: Range; decorations: Range[] } {
+): { selection: Range | null; decorations: Range[] } {
     const p = parentPath.concat(index);
     try {
         const ds = childrenContext.decorate([item, p]);
@@ -430,7 +430,7 @@ export function createBlockCard(
 }
 
 export function trackBy(viewContext: SlateViewContext) {
-    return (index, node) => {
+    return (index: number, node: Element) => {
         return viewContext.trackBy(node) || AngularEditor.findKey(viewContext.editor, node);
     };
 }

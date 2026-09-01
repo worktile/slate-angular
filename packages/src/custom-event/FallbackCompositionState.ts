@@ -17,11 +17,11 @@
  *
  */
 
-let root = null;
-let startText = null;
-let fallbackText = null;
+let root: any = null;
+let startText: string | null = null;
+let fallbackText: string | null = null;
 
-export function initialize(nativeEventTarget) {
+export function initialize(nativeEventTarget: any) {
     root = nativeEventTarget;
     startText = getText();
     return true;
@@ -39,7 +39,7 @@ export function getData() {
     }
 
     let start;
-    const startValue = startText;
+    const startValue = startText!;
     const startLength = startValue.length;
     let end;
     const endValue = getText();

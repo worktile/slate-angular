@@ -8,9 +8,9 @@ export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | Slat
 
     initialized = false;
 
-    protected _context: T;
+    protected _context!: T;
 
-    viewContainerRef: ViewContainerRef;
+    viewContainerRef!: ViewContainerRef;
 
     set context(value: T) {
         if (hasBeforeContextChange<T>(this)) {
@@ -27,21 +27,21 @@ export abstract class BaseFlavour<T = SlateTextContext | SlateLeafContext | Slat
         return this._context;
     }
 
-    viewContext: SlateViewContext<K>;
+    viewContext!: SlateViewContext<K>;
 
     get editor() {
         return this.viewContext && this.viewContext.editor;
     }
 
-    nativeElement: HTMLElement;
+    nativeElement!: HTMLElement;
 
-    abstract onContextChange();
+    abstract onContextChange(): void;
 
-    abstract onInit();
+    abstract onInit(): void;
 
-    abstract onDestroy();
+    abstract onDestroy(): void;
 
-    abstract render();
+    abstract render(): void;
 
-    abstract rerender();
+    abstract rerender(): void;
 }

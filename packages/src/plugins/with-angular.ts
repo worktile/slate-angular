@@ -30,7 +30,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
         // Create a fake selection so that we can add a Base64-encoded copy of the
         // fragment to the HTML, to decode on future pastes.
-        let domRange: globalThis.Range;
+        let domRange: globalThis.Range | undefined;
         if (AngularEditor.isEnabledVirtualScroll(e)) {
             const virtualScrollSelection = EDITOR_TO_VIRTUAL_SCROLL_SELECTION.get(e);
             if (virtualScrollSelection) {
@@ -126,7 +126,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         }
     };
 
-    e.customInsertFragmentData = async (data: DataTransfer, contextClipboardData: ClipboardData): Promise<boolean> => {
+    e.customInsertFragmentData = async (data: DataTransfer, contextClipboardData: ClipboardData | null): Promise<boolean> => {
         /**
          * Checking copied fragment from application/x-slate-fragment or data-slate-fragment
          */
@@ -227,7 +227,7 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
         apply(op);
 
         for (const [source, key] of matches) {
-            const [node] = Editor.node(e, Path.isPath(source) ? source : source.current);
+            const [node] = Editor.node(e, Path.isPath(source) ? source : source.current!);
             NODE_TO_KEY.set(node, key);
         }
     };

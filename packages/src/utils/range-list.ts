@@ -1,7 +1,7 @@
 import { Range } from 'slate';
 import { PLACEHOLDER_SYMBOL } from './weak-maps';
 
-export const shallowCompare = (obj1: {}, obj2: {}) =>
+export const shallowCompare = (obj1: Record<string, any>, obj2: Record<string, any>) =>
     Object.keys(obj1).length === Object.keys(obj2).length &&
     Object.keys(obj1).every(key => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]);
 
@@ -27,7 +27,7 @@ export const isDecoratorRangeListEqual = (list: Range[], another: Range[]): bool
 
         if (
             !Range.equals(range, other) ||
-            range[PLACEHOLDER_SYMBOL] !== other[PLACEHOLDER_SYMBOL] ||
+            (range as any)[PLACEHOLDER_SYMBOL] !== (other as any)[PLACEHOLDER_SYMBOL] ||
             !shallowCompare(rangeOwnProps, otherOwnProps)
         ) {
             return false;

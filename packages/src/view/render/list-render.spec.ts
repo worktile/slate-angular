@@ -98,9 +98,9 @@ describe('list-render', () => {
             fixture.detectChanges();
             const value = component.value;
             const firstRoot = AngularEditor.toDOMNode(editor, value[0]);
-            expect(firstRoot.firstElementChild.textContent).toEqual('before');
-            expect(firstRoot.lastElementChild.textContent).toEqual('after');
-            expect(firstRoot.children.item(1).textContent).toEqual(Node.string(value[0]));
+            expect(firstRoot.firstElementChild!.textContent).toEqual('before');
+            expect(firstRoot.lastElementChild!.textContent).toEqual('after');
+            expect(firstRoot.children.item(1)!.textContent).toEqual(Node.string(value[0]));
             expect(firstRoot.children.length).toEqual(3);
         }));
 
@@ -118,10 +118,10 @@ describe('list-render', () => {
             fixture.detectChanges();
             const value = component.value;
             const firstRoot = AngularEditor.toDOMNode(editor, value[0]);
-            expect(firstRoot.firstElementChild.textContent).toEqual('before');
-            expect(firstRoot.lastElementChild.textContent).toEqual('after');
-            expect(firstRoot.children.item(1).textContent).toEqual(Node.string(value[0].children[0]));
-            expect(firstRoot.children.item(2).textContent).toEqual(Node.string(value[0].children[1]));
+            expect(firstRoot.firstElementChild!.textContent).toEqual('before');
+            expect(firstRoot.lastElementChild!.textContent).toEqual('after');
+            expect(firstRoot.children.item(1)!.textContent).toEqual(Node.string(value[0].children[0]));
+            expect(firstRoot.children.item(2)!.textContent).toEqual(Node.string(value[0].children[1]));
             expect(firstRoot.children.length).toEqual(4);
         }));
     });

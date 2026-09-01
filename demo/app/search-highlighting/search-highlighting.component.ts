@@ -20,7 +20,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
 
     editor = withAngular(createEditor());
 
-    decorate: (nodeEntry: NodeEntry) => Range[];
+    decorate: (nodeEntry: NodeEntry) => Range[] = () => [];
 
     public cdr = inject(ChangeDetectorRef);
 
@@ -28,14 +28,14 @@ export class DemoSearchHighlightingComponent implements OnInit {
         this.generateDecorate();
     }
 
-    keywordsChange(event) {
+    keywordsChange(event: string) {
         this.generateDecorate();
         this.cdr.markForCheck();
     }
 
     generateDecorate() {
-        this.decorate = ([node, path]) => {
-            const ranges = [];
+        this.decorate = ([node, path]: NodeEntry) => {
+            const ranges: Range[] = [];
 
             if (this.keywords && Text.isText(node)) {
                 const { text } = node;
@@ -51,7 +51,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
                             },
                             focus: { path, offset },
                             highlight: true
-                        });
+                        } as Range);
                     }
 
                     offset = offset + part.length + this.keywords.length;
@@ -69,7 +69,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
     };
 
     renderLeaf = (text: Text) => {
-        if (text['highlight']) {
+        if (text.highlight) {
             return DemoLeafComponent;
         }
         return null;

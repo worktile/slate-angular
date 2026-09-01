@@ -9,7 +9,7 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
         return this._context && this._context.text;
     }
 
-    leavesRender: LeavesRender;
+    leavesRender!: LeavesRender;
 
     getOutletParent = () => {
         return this.nativeElement;
@@ -50,7 +50,7 @@ export abstract class BaseTextFlavour<T extends Text = Text> extends BaseFlavour
         this.leavesRender.update(this.context);
     }
 
-    abstract render();
+    abstract render(): void;
 
-    abstract rerender();
+    abstract rerender(): void;
 }

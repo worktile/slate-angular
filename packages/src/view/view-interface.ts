@@ -18,21 +18,21 @@ export interface BeforeDomMoveRef {
     };
 }
 
-export function hasBeforeContextChange<T>(value): value is BeforeContextChange<T> {
+export function hasBeforeContextChange<T>(value: any): value is BeforeContextChange<T> {
     if (value.beforeContextChange) {
         return true;
     }
     return false;
 }
 
-export function hasAfterContextChange<T>(value): value is AfterContextChange {
+export function hasAfterContextChange<T>(value: any): value is AfterContextChange {
     if (value.afterContextChange) {
         return true;
     }
     return false;
 }
 
-export function hasBeforeDomMove(value): value is BeforeDomMoveRef {
+export function hasBeforeDomMove(value: any): value is BeforeDomMoveRef {
     if (value.instance?.beforeDomMove) {
         return true;
     }

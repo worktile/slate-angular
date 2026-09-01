@@ -14,6 +14,6 @@ export enum SlateErrorCode {
 export interface SlateError {
     code?: SlateErrorCode | number;
     name?: string;
-    nativeError?: Error;
+    nativeError?: Error | unknown;
     data?: Descendant[];
 }

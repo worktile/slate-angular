@@ -48,7 +48,7 @@
 import 'zone.js'; // Included with Angular CLI.
 import 'core-js/features/global-this';
 
-window['global'] = window as any;
+(window as any)['global'] = window as any;
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */

@@ -3,11 +3,11 @@ import { getZeroTextNode } from '../../utils/dom';
 export const SLATE_BLOCK_CARD_CLASS_NAME = 'slate-block-card';
 
 export class SlateBlockCard {
-    centerRootNodes: HTMLElement[];
+    centerRootNodes!: HTMLElement[];
 
-    nativeElement: HTMLElement;
+    nativeElement!: HTMLElement;
 
-    centerContainer: HTMLElement;
+    centerContainer!: HTMLElement;
 
     onInit() {
         const nativeElement = document.createElement('div');

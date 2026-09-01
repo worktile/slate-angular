@@ -17,7 +17,7 @@ import { MentionFlavour } from './mention.flavour';
 export class DemoMentionsComponent implements OnInit {
     searchText = '';
     suggestions: string[] = [];
-    target: Range;
+    target: Range | null = null;
     activeIndex = 0;
     trigger = '@';
 
@@ -26,7 +26,7 @@ export class DemoMentionsComponent implements OnInit {
     editor = withMentions(withHistory(withAngular(createEditor())));
 
     @ViewChild('suggestionList', { static: true })
-    suggestionList: ElementRef;
+    suggestionList!: ElementRef;
 
     public renderer2 = inject(Renderer2);
     public cdr = inject(ChangeDetectorRef);
@@ -81,8 +81,8 @@ export class DemoMentionsComponent implements OnInit {
         const { selection, operations } = this.editor;
         if (operations[0].type === 'insert_text' && operations[0].text === this.trigger) {
             this.target = {
-                anchor: Editor.before(this.editor, selection.anchor),
-                focus: selection.focus
+                anchor: Editor.before(this.editor, selection!.anchor)!,
+                focus: selection!.focus
             };
             this.searchText = '';
             this.activeIndex = 0;
@@ -123,7 +123,7 @@ export class DemoMentionsComponent implements OnInit {
         this.renderer2.removeStyle(this.suggestionList.nativeElement, 'top');
     }
 
-    mousedown(event: MouseEvent, item) {
+    mousedown(event: MouseEvent, item: string) {
         event.preventDefault();
         this.removeSearchText();
         insertMention(this.editor, item);
@@ -132,22 +132,22 @@ export class DemoMentionsComponent implements OnInit {
     removeSearchText() {
         const range = {
             anchor: {
-                path: this.editor.selection.anchor.path,
-                offset: this.editor.selection.anchor.offset - this.searchText.length - 1
+                path: this.editor.selection!.anchor.path,
+                offset: this.editor.selection!.anchor.offset - this.searchText.length - 1
             },
-            focus: this.editor.selection.focus
+            focus: this.editor.selection!.focus
         };
         Transforms.select(this.editor, range);
         Transforms.delete(this.editor);
     }
 }
 
-const withMentions = editor => {
+const withMentions = <T extends Editor>(editor: T) => {
     const { isVoid, isInline } = editor;
-    editor.isInline = element => {
+    editor.isInline = (element: Element) => {
         return element.type === 'mention' ? true : isInline(element);
     };
-    editor.isVoid = element => {
+    editor.isVoid = (element: Element) => {
         return element.type === 'mention' ? true : isVoid(element);
     };
     return editor;

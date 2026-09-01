@@ -9,7 +9,7 @@ export const setDataTransferClipboardText = (data: Pick<DataTransfer, 'getData' 
     data?.setData(`text/plain`, text);
 };
 
-export const getDataTransferClipboard = (data: Pick<DataTransfer, 'getData' | 'setData'> | null): ClipboardData => {
+export const getDataTransferClipboard = (data: Pick<DataTransfer, 'getData' | 'setData'> | null): ClipboardData | null => {
     const html = data?.getData(`text/html`);
     if (html) {
         const htmlClipboardData = getClipboardFromHTMLText(html);
@@ -31,7 +31,7 @@ export const getDataTransferClipboard = (data: Pick<DataTransfer, 'getData' | 's
     }
 };
 
-export const getDataTransferClipboardText = (data: Pick<DataTransfer, 'getData' | 'setData'> | null): ClipboardData => {
+export const getDataTransferClipboardText = (data: Pick<DataTransfer, 'getData' | 'setData'> | null): ClipboardData | null => {
     if (!data) {
         return null;
     }

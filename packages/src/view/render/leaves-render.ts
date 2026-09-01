@@ -7,17 +7,17 @@ import { FlavourRef } from '../flavour/ref';
 import { DefaultLeafFlavour } from '../../components/leaf/leaf.flavour';
 
 export class LeavesRender {
-    private decoratedLeaves: { leaf: Text; position?: LeafPosition }[];
+    private decoratedLeaves!: { leaf: Text; position?: LeafPosition }[];
     private views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
     private contexts: SlateLeafContext[] = [];
     private viewTypes: ViewType[] = [];
-    private differ: IterableDiffer<any>;
+    private differ!: IterableDiffer<any>;
 
     constructor(
         private viewContext: SlateViewContext,
         private viewContainerRef: ViewContainerRef,
         private getOutletParent: () => HTMLElement,
-        private getOutletElement: () => HTMLElement
+        private getOutletElement: () => HTMLElement | null
     ) {}
 
     public initialize(context: SlateTextContext) {
@@ -44,11 +44,11 @@ export class LeavesRender {
         const diffResult = this.differ.diff(decoratedLeaves);
         if (diffResult) {
             let firstRootNode = getRootNodes(this.views[0])[0];
-            const newContexts = [];
-            const newViewTypes = [];
-            const newViews = [];
+            const newContexts: SlateLeafContext[] = [];
+            const newViewTypes: ViewType[] = [];
+            const newViews: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[] = [];
             diffResult.forEachItem(record => {
-                let context = getContext(record.currentIndex, contexts);
+                let context = getContext(record.currentIndex!, contexts);
                 const viewType = getViewType(context, this.viewContext);
                 newViewTypes.push(viewType);
                 let view: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef;
@@ -56,7 +56,7 @@ export class LeavesRender {
                     view = createEmbeddedViewOrComponentOrFlavour(viewType, context, this.viewContext, this.viewContainerRef);
                     newContexts.push(context);
                     newViews.push(view);
-                    mountOnItemChange(record.currentIndex, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
+                    mountOnItemChange(record.currentIndex!, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
                 } else {
                     const previousView = this.views[record.previousIndex];
                     const previousViewType = this.viewTypes[record.previousIndex];
@@ -75,11 +75,11 @@ export class LeavesRender {
                 }
             });
             diffResult.forEachRemovedItem(record => {
-                const view = this.views[record.previousIndex];
+                const view = this.views[record.previousIndex!];
                 view.destroy();
             });
             diffResult.forEachMovedItem(record => {
-                mountOnItemChange(record.currentIndex, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
+                mountOnItemChange(record.currentIndex!, record.item, newViews, null, outletParent, firstRootNode, this.viewContext);
             });
             this.viewTypes = newViewTypes;
             this.views = newViews;
@@ -117,7 +117,7 @@ export function getViewType(leafContext: SlateLeafContext, viewContext: SlateVie
 }
 
 export function trackBy(viewContext: SlateViewContext) {
-    return (index, node) => {
+    return (index: number, node: any) => {
         return index;
     };
 }

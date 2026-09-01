@@ -123,7 +123,7 @@ const withInlines = (editor: Editor) => {
     return editor;
 };
 
-const insertLink = (editor, url) => {
+const insertLink = (editor: Editor, url: string) => {
     if (editor.selection) {
         wrapLink(editor, url);
     }
@@ -161,7 +161,7 @@ const unwrapButton = (editor: Editor) => {
     });
 };
 
-const wrapLink = (editor, url: string) => {
+const wrapLink = (editor: Editor, url: string) => {
     if (isLinkActive(editor)) {
         unwrapLink(editor);
     }

@@ -24,11 +24,11 @@ export class EditableWithOutletComponent {
     value: Element[] = createDefaultDocument() as Element[];
 
     @ViewChild(SlateEditable, { static: true })
-    editableComponent: SlateEditable;
+    editableComponent!: SlateEditable;
 
     renderElement() {
         return (element: Element) => {
-            if ((element.type as any) === customType) {
+            if ((element as any).type === customType) {
                 return TestElementWithOutletComponent;
             }
             return null;

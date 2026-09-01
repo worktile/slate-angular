@@ -316,6 +316,6 @@ describe('with-angular', () => {
     });
 });
 
-const validKey = (oldNode, newNode) => {
+const validKey = (oldNode: Node, newNode: Node) => {
     expect(NODE_TO_KEY.get(oldNode)).toEqual(NODE_TO_KEY.get(newNode));
 };

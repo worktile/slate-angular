@@ -73,7 +73,7 @@ export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {
         };
     }
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 
     private syncVirtualScrollConfig() {
         if (this.mode !== 'virtual') {

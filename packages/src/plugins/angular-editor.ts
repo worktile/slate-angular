@@ -77,7 +77,7 @@ export const AngularEditor = {
         const cursorNode = AngularEditor.getCardCursorNode(editor, blockCardNode, options);
         const window = AngularEditor.getWindow(editor);
         const domSelection = window.getSelection();
-        domSelection.setBaseAndExtent(cursorNode, 1, cursorNode, 1);
+        domSelection!.setBaseAndExtent(cursorNode!, 1, cursorNode!, 1);
     },
 
     /**
@@ -99,7 +99,7 @@ export const AngularEditor = {
         };
         Transforms.select(editor, { anchor: cursor, focus: cursor });
     },
-    focus: (editor, options = { retries: 5 }) => {
+    focus: (editor: AngularEditor, options = { retries: 5 }) => {
         // Return if already focused
         if (IS_FOCUSED.get(editor)) {
             return;

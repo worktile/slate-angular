@@ -17,7 +17,7 @@ describe('Block Card Component', () => {
 
     it('The block-card component should be created', fakeAsync(() => {
         let blockCardElement: HTMLElement;
-        blockCardElement = (fixture.debugElement.nativeNode as HTMLElement).querySelector(`.${SLATE_BLOCK_CARD_CLASS_NAME}`);
+        blockCardElement = (fixture.debugElement.nativeNode as HTMLElement).querySelector(`.${SLATE_BLOCK_CARD_CLASS_NAME}`)!;
         expect(blockCardElement).toBeTruthy();
     }));
 });

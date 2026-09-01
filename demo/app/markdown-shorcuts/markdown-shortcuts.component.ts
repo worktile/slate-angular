@@ -56,7 +56,7 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
         };
     }
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 }
 const initialValue = [
     {
@@ -93,7 +93,7 @@ const initialValue = [
     }
 ];
 
-const SHORTCUTS = {
+const SHORTCUTS: Record<string, string> = {
     '*': 'list-item',
     '-': 'list-item',
     '+': 'list-item',
@@ -105,10 +105,10 @@ const SHORTCUTS = {
     '#####': 'heading-five',
     '######': 'heading-six'
 };
-const withShortcuts = editor => {
+const withShortcuts = <T extends Editor>(editor: T) => {
     const { deleteBackward, insertText } = editor;
 
-    editor.insertText = text => {
+    editor.insertText = (text: string) => {
         const { selection } = editor;
 
         if (text === ' ' && selection && Range.isCollapsed(selection)) {
@@ -125,7 +125,7 @@ const withShortcuts = editor => {
             if (type) {
                 Transforms.select(editor, range);
                 Transforms.delete(editor);
-                Transforms.setNodes(editor, { type }, { match: n => Element.isElement(n) && Editor.isBlock(editor, n) });
+                Transforms.setNodes(editor, { type: type as Element['type'] }, { match: n => Element.isElement(n) && Editor.isBlock(editor, n) });
 
                 if (type === 'list-item') {
                     const list: BulletedListElement = {
@@ -144,7 +144,7 @@ const withShortcuts = editor => {
         insertText(text);
     };
 
-    editor.deleteBackward = (...args) => {
+    editor.deleteBackward = (...args: Parameters<Editor['deleteBackward']>) => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {

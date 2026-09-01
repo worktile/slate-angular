@@ -33,7 +33,7 @@ describe('AngularEditor', () => {
                 offset: 0
             }
         });
-        const nativeRange = AngularEditor.toDOMRange(component.editor, component.editor.selection);
+        const nativeRange = AngularEditor.toDOMRange(component.editor, component.editor.selection!);
         expect(nativeRange.startOffset).toEqual(1);
         expect(nativeRange.endOffset).toEqual(1);
     });
@@ -53,7 +53,7 @@ describe('AngularEditor', () => {
         tick(100);
         Transforms.insertText(component.editor, insertText);
         tick(100);
-        const nativeRange = AngularEditor.toDOMRange(component.editor, component.editor.selection);
+        const nativeRange = AngularEditor.toDOMRange(component.editor, component.editor.selection!);
         expect(nativeRange.startOffset).toEqual(insertText.length);
         expect(nativeRange.endOffset).toEqual(insertText.length);
     }));

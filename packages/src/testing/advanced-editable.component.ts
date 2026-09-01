@@ -28,18 +28,18 @@ export class AdvancedEditableComponent implements OnInit {
 
     value: any = createDefaultDocument();
 
-    decorate = (nodeEntry: NodeEntry) => [];
+    decorate: (nodeEntry: NodeEntry) => any[] = () => [];
 
     trackBy = (element: Element) => null;
 
-    placeholder: string;
+    placeholder!: string;
 
     @ViewChild(SlateEditable, { static: true })
-    editableComponent: SlateEditable;
+    editableComponent!: SlateEditable;
 
     generateDecorate(keywords: string) {
-        this.decorate = ([node, path]) => {
-            const ranges = [];
+        this.decorate = ([node, path]: NodeEntry) => {
+            const ranges: any[] = [];
 
             if (keywords && Text.isText(node)) {
                 const { text } = node;
@@ -64,7 +64,7 @@ export class AdvancedEditableComponent implements OnInit {
     }
 
     renderLeaf = (text: Text) => {
-        if (text['highlight']) {
+        if ((text as any)['highlight']) {
             return TestingLeafFlavour;
         }
         return null;

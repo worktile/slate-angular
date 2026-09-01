@@ -9,7 +9,7 @@ export enum MarkTypes {
 }
 
 export class RichTextFlavour extends DefaultTextFlavour {
-    attributes = [];
+    attributes: string[] = [];
 
     render() {
         super.render();
@@ -21,8 +21,9 @@ export class RichTextFlavour extends DefaultTextFlavour {
             this.nativeElement.removeAttribute(attr);
         });
         this.attributes = [];
-        for (const key in this.text) {
-            if (Object.prototype.hasOwnProperty.call(this.text, key) && key !== 'text' && !!this.text[key]) {
+        const textRecord = this.text as Record<string, unknown>;
+        for (const key in textRecord) {
+            if (Object.prototype.hasOwnProperty.call(textRecord, key) && key !== 'text' && !!textRecord[key]) {
                 const attr = `slate-${key}`;
                 this.nativeElement.setAttribute(attr, 'true');
                 this.attributes.push(attr);

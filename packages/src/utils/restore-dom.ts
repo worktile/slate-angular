@@ -3,7 +3,7 @@ import { EDITOR_TO_ELEMENT } from 'slate-dom';
 
 export function restoreDom(editor: Editor, execute: () => void) {
     const editable = EDITOR_TO_ELEMENT.get(editor);
-    let observer = new MutationObserver(mutations => {
+    let observer: MutationObserver | null = new MutationObserver(mutations => {
         mutations.reverse().forEach(mutation => {
             if (mutation.type === 'characterData') {
                 // We don't want to restore the DOM for characterData mutations
@@ -23,10 +23,10 @@ export function restoreDom(editor: Editor, execute: () => void) {
         execute();
     });
     const disconnect = () => {
-        observer.disconnect();
+        observer?.disconnect();
         observer = null;
     };
-    observer.observe(editable, { subtree: true, childList: true, characterData: true, characterDataOldValue: true });
+    observer.observe(editable!, { subtree: true, childList: true, characterData: true, characterDataOldValue: true });
     setTimeout(() => {
         if (observer) {
             disconnect();
