@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
@@ -10,6 +10,7 @@ import { DemoLeafComponent } from './hightlighting-leaf.flavour';
     selector: 'demo-search-highlight',
     templateUrl: './search-highlighting.component.html',
     styleUrls: ['./search-highlighting.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [FormsModule, SlateEditable]
 })
 export class DemoSearchHighlightingComponent implements OnInit {

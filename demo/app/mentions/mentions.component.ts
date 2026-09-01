@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, Renderer2, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MentionElement } from 'custom-types';
 import { createEditor, Editor, Element, Range, Transforms } from 'slate';
@@ -11,6 +11,7 @@ import { MentionFlavour } from './mention.flavour';
 @Component({
     selector: 'demo-mentions',
     templateUrl: 'mentions.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule, NgClass]
 })
 export class DemoMentionsComponent implements OnInit {

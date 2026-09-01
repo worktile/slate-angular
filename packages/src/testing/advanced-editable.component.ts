@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Element, NodeEntry, Text } from 'slate';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
@@ -20,6 +20,7 @@ import { TestingLeafFlavour } from './leaf.flavour';
             [scrollSelectionIntoView]="scrollSelectionIntoView"
         ></slate-editable>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AdvancedEditableComponent implements OnInit {

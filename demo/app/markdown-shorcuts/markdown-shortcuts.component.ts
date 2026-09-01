@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -12,6 +12,7 @@ import { BlockquoteFlavour } from '../flavours/quote.flavour';
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {

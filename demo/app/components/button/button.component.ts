@@ -1,4 +1,15 @@
-import { Component, ElementRef, EventEmitter, HostListener, inject, Input, OnChanges, Output, Renderer2 } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    Renderer2,
+    ChangeDetectionStrategy
+} from '@angular/core';
 
 @Component({
     selector: 'demo-button',
@@ -6,6 +17,7 @@ import { Component, ElementRef, EventEmitter, HostListener, inject, Input, OnCha
     host: {
         style: 'cursor: pointer'
     },
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true
 })
 export class DemoButtonComponent implements OnChanges {

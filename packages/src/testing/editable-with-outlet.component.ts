@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Element } from 'slate';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
@@ -15,6 +15,7 @@ const customType = 'custom-with-outlet';
         (ngModelChange)="ngModelChange()"
         [renderElement]="renderElement()"
     ></slate-editable> `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EditableWithOutletComponent {
@@ -63,6 +64,7 @@ export function createDefaultDocument() {
     host: {
         class: 'test-element-with-outlet'
     },
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateChildrenOutlet]
 })
 export class TestElementWithOutletComponent extends BaseElementComponent<any> {}

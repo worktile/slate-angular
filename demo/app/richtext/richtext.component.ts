@@ -1,4 +1,4 @@
-import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
+import { Component, ViewChild, TemplateRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Text, Editor, Element, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -25,6 +25,7 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 @Component({
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoRichtextComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Editor, Element, Node } from 'slate';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
@@ -6,6 +6,7 @@ import { withAngular } from '../plugins/with-angular';
 @Component({
     selector: 'image-editable',
     template: ` <slate-editable [editor]="editor" [ngModel]="value"></slate-editable> `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ImageEditableComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
 import { createEditor, Element } from 'slate';
@@ -9,6 +9,7 @@ import { H1Flavour } from '../flavours/heading.flavour';
 @Component({
     selector: 'demo-huge-document',
     templateUrl: 'huge-document.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoHugeDocumentComponent implements OnInit, AfterViewInit {

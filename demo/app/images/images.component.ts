@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { withAngular } from 'slate-angular';
 import { createEditor, Transforms, Editor, Element } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
@@ -10,6 +10,7 @@ import { DemoButtonComponent } from '../components/button/button.component';
 @Component({
     selector: 'demo-images',
     templateUrl: 'images.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoImagesComponent implements OnInit {

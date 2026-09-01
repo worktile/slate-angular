@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Editor, Transforms, createEditor, Element as SlateElement, Range, Descendant } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -20,6 +20,7 @@ interface ToolbarItem {
 @Component({
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoInlinesComponent {

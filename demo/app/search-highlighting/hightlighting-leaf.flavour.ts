@@ -1,9 +1,10 @@
-import { Component, inject, Renderer2 } from '@angular/core';
+import { Component, inject, Renderer2, ChangeDetectionStrategy } from '@angular/core';
 import { BaseLeafComponent } from 'slate-angular';
 
 @Component({
     selector: 'span[demoLeaf]',
     template: ``,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: []
 })
 export class DemoLeafComponent extends BaseLeafComponent {

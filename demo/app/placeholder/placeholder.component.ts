@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Descendant, Editor, Node } from 'slate';
 import { SlatePlaceholder, withAngular } from 'slate-angular';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,7 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
             ></slate-editable>
         </div>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoPlaceholderComponent {

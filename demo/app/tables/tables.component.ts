@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, withAngular } from 'slate-angular';
 import { MarkTypes, RichTextFlavour } from '../flavours/richtext.flavour';
@@ -11,6 +11,7 @@ import { TableFlavour } from './table.flavour';
 @Component({
     selector: 'demo-tables',
     templateUrl: 'tables.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoTablesComponent implements OnInit {
