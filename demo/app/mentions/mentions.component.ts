@@ -37,6 +37,7 @@ export class DemoMentionsComponent implements OnInit {
         if (element.type === 'mention') {
             return MentionFlavour;
         }
+        return null;
     };
 
     onKeydown = (event: KeyboardEvent) => {

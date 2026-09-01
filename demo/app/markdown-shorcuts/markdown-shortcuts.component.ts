@@ -53,6 +53,7 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
             if (element.type === 'bulleted-list') {
                 return ULFlavour;
             }
+            return null;
         };
     }
 

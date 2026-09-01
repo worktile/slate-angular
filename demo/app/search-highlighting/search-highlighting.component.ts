@@ -66,6 +66,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return RichTextFlavour;
         }
+        return null;
     };
 
     renderLeaf = (text: Text) => {

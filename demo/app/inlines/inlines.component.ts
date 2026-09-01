@@ -68,6 +68,7 @@ export class DemoInlinesComponent {
         } else if (element.type === 'link') {
             return DemoElementLinkComponent;
         }
+        return null;
     };
 
     onKeydown = (event: KeyboardEvent) => {
