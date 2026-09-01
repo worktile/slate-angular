@@ -11,7 +11,7 @@ export function createEmbeddedViewOrComponentOrFlavour(
     context: any,
     viewContext: SlateViewContext,
     viewContainerRef: ViewContainerRef
-) {
+): EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef {
     if (isFlavourType(viewType)) {
         const flavourRef = new FlavourRef();
         flavourRef.instance = new (viewType as any)();
@@ -39,6 +39,7 @@ export function createEmbeddedViewOrComponentOrFlavour(
         componentRef.changeDetectorRef.detectChanges();
         return componentRef;
     }
+    throw new Error('Invalid view type');
 }
 
 export function updateContext(
@@ -69,10 +70,10 @@ export function mount(
         const fragment = document.createDocumentFragment();
         views.forEach((view, index) => {
             const blockCard = blockCards ? blockCards[index] : undefined;
-            fragment.append(...getRootNodes(view, blockCard));
+            fragment.append(...getRootNodes(view, blockCard ?? undefined));
         });
         if (outletElement) {
-            outletElement.parentElement.insertBefore(fragment, outletElement);
+            outletElement.parentElement!.insertBefore(fragment, outletElement);
             outletElement.remove();
         } else {
             outletParent.prepend(fragment);
@@ -80,7 +81,10 @@ export function mount(
     }
 }
 
-export function getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef, blockCard?: BlockCardRef): HTMLElement[] {
+export function getRootNodes(
+    ref: EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef,
+    blockCard?: BlockCardRef | null
+): HTMLElement[] {
     if (blockCard) {
         return [blockCard.instance.nativeElement];
     }
@@ -114,7 +118,7 @@ export function getRootNodes(ref: EmbeddedViewRef<any> | ComponentRef<any> | Fla
 export function mountOnItemChange(
     index: number,
     item: Descendant,
-    views: (EmbeddedViewRef<any> | ComponentRef<any>)[],
+    views: (EmbeddedViewRef<any> | ComponentRef<any> | FlavourRef)[],
     blockCards: (BlockCardRef | null)[] | null,
     outletParent: HTMLElement,
     firstRootNode: HTMLElement | null,
@@ -129,7 +133,7 @@ export function mountOnItemChange(
         const isBlockCard = viewContext.editor.isBlockCard(item);
         if (isBlockCard) {
             const blockCard = blockCards[index];
-            rootNodes = [blockCard.instance.nativeElement];
+            rootNodes = [blockCard!.instance.nativeElement];
         }
     }
     if (index === 0) {

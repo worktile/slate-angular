@@ -105,13 +105,23 @@ export type CustomText = {
     placeholder?: string;
     bold?: boolean;
     italic?: boolean;
+    underlined?: boolean;
+    strike?: boolean;
     code?: boolean;
     text: string;
     'code-line'?: boolean;
+    highlight?: boolean;
 };
 
 export type EmptyText = {
     text: string;
+    bold?: boolean;
+    italic?: boolean;
+    underlined?: boolean;
+    strike?: boolean;
+    code?: boolean;
+    'code-line'?: boolean;
+    highlight?: boolean;
 };
 
 export type CustomEditor = BaseEditor & AngularEditor;

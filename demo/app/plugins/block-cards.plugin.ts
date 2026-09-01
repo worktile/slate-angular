@@ -2,42 +2,43 @@ import { Editor, Path, Transforms, Location } from 'slate';
 import { AngularEditor, hasBlockCard, isCardLeft } from 'slate-angular';
 import { HistoryEditor } from 'slate-history';
 
-export const withBlockCard = editor => {
-    const { insertBreak, deleteBackward, deleteForward, insertText } = editor;
+export const withBlockCard = <T extends Editor>(editor: T) => {
+    const e = editor as T & AngularEditor;
+    const { insertBreak, deleteBackward, deleteForward, insertText } = e;
 
-    editor.insertBreak = () => {
+    e.insertBreak = () => {
         const domSelection = window.getSelection();
-        const anchorNode = domSelection.anchorNode;
-        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection)) {
+        const anchorNode = domSelection?.anchorNode;
+        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection) && anchorNode) {
             const isLeftCursor = isCardLeft(anchorNode);
-            const cardEntry = AngularEditor.toSlateCardEntry(editor, anchorNode);
+            const cardEntry = AngularEditor.toSlateCardEntry(e, anchorNode);
             const cursorRootPath = cardEntry[1];
-            insertParagraph(editor, isLeftCursor ? cursorRootPath : Path.next(cursorRootPath));
+            insertParagraph(e, isLeftCursor ? cursorRootPath : Path.next(cursorRootPath));
             if (!isLeftCursor) {
-                Transforms.select(editor, Path.next(cursorRootPath));
+                Transforms.select(e, Path.next(cursorRootPath));
             }
             return;
         }
         insertBreak();
     };
 
-    editor.deleteBackward = unit => {
+    e.deleteBackward = (unit: 'character' | 'word' | 'line' | 'block') => {
         const domSelection = window.getSelection();
-        const anchorNode = domSelection.anchorNode;
-        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection)) {
+        const anchorNode = domSelection?.anchorNode;
+        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection) && anchorNode) {
             const isLeftCursor = isCardLeft(anchorNode);
-            const cardEntry = AngularEditor.toSlateCardEntry(editor, anchorNode);
+            const cardEntry = AngularEditor.toSlateCardEntry(e, anchorNode);
             const cursorRootPath = cardEntry[1];
             if (isLeftCursor) {
                 const previousPath = Path.previous(cursorRootPath);
-                HistoryEditor.withoutMerging(editor, () => {
-                    Transforms.select(editor, Editor.end(editor, previousPath));
+                HistoryEditor.withoutMerging(e as T & HistoryEditor, () => {
+                    Transforms.select(e, Editor.end(e, previousPath));
                 });
                 return;
             } else {
-                insertParagraph(editor, cursorRootPath);
-                Transforms.select(editor, cursorRootPath);
-                Transforms.removeNodes(editor, {
+                insertParagraph(e, cursorRootPath);
+                Transforms.select(e, cursorRootPath);
+                Transforms.removeNodes(e, {
                     at: Path.next(cursorRootPath)
                 });
                 return;
@@ -46,24 +47,24 @@ export const withBlockCard = editor => {
         deleteBackward(unit);
     };
 
-    editor.deleteForward = unit => {
+    e.deleteForward = (unit: 'character' | 'word' | 'line' | 'block') => {
         const domSelection = window.getSelection();
-        const anchorNode = domSelection.anchorNode;
-        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection)) {
+        const anchorNode = domSelection?.anchorNode;
+        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection) && anchorNode) {
             const isLeftCursor = isCardLeft(anchorNode);
-            const cardEntry = AngularEditor.toSlateCardEntry(editor, anchorNode);
+            const cardEntry = AngularEditor.toSlateCardEntry(e, anchorNode);
             const cursorRootPath = cardEntry[1];
             if (isLeftCursor) {
-                insertParagraph(editor, cursorRootPath);
-                Transforms.select(editor, cursorRootPath);
-                Transforms.removeNodes(editor, {
+                insertParagraph(e, cursorRootPath);
+                Transforms.select(e, cursorRootPath);
+                Transforms.removeNodes(e, {
                     at: Path.next(cursorRootPath)
                 });
                 return;
             } else {
                 const nextPath = Path.next(cursorRootPath);
-                HistoryEditor.withoutMerging(editor, () => {
-                    Transforms.select(editor, Editor.start(editor, nextPath));
+                HistoryEditor.withoutMerging(e as T & HistoryEditor, () => {
+                    Transforms.select(e, Editor.start(e, nextPath));
                 });
                 return;
             }
@@ -72,26 +73,26 @@ export const withBlockCard = editor => {
         deleteForward(unit);
     };
 
-    editor.insertText = (text: string) => {
+    e.insertText = (text: string) => {
         const domSelection = window.getSelection();
         const anchorNode = domSelection?.anchorNode;
-        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection)) {
+        if (domSelection && domSelection.isCollapsed && hasBlockCard(domSelection) && anchorNode) {
             const isLeftCursor = isCardLeft(anchorNode);
-            const cardEntry = AngularEditor.toSlateCardEntry(editor, anchorNode);
+            const cardEntry = AngularEditor.toSlateCardEntry(e, anchorNode);
             const cursorRootPath = cardEntry[1];
             if (isLeftCursor) {
-                insertParagraph(editor, cursorRootPath);
-                Transforms.select(editor, cursorRootPath);
+                insertParagraph(e, cursorRootPath);
+                Transforms.select(e, cursorRootPath);
             } else {
                 const nextPath = Path.next(cursorRootPath);
-                insertParagraph(editor, nextPath);
-                Transforms.select(editor, nextPath);
+                insertParagraph(e, nextPath);
+                Transforms.select(e, nextPath);
             }
         }
         insertText(text);
     };
 
-    return editor;
+    return e;
 };
 
 const insertParagraph = (editor: Editor, at: Location) => {

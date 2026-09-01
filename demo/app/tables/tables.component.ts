@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Editor, Text, Element, Node } from 'slate';
 import { AngularEditor, withAngular } from 'slate-angular';
 import { MarkTypes, RichTextFlavour } from '../flavours/richtext.flavour';
@@ -11,6 +11,7 @@ import { TableFlavour } from './table.flavour';
 @Component({
     selector: 'demo-tables',
     templateUrl: 'tables.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoTablesComponent implements OnInit {
@@ -39,9 +40,10 @@ export class DemoTablesComponent implements OnInit {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return RichTextFlavour;
         }
+        return null;
     };
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 
     mousedown(event: MouseEvent) {
         const editableElement = AngularEditor.toDOMNode(this.editor, this.editor);
@@ -49,9 +51,9 @@ export class DemoTablesComponent implements OnInit {
             const rectEditable = editableElement.getBoundingClientRect();
             const centerX = rectEditable.x + rectEditable.width / 2;
             const relativeElement = document.elementFromPoint(centerX, event.y);
-            const relativeBlockCardElement: DOMElement = relativeElement.closest('.slate-block-card');
+            const relativeBlockCardElement = relativeElement?.closest('.slate-block-card') as DOMElement | null;
             if (relativeBlockCardElement) {
-                const blockCardEntry = AngularEditor.toSlateCardEntry(this.editor, relativeBlockCardElement.firstElementChild);
+                const blockCardEntry = AngularEditor.toSlateCardEntry(this.editor, relativeBlockCardElement.firstElementChild!);
                 if (blockCardEntry && blockCardEntry[1]) {
                     const rootNodePath = blockCardEntry[1].slice(0, 1);
                     const rootNode = Node.get(this.editor, rootNodePath);

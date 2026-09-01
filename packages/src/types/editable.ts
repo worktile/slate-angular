@@ -2,7 +2,7 @@ import { Element } from 'slate';
 
 export interface SlateVirtualScrollConfig {
     enabled?: boolean;
-    scrollContainer?: HTMLElement;
+    scrollContainer?: HTMLElement | null;
     scrollTop: number;
 }
 
@@ -12,4 +12,5 @@ export interface VirtualViewResult {
     top: number;
     bottom: number;
     heights: number[];
+    accumulatedHeights?: number[];
 }

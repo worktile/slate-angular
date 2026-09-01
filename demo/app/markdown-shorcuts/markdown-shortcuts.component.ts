@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Editor, Range, Point, Transforms, createEditor, Element } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -12,6 +12,7 @@ import { BlockquoteFlavour } from '../flavours/quote.flavour';
 @Component({
     selector: 'demo-markdown-shortcuts',
     templateUrl: 'markdown-shortcuts.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoMarkdownShortcutsComponent implements OnInit {
@@ -52,10 +53,11 @@ export class DemoMarkdownShortcutsComponent implements OnInit {
             if (element.type === 'bulleted-list') {
                 return ULFlavour;
             }
+            return null;
         };
     }
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 }
 const initialValue = [
     {
@@ -92,7 +94,7 @@ const initialValue = [
     }
 ];
 
-const SHORTCUTS = {
+const SHORTCUTS: Record<string, string> = {
     '*': 'list-item',
     '-': 'list-item',
     '+': 'list-item',
@@ -104,10 +106,10 @@ const SHORTCUTS = {
     '#####': 'heading-five',
     '######': 'heading-six'
 };
-const withShortcuts = editor => {
+const withShortcuts = <T extends Editor>(editor: T) => {
     const { deleteBackward, insertText } = editor;
 
-    editor.insertText = text => {
+    editor.insertText = (text: string) => {
         const { selection } = editor;
 
         if (text === ' ' && selection && Range.isCollapsed(selection)) {
@@ -124,7 +126,7 @@ const withShortcuts = editor => {
             if (type) {
                 Transforms.select(editor, range);
                 Transforms.delete(editor);
-                Transforms.setNodes(editor, { type }, { match: n => Element.isElement(n) && Editor.isBlock(editor, n) });
+                Transforms.setNodes(editor, { type: type as Element['type'] }, { match: n => Element.isElement(n) && Editor.isBlock(editor, n) });
 
                 if (type === 'list-item') {
                     const list: BulletedListElement = {
@@ -143,7 +145,7 @@ const withShortcuts = editor => {
         insertText(text);
     };
 
-    editor.deleteBackward = (...args) => {
+    editor.deleteBackward = (...args: Parameters<Editor['deleteBackward']>) => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {

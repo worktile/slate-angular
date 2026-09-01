@@ -1,6 +1,6 @@
 import { Descendant, Element, Text } from 'slate';
 
-const isValid = (value: Descendant) =>
+const isValid = (value: Descendant): boolean =>
     (Element.isElement(value) && value.children.length > 0 && (value.children as Descendant[]).every(child => isValid(child))) ||
     Text.isText(value);
 

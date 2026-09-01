@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Editor, Transforms, createEditor, Element as SlateElement, Range, Descendant } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -20,6 +20,7 @@ interface ToolbarItem {
 @Component({
     selector: 'demo-inlines',
     templateUrl: 'inlines.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoInlinesComponent {
@@ -67,6 +68,7 @@ export class DemoInlinesComponent {
         } else if (element.type === 'link') {
             return DemoElementLinkComponent;
         }
+        return null;
     };
 
     onKeydown = (event: KeyboardEvent) => {
@@ -122,7 +124,7 @@ const withInlines = (editor: Editor) => {
     return editor;
 };
 
-const insertLink = (editor, url) => {
+const insertLink = (editor: Editor, url: string) => {
     if (editor.selection) {
         wrapLink(editor, url);
     }
@@ -160,7 +162,7 @@ const unwrapButton = (editor: Editor) => {
     });
 };
 
-const wrapLink = (editor, url: string) => {
+const wrapLink = (editor: Editor, url: string) => {
     if (isLinkActive(editor)) {
         unwrapLink(editor);
     }

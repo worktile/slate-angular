@@ -12,14 +12,14 @@ export enum StringType {
 }
 
 export class SlateStringRender {
-    nativeElement: HTMLElement;
+    nativeElement!: HTMLElement;
 
     constructor(
         public context: SlateLeafContext,
         public viewContext: SlateViewContext
     ) {}
 
-    type: StringType;
+    type!: StringType;
 
     // COMPAT: If the text is empty, it's because it's on the edge of an inline
     // node, so we render a zero-width space so that the selection can be
@@ -160,7 +160,9 @@ export const createCompatibleStringNode = (text: string) => {
 export const updateCompatibleStringNode = (stringNode: HTMLSpanElement, text: string) => {
     const zeroWidthSpan = stringNode.querySelector('span');
     stringNode.textContent = text;
-    stringNode.appendChild(zeroWidthSpan);
+    if (zeroWidthSpan) {
+        stringNode.appendChild(zeroWidthSpan);
+    }
     return stringNode;
 };
 
@@ -183,7 +185,7 @@ export const createLineBreakEmptyStringDOM = (elementStringLength: number) => {
  * @param element
  * @returns
  */
-export const isEmpty = (editor, element) => {
+export const isEmpty = (editor: any, element: any) => {
     const { children } = element;
     const [first] = children;
     return children.length === 0 || (children.length === 1 && Text.isText(first) && first.text === '' && !editor.isVoid(element));

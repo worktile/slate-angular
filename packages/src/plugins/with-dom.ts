@@ -55,20 +55,20 @@ const toDOMPointForBlockCard = (editor: AngularEditor, point: Point): DOMPoint |
         if (point.offset < 0) {
             if (point.offset === FAKE_LEFT_BLOCK_CARD_OFFSET) {
                 const cursorNode = CustomDOMEditor.getCardCursorNode(editor, node, { direction: 'left' });
-                return [cursorNode, 1];
+                return [cursorNode!, 1];
             } else {
                 const cursorNode = CustomDOMEditor.getCardCursorNode(editor, node, { direction: 'right' });
-                return [cursorNode, 1];
+                return [cursorNode!, 1];
             }
         }
         if (editor.selection && Range.isExpanded(editor.selection)) {
             const [start, end] = Range.edges(editor.selection);
             if (start === point) {
                 const cursorNode = CustomDOMEditor.getCardCursorNode(editor, parentNode, { direction: 'left' });
-                return [cursorNode, 1];
+                return [cursorNode!, 1];
             } else {
                 const cursorNode = CustomDOMEditor.getCardCursorNode(editor, parentNode, { direction: 'right' });
-                return [cursorNode, 1];
+                return [cursorNode!, 1];
             }
         }
     }
@@ -137,7 +137,7 @@ const toSlatePointForBlockCard = (editor: AngularEditor, domPoint: DOMPoint, nea
         const domSelection = window.getSelection();
         const blockCardEntry = CustomDOMEditor.toSlateCardEntry(editor, domNode) || CustomDOMEditor.toSlateCardEntry(editor, nearestNode);
         const [, blockPath] = blockCardEntry;
-        if (domSelection.isCollapsed) {
+        if (domSelection!.isCollapsed) {
             if (isCardLeftByTargetAttr(cardTargetAttr)) {
                 return { path: blockPath, offset: -1 };
             } else {
@@ -207,10 +207,10 @@ const customToSlatePoint = <T extends boolean>(
             // ancestor, so find it by going down from the nearest void parent.
             const spacer = voidNode.querySelector('[data-slate-spacer="true"]')!;
             leafNode = spacer.firstElementChild;
-            parentNode = leafNode.firstElementChild;
+            parentNode = leafNode!.firstElementChild as DOMElement;
             textNode = spacer;
             domNode = leafNode;
-            offset = domNode.textContent!.length;
+            offset = domNode!.textContent!.length;
         }
 
         // COMPAT: If the parent node is a Slate zero-width space, editor is
@@ -244,7 +244,7 @@ const customToSlatePoint = <T extends boolean>(
     if (!slateNode && suppressThrow) {
         return null as T extends true ? Point | null : Point;
     }
-    const path = CustomDOMEditor.findPath(editor, slateNode);
+    const path = CustomDOMEditor.findPath(editor, slateNode!);
     return { path, offset };
 };
 DOMEditor.toSlatePoint = customToSlatePoint as unknown as <T extends boolean>(
@@ -297,12 +297,14 @@ const customToSlateRange = <T extends boolean>(
         throw new Error(`Cannot resolve a Slate range from DOM range: ${domRange}`);
     }
 
-    const anchor = DOMEditor.toSlatePoint(editor, [anchorNode, anchorOffset], { suppressThrow, exactMatch });
+    const anchor = DOMEditor.toSlatePoint(editor, [anchorNode, anchorOffset], { suppressThrow: !!suppressThrow, exactMatch: !!exactMatch });
     if (!anchor) {
         return null as T extends true ? Range | null : Range;
     }
 
-    const focus = isCollapsed ? anchor : DOMEditor.toSlatePoint(editor, [focusNode, focusOffset], { suppressThrow, exactMatch });
+    const focus = isCollapsed
+        ? anchor
+        : DOMEditor.toSlatePoint(editor, [focusNode, focusOffset], { suppressThrow: !!suppressThrow, exactMatch: !!exactMatch });
     if (!focus) {
         return null as T extends true ? Range | null : Range;
     }
@@ -384,7 +386,7 @@ export const CustomDOMEditor = {
             at: end,
             match: node => Element.isElement(node) && Editor.isBlock(editor, node)
         });
-        return Editor.isStart(editor, end, endBlock[1]);
+        return Editor.isStart(editor, end, endBlock![1]);
     },
     isBlockCardLeftCursor(editor: Editor) {
         return (
@@ -406,11 +408,16 @@ export const CustomDOMEditor = {
         }
     ) {
         const blockCardElement = DOMEditor.toDOMNode(editor, blockCardNode);
-        const cardCenter = blockCardElement.parentElement;
-        return options.direction === 'left' ? cardCenter.previousElementSibling.firstChild : cardCenter.nextElementSibling.firstChild;
+        const cardCenter = blockCardElement.parentElement!;
+        return options.direction === 'left'
+            ? cardCenter.previousElementSibling!.firstChild
+            : cardCenter.nextElementSibling!.firstChild;
     },
     toSlateCardEntry(editor: AngularEditor, node: DOMNode): NodeEntry {
-        const element = node.parentElement.closest('.slate-block-card')?.querySelector('[card-target="card-center"]').firstElementChild;
+        const element = node.parentElement!
+            .closest('.slate-block-card')
+            ?.querySelector('[card-target="card-center"]')!
+            .firstElementChild!;
         const slateNode = DOMEditor.toSlateNode(editor, element);
         const path = DOMEditor.findPath(editor, slateNode);
         return [slateNode, path];

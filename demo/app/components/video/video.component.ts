@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoElement } from 'custom-types';
 import { Element as SlateElement, Transforms } from 'slate';
@@ -7,6 +7,7 @@ import { AngularEditor, BaseElementComponent } from 'slate-angular';
 @Component({
     selector: 'demo-video',
     templateUrl: './video.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./video.component.scss']
 })
 export class DemoElementVideoComponent extends BaseElementComponent<VideoElement> {

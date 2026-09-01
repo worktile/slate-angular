@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Element, NodeEntry, Text } from 'slate';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
@@ -20,6 +20,7 @@ import { TestingLeafFlavour } from './leaf.flavour';
             [scrollSelectionIntoView]="scrollSelectionIntoView"
         ></slate-editable>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AdvancedEditableComponent implements OnInit {
@@ -27,18 +28,18 @@ export class AdvancedEditableComponent implements OnInit {
 
     value: any = createDefaultDocument();
 
-    decorate = (nodeEntry: NodeEntry) => [];
+    decorate: (nodeEntry: NodeEntry) => any[] = () => [];
 
     trackBy = (element: Element) => null;
 
-    placeholder: string;
+    placeholder!: string;
 
     @ViewChild(SlateEditable, { static: true })
-    editableComponent: SlateEditable;
+    editableComponent!: SlateEditable;
 
     generateDecorate(keywords: string) {
-        this.decorate = ([node, path]) => {
-            const ranges = [];
+        this.decorate = ([node, path]: NodeEntry) => {
+            const ranges: any[] = [];
 
             if (keywords && Text.isText(node)) {
                 const { text } = node;
@@ -63,7 +64,7 @@ export class AdvancedEditableComponent implements OnInit {
     }
 
     renderLeaf = (text: Text) => {
-        if (text['highlight']) {
+        if ((text as any)['highlight']) {
             return TestingLeafFlavour;
         }
         return null;

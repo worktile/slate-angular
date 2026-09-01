@@ -5,5 +5,13 @@
     "types": []
   },
   "files": ["demo/main.ts", "demo/polyfills.ts"],
-  "include": ["demo/**/*.d.ts"]
+  "include": ["demo/**/*.d.ts"],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }

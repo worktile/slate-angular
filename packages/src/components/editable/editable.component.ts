@@ -86,8 +86,8 @@ import { ListRender, updatePreRenderingElementWidth } from '../../view/render/li
 const forceOnDOMPaste = IS_SAFARI;
 
 class RemeasureConfig {
-    indics: number[];
-    tryUpdateViewport: boolean;
+    indics!: number[];
+    tryUpdateViewport!: boolean;
 }
 
 @Component({
@@ -112,8 +112,8 @@ class RemeasureConfig {
     imports: []
 })
 export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChecked, DoCheck {
-    viewContext: SlateViewContext;
-    context: SlateChildrenContext;
+    viewContext!: SlateViewContext;
+    context!: SlateChildrenContext;
 
     private destroy$ = new Subject();
 
@@ -124,23 +124,23 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     protected manualListeners: (() => void)[] = [];
 
-    private initialized: boolean;
+    private initialized = false;
 
     private onTouchedCallback: () => void = () => {};
 
     private onChangeCallback: (_: any) => void = () => {};
 
-    @Input() editor: AngularEditor;
+    @Input() editor!: AngularEditor;
 
-    @Input() renderElement: (element: Element) => ViewType | null;
+    @Input() renderElement?: (element: Element) => ViewType | null;
 
-    @Input() renderLeaf: (text: SlateText) => ViewType | null;
+    @Input() renderLeaf?: (text: SlateText) => ViewType | null;
 
-    @Input() renderText: (text: SlateText) => ViewType | null;
+    @Input() renderText?: (text: SlateText) => ViewType | null;
 
     @Input() decorate: (entry: NodeEntry) => Range[] = () => [];
 
-    @Input() placeholderDecorate: (editor: Editor) => SlatePlaceholder[];
+    @Input() placeholderDecorate?: (editor: Editor) => SlatePlaceholder[];
 
     @Input() scrollSelectionIntoView: (editor: AngularEditor, domRange: DOMRange) => void = defaultScrollSelectionIntoView;
 
@@ -150,7 +150,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     @Input() readonly = false;
 
-    @Input() placeholder: string;
+    @Input() placeholder?: string;
 
     @Input()
     set virtualScroll(config: SlateVirtualScrollConfig) {
@@ -165,21 +165,21 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     //#region input event handler
-    @Input() beforeInput: (event: Event) => void;
-    @Input() blur: (event: Event) => void;
-    @Input() click: (event: MouseEvent) => void;
-    @Input() compositionEnd: (event: CompositionEvent) => void;
-    @Input() compositionUpdate: (event: CompositionEvent) => void;
-    @Input() compositionStart: (event: CompositionEvent) => void;
-    @Input() copy: (event: ClipboardEvent) => void;
-    @Input() cut: (event: ClipboardEvent) => void;
-    @Input() dragOver: (event: DragEvent) => void;
-    @Input() dragStart: (event: DragEvent) => void;
-    @Input() dragEnd: (event: DragEvent) => void;
-    @Input() drop: (event: DragEvent) => void;
-    @Input() focus: (event: Event) => void;
-    @Input() keydown: (event: KeyboardEvent) => void;
-    @Input() paste: (event: ClipboardEvent) => void;
+    @Input() beforeInput?: (event: Event) => void;
+    @Input() blur?: (event: Event) => void;
+    @Input() click?: (event: MouseEvent) => void;
+    @Input() compositionEnd?: (event: CompositionEvent) => void;
+    @Input() compositionUpdate?: (event: CompositionEvent) => void;
+    @Input() compositionStart?: (event: CompositionEvent) => void;
+    @Input() copy?: (event: ClipboardEvent) => void;
+    @Input() cut?: (event: ClipboardEvent) => void;
+    @Input() dragOver?: (event: DragEvent) => void;
+    @Input() dragStart?: (event: DragEvent) => void;
+    @Input() dragEnd?: (event: DragEvent) => void;
+    @Input() drop?: (event: DragEvent) => void;
+    @Input() focus?: (event: Event) => void;
+    @Input() keydown?: (event: KeyboardEvent) => void;
+    @Input() paste?: (event: ClipboardEvent) => void;
     //#endregion
 
     //#region DOM attr
@@ -210,7 +210,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
     };
 
-    listRender: ListRender;
+    listRender!: ListRender;
 
     private virtualScrollConfig: SlateVirtualScrollConfig = {
         enabled: false,
@@ -221,7 +221,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     private inViewportChildren: Element[] = [];
     private inViewportIndics: number[] = [];
     private keyHeightMap = new Map<string, number>();
-    private tryUpdateVirtualViewportAnimId: number;
+    private tryUpdateVirtualViewportAnimId!: number;
     private editorResizeObserver?: ResizeObserver;
     private editorScrollContainerResizeObserver?: ResizeObserver;
 
@@ -229,11 +229,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
     virtualScrollInitialized = false;
 
-    virtualTopHeightElement: HTMLElement;
+    virtualTopHeightElement!: HTMLElement;
 
-    virtualBottomHeightElement: HTMLElement;
+    virtualBottomHeightElement!: HTMLElement;
 
-    virtualCenterOutlet: HTMLElement;
+    virtualCenterOutlet!: HTMLElement;
 
     elementRef = inject(ElementRef);
     renderer2 = inject(Renderer2);
@@ -246,7 +246,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     ngOnInit() {
         this.editor.injector = this.injector;
         this.editor.children = [];
-        let window = getDefaultView(this.elementRef.nativeElement);
+        let window = getDefaultView(this.elementRef.nativeElement)!;
         EDITOR_TO_WINDOW.set(this.editor, window);
         EDITOR_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
         NODE_TO_ELEMENT.set(this.editor, this.elementRef.nativeElement);
@@ -422,7 +422,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             this.editorResizeObserver.observe(this.elementRef.nativeElement);
             if (this.virtualScrollConfig.scrollContainer) {
                 this.editorScrollContainerResizeObserver = new ResizeObserver(entries => {
-                    const height = this.virtualScrollConfig.scrollContainer.getBoundingClientRect().height;
+                    const height = this.virtualScrollConfig.scrollContainer!.getBoundingClientRect().height;
                     EDITOR_TO_VIEWPORT_HEIGHT.set(this.editor, height);
                     if (isDebug) {
                         debugLog('log', 'editorScrollContainerResizeObserver calc viewport height: ', height);
@@ -466,7 +466,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     getChangedIndics(previousValue: Descendant[]) {
-        const remeasureIndics = [];
+        const remeasureIndics: number[] = [];
         this.inViewportChildren.forEach((child, index) => {
             if (previousValue.indexOf(child) === -1) {
                 remeasureIndics.push(this.inViewportIndics[index]);
@@ -606,7 +606,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                             debugLog('log', 'needAddOnTop to remeasure heights: ', remeasureAddedIndics);
                         }
                         const startIndexBeforeAdd = diff.changedIndexesOfTop[diff.changedIndexesOfTop.length - 1] + 1;
-                        const topHeightBeforeAdd = virtualView.accumulatedHeights[startIndexBeforeAdd];
+                        const topHeightBeforeAdd = virtualView.accumulatedHeights![startIndexBeforeAdd];
                         const changed = measureHeightByIndics(this.editor, remeasureAddedIndics, 'need-add-from-top');
                         if (changed) {
                             const newHeights = buildHeightsAndAccumulatedHeights(this.editor, visibleStates);
@@ -869,7 +869,11 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     //#region event proxy
-    private addEventListener(eventName: string, listener: EventListener, target: HTMLElement | Document = this.elementRef.nativeElement) {
+    private addEventListener(
+        eventName: string,
+        listener: (event: any) => void,
+        target: HTMLElement | Document = this.elementRef.nativeElement
+    ) {
         this.manualListeners.push(
             this.renderer2.listen(target, eventName, (event: Event) => {
                 const beforeInputEvent = extractBeforeInputEvent(event.type, null, event, event.target);
@@ -920,7 +924,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return selection;
     }
 
-    private isSelectionInvisible(selection: Selection) {
+    private isSelectionInvisible(selection: Range) {
         const anchorIndex = selection.anchor.path[0];
         const focusIndex = selection.focus.path[0];
         const anchorElement = this.editor.children[anchorIndex] as Element | undefined;
@@ -1001,8 +1005,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             if (newDomRange) {
                 // COMPAT: Since the DOM range has no concept of backwards/forwards
                 // we need to check and do the right thing here.
-                if (Range.isBackward(selection)) {
-                    // eslint-disable-next-line max-len
+                if (Range.isBackward(selection!)) {
                     domSelection.setBaseAndExtent(
                         newDomRange.endContainer,
                         newDomRange.endOffset,
@@ -1010,7 +1013,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         newDomRange.startOffset
                     );
                 } else {
-                    // eslint-disable-next-line max-len
                     domSelection.setBaseAndExtent(
                         newDomRange.startContainer,
                         newDomRange.startOffset,
@@ -1082,12 +1084,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             // this time condition is true and isComposing is assigned false
             // Therefore, need to wait for the composition input text to be rendered before performing condition matching
             setTimeout(() => {
-                const textNode = Node.get(this.editor, this.editor.selection.anchor.path);
+                const textNode = Node.get(this.editor, this.editor.selection!.anchor.path);
                 const textDOMNode = AngularEditor.toDOMNode(this.editor, textNode);
                 let textContent = '';
                 // skip decorate text
                 textDOMNode.querySelectorAll('[editable-text]').forEach(stringDOMNode => {
-                    let text = stringDOMNode.textContent;
+                    let text = stringDOMNode.textContent || '';
                     const zeroChar = '\uFEFF';
                     // remove zero with char
                     if (text.startsWith(zeroChar)) {
@@ -1138,8 +1140,8 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         // if the most top content of the first element is not in viewport, the change of height will cause the viewport to scroll
         // to keep viewport stable, we need to use the current inViewportIndics temporarily
         if (mutationOfFirstElementHeight) {
-            const newInViewportIndics = [];
-            const newInViewportChildren = [];
+            const newInViewportIndics: number[] = [];
+            const newInViewportChildren: Element[] = [];
             this.inViewportIndics.forEach(index => {
                 const element = this.editor.children[index] as Element;
                 const isVisible = visibleStates[index];
@@ -1275,7 +1277,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
                 const editorElement = EDITOR_TO_ELEMENT.get(this.editor);
                 const hasDomSelectionInEditor =
-                    editorElement.contains(domSelection.anchorNode) && editorElement.contains(domSelection.focusNode);
+                    !!editorElement &&
+                    editorElement.contains(domSelection.anchorNode) &&
+                    editorElement.contains(domSelection.focusNode);
                 if (!hasDomSelectionInEditor) {
                     Transforms.deselect(this.editor);
                     return;
@@ -1356,9 +1360,9 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 // gboard can not prevent default action, so must use restoreDom,
                 // sougou Keyboard can prevent default action（only in Chinese input mode）.
                 // In order to avoid weird action in Sougou Keyboard, use resotreDom only range's isCollapsed is false (recognize gboard)
-                if (!Range.isCollapsed(targetRange)) {
+                if (!Range.isCollapsed(targetRange!)) {
                     restoreDom(editor, () => {
-                        Transforms.delete(editor, { at: targetRange });
+                        Transforms.delete(editor, { at: targetRange! });
                     });
                     return;
                 }
@@ -1603,7 +1607,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
     }
 
     private onDOMCompositionEnd(event: CompositionEvent) {
-        if (!event.data && !Range.isCollapsed(this.editor.selection)) {
+        if (!event.data && this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
             Transforms.delete(this.editor);
         }
         if (
@@ -1632,14 +1636,14 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         const isOutsideSlate = !hasStringTarget(window.getSelection()) && isTargetInsideVoid(this.editor, event.target);
         if (!isOutsideSlate && AngularEditor.hasTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.copy)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'copy');
+            AngularEditor.setFragmentData(this.editor, event.clipboardData!, 'copy');
         }
     }
 
     private onDOMCut(event: ClipboardEvent) {
         if (!this.readonly && AngularEditor.hasEditableTarget(this.editor, event.target) && !this.isDOMEventHandled(event, this.cut)) {
             event.preventDefault();
-            AngularEditor.setFragmentData(this.editor, event.clipboardData, 'cut');
+            AngularEditor.setFragmentData(this.editor, event.clipboardData!, 'cut');
             const { selection } = this.editor;
 
             if (selection) {
@@ -1677,7 +1681,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
 
             this.isDraggingInternally = true;
 
-            AngularEditor.setFragmentData(this.editor, event.dataTransfer, 'drag');
+            AngularEditor.setFragmentData(this.editor, event.dataTransfer!, 'drag');
         }
     }
 
@@ -1704,7 +1708,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 this.isDraggingInternally = false;
             }
 
-            AngularEditor.insertData(editor, data);
+            AngularEditor.insertData(editor, data!);
 
             // When dragging from another source into the editor, it's possible
             // that the current editor does not have focus.
@@ -2024,7 +2028,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             AngularEditor.hasEditableTarget(this.editor, event.target)
         ) {
             event.preventDefault();
-            AngularEditor.insertData(this.editor, event.clipboardData);
+            AngularEditor.insertData(this.editor, event.clipboardData!);
         }
     }
 
@@ -2041,7 +2045,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             event.nativeEvent.preventDefault();
             try {
                 const text = event.data;
-                if (!Range.isCollapsed(this.editor.selection)) {
+                if (this.editor.selection && !Range.isCollapsed(this.editor.selection)) {
                     Editor.deleteFragment(this.editor);
                 }
                 // just handle Non-IME input
@@ -2057,7 +2061,7 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         }
     }
 
-    private isDOMEventHandled(event: Event, handler?: (event: Event) => void) {
+    private isDOMEventHandled(event: Event, handler?: (event: any) => void) {
         if (!handler) {
             return false;
         }
@@ -2103,7 +2107,7 @@ export const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: 
         scrollIntoView(leafEl, {
             scrollMode: 'if-needed'
         });
-        delete leafEl.getBoundingClientRect;
+        delete (leafEl as any).getBoundingClientRect;
     }
 };
 
@@ -2114,9 +2118,9 @@ export const defaultScrollSelectionIntoView = (editor: AngularEditor, domRange: 
 const isTargetInsideVoid = (editor: AngularEditor, target: EventTarget | null): boolean => {
     let slateNode: Node | null = null;
     try {
-        slateNode = AngularEditor.hasTarget(editor, target) && AngularEditor.toSlateNode(editor, target);
+        slateNode = AngularEditor.hasTarget(editor, target) ? AngularEditor.toSlateNode(editor, target) : null;
     } catch (error) {}
-    return slateNode && Element.isElement(slateNode) && Editor.isVoid(editor, slateNode);
+    return !!(slateNode && Element.isElement(slateNode) && Editor.isVoid(editor, slateNode));
 };
 
 export const isSelectionInsideVoid = (editor: AngularEditor) => {
@@ -2128,8 +2132,11 @@ export const isSelectionInsideVoid = (editor: AngularEditor) => {
     return false;
 };
 
-const hasStringTarget = (domSelection: DOMSelection) => {
+const hasStringTarget = (domSelection: DOMSelection | null) => {
     return (
+        !!domSelection &&
+        !!domSelection.anchorNode?.parentElement &&
+        !!domSelection.focusNode?.parentElement &&
         (domSelection.anchorNode.parentElement.hasAttribute('data-slate-string') ||
             domSelection.anchorNode.parentElement.hasAttribute('data-slate-zero-width')) &&
         (domSelection.focusNode.parentElement.hasAttribute('data-slate-string') ||
@@ -2150,7 +2157,7 @@ const preventInsertFromComposition = (event: Event, editor: AngularEditor) => {
     const window = AngularEditor.getWindow(editor);
     const domSelection = window.getSelection();
     // ensure text node insert composition input text
-    if (insertText && domSelection.anchorNode instanceof Text && domSelection.anchorNode.textContent.endsWith(insertText)) {
+    if (insertText && domSelection && domSelection.anchorNode instanceof Text && domSelection.anchorNode.textContent?.endsWith(insertText)) {
         const textNode = domSelection.anchorNode;
         textNode.splitText(textNode.length - insertText.length).remove();
     }

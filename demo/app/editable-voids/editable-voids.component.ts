@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Descendant, Editor, Element as SlateElement, Text, Transforms, createEditor } from 'slate';
 import { SlateEditable, withAngular } from 'slate-angular';
@@ -18,6 +18,7 @@ interface ToolbarItem {
     selector: 'demo-editable-voids',
     templateUrl: './editable-voids.component.html',
     styleUrls: ['./editable-voids.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule, DemoButtonComponent]
 })
 export class DemoEditableVoidsComponent {

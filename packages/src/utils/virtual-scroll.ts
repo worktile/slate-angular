@@ -50,10 +50,10 @@ export const cacheHeightByElement = (editor: AngularEditor, element: Element, he
     }
     const key = AngularEditor.findKey(editor, element);
     const heights = ELEMENT_KEY_TO_HEIGHTS.get(editor);
-    heights.set(key.id, height);
+    heights!.set(key.id, height);
 };
 
-export const setMinHeightByElement = (editor: AngularEditor, element: Element, rootElementMarginBottom) => {
+export const setMinHeightByElement = (editor: AngularEditor, element: Element, rootElementMarginBottom: number) => {
     if (!AngularEditor.isEnabledVirtualScroll(editor)) {
         return;
     }
@@ -173,7 +173,7 @@ export const calcBusinessTop = (editor: AngularEditor) => {
     const virtualScrollConfig = EDITOR_TO_VIRTUAL_SCROLL_CONFIG.get(editor);
     const scrollContainer = virtualScrollConfig?.scrollContainer;
     const viewportBoundingTop = scrollContainer?.getBoundingClientRect()?.top ?? 0;
-    const businessTop = Math.ceil(virtualTopBoundingTop) + Math.ceil(virtualScrollConfig.scrollTop) - Math.floor(viewportBoundingTop);
+    const businessTop = Math.ceil(virtualTopBoundingTop) + Math.ceil(virtualScrollConfig!.scrollTop) - Math.floor(viewportBoundingTop);
     EDITOR_TO_BUSINESS_TOP.set(editor, businessTop);
     if (isDebug) {
         debugLog('log', 'calcBusinessTop: ', businessTop);
@@ -183,7 +183,7 @@ export const calcBusinessTop = (editor: AngularEditor) => {
         'virtualTopBoundingTop: ',
         virtualTopBoundingTop,
         'virtualScrollConfig.scrollTop: ',
-        virtualScrollConfig.scrollTop,
+        virtualScrollConfig!.scrollTop,
         'viewportBoundingTop: ',
         viewportBoundingTop
     );

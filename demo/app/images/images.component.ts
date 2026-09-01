@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { withAngular } from 'slate-angular';
-import { createEditor, Transforms, Editor, Element } from 'slate';
+import { createEditor, Transforms, Editor, Element, Node } from 'slate';
 import { DemoElementImageComponent } from '../components/image/image-component';
 import { ImageElement } from '../../../custom-types';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { DemoButtonComponent } from '../components/button/button.component';
 @Component({
     selector: 'demo-images',
     templateUrl: 'images.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoImagesComponent implements OnInit {
@@ -69,7 +70,7 @@ export class DemoImagesComponent implements OnInit {
         }
     }
 
-    valueChange(event) {}
+    valueChange(event: Element[]) {}
 }
 const initialValue = [
     {
@@ -119,8 +120,8 @@ const withImage = (editor: Editor) => {
         return element.type === 'image' || isVoid(element);
     };
 
-    editor.isBlockCard = (element: Element) => {
-        return element.type === 'image' || isVoid(element);
+    editor.isBlockCard = (element: Node) => {
+        return (Element.isElement(element) && element.type === 'image') || isVoid(element as Element);
     };
 
     return editor;

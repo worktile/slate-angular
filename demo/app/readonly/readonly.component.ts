@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Descendant } from 'slate';
 import { withAngular } from 'slate-angular';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { SlateEditable } from '../../../packages/src/components/editable/editabl
             <slate-editable [readonly]="true" class="demo-slate-angular-editor" [editor]="editor" [(ngModel)]="value"></slate-editable>
         </div>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoReadonlyComponent {

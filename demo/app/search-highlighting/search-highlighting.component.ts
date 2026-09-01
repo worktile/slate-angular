@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { createEditor, NodeEntry, Range, Text } from 'slate';
 import { withAngular } from 'slate-angular';
@@ -10,6 +10,7 @@ import { DemoLeafComponent } from './hightlighting-leaf.flavour';
     selector: 'demo-search-highlight',
     templateUrl: './search-highlighting.component.html',
     styleUrls: ['./search-highlighting.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [FormsModule, SlateEditable]
 })
 export class DemoSearchHighlightingComponent implements OnInit {
@@ -19,7 +20,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
 
     editor = withAngular(createEditor());
 
-    decorate: (nodeEntry: NodeEntry) => Range[];
+    decorate: (nodeEntry: NodeEntry) => Range[] = () => [];
 
     public cdr = inject(ChangeDetectorRef);
 
@@ -27,14 +28,14 @@ export class DemoSearchHighlightingComponent implements OnInit {
         this.generateDecorate();
     }
 
-    keywordsChange(event) {
+    keywordsChange(event: string) {
         this.generateDecorate();
         this.cdr.markForCheck();
     }
 
     generateDecorate() {
-        this.decorate = ([node, path]) => {
-            const ranges = [];
+        this.decorate = ([node, path]: NodeEntry) => {
+            const ranges: Range[] = [];
 
             if (this.keywords && Text.isText(node)) {
                 const { text } = node;
@@ -50,7 +51,7 @@ export class DemoSearchHighlightingComponent implements OnInit {
                             },
                             focus: { path, offset },
                             highlight: true
-                        });
+                        } as Range);
                     }
 
                     offset = offset + part.length + this.keywords.length;
@@ -65,10 +66,11 @@ export class DemoSearchHighlightingComponent implements OnInit {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return RichTextFlavour;
         }
+        return null;
     };
 
     renderLeaf = (text: Text) => {
-        if (text['highlight']) {
+        if (text.highlight) {
             return DemoLeafComponent;
         }
         return null;

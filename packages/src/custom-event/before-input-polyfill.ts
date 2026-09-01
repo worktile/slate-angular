@@ -1,6 +1,6 @@
 export const BEFORE_INPUT_EVENTS: {
     name: string;
-    handler: string;
+    handler: string | null;
     isTriggerBeforeInput: boolean;
 }[] = [
     // { name: 'blur', handler: 'onBlur', isTriggerBeforeInput: true },

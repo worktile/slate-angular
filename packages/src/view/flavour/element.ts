@@ -13,13 +13,13 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
     SlateElementContext<T>,
     K
 > {
-    childrenContext: SlateChildrenContext;
+    childrenContext!: SlateChildrenContext;
 
     get element(): T {
         return this._context && this._context.element;
     }
 
-    get selection(): Range {
+    get selection(): Range | null {
         return this._context && this._context.selection;
     }
 
@@ -51,13 +51,13 @@ export abstract class BaseElementFlavour<T extends Element = Element, K extends 
         return this.nativeElement.querySelector('.children-outlet') as HTMLElement | null;
     };
 
-    listRender: ListRender;
+    listRender!: ListRender;
 
     onInit() {
         this.initialized = true;
         this.render();
         for (const key in this._context.attributes) {
-            this.nativeElement.setAttribute(key, this._context.attributes[key]);
+            this.nativeElement.setAttribute(key, (this._context.attributes as any)[key]);
         }
         this.updateWeakMap();
         this.listRender = new ListRender(this.viewContext, this.viewContainerRef, this.getOutletParent, this.getOutletElement);

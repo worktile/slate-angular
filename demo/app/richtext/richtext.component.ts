@@ -1,4 +1,4 @@
-import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
+import { Component, ViewChild, TemplateRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { createEditor, Text, Editor, Element, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
 import { withAngular } from 'slate-angular';
@@ -13,7 +13,7 @@ import { BlockquoteFlavour } from '../flavours/quote.flavour';
 
 const SLATE_DEV_MODE_KEY = 'slate-dev';
 
-const HOTKEYS = {
+const HOTKEYS: Record<string, MarkTypes> = {
     'mod+b': MarkTypes.bold,
     'mod+i': MarkTypes.italic,
     'mod+u': MarkTypes.underline,
@@ -25,31 +25,32 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 @Component({
     selector: 'demo-richtext',
     templateUrl: 'richtext.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [DemoButtonComponent, SlateEditable, FormsModule]
 })
 export class DemoRichtextComponent implements OnInit {
     value = initialValue;
 
-    toggleBlock = format => {
+    toggleBlock = (format: string) => {
         const isActive = this.isBlockActive(format);
         const isList = LIST_TYPES.includes(format);
 
         Transforms.unwrapNodes(this.editor, {
-            match: n => LIST_TYPES.includes(Element.isElement(n) && n.type),
+            match: n => Element.isElement(n) && LIST_TYPES.includes(n.type),
             split: true
         });
         const newProperties: Partial<Element> = {
-            type: isActive ? 'paragraph' : isList ? 'list-item' : format
+            type: isActive ? 'paragraph' : isList ? 'list-item' : (format as Element['type'])
         };
         Transforms.setNodes(this.editor, newProperties);
 
         if (!isActive && isList) {
-            const block = { type: format, children: [] };
+            const block = { type: format, children: [] } as Element;
             Transforms.wrapNodes(this.editor, block);
         }
     };
 
-    toggleMark = format => {
+    toggleMark = (format: string) => {
         const isActive = this.isMarkActive(format);
 
         if (isActive) {
@@ -59,7 +60,7 @@ export class DemoRichtextComponent implements OnInit {
         }
     };
 
-    isBlockActive = format => {
+    isBlockActive = (format: string) => {
         const [match] = Editor.nodes(this.editor, {
             match: n => !Editor.isEditor(n) && Element.isElement(n) && n.type === format
         });
@@ -67,8 +68,8 @@ export class DemoRichtextComponent implements OnInit {
         return !!match;
     };
 
-    isMarkActive = format => {
-        const marks = Editor.marks(this.editor);
+    isMarkActive = (format: string) => {
+        const marks = Editor.marks(this.editor) as Record<string, unknown> | null;
         return marks ? marks[format] === true : false;
     };
 
@@ -130,25 +131,25 @@ export class DemoRichtextComponent implements OnInit {
     ];
 
     @ViewChild('heading_1', { read: TemplateRef, static: true })
-    headingOneTemplate: TemplateRef<any>;
+    headingOneTemplate!: TemplateRef<any>;
 
     @ViewChild('heading_2', { read: TemplateRef, static: true })
-    headingTwoTemplate: TemplateRef<any>;
+    headingTwoTemplate!: TemplateRef<any>;
 
     @ViewChild('heading_3', { read: TemplateRef, static: true })
-    headingThreeTemplate: TemplateRef<any>;
+    headingThreeTemplate!: TemplateRef<any>;
 
     @ViewChild('blockquote', { read: TemplateRef, static: true })
-    blockquoteTemplate: TemplateRef<any>;
+    blockquoteTemplate!: TemplateRef<any>;
 
     @ViewChild('ul', { read: TemplateRef, static: true })
-    ulTemplate: TemplateRef<any>;
+    ulTemplate!: TemplateRef<any>;
 
     @ViewChild('ol', { read: TemplateRef, static: true })
-    olTemplate: TemplateRef<any>;
+    olTemplate!: TemplateRef<any>;
 
     @ViewChild('li', { read: TemplateRef, static: true })
-    liTemplate: TemplateRef<any>;
+    liTemplate!: TemplateRef<any>;
 
     editor = withHistory(withAngular(createEditor()));
 
@@ -158,7 +159,7 @@ export class DemoRichtextComponent implements OnInit {
         }
     }
 
-    valueChange(event) {
+    valueChange(event: Element[]) {
         if (localStorage.getItem(SLATE_DEV_MODE_KEY)) {
             console.log(
                 `anchor: ${JSON.stringify(this.editor.selection?.anchor)}\nfocus:  ${JSON.stringify(this.editor.selection?.focus)}`
@@ -199,6 +200,7 @@ export class DemoRichtextComponent implements OnInit {
         if (text[MarkTypes.bold] || text[MarkTypes.italic] || text[MarkTypes.code] || text[MarkTypes.underline]) {
             return RichTextFlavour;
         }
+        return null;
     };
 
     keydown = (event: KeyboardEvent) => {

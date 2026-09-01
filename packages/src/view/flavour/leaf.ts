@@ -2,9 +2,10 @@ import { Text } from 'slate';
 import { SlateLeafContext } from '../context';
 import { getContentHeight } from '../../utils/dom';
 import { BaseFlavour } from './base';
+import { TextWithPlaceholder } from '../../types/feature';
 
 export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
-    placeholderElement: HTMLSpanElement;
+    placeholderElement: HTMLSpanElement | null = null;
 
     get text(): Text {
         return this.context && this.context.text;
@@ -32,7 +33,7 @@ export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
         // issue-1: IME input was interrupted
         // issue-2: IME input focus jumping
         // Issue occurs when the span node of the placeholder is before the slateString span node
-        if (this.context.leaf['placeholder']) {
+        if ((this.context.leaf as TextWithPlaceholder).placeholder) {
             if (!this.placeholderElement) {
                 this.createPlaceholder();
             }
@@ -44,7 +45,7 @@ export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
 
     createPlaceholder() {
         const placeholderElement = document.createElement('span');
-        placeholderElement.innerText = this.context.leaf['placeholder'];
+        placeholderElement.innerText = (this.context.leaf as TextWithPlaceholder).placeholder!;
         placeholderElement.contentEditable = 'false';
         placeholderElement.setAttribute('data-slate-placeholder', 'true');
         this.placeholderElement = placeholderElement;
@@ -64,8 +65,8 @@ export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
     }
 
     updatePlaceholder() {
-        if (this.placeholderElement.innerText !== this.context.leaf['placeholder']) {
-            this.placeholderElement.innerText = this.context.leaf['placeholder'];
+        if (this.placeholderElement!.innerText !== (this.context.leaf as TextWithPlaceholder).placeholder) {
+            this.placeholderElement!.innerText = (this.context.leaf as TextWithPlaceholder).placeholder!;
         }
     }
 
@@ -81,7 +82,7 @@ export abstract class BaseLeafFlavour extends BaseFlavour<SlateLeafContext> {
         this.nativeElement?.remove();
     }
 
-    abstract render();
+    abstract render(): void;
 
-    abstract rerender();
+    abstract rerender(): void;
 }

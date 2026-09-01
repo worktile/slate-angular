@@ -56,7 +56,7 @@ export const getSelection = (root: Document | ShadowRoot): Selection | null => {
     return document.getSelection();
 };
 
-export const getContentHeight = (element: Element) => {
+export const getContentHeight = (element: globalThis.Element | null) => {
     if (!element) return 0;
     const style = window.getComputedStyle(element);
     const boxSizing = style.boxSizing;

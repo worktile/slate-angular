@@ -11,5 +11,6 @@ export class TableFlavour extends BaseFlavour {
         if (this.element.type === 'table-cell') {
             return document.createElement('td');
         }
+        return document.createElement('div');
     }
 }

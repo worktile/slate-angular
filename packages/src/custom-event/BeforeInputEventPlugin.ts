@@ -71,7 +71,7 @@ let hasSpaceKeypress = false;
  * This is required because Firefox fires `keypress` events for key commands
  * (cut, copy, select-all, etc.) even though no character is inserted.
  */
-function isKeypressCommand(nativeEvent) {
+function isKeypressCommand(nativeEvent: any) {
     return (
         (nativeEvent.ctrlKey || nativeEvent.altKey || nativeEvent.metaKey) &&
         // ctrlKey && altKey is equivalent to AltGr, and is not a command.
@@ -83,7 +83,7 @@ function isKeypressCommand(nativeEvent) {
  * Does our fallback mode think that this event is the end of composition?
  *
  */
-function isFallbackCompositionEnd(topLevelType, nativeEvent) {
+function isFallbackCompositionEnd(topLevelType: any, nativeEvent: any) {
     switch (topLevelType) {
         case TOP_KEY_UP:
             // Command keys insert or clear IME input.
@@ -109,7 +109,7 @@ function isFallbackCompositionEnd(topLevelType, nativeEvent) {
  * composition event and we have nothing special to extract.
  *
  */
-function getDataFromCustomEvent(nativeEvent) {
+function getDataFromCustomEvent(nativeEvent: any) {
     const detail = nativeEvent.detail;
     if (typeof detail === 'object' && 'data' in detail) {
         return detail.data;
@@ -125,14 +125,14 @@ function getDataFromCustomEvent(nativeEvent) {
  * it is available in IE, where our fallback mode is enabled.
  *
  */
-function isUsingKoreanIME(nativeEvent) {
+function isUsingKoreanIME(nativeEvent: any) {
     return nativeEvent.locale === 'ko';
 }
 
 // Track the current IME composition status, if any.
 let isComposing = false;
 
-function getNativeBeforeInputChars(topLevelType: any, nativeEvent) {
+function getNativeBeforeInputChars(topLevelType: any, nativeEvent: any) {
     switch (topLevelType) {
         case TOP_COMPOSITION_END:
             return getDataFromCustomEvent(nativeEvent);
@@ -183,7 +183,7 @@ function getNativeBeforeInputChars(topLevelType: any, nativeEvent) {
  * appropriate string to use for SyntheticInputEvent.
  *
  */
-function getFallbackBeforeInputChars(topLevelType: any, nativeEvent) {
+function getFallbackBeforeInputChars(topLevelType: any, nativeEvent: any) {
     // If we are currently composing (IME) and using a fallback to do so,
     // try to extract the composed characters from the fallback object.
     // If composition event is available, we extract a string only at
@@ -246,7 +246,7 @@ function getFallbackBeforeInputChars(topLevelType: any, nativeEvent) {
  * `textInput` or fallback behavior.
  *
  */
-export function extractBeforeInputEvent(topLevelType, targetInst, nativeEvent, nativeEventTarget) {
+export function extractBeforeInputEvent(topLevelType: any, targetInst: any, nativeEvent: any, nativeEventTarget: any) {
     let chars;
 
     if (canUseTextInputEvent) {
@@ -286,13 +286,13 @@ export function extractBeforeInputEvent(topLevelType, targetInst, nativeEvent, n
  * `composition` event types.
  */
 const BeforeInputEventPlugin = {
-    extractEvents: (topLevelType, targetInst, nativeEvent, nativeEventTarget) => {
+    extractEvents: (topLevelType: any, targetInst: any, nativeEvent: any, nativeEventTarget: any) => {
         return extractBeforeInputEvent(topLevelType, targetInst, nativeEvent, nativeEventTarget);
     }
 };
 
 export class BeforeInputEvent {
-    data: string;
-    nativeEvent: Event;
+    data!: string;
+    nativeEvent!: Event;
 }
 export default BeforeInputEventPlugin;

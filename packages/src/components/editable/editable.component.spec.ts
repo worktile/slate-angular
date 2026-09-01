@@ -29,7 +29,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         testingLeaf = (fixture.debugElement.nativeNode as HTMLElement).querySelector('.testing-leaf');
         expect(testingLeaf).toBeTruthy();
-        expect(testingLeaf.textContent).toEqual(keywords1);
+        expect(testingLeaf!.textContent).toEqual(keywords1);
 
         const keywords2 = 'text';
         component.generateDecorate(keywords2);
@@ -38,7 +38,7 @@ describe('Editable Component', () => {
         fixture.detectChanges();
         testingLeaf = (fixture.debugElement.nativeNode as HTMLElement).querySelector('.testing-leaf');
         expect(testingLeaf).toBeTruthy();
-        expect(testingLeaf.textContent).toEqual(keywords2);
+        expect(testingLeaf!.textContent).toEqual(keywords2);
     }));
 
     it('should rerender when data reference changes', fakeAsync(() => {
@@ -69,7 +69,7 @@ describe('Editable Component', () => {
 
     it('should not rerender when set trackBy', fakeAsync(() => {
         component.trackBy = element => {
-            return element['key'];
+            return (element as any)['key'];
         };
         component.value = [
             {
@@ -113,7 +113,7 @@ describe('Editable Component', () => {
 
         AngularEditor.focus(component.editor);
         const inputElement = document.querySelector('[editable-text]');
-        dispatchFakeEvent(inputElement, 'compositionstart', true);
+        dispatchFakeEvent(inputElement!, 'compositionstart', true);
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
@@ -147,13 +147,13 @@ describe('Editable Component', () => {
         flush();
         fixture.detectChanges();
         const placeholderLeaf = document.querySelector<HTMLSpanElement>('[data-slate-placeholder="true"]');
-        expect(placeholderLeaf.innerText).toEqual(placeholder);
+        expect(placeholderLeaf!.innerText).toEqual(placeholder);
         const newPlaceholder = 'new placeholder ...';
         component.placeholder = newPlaceholder;
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        expect(placeholderLeaf.innerText).toEqual(newPlaceholder);
+        expect(placeholderLeaf!.innerText).toEqual(newPlaceholder);
     }));
 
     it(`should execute custom scroll into view`, fakeAsync(() => {

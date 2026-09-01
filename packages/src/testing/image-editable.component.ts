@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { createEditor, Editor, Element, Node } from 'slate';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { createEditor, Element, Node } from 'slate';
+import { AngularEditor } from '../plugins/angular-editor';
 import { SlateEditable } from '../components/editable/editable.component';
 import { withAngular } from '../plugins/with-angular';
 
 @Component({
     selector: 'image-editable',
     template: ` <slate-editable [editor]="editor" [ngModel]="value"></slate-editable> `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ImageEditableComponent implements OnInit {
@@ -24,23 +26,23 @@ export class ImageEditableComponent implements OnInit {
     ];
 
     @ViewChild(SlateEditable, { static: true })
-    editableComponent: SlateEditable;
+    editableComponent!: SlateEditable;
 
     ngOnInit() {}
 
     constructor() {}
 }
 
-const withImage = (editor: Editor) => {
+const withImage = (editor: AngularEditor) => {
     const { isBlockCard, isVoid } = editor;
-    editor.isBlockCard = (node: Element) => {
-        if (Element.isElement(node) && node.type === 'image') {
+    editor.isBlockCard = (node: Node) => {
+        if (Element.isElement(node) && (node as any).type === 'image') {
             return true;
         }
         return isBlockCard(node);
     };
     editor.isVoid = (node: Element) => {
-        if (Element.isElement(node) && node.type === 'image') {
+        if (Element.isElement(node) && (node as any).type === 'image') {
             return true;
         }
         return isVoid(node);

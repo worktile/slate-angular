@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Descendant, Editor, createEditor, Element as SlateElement } from 'slate';
 import { SlateEditable, withAngular } from 'slate-angular';
@@ -8,6 +8,7 @@ import { DemoElementVideoComponent } from '../components/video/video.component';
     selector: 'demo-embeds',
     templateUrl: './embeds.component.html',
     styleUrls: ['./embeds.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [SlateEditable, FormsModule]
 })
 export class DemoEmbedsComponent {

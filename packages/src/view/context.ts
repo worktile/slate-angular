@@ -5,15 +5,15 @@ import { ViewType } from '../types/view';
 export interface SlateViewContext<T extends AngularEditor = AngularEditor> {
     editor: T;
     trackBy: (element: Element) => any;
-    renderElement?: (element: Element) => ViewType;
-    renderLeaf?: (text: Text) => ViewType;
-    renderText?: (text: Text) => ViewType;
+    renderElement?: (element: Element) => ViewType | null;
+    renderLeaf?: (text: Text) => ViewType | null;
+    renderText?: (text: Text) => ViewType | null;
     isStrictDecorate: boolean;
 }
 
 export interface SlateChildrenContext {
     parent: Ancestor;
-    selection: Range;
+    selection: Range | null;
     decorations: Range[];
     decorate: (entry: NodeEntry) => Range[];
     readonly: boolean;

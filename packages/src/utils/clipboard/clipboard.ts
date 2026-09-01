@@ -12,7 +12,7 @@ export const buildHTMLText = (wrapper: HTMLElement, attach: HTMLElement, data: E
     return wrapper.innerHTML;
 };
 
-export const getClipboardFromHTMLText = (html: string): ClipboardData => {
+export const getClipboardFromHTMLText = (html: string): ClipboardData | null => {
     const fragmentAttribute = getSlateFragmentAttribute(html);
     if (fragmentAttribute) {
         try {
@@ -36,8 +36,8 @@ export const createClipboardData = (html: string, elements: Element[], text: str
     return data;
 };
 
-export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<ClipboardData> => {
-    let clipboardData = null;
+export const getClipboardData = async (dataTransfer?: DataTransfer): Promise<ClipboardData | null> => {
+    let clipboardData: ClipboardData | null = null;
     if (dataTransfer) {
         let filesData = {};
         if (dataTransfer.files.length) {
@@ -68,20 +68,20 @@ export const setClipboardData = async (
     }
     const { elements, text } = clipboardData;
     if (isClipboardWriteSupported()) {
-        const htmlText = buildHTMLText(wrapper, attach, elements);
+        const htmlText = buildHTMLText(wrapper, attach, elements!);
         // TODO
         // maybe fail to write when copy some cell in table
-        return await setNavigatorClipboard(htmlText, elements, text);
+        return await setNavigatorClipboard(htmlText, elements!, text);
     }
 
     if (dataTransfer) {
-        const htmlText = buildHTMLText(wrapper, attach, elements);
+        const htmlText = buildHTMLText(wrapper, attach, elements!);
         setDataTransferClipboard(dataTransfer, htmlText);
-        setDataTransferClipboardText(dataTransfer, text);
+        setDataTransferClipboardText(dataTransfer, text!);
         return;
     }
 
-    const htmlText = buildHTMLText(wrapper, attach, elements);
+    const htmlText = buildHTMLText(wrapper, attach, elements!);
     // Compatible with situations where navigator.clipboard.write is not supported and dataTransfer is empty
     // Such as contextmenu copy in Firefox.
     if (isClipboardWriteTextSupported()) {

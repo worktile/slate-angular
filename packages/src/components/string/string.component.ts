@@ -8,6 +8,6 @@ import { SlateLeafContext, SlateViewContext } from '../../view/context';
     standalone: true
 })
 export class SlateString {
-    @Input() context: SlateLeafContext;
-    @Input() viewContext: SlateViewContext;
+    @Input() context!: SlateLeafContext;
+    @Input() viewContext!: SlateViewContext;
 }

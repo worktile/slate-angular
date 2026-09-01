@@ -440,7 +440,7 @@ export class VirtualScrollDebugOverlay {
             this.contentWrapper.style.display = 'none';
             this.bubble.style.display = 'flex';
             this.collapseToggle.textContent = '展开';
-            this.resizeHandle.style.display = 'none';
+            this.resizeHandle!.style.display = 'none';
         } else {
             this.applySize();
             this.container.style.padding = '12px';
@@ -452,7 +452,7 @@ export class VirtualScrollDebugOverlay {
             this.contentWrapper.style.display = 'flex';
             this.bubble.style.display = 'none';
             this.collapseToggle.textContent = '折叠';
-            this.resizeHandle.style.display = 'block';
+            this.resizeHandle!.style.display = 'block';
         }
     }
 

@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { AdvancedEditableComponent, configureBasicEditableTestingModule } from '../../testing';  
+import { AdvancedEditableComponent, configureBasicEditableTestingModule } from '../../testing';
 import { Editor, Transforms } from 'slate';
 
 describe('String Render', () => {
@@ -24,8 +24,8 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        const paragraphElement = document.querySelector('[data-slate-node="element"]')!;
+        const editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText).toBeTruthy();
         expect(editableText.getAttribute('data-slate-string')).toEqual('true');
         expect(editableText.textContent).toEqual(text);
@@ -44,8 +44,8 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        const paragraphElement = document.querySelector('[data-slate-node="element"]')!;
+        const editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText).toBeTruthy();
         expect(editableText.getAttribute('data-slate-string')).toEqual('true');
         expect(editableText.textContent).toEqual(text);
@@ -63,12 +63,12 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        const editableText = paragraphElement.querySelector('[editable-text]');
+        const paragraphElement = document.querySelector('[data-slate-node="element"]')!;
+        const editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(2);
-        expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
-        expect(editableText.lastElementChild.tagName).toEqual(`BR`);
+        expect(editableText.firstChild!.textContent).toEqual(`\uFEFF`);
+        expect(editableText.lastElementChild!.tagName).toEqual(`BR`);
     }));
 
     it('should correctly render text when text transform text from empty string to non-empty string', fakeAsync(() => {
@@ -83,12 +83,12 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        let editableText = paragraphElement.querySelector('[editable-text]');
+        const paragraphElement = document.querySelector('[data-slate-node="element"]')!;
+        let editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(2);
-        expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
-        expect(editableText.lastElementChild.tagName).toEqual(`BR`);
+        expect(editableText.firstChild!.textContent).toEqual(`\uFEFF`);
+        expect(editableText.lastElementChild!.tagName).toEqual(`BR`);
 
         Transforms.select(component.editor, Editor.end(component.editor, [0]));
 
@@ -97,9 +97,9 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        editableText = paragraphElement.querySelector('[editable-text]');
+        editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText.childNodes.length).toEqual(1);
-        expect(editableText.firstChild.textContent).toEqual(newText);
+        expect(editableText.firstChild!.textContent).toEqual(newText);
     }));
 
     it('should correctly render text when text transform text from non-empty string empty string', fakeAsync(() => {
@@ -114,11 +114,11 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        const paragraphElement = document.querySelector('[data-slate-node="element"]');
-        let editableText = paragraphElement.querySelector('[editable-text]');
+        const paragraphElement = document.querySelector('[data-slate-node="element"]')!;
+        let editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText).toBeTruthy();
         expect(editableText.childNodes.length).toEqual(1);
-        expect(editableText.firstChild.textContent).toEqual(text);
+        expect(editableText.firstChild!.textContent).toEqual(text);
 
         Transforms.select(component.editor, [0]);
 
@@ -126,9 +126,9 @@ describe('String Render', () => {
         fixture.detectChanges();
         flush();
         fixture.detectChanges();
-        editableText = paragraphElement.querySelector('[editable-text]');
+        editableText = paragraphElement.querySelector('[editable-text]')!;
         expect(editableText.childNodes.length).toEqual(2);
-        expect(editableText.firstChild.textContent).toEqual(`\uFEFF`);
-        expect(editableText.lastElementChild.tagName).toEqual(`BR`);
+        expect(editableText.firstChild!.textContent).toEqual(`\uFEFF`);
+        expect(editableText.lastElementChild!.tagName).toEqual(`BR`);
     }));
 });
