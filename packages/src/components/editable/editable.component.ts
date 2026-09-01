@@ -1006,7 +1006,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                 // COMPAT: Since the DOM range has no concept of backwards/forwards
                 // we need to check and do the right thing here.
                 if (Range.isBackward(selection!)) {
-                    // eslint-disable-next-line max-len
                     domSelection.setBaseAndExtent(
                         newDomRange.endContainer,
                         newDomRange.endOffset,
@@ -1014,7 +1013,6 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                         newDomRange.startOffset
                     );
                 } else {
-                    // eslint-disable-next-line max-len
                     domSelection.setBaseAndExtent(
                         newDomRange.startContainer,
                         newDomRange.startOffset,
