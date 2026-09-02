@@ -1,5 +1,11 @@
 # Changelog
 
+## 22.0.0-next.0
+
+### Major Changes
+
+- [#342](https://github.com/worktile/slate-angular/pull/342) [`88d25d73dd8073e262a36479ec8c9c96ad25dd65`](https://github.com/worktile/slate-angular/commit/88d25d73dd8073e262a36479ec8c9c96ad25dd65) Thanks [@xinglu01](https://github.com/xinglu01)! - bump angular version to 22.1.4
+
 ## 21.2.0
 
 ### Minor Changes

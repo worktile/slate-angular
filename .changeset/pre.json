@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "slate-angular": "21.2.0"
+  },
+  "changesets": [
+    "bump-angular-22"
+  ]
+}
