@@ -181,4 +181,32 @@ describe('Editable Component', () => {
 
         expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(1);
     }));
+
+    it('should not steal focus from an external control while native selection sync is pending', fakeAsync(() => {
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+
+        const editor = component.editor;
+        const editorElement = AngularEditor.toDOMNode(editor, editor) as HTMLElement;
+        const externalInput = document.createElement('input');
+        document.body.appendChild(externalInput);
+
+        try {
+            editorElement.focus();
+            Transforms.select(editor, Editor.start(editor, [0]));
+            flush();
+
+            const end = Editor.end(editor, [0]);
+            editor.selection = { anchor: end, focus: end };
+            component.editableComponent.toNativeSelection(false);
+
+            externalInput.focus();
+            flush();
+
+            expect(document.activeElement).toBe(externalInput);
+        } finally {
+            externalInput.remove();
+        }
+    }));
 });
