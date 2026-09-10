@@ -56,6 +56,24 @@ export const getSelection = (root: Document | ShadowRoot): Selection | null => {
     return document.getSelection();
 };
 
+const NON_TEXT_INPUT_TYPES = ['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'];
+
+/**
+ * Check if an element accepts text input, e.g. <input type="text">, <textarea> or a contenteditable element
+ */
+export const isTextEditableElement = (element: globalThis.Element | null | undefined): boolean => {
+    if (!isDOMElement(element)) {
+        return false;
+    }
+    if (element.tagName === 'TEXTAREA') {
+        return true;
+    }
+    if (element.tagName === 'INPUT') {
+        return !NON_TEXT_INPUT_TYPES.includes((element as HTMLInputElement).type);
+    }
+    return (element as HTMLElement).isContentEditable;
+};
+
 export const getContentHeight = (element: globalThis.Element | null) => {
     if (!element) return 0;
     const style = window.getComputedStyle(element);

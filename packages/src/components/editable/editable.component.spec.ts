@@ -181,4 +181,35 @@ describe('Editable Component', () => {
 
         expect(component.scrollSelectionIntoView).toHaveBeenCalledTimes(1);
     }));
+
+    it('should not sync selection when a text input outside the editor is focused', fakeAsync(() => {
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        const externalInput = document.createElement('input');
+        document.body.appendChild(externalInput);
+        const selection = { anchor: { path: [0, 0], offset: 3 }, focus: { path: [0, 0], offset: 3 } };
+        AngularEditor.focus(component.editor);
+        Transforms.select(component.editor, selection);
+        flush();
+        fixture.detectChanges();
+
+        // simulate Firefox: the DOM selection stays in the editor (and gets out of sync) after an external input is focused,
+        // stub activeElement since Chrome moves focus to the editor when setting a DOM selection in it
+        const textNode = document.querySelector('[editable-text]')!.firstChild!;
+        window.getSelection()!.setBaseAndExtent(textNode, 1, textNode, 1);
+        spyOnProperty(document, 'activeElement').and.returnValue(externalInput);
+
+        const setBaseAndExtentSpy = spyOn(Selection.prototype, 'setBaseAndExtent').and.callThrough();
+        component.generateDecorate('editable');
+        fixture.detectChanges();
+        flush();
+        fixture.detectChanges();
+        expect(setBaseAndExtentSpy).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(externalInput);
+
+        dispatchFakeEvent(document, 'selectionchange');
+        expect(component.editor.selection).toEqual(selection);
+        externalInput.remove();
+    }));
 });
