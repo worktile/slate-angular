@@ -2,7 +2,7 @@
   <div class="box">
     <h4>Name:</h4>
     <div class="input">
-      <input type="text" [value]="inputValue" (change)="setInputValue($event)" />
+      <input #nameInput type="text" [value]="inputValue" (change)="setInputValue($event)" />
     </div>
     <h4>Left or right handed</h4>
     <label>
