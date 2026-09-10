@@ -58,6 +58,7 @@ import {
     isDebug,
     isDebugScrollTop,
     isDecoratorRangeListEqual,
+    isTextEditableElement,
     measureHeightByIndics,
     roundTo
 } from '../../utils';
@@ -932,6 +933,15 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
         return !anchorElement || !focusElement || !this.editor.isVisible(anchorElement) || !this.editor.isVisible(focusElement);
     }
 
+    /**
+     * Whether a text input (input, textarea or contenteditable) outside the editor has focus.
+     * In this case Chrome moves the DOM selection out of the editor, but Firefox leaves it in the editor.
+     */
+    private isTextInputOutsideFocused(activeElement: DOMElement | null) {
+        const editorElement = EDITOR_TO_ELEMENT.get(this.editor);
+        return !!activeElement && !!editorElement && !editorElement.contains(activeElement) && isTextEditableElement(activeElement);
+    }
+
     toNativeSelection(autoScroll = true) {
         try {
             let { selection } = this.editor;
@@ -964,6 +974,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
             }
 
             if (!hasDomSelectionInEditor && !AngularEditor.isFocused(this.editor)) {
+                return;
+            }
+
+            // COMPAT: In Firefox, setting a DOM selection inside the editor moves focus to it, which would steal
+            // focus from an external text input while the user is typing in it (e.g. a search box that changes `decorate`).
+            if (this.isTextInputOutsideFocused(activeElement)) {
                 return;
             }
 
@@ -1276,6 +1292,12 @@ export class SlateEditable implements OnInit, OnChanges, OnDestroy, AfterViewChe
                     editorElement.contains(domSelection.focusNode);
                 if (!hasDomSelectionInEditor) {
                     Transforms.deselect(this.editor);
+                    return;
+                }
+
+                // COMPAT: In Firefox, the DOM selection left in the editor is stale while an external text input is focused,
+                // it can be moved by re-rendering (e.g. `decorate` changes), so don't sync it to the editor selection.
+                if (this.isTextInputOutsideFocused(activeElement)) {
                     return;
                 }
 
