@@ -6,7 +6,7 @@ import { withHistory } from 'slate-history';
 import { DemoButtonComponent } from '../components/button/button.component';
 
 import { EditableVoidElement } from 'custom-types';
-import { AUTO_FOCUS_EDITABLE_VOIDS, DemoElementEditableVoid } from '../components/editable-void/editable-void.component';
+import { DemoElementEditableVoid } from '../components/editable-void/editable-void.component';
 
 interface ToolbarItem {
     icon: string;
@@ -36,21 +36,6 @@ export class DemoEditableVoidsComponent {
                     type: 'editable-void',
                     children: [text]
                 };
-                Transforms.insertNodes(this.editor, voidNode);
-            }
-        },
-        {
-            icon: 'edit_note',
-            active: () => true,
-            action: event => {
-                event.preventDefault();
-                const text: Text = { text: '' };
-                const voidNode: EditableVoidElement = {
-                    type: 'editable-void',
-                    children: [text]
-                };
-                // insert and focus the name input inside the void
-                AUTO_FOCUS_EDITABLE_VOIDS.add(voidNode);
                 Transforms.insertNodes(this.editor, voidNode);
             }
         }
