@@ -1,6 +1,6 @@
 # Changelog
 
-## 22.0.0-next.0
+## 22.0.0
 
 ### Major Changes
 
