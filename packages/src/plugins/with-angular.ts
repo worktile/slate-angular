@@ -192,11 +192,21 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
 
             case 'insert_node':
             case 'remove_node':
-            case 'merge_node':
-            case 'split_node': {
+            case 'merge_node': {
                 for (const [node, path] of Editor.levels(e, {
                     at: Path.parent(op.path)
                 })) {
+                    const key = AngularEditor.findKey(e, node);
+                    matches.push([path, key]);
+                }
+
+                break;
+            }
+
+            case 'split_node': {
+                // The original node becomes the left side of the split. Keep its
+                // key so its view and child components are reused after the split.
+                for (const [node, path] of Editor.levels(e, { at: op.path })) {
                     const key = AngularEditor.findKey(e, node);
                     matches.push([path, key]);
                 }

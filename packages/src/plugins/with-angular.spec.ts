@@ -71,6 +71,22 @@ describe('with-angular', () => {
         let component: BasicEditableComponent;
         let fixture: ComponentFixture<BasicEditableComponent>;
 
+        it('preserves the original node key when splitting a paragraph', () => {
+            const editor = withAngular(createEditor());
+            editor.children = [{ type: 'paragraph', children: [{ text: 'before' }, { text: 'after' }] }];
+
+            const originalParagraph = Node.get(editor, [0]);
+            const originalKey = AngularEditor.findKey(editor, originalParagraph);
+
+            editor.apply({ type: 'split_node', path: [0], position: 1, properties: { type: 'paragraph' } });
+
+            const leftParagraph = Node.get(editor, [0]);
+            const rightParagraph = Node.get(editor, [1]);
+            expect(leftParagraph).not.toBe(originalParagraph);
+            expect(AngularEditor.findKey(editor, leftParagraph)).toBe(originalKey);
+            expect(AngularEditor.findKey(editor, rightParagraph)).not.toBe(originalKey);
+        });
+
         beforeEach(fakeAsync(() => {
             configureBasicEditableTestingModule([BasicEditableComponent]);
             fixture = TestBed.createComponent(BasicEditableComponent);
