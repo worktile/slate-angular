@@ -87,6 +87,23 @@ describe('with-angular', () => {
             expect(AngularEditor.findKey(editor, rightParagraph)).not.toBe(originalKey);
         });
 
+        it('preserves the target node key when merging paragraphs', () => {
+            const editor = withAngular(createEditor());
+            editor.children = [
+                { type: 'paragraph', children: [{ text: 'before' }] },
+                { type: 'paragraph', children: [{ text: 'after' }] }
+            ];
+
+            const targetParagraph = Node.get(editor, [0]);
+            const targetKey = AngularEditor.findKey(editor, targetParagraph);
+
+            editor.apply({ type: 'merge_node', path: [1], position: 1, properties: { type: 'paragraph' } });
+
+            const mergedParagraph = Node.get(editor, [0]);
+            expect(mergedParagraph).not.toBe(targetParagraph);
+            expect(AngularEditor.findKey(editor, mergedParagraph)).toBe(targetKey);
+        });
+
         beforeEach(fakeAsync(() => {
             configureBasicEditableTestingModule([BasicEditableComponent]);
             fixture = TestBed.createComponent(BasicEditableComponent);
