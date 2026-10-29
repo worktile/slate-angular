@@ -1,5 +1,19 @@
 # Changelog
 
+## 22.0.1
+
+### Patch Changes
+
+- [#344](https://github.com/worktile/slate-angular/pull/344) [`571cb77113d02569425211a4f1525dad90fc623c`](https://github.com/worktile/slate-angular/commit/571cb77113d02569425211a4f1525dad90fc623c) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - do not sync selection while a text input outside the editor is focused
+  in firefox the DOM selection stays in the editor when an external input is focused, so re-rendering (e.g. `decorate` changes while typing in a search box) called `setBaseAndExtent` and stole focus from the input, and the stale DOM selection was synced back to the editor selection
+
+- [#341](https://github.com/worktile/slate-angular/pull/341) [`906ead4c8143eb9fa76c259d2a8f9dc8d872d54a`](https://github.com/worktile/slate-angular/commit/906ead4c8143eb9fa76c259d2a8f9dc8d872d54a) Thanks [@Xwatson](https://github.com/Xwatson)! - remove obsolete firefox focus compat in toNativeSelection
+  it focused the editor in a setTimeout after updating the native selection, which stole focus from inputs focused in between (e.g. the input of a newly inserted tag) in firefox
+
+- [#346](https://github.com/worktile/slate-angular/pull/346) [`fa480aa55eb4684bfd3c2c971400b07f20c06441`](https://github.com/worktile/slate-angular/commit/fa480aa55eb4684bfd3c2c971400b07f20c06441) Thanks [@pubuzhixing8](https://github.com/pubuzhixing8)! - Preserve the original node key when splitting a node and the target node key when merging nodes. This keeps existing Angular views and their child components mounted when the node remains in place.
+
+  This follows Slate's [split and merge key handling PR](https://github.com/ianstormtaylor/slate/pull/4901), now implemented in [`slate-dom`'s `withDOM`](https://github.com/ianstormtaylor/slate/blob/main/packages/slate-dom/src/plugin/with-dom.ts).
+
 ## 22.0.0
 
 ### Major Changes
