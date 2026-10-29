@@ -182,25 +182,23 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
             case 'insert_text':
             case 'remove_text':
             case 'set_node': {
-                for (const [node, path] of Editor.levels(e, { at: op.path })) {
-                    const key = AngularEditor.findKey(e, node);
-                    matches.push([path, key]);
-                }
-
+                matches.push(...getMatches(e, op.path));
                 break;
             }
 
             case 'insert_node':
-            case 'remove_node':
-            case 'merge_node':
-            case 'split_node': {
-                for (const [node, path] of Editor.levels(e, {
-                    at: Path.parent(op.path)
-                })) {
-                    const key = AngularEditor.findKey(e, node);
-                    matches.push([path, key]);
-                }
+            case 'remove_node': {
+                matches.push(...getMatches(e, Path.parent(op.path)));
+                break;
+            }
 
+            case 'split_node': {
+                matches.push(...getMatches(e, op.path));
+                break;
+            }
+
+            case 'merge_node': {
+                matches.push(...getMatches(e, Path.previous(op.path)));
                 break;
             }
 
@@ -251,4 +249,12 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
     e.isFloating = element => false;
 
     return e;
+};
+
+const getMatches = (editor: AngularEditor, path: Path): [Path, Key][] => {
+    const matches: [Path, Key][] = [];
+    for (const [node, nodePath] of Editor.levels(editor, { at: path })) {
+        matches.push([nodePath, AngularEditor.findKey(editor, node)]);
+    }
+    return matches;
 };

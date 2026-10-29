@@ -71,6 +71,39 @@ describe('with-angular', () => {
         let component: BasicEditableComponent;
         let fixture: ComponentFixture<BasicEditableComponent>;
 
+        it('preserves the original node key when splitting a paragraph', () => {
+            const editor = withAngular(createEditor());
+            editor.children = [{ type: 'paragraph', children: [{ text: 'before' }, { text: 'after' }] }];
+
+            const originalParagraph = Node.get(editor, [0]);
+            const originalKey = AngularEditor.findKey(editor, originalParagraph);
+
+            editor.apply({ type: 'split_node', path: [0], position: 1, properties: { type: 'paragraph' } });
+
+            const leftParagraph = Node.get(editor, [0]);
+            const rightParagraph = Node.get(editor, [1]);
+            expect(leftParagraph).not.toBe(originalParagraph);
+            expect(AngularEditor.findKey(editor, leftParagraph)).toBe(originalKey);
+            expect(AngularEditor.findKey(editor, rightParagraph)).not.toBe(originalKey);
+        });
+
+        it('preserves the target node key when merging paragraphs', () => {
+            const editor = withAngular(createEditor());
+            editor.children = [
+                { type: 'paragraph', children: [{ text: 'before' }] },
+                { type: 'paragraph', children: [{ text: 'after' }] }
+            ];
+
+            const targetParagraph = Node.get(editor, [0]);
+            const targetKey = AngularEditor.findKey(editor, targetParagraph);
+
+            editor.apply({ type: 'merge_node', path: [1], position: 1, properties: { type: 'paragraph' } });
+
+            const mergedParagraph = Node.get(editor, [0]);
+            expect(mergedParagraph).not.toBe(targetParagraph);
+            expect(AngularEditor.findKey(editor, mergedParagraph)).toBe(targetKey);
+        });
+
         beforeEach(fakeAsync(() => {
             configureBasicEditableTestingModule([BasicEditableComponent]);
             fixture = TestBed.createComponent(BasicEditableComponent);
