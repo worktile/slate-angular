@@ -1,5 +1,11 @@
 # Changelog
 
+## 22.0.2
+
+### Patch Changes
+
+- [#347](https://github.com/worktile/slate-angular/pull/347) [`0c9d816b6e96d17cc272fbf93aa6d292d8990b68`](https://github.com/worktile/slate-angular/commit/0c9d816b6e96d17cc272fbf93aa6d292d8990b68) Thanks [@helingkaih](https://github.com/helingkaih)! - Strip `.the-break-char` / `.link-break-char` placeholders from the clipboard DOM on copy/cut/drag so `text/plain` no longer contains NBSP that breaks pasted terminal commands.
+
 ## 22.0.1
 
 ### Patch Changes
