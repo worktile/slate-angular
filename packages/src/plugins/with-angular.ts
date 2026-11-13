@@ -75,6 +75,11 @@ export const withAngular = <T extends Editor>(editor: T, clipboardFormatKey = 'x
             zw.textContent = isNewline ? '\n' : '';
         });
 
+        // On copy/cut/drag: drop .the-break-char / .link-break-char from the cloned DOM only.
+        Array.from(contents.querySelectorAll('.the-break-char, .link-break-char')).forEach(el => {
+            el.remove();
+        });
+
         // Set a `data-slate-fragment` attribute on a non-empty node, so it shows up
         // in the HTML, and can be used for intra-Slate pasting. If it's a text
         // node, wrap it in a `<span>` so we have something to set an attribute on.
